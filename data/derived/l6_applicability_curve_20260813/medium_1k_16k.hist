@@ -1,0 +1,6 @@
+# Medium-only distribution: equal weights, 1 KiB through 16 KiB.
+1024 1
+2048 1
+4096 1
+8192 1
+16384 1

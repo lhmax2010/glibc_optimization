@@ -1,0 +1,5 @@
+target	candidate	file_distance_pct	text_distance_pct	dyn_sum_distance_pct	characteristic_mape_pct	composite_pct
+product_board_product	workspace_o2	0.2369	0.2512	0.3420	0.4833	0.3284
+product_board_product	workspace_os	11.7945	13.9401	10.7602	17.3053	13.4500
+test_board_product	workspace_o2	0.0000	0.0000	0.0000	0.0000	0.0000
+test_board_product	workspace_os	11.5850	14.1557	11.0643	17.6522	13.6143

@@ -1,0 +1,2 @@
+target	segment	pid	event	peak_timestamp	trough_timestamp	peak_kb	trough_kb	drop_kb	drop_pct_of_baseline	nearest_action_within_15s	seconds_after_action
+enlightenment	1	258	1	2026-08-13T23:20:23,767681782-0700	2026-08-13T23:28:17,755574002-0700	2744	2624	120	15.15	none within 15 s	NA

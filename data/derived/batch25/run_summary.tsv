@@ -1,0 +1,81 @@
+part	profile	actual_profile	grid	rep	attempt	threads	extra_args	exit_code	throughput_ops_per_s	p50	p99	measure_rss_kb_median	idle_rss_kb	idle_free_delta_kb	idle_trim_ret	temp_before	json_status	local_dir
+A	thread-churn	thread-churn	C0	1	1	4		0	1780256.547	250	1657	72708	72740	n/a	n/a	33102	ok	board_results/batch25/thread-churn/C0/rep1
+A	thread-churn	thread-churn	C0	2	1	4		0	1784744.698	253	1644	72620	72652	n/a	n/a	34563	ok	board_results/batch25/thread-churn/C0/rep2
+A	thread-churn	thread-churn	C0	3	1	4		0	1772269.656	252	1645	72700	72732	n/a	n/a	35050	ok	board_results/batch25/thread-churn/C0/rep3
+A	thread-churn	thread-churn	C0	4	1	4		0	1783898.127	254	1645	73632	73664	n/a	n/a	35050	ok	board_results/batch25/thread-churn/C0/rep4
+A	thread-churn	thread-churn	C0	5	1	4		0	1787600.775	255	1647	73656	73688	n/a	n/a	35050	ok	board_results/batch25/thread-churn/C0/rep5
+A	thread-churn	thread-churn	arena2	1	1	4		0	1013691.546	387	18663	117644	117652	n/a	n/a	34076	ok	board_results/batch25/thread-churn/arena2/rep1
+A	thread-churn	thread-churn	arena2	2	1	4		0	1015562.039	387	19295	85952	85960	n/a	n/a	35537	ok	board_results/batch25/thread-churn/arena2/rep2
+A	thread-churn	thread-churn	arena2	3	1	4		0	978837.531	358	20576	94528	94536	n/a	n/a	36024	ok	board_results/batch25/thread-churn/arena2/rep3
+A	thread-churn	thread-churn	arena2	4	1	4		0	978459.02	348	21333	102624	102632	n/a	n/a	35537	ok	board_results/batch25/thread-churn/arena2/rep4
+A	thread-churn	thread-churn	arena2	5	1	4		0	993351.503	366	20493	78408	78416	n/a	n/a	36511	ok	board_results/batch25/thread-churn/arena2/rep5
+A	thread-churn	thread-churn	arena3	1	1	4		0	1446699.559	280	14330	94844	94852	n/a	n/a	35050	ok	board_results/batch25/thread-churn/arena3/rep1
+A	thread-churn	thread-churn	arena3	2	1	4		0	1418755.856	276	15868	117324	117336	n/a	n/a	36024	ok	board_results/batch25/thread-churn/arena3/rep2
+A	thread-churn	thread-churn	arena3	3	1	4		0	1427316.674	276	15541	83212	83220	n/a	n/a	36024	ok	board_results/batch25/thread-churn/arena3/rep3
+A	thread-churn	thread-churn	arena3	4	1	4		0	1439283.106	279	15477	84016	84024	n/a	n/a	36024	ok	board_results/batch25/thread-churn/arena3/rep4
+A	thread-churn	thread-churn	arena3	5	1	4		0	1398229.377	278	15936	90992	91000	n/a	n/a	36024	ok	board_results/batch25/thread-churn/arena3/rep5
+A	thread-churn	thread-churn	arena4	1	1	4		0	1695717.39	251	2683	85464	85472	n/a	n/a	34076	ok	board_results/batch25/thread-churn/arena4/rep1
+A	thread-churn	thread-churn	arena4	2	1	4		0	1726895.422	249	2461	80480	80488	n/a	n/a	35537	ok	board_results/batch25/thread-churn/arena4/rep2
+A	thread-churn	thread-churn	arena4	3	1	4		0	1677435.548	249	2840	78644	78652	n/a	n/a	36511	ok	board_results/batch25/thread-churn/arena4/rep3
+A	thread-churn	thread-churn	arena4	4	1	4		0	1667743.656	255	2883	83968	83976	n/a	n/a	36024	ok	board_results/batch25/thread-churn/arena4/rep4
+A	thread-churn	thread-churn	arena4	5	1	4		0	1637949.153	257	3076	85436	85444	n/a	n/a	36024	ok	board_results/batch25/thread-churn/arena4/rep5
+A	mixed	mixed	C0	1	1	4		0	1999048.768	260	1228	115076	115112	n/a	n/a	33589	ok	board_results/batch25/mixed/C0/rep1
+A	mixed	mixed	C0	2	1	4		0	2008889.295	257	1219	114588	114624	n/a	n/a	34563	ok	board_results/batch25/mixed/C0/rep2
+A	mixed	mixed	C0	3	1	4		0	2013608.426	251	1210	115424	115460	n/a	n/a	35537	ok	board_results/batch25/mixed/C0/rep3
+A	mixed	mixed	arena2	1	1	4		0	1087237.599	423	17670	108348	108360	n/a	n/a	36511	ok	board_results/batch25/mixed/arena2/rep1
+A	mixed	mixed	arena2	2	1	4		0	1096420.329	423	17489	109500	109512	n/a	n/a	34563	ok	board_results/batch25/mixed/arena2/rep2
+A	mixed	mixed	arena2	3	1	4		0	1086463.451	424	17580	109188	109200	n/a	n/a	35537	ok	board_results/batch25/mixed/arena2/rep3
+A	mixed	mixed	arena3	1	1	4		0	1575262.628	270	5411	110128	110140	n/a	n/a	34563	ok	board_results/batch25/mixed/arena3/rep1
+A	mixed	mixed	arena3	2	1	4		0	1561580.052	279	6891	111016	111028	n/a	n/a	36024	ok	board_results/batch25/mixed/arena3/rep2
+A	mixed	mixed	arena3	3	1	4		0	1567803.86	279	6766	110936	110948	n/a	n/a	36024	ok	board_results/batch25/mixed/arena3/rep3
+A	mixed	mixed	arena4	1	1	4		0	2029256.103	247	1189	113448	113460	n/a	n/a	35050	ok	board_results/batch25/mixed/arena4/rep1
+A	mixed	mixed	arena4	2	1	4		0	2025102.072	242	1188	113344	113356	n/a	n/a	34563	ok	board_results/batch25/mixed/arena4/rep2
+A	mixed	mixed	arena4	3	1	4		0	2029159.323	246	1187	114688	114700	n/a	n/a	35050	ok	board_results/batch25/mixed/arena4/rep3
+A	large-transient	large-transient	C0	1	1	4		0	96986.553	352	59065	107436	107448	n/a	n/a	35537	ok	board_results/batch25/large-transient/C0/rep1
+A	large-transient	large-transient	C0	2	1	4		0	97273.05	342	53776	107540	107552	n/a	n/a	35050	ok	board_results/batch25/large-transient/C0/rep2
+A	large-transient	large-transient	C0	3	1	4		0	96602.178	345	61648	107112	107124	n/a	n/a	35050	ok	board_results/batch25/large-transient/C0/rep3
+A	large-transient	large-transient	arena2	1	1	4		0	93257.452	348	71553	97008	97024	n/a	n/a	35050	ok	board_results/batch25/large-transient/arena2/rep1
+A	large-transient	large-transient	arena2	2	1	4		0	95512.479	351	58456	96432	96444	n/a	n/a	34076	ok	board_results/batch25/large-transient/arena2/rep2
+A	large-transient	large-transient	arena2	3	1	4		0	95290.525	341	60838	95092	95104	n/a	n/a	35537	ok	board_results/batch25/large-transient/arena2/rep3
+A	large-transient	large-transient	arena3	1	1	4		0	95452.519	330	58267	102432	102452	n/a	n/a	36024	ok	board_results/batch25/large-transient/arena3/rep1
+A	large-transient	large-transient	arena3	2	1	4		0	97307.982	343	57277	102956	102972	n/a	n/a	34563	ok	board_results/batch25/large-transient/arena3/rep2
+A	large-transient	large-transient	arena3	3	1	4		0	97148.46	340	60691	99656	99680	n/a	n/a	35537	ok	board_results/batch25/large-transient/arena3/rep3
+A	large-transient	large-transient	arena4	1	1	4		0	95969.52	336	62046	103920	103932	n/a	n/a	36511	ok	board_results/batch25/large-transient/arena4/rep1
+A	large-transient	large-transient	arena4	2	1	4		0	96546.12	338	54200	107056	107080	n/a	n/a	34076	ok	board_results/batch25/large-transient/arena4/rep2
+A	large-transient	large-transient	arena4	3	1	4		0	95632.017	339	61498	105680	105692	n/a	n/a	35537	ok	board_results/batch25/large-transient/arena4/rep3
+A	mixed-t2	mixed	C0	1	1	2		0	1196878.99	241	934	58668	58688	n/a	n/a	35537	ok	board_results/batch25/mixed-t2/C0/rep1
+A	mixed-t2	mixed	C0	2	1	2		0	1194254.887	242	931	57868	57888	n/a	n/a	34563	ok	board_results/batch25/mixed-t2/C0/rep2
+A	mixed-t2	mixed	C0	3	1	2		0	1194537.579	239	926	57796	57816	n/a	n/a	34076	ok	board_results/batch25/mixed-t2/C0/rep3
+A	mixed-t2	mixed	arena2	1	1	2		0	1204550.602	228	900	56616	56628	n/a	n/a	34563	ok	board_results/batch25/mixed-t2/arena2/rep1
+A	mixed-t2	mixed	arena2	2	1	2		0	1204864.112	229	881	56224	56236	n/a	n/a	34563	ok	board_results/batch25/mixed-t2/arena2/rep2
+A	mixed-t2	mixed	arena2	3	1	2		0	1199942.924	228	900	56776	56788	n/a	n/a	34076	ok	board_results/batch25/mixed-t2/arena2/rep3
+B	burst-free-small	burst-free-small	C0	1	1	4		0	10490015.898	112	627	1464	1488	n/a	n/a	34076	ok	board_results/batch25/burst-free-small/C0/rep1
+B	burst-free-small	burst-free-small	C0	2	1	4		0	10534439.088	112	613	1464	1492	n/a	n/a	35537	ok	board_results/batch25/burst-free-small/C0/rep2
+B	burst-free-small	burst-free-small	C0	3	1	4		0	10591056.114	112	601	1464	1492	n/a	n/a	36024	ok	board_results/batch25/burst-free-small/C0/rep3
+B	burst-free-small	burst-free-small	mxfast0	1	1	4		0	10006246.859	164	380	1432	1456	n/a	n/a	36024	ok	board_results/batch25/burst-free-small/mxfast0/rep1
+B	burst-free-small	burst-free-small	mxfast0	2	1	4		0	9944215.511	164	388	1432	1456	n/a	n/a	36024	ok	board_results/batch25/burst-free-small/mxfast0/rep2
+B	burst-free-small	burst-free-small	mxfast0	3	1	4		0	9869320.232	164	400	1432	1456	n/a	n/a	35537	ok	board_results/batch25/burst-free-small/mxfast0/rep3
+B	burst-free-small	burst-free-small	tcache_unsorted3	1	1	4		0	10408738.723	112	666	1464	1488	n/a	n/a	36024	ok	board_results/batch25/burst-free-small/tcache_unsorted3/rep1
+B	burst-free-small	burst-free-small	tcache_unsorted3	2	1	4		0	10458960.381	112	659	1464	1488	n/a	n/a	36024	ok	board_results/batch25/burst-free-small/tcache_unsorted3/rep2
+B	burst-free-small	burst-free-small	tcache_unsorted3	3	1	4		0	10463636.127	112	662	1464	1492	n/a	n/a	35537	ok	board_results/batch25/burst-free-small/tcache_unsorted3/rep3
+B	unsorted-drain	unsorted-drain	C0	1	1	4		0	2425487.869	492	10640	138376	138444	n/a	n/a	36998	ok	board_results/batch25/unsorted-drain/C0/rep1
+B	unsorted-drain	unsorted-drain	C0	2	1	4		0	2420848.642	486	10679	138484	138552	n/a	n/a	36024	ok	board_results/batch25/unsorted-drain/C0/rep2
+B	unsorted-drain	unsorted-drain	C0	3	1	4		0	2431634.008	486	10651	138656	138724	n/a	n/a	35050	ok	board_results/batch25/unsorted-drain/C0/rep3
+B	unsorted-drain	unsorted-drain	mxfast0	1	1	4		0	2422228.959	490	10605	138696	138732	n/a	n/a	35537	ok	board_results/batch25/unsorted-drain/mxfast0/rep1
+B	unsorted-drain	unsorted-drain	mxfast0	2	1	4		0	2421615.469	488	10673	138364	138432	n/a	n/a	35537	ok	board_results/batch25/unsorted-drain/mxfast0/rep2
+B	unsorted-drain	unsorted-drain	mxfast0	3	1	4		0	2428174.142	485	10561	138628	138696	n/a	n/a	35537	ok	board_results/batch25/unsorted-drain/mxfast0/rep3
+B	unsorted-drain	unsorted-drain	tcache_unsorted3	1	1	4		0	2432474.955	482	10589	138768	138836	n/a	n/a	35537	ok	board_results/batch25/unsorted-drain/tcache_unsorted3/rep1
+B	unsorted-drain	unsorted-drain	tcache_unsorted3	2	1	4		0	2419955.977	487	10714	138828	138896	n/a	n/a	35050	ok	board_results/batch25/unsorted-drain/tcache_unsorted3/rep2
+B	unsorted-drain	unsorted-drain	tcache_unsorted3	3	1	4		0	2433467.376	489	10539	138568	138636	n/a	n/a	35537	ok	board_results/batch25/unsorted-drain/tcache_unsorted3/rep3
+C	thread-churn	thread-churn	L1_L3	1	1	4		0	1780686.498	254	1655	68676	68708	n/a	n/a	36024	ok	board_results/batch25/thread-churn/L1_L3/rep1
+C	thread-churn	thread-churn	L1_L3	2	1	4		0	1789267.787	252	1649	71180	71212	n/a	n/a	36024	ok	board_results/batch25/thread-churn/L1_L3/rep2
+C	thread-churn	thread-churn	L1_L3	3	1	4		0	1785091.975	256	1645	70224	70256	n/a	n/a	36024	ok	board_results/batch25/thread-churn/L1_L3/rep3
+D	mixed	mixed	D-C0	1	1	4	--idle-release 50	0	2016951.805	253	1216	114404	114444	48538.220	-1	36024	ok	board_results/batch25/mixed/D-C0/rep1
+D	mixed	mixed	D-C0	2	1	4	--idle-release 50	0	2010617.271	254	1216	113660	113700	50359.020	-1	35537	ok	board_results/batch25/mixed/D-C0/rep2
+D	mixed	mixed	D-C0	3	1	4	--idle-release 50	0	2004777.211	256	1220	114584	114624	48121.684	-1	35050	ok	board_results/batch25/mixed/D-C0/rep3
+D	mixed	mixed	D-C0-idle-trim	1	1	4	--idle-release 50 --idle-trim	0	2012834.046	248	1213	113764	53500	50905.817	1	35537	ok	board_results/batch25/mixed/D-C0-idle-trim/rep1
+D	mixed	mixed	D-C0-idle-trim	2	1	4	--idle-release 50 --idle-trim	0	2009791.078	258	1225	115348	54012	49680.904	1	35050	ok	board_results/batch25/mixed/D-C0-idle-trim/rep2
+D	mixed	mixed	D-C0-idle-trim	3	1	4	--idle-release 50 --idle-trim	0	2010910.556	253	1218	114792	52896	49341.146	1	35050	ok	board_results/batch25/mixed/D-C0-idle-trim/rep3
+D	mixed	mixed	D-T-L3	1	1	4	--idle-release 50	0	2007878.461	251	1224	112736	112776	48330.726	-1	34563	ok	board_results/batch25/mixed/D-T-L3/rep1
+D	mixed	mixed	D-T-L3	2	1	4	--idle-release 50	0	2010702.283	259	1218	115172	115212	50616.012	-1	34076	ok	board_results/batch25/mixed/D-T-L3/rep2
+D	mixed	mixed	D-T-L3	3	1	4	--idle-release 50	0	2010069.406	258	1229	114664	114704	49022.708	-1	35050	ok	board_results/batch25/mixed/D-T-L3/rep3

@@ -1,0 +1,14 @@
+pid	comm	total_private_dirty_kb	main_heap_private_dirty_kb	arena_like_count	arena_like_private_dirty_kb	heap_plus_arena_kb	heap_plus_arena_pct
+1048	ServiceD	7632	724	5	1224	1948	25.5
+1309	pulseaudio	1204	332	3	24	356	29.6
+1595	ServiceF	6668	804	4	192	996	14.9
+2556	AppProcB	33412	7276	17	7596	14872	44.5
+265	enlightenment	14416	2772	6	164	2936	20.4
+2899	ServiceR	1248	220	6	64	284	22.8
+3772	AppProcA	13304	2864	12	2096	4960	37.3
+4042	ServiceH	10944	2528	11	884	3412	31.2
+562	AppProcD	35476	6324	13	3756	10080	28.4
+572	ServiceE	19480	5268	11	2644	7912	40.6
+613	ServiceL	4068	964	1	0	964	23.7
+654	ServiceV	2812	788	6	140	928	33.0
+669	ServiceC	6820	248	5	824	1072	15.7

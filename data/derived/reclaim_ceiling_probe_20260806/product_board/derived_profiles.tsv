@@ -1,0 +1,6 @@
+pid	comm	total_pd_MiB	glibc_pd_MiB	other_pd_MiB	glibc_pct	other_pct
+2556	AppProcB	33.090	15.066	11.668	45.53	35.26
+562	AppProcD	37.102	10.816	21.570	29.15	58.14
+572	ServiceE	19.023	7.730	3.840	40.64	20.18
+3772	AppProcA	13.102	4.898	4.785	37.39	36.52
+1048	ServiceD	7.746	2.121	2.594	27.38	33.48

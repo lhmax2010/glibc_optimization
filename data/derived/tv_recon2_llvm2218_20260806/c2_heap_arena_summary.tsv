@@ -1,0 +1,13 @@
+pid	comm	total_private_dirty_kb	main_heap_private_dirty_kb	arena_like_count	arena_like_private_dirty_kb	heap_plus_arena_kb	heap_plus_arena_pct
+966	runner	32140	2584	19	6176	8760	27.3
+1016	AppUIA.dll	10416	2340	11	760	3100	29.8
+754	ise-default	8716	3056	1	44	3100	35.6
+556	enlightenment	6748	2760	2	20	2780	41.2
+1015	dotnet-hydra-lo	4464	1420	9	176	1596	35.8
+554	pulseaudio	2672	1348	1	16	1364	51.0
+406	esd	2584	248	5	300	548	21.2
+428	ServiceV	2408	504	2	36	540	22.4
+403	ServiceS	2036	596	3	80	676	33.2
+408	ServiceR	1796	408	3	160	568	31.6
+471	deviced	1504	304	3	36	340	22.6
+864	dotnet-hydra-lo	292	136	7	12	148	50.7

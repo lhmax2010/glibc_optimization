@@ -1,0 +1,4 @@
+rep	arenas	fast_count	fast_bytes	rest_count	rest_bytes	unsorted_count	unsorted_bytes	fast_pct_free	unsorted_pct_rest	system_current_bytes
+1	8	96	2328	273	520769	8	6328	0.4450	1.2151	3915776
+2	8	229	5536	328	512720	5	1621	1.0682	0.3162	3911680
+3	8	81	1968	266	508434	9	22569	0.3856	4.4389	3903488

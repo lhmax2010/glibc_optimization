@@ -1,0 +1,11 @@
+target	p0_baseline_kb	threshold_5pct_kb	max_round_rise_kb	round_peaks_monotonic_nondecreasing	first_plateau_pair	platform_period_peak_kb	platform_height_kb	shape
+AppProcD	30036	1501.80	244	no	NA	NA	NA	no-response
+AppProcC	15348	767.40	0	no	NA	NA	NA	no-response
+AppProcB	10540	527.00	4	no	NA	NA	NA	no-response
+ServiceA	2932	146.60	8828	no	NA	NA	NA	unclassified-nonmonotonic
+ServiceD	9512	475.60	136	yes	NA	NA	NA	no-response
+ServiceE	8772	438.60	0	yes	NA	NA	NA	no-response
+ServiceL	6436	321.80	32	no	NA	NA	NA	no-response
+ServiceH[ServiceK]	11240	562.00	2360	yes	R1-R2	13600	2360	plateau
+ServiceB	3508	175.40	1420	no	NA	NA	NA	unclassified-nonmonotonic
+ServiceC	3932	196.60	80	no	NA	NA	NA	no-response

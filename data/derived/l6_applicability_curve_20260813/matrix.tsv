@@ -1,0 +1,13 @@
+cell	factor	profile	release_pct	live_set	release_order	repetitions
+pct25	release_pct	mixed	25	4096	high	3
+baseline	reference	mixed	50	4096	high	3
+pct75	release_pct	mixed	75	4096	high	3
+pct90	release_pct	mixed	90	4096	high	3
+size_small	size_distribution	small-churn	50	4096	high	3
+size_medium	size_distribution	external:medium_1k_16k.hist	50	4096	high	3
+live1024	live_set	mixed	50	1024	high	3
+live16384	live_set	mixed	50	16384	high	3
+order_interleave	release_order	mixed	50	4096	interleave	3
+x_medium90_large	interaction	external:medium_1k_16k.hist	90	16384	high	3
+x_small90_large_interleave	interaction	small-churn	90	16384	interleave	3
+x_mixed75_large_interleave	interaction	mixed	75	16384	interleave	3
