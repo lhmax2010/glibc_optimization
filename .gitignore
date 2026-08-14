@@ -1,0 +1,19 @@
+# Local migration audit material and the real-value replacement map.
+.migration-local/
+desensitize_map.tsv
+
+# Build products are reproducible from the published sources.
+*.armv7l
+*.host
+*.host-asan
+*.o
+
+# Raw board evidence stays in the private local archive.
+board_results/
+raw/
+**/raw/
+data/raw/
+*.xml
+*.dlog
+*.dmesg
+*.log
