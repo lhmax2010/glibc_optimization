@@ -1,0 +1,2 @@
+samples	target_rows	interval_min_s	interval_median_s	interval_max_s	interval_gt_1_1_s	interval_gt_2_s	interval_gt_3_s	catchup_interval_lt_0_9_s	key_rows	key_lateness_min_ms	key_lateness_median_ms	key_lateness_max_ms	MemAvailable_min_kb	MemAvailable_max_kb	zram_used_min_kb	zram_used_max_kb
+660	2640	0.614598	0.756541	6.077082	106	44	15	428	88	24.522	176.135	1242.877	737800	801396	92684	92940

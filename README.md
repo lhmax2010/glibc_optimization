@@ -23,6 +23,7 @@ The figures above are measurements for the documented builds and workloads, not 
 - [L6 applicability curve](docs/l6_applicability_curve.md)
 - [L6 release-phase scale test](docs/l6_release_phase_scale.md)
 - [Real UI release-phase probe](docs/l6_ui_release_phase.md)
+- [Product cyclic-target peak/valley probe](docs/product_cyclic_target_probe.md)
 - [Allocator benchmark specification](docs/alloc_bench_spec_v1_1a_zh.md)
 - [Board and protocol reports](docs/)
 
