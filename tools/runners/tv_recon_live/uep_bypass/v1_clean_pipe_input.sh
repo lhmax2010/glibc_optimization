@@ -1,0 +1,1 @@
+echo CLEAN_PIPE_OK

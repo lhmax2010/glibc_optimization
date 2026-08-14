@@ -1,0 +1,14 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>L4_START</title></head>
+<body><h1 id="status">L4_START</h1><main id="content"></main>
+<script>
+const root = document.getElementById('content');
+for (let i = 0; i < 500; i++) {
+  const node = document.createElement('p');
+  node.textContent = `L4_ROW_${i}`;
+  root.appendChild(node);
+}
+document.getElementById('status').textContent = 'L4_DONE';
+document.title = 'L4_DONE';
+console.log('L4_DONE');
+</script></body></html>
