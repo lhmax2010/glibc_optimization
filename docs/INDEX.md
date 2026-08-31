@@ -47,6 +47,7 @@ This is the review entry point for the project. Start with the consolidated stat
 | 2026-08-14 | Host | Implemented cyclic alloc_bench mode and trim timing controls | Passed 13 self-tests and ARM cross-build; board timing scan remains blocked before identity verification | [`cyclic_profile_replication.md`](cyclic_profile_replication.md) |
 | 2026-08-14 | Host | First public-repository migration | Published the sanitized document, tool, and derived-data archive | [`repo_migration_plan.md`](repo_migration_plan.md) |
 | 2026-08-31 | Host | Established the long-term incremental workspace | Added compact execution evidence, a chronological index, patches, and the latest benchmark/report deltas | [`workspace_sync_report.md`](workspace_sync_report.md) |
+| 2026-08-31 | TEST_BOARD | Restored the RPI4 SDB channel and collected the new LLVM-image baseline | Passed the three-part identity gate on glibc 2.40; cleared S2/S3 to run later and required a fresh S4 reference grid | [`board_baseline_llvm_image_20260831.md`](board_baseline_llvm_image_20260831.md) |
 
 ## Specifications And Designs
 

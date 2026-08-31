@@ -2,7 +2,9 @@
 
 # 周期型分配画像的受控复现与 trim 时机扫描
 
-状态：**板上扫描阻塞于 RPI4 SDB 通道；实现、host 验证与 armv7l 构建已完成。**  
+原始执行状态（2026-08-14）：**板上扫描阻塞于 RPI4 SDB 通道；实现、host 验证与 armv7l 构建已完成。**
+
+后续状态（2026-08-31）：**SDB 通道已恢复，新镜像身份门与环境门已通过；S2/S3 板上负载仍未执行。** 详见 [`board_baseline_llvm_image_20260831.md`](board_baseline_llvm_image_20260831.md)。
 日期：2026-08-14（Asia/Shanghai）
 
 ## 1. 身份门、环境与工具扩展
@@ -146,9 +148,11 @@ M7 在 host 校准中可见：peak -> valley 的 rest 增量 6,398,826 B，unsor
 - 最佳时机回收比例乘以产品板 6.2 MB 峰谷差；
 - 渐进释放与既有瞬时释放曲线的差异。
 
-既有瞬时释放参考值仅保留作后续同口径对照：`mixed / 50% / high` 的回收率
-为 53.55%，`medium-only / 50% / high` 为 50.60%。本报告没有把这些历史值
-代入尚未完成的渐进释放扫描。
+既有瞬时释放参考值为 `mixed / 50% / high = 53.55%`、
+`medium-only / 50% / high = 50.60%`。2026-08-31 的新镜像在 BUILD_ID、
+kernel build、glibc RPM release、MemTotal 与 zram 容量上均已变化，因此这些值
+仅保留为历史 sanity range，不能作为新镜像的同板对照或通过阈值；S4 必须先在
+新镜像补跑两项参考格。本报告没有把历史值代入尚未完成的渐进释放扫描。
 
 ## 5. 失败、限制与恢复现场
 
@@ -166,6 +170,6 @@ M7 在 host 校准中可见：peak -> valley 的 rest 增量 6,398,826 B，unsor
 ## 6. 原始文件
 
 当前仅有 host 验证临时结果（位于 `/tmp/cyclic-host-cal.*` 与
-`/tmp/cyclic-touch-cal.*`，不属于板上证据）。板上原始目录将在通道恢复后
-建立为 `board_results/cyclic_profile_replication_20260814/`；本轮尚不存在。
-
+`/tmp/cyclic-touch-cal.*`，不属于板上证据）。板上原始目录原计划在通道恢复后
+建立为 `board_results/cyclic_profile_replication_20260814/`；截至 2026-08-31，
+通道恢复和只读基线采集均未创建该目录，S2/S3 仍未执行。

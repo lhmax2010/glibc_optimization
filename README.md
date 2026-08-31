@@ -4,7 +4,7 @@ This repository is the long-term, sanitized workspace for source audits, control
 
 文中应用/进程名为代号，板标识与路径已脱敏。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）保留在本地；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
 
-**Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented but its RPI4 board scan remains blocked by the board channel.
+**Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented. The RPI4 SDB channel and new-image baseline are restored; the S2/S3 board runs remain pending.
 
 ## Current Findings
 
