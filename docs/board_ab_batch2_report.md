@@ -290,7 +290,7 @@ drwx------  3 root root  4096 Jul  8 20:37 .config
 ---TMP---
 total 8
 -rw-r--r-- 1 location  location 28 Jan  1  1970 dump_gps.log
-drwxrwxrwx 2 owner     users    80 Jan  1  1970 focus
+drwxrwxrwx 2 <USER>    users    80 Jan  1  1970 focus
 prw-rw-rw- 1 pulse     pulse     0 Jan  1  1970 keytone
 drwxrwxrwt 2 root      users    40 Jan  1  1970 pkgmgr
 -rw-r--r-- 1 root      root      0 Jan  1  1970 rsc_mgr_ready

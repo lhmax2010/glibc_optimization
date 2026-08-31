@@ -158,7 +158,7 @@ $ aul_test open_content file:///opt/media/USBDriveA1/Argentina.mp4
 | `gst-play-1.0` | 缺失 |
 | `mediaplayer` | 缺失 |
 
-`player_test` 直接从普通 sdb shell 启动时报告 `failed to connect display, err -12`。复用前台 owner 会话的 `WAYLAND_DISPLAY=wayland-0`、`XDG_RUNTIME_DIR=/run/user/5001`、`ELM_ENGINE=wayland_egl` 后，可创建窗口并完成平台 player 流程：
+`player_test` 直接从普通 sdb shell 启动时报告 `failed to connect display, err -12`。复用前台 `<USER>` 会话的 `WAYLAND_DISPLAY=wayland-0`、`XDG_RUNTIME_DIR=/run/user/5001`、`ELM_ENGINE=wayland_egl` 后，可创建窗口并完成平台 player 流程：
 
 ```text
 *** input mediapath.

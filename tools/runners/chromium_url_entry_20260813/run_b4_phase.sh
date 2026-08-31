@@ -54,7 +54,7 @@ sleep 1
     echo "page_navigates_about_blank_at=20s"
     echo "blank_profile_at=32s"
 } >"$out/run.txt"
-systemd-run --no-block --collect --unit="$unit" --uid=owner --gid=users \
+systemd-run --no-block --collect --unit="$unit" --uid='<USER>' --gid=users \
     -p SupplementaryGroups=display \
     -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
     -E HOME='/opt/usr/home/<USER>' \

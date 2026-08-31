@@ -142,7 +142,7 @@ renderer 命令行含 `--no-sandbox`，`Seccomp=0`；日志中没有 Chromium sa
 
 app framework 对照的进程为 UID 5001，Smack label 为 `User::Pkg::AppK`，renderer capabilities 仍为 0；该域拥有对 `System::Run` 的 `rwxat`，所以不再出现 `/dev/shm` 错误。这证明在 HDMI disconnected 状态下，Chromium renderer 和合成路径可以推进到 `DidFinishLoad`，也验证了 Smack 归因。
 
-但 `efl_webview_app` 将 launchpad 注入的第一个位置参数 `` `zaybxcwdveuftgsh` `` 当成 URL，没有消费 `__APP_SVC_URI__` bundle。因此现有 appid 入口不能直接作为指定页面驱动器。`app_launcher -t` 对这个 demo app 返回 `Failed to terminate ... (-6)`，本轮随后只对该测试 PID 发送 `SIGTERM`，进程及子进程均退出。
+但 `efl_webview_app` 将 launchpad 注入的第一个位置参数 `<LAUNCH_TOKEN>` 当成 URL，没有消费 `__APP_SVC_URI__` bundle。因此现有 appid 入口不能直接作为指定页面驱动器。`app_launcher -t` 对这个 demo app 返回 `Failed to terminate ... (-6)`，本轮随后只对该测试 PID 发送 `SIGTERM`，进程及子进程均退出。
 
 证据：[`direct_efl/`](../board_results/chromium_load_diagnosis_20260813/entries/direct_efl/)、[`direct_mini/`](../board_results/chromium_load_diagnosis_20260813/entries/direct_mini/)、[`app_efl/`](../board_results/chromium_load_diagnosis_20260813/entries/app_efl/)、[`app_efl_heavy/`](../board_results/chromium_load_diagnosis_20260813/entries/app_efl_heavy/)。
 

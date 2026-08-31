@@ -153,7 +153,7 @@ RELEASE_NAVIGATION_VERIFIED=0
 
 37 s 内没有 `LoadProgress=1`、`DidFinishLoad`、`L6_UI_HEAVY` 或
 `about:blank#L6_UI_RELEASED` 证据。另一路 app-control rehearsal 虽返回 PID，
-但实际加载 URL 为占位主机名 ``http://`zaybxcwdveuftgsh`/``，不是指定文件。
+但实际加载 URL 为占位主机名 `http://<LAUNCH_TOKEN>/`，不是指定文件。
 
 ### 5.2 只读画像
 
@@ -189,7 +189,7 @@ Chromium 没有可审核的 T1/T2，更没有 M7；按合同不注入、不填�
 ## 7. 失败、偏差与限制
 
 1. AppUIB 的首次执行器尝试把 `malloc_info` XML 写到 `/root`。表达式在
-   owner 目标权限下运行，`fopen` 返回空指针，随后 LLDB 表达式触发 SIGSEGV；
+   `<USER>` 目标权限下运行，`fopen` 返回空指针，随后 LLDB 表达式触发 SIGSEGV；
    LLDB 原文称进程已恢复到表达式执行前状态。该轮在 T1 中止，未到 T2、未
    trim；随后改为 `/tmp` 落盘、复制回证据目录并立即删除。原始证据保存在
    `runs/AppUIB/rep1_attempt1/`。

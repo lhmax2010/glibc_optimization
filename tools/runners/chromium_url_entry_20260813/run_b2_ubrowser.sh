@@ -27,7 +27,7 @@ sleep 1
     echo "requested_url=$url"
     echo "CMD=systemd-run --no-block --collect --unit=$unit --uid=<USER> --gid=users -p SupplementaryGroups=display -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 -E HOME=/opt/usr/home/<USER> /usr/apps/AppK/bin/AppUIC -v -n $url"
 } >"$out/run.txt"
-systemd-run --no-block --collect --unit="$unit" --uid=owner --gid=users \
+systemd-run --no-block --collect --unit="$unit" --uid='<USER>' --gid=users \
     -p SupplementaryGroups=display \
     -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
     -E HOME='/opt/usr/home/<USER>' \

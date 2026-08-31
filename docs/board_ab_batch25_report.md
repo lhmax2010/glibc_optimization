@@ -266,7 +266,7 @@ drwx------  2 system_fw     system_fw       40 Jan  1  1970 .run
 -rw-r--r--  1 root          root             0 Jan  1  1970 .security-manager.db.ok
 -rw-r--r--  1 multimedia_fw multimedia_fw    0 Jan  1  1970 .sound_server_ready
 -rw-r--r--  1 location      location        28 Jan  1  1970 dump_gps.log
-drwxrwxrwx  2 owner         users           80 Jan  1  1970 focus
+drwxrwxrwx  2 <USER>        users           80 Jan  1  1970 focus
 prw-rw-rw-  1 pulse         pulse            0 Jan  1  1970 keytone
 drwxrwxrwt  2 root          users           40 Jan  1  1970 pkgmgr
 -rw-r--r--  1 root          root             0 Jan  1  1970 rsc_mgr_ready

@@ -13,7 +13,7 @@ if grep -qi '<PRODUCT_IMAGE>' /etc/os-release 2>/dev/null; then
     exit 98
 fi
 
-runuser -u owner -g users -G display -- /bin/sh -c '
+runuser -u '<USER>' -g users -G display -- /bin/sh -c '
   id
   printf "attr_current="; cat /proc/self/attr/current
   printf "shm_write="
@@ -27,7 +27,7 @@ runuser -u owner -g users -G display -- /bin/sh -c '
 echo "RUNUSER_EXIT=$?" >>"$out/runuser.txt"
 
 systemd-run --wait --pipe --collect --unit=chromium-url-entry-label-probe \
-  --uid=owner --gid=users -p SupplementaryGroups=display \
+  --uid='<USER>' --gid=users -p SupplementaryGroups=display \
   -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
   /bin/sh -c '
     id

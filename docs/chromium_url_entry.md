@@ -67,7 +67,7 @@ DidFinish 若实际 URL 是 token，表示 DNS 错误页完成，并不表示指
 
 | 尝试 | shell exit | 实际 `ewk_view_url_set` URL | progress / DidFinish | 指定 URL 加载 |
 |---|---:|---|---|---|
-| `app_launcher -s ... __APP_SVC_URI__ URL` | 0 | `http://\`zaybxcwdveuftgsh\`` | 1 / 有 | 否 |
+| `app_launcher -s ... __APP_SVC_URI__ URL` | 0 | `http://<LAUNCH_TOKEN>` | 1 / 有 | 否 |
 | operation/view + URI + text/html | 0 | 同一 token | 1 / 有 | 否 |
 | `aul_test launch` 同一标准 bundle | 89；工具内部打印成功 PID 32601 | 同一 token | 1 / 有 | 否 |
 | `aul_test open_content FILE` | 0 | 没有 Chromium URL 记录，也没有测试进程 | 无 | 否 |
@@ -77,7 +77,7 @@ DidFinish 若实际 URL 是 token，表示 DNS 错误页完成，并不表示指
 token 路径均伴随：
 
 ```text
-[NETWORK ERROR] Failing url : http://`zaybxcwdveuftgsh`/
+[NETWORK ERROR] Failing url : http://<LAUNCH_TOKEN>/
 Error code : -105 Error message : net::ERR_NAME_NOT_RESOLVED
 ```
 
@@ -97,8 +97,8 @@ Error code : -105 Error message : net::ERR_NAME_NOT_RESOLVED
 runuser: failed to establish user credentials: Failure setting user credentials
 RUNUSER_EXIT=1
 
-systemd-run --wait --pipe --collect --uid=owner --gid=users ...
-uid=5001(owner) gid=100(users) ... context="System::Privileged"
+systemd-run --wait --pipe --collect --uid='<USER>' --gid=users ...
+uid=5001(<USER>) gid=100(users) ... context="System::Privileged"
 attr_current=System::Privileged
 shm_write=PASS
 Finished with result: success
@@ -113,7 +113,7 @@ SYSTEMD_RUN_EXIT=0
 
 ```text
 systemd-run --no-block --collect --unit=chromium-url-entry-AppUIC \
-  --uid=owner --gid=users -p SupplementaryGroups=display \
+  --uid='<USER>' --gid=users -p SupplementaryGroups=display \
   -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
   -E HOME=/opt/usr<USER_HOME> \
   /usr/apps/AppK/bin/AppUIC -v -n \

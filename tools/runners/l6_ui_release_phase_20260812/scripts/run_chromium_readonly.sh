@@ -40,8 +40,8 @@ export ELM_SCALE=1.8
 export ECORE_IMF_MODULE=wayland
 export TIZEN_WAYLAND_SHM_DIR=/run/.efl
 export HOME='/opt/usr/home/<USER>'
-export USER=owner
-export LOGNAME=owner
+export USER='<USER>'
+export LOGNAME='<USER>'
 export LANG=en_US.UTF-8
 
 /usr/apps/AppK/bin/AppUIC -v -n \
