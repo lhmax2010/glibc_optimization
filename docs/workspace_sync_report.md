@@ -14,7 +14,7 @@ The existing public clone was retained and updated in place. No tracked path fro
 
 | Directory | Files | Bytes | Contents |
 |---|---:|---:|---|
-| `docs/` | 65 | 1,087,025 | Designs, specifications, reviews, arbitration, reconnaissance, experiment reports, and `INDEX.md` |
+| `docs/` | 65 | 1,087,590 at verified push | Designs, specifications, reviews, arbitration, reconnaissance, experiment reports, and `INDEX.md` |
 | `tools/` | 79 | 482,384 | Benchmark/probe source, Makefiles, self-tests, inventory, and sanitized runners |
 | `patches/` | 1 | 1,597 | Reproducibility patch for the local size-optimized glibc comparison build |
 | `data/derived/` | 54 | 178,252 | Matrix definitions, histograms, and derived TSV summaries |
@@ -94,13 +94,29 @@ The cyclic timing report remains explicit that its board scan was blocked before
 | tools | `963a580640a11b7c8806331deca3e6136894d76c` | Added cyclic allocator controls and repaired syntax-neutral public placeholders |
 | patches | `5b184b5bf2f797de4fb7d3cab059b3c07c54d031` | Added the local glibc size-build compatibility patch |
 | data | `95431057525899bb5c6ef6a8c13ae0f644686767` | Added selected compact execution evidence and updated ignore policy |
+| sync report | `540fea7705e063513de2b7e2d9a96b01877642f4` | Recorded workspace inventory, validation, and local commit set |
 | security | `65d271c97a32fadc5d3c86d96ffffc9485a0126e` | Removed 15 encoded identity-bearing process timelines and sanitized board-account/token references |
+| audit | `9a9d431c72a5844211010295fe87302a174f7114` | Recorded the expanded zero-hit sanitization gate |
 
 Relative to `7341d8b`, the current cumulative change adds 461 files and modifies 78 files, with zero deletions of paths that existed at the previous public HEAD. The repository has 658 tracked files and 3,378,287 tracked bytes at this verification point.
 
 ## 6. Push Result
 
-Status at report creation: pending final report commit, full-tree zero-hit rescan, push, and clean remote-clone verification. This section is updated only after those gates complete.
+The incremental range `7341d8b..9a9d431` was pushed to `origin/main` by fast-forward. Before push, `origin/main` was re-fetched and verified as an ancestor of the local HEAD.
+
+Clean-clone verification of the public repository produced:
+
+```text
+remote_clone_head=9a9d431c72a5844211010295fe87302a174f7114
+remote_main=9a9d431c72a5844211010295fe87302a174f7114
+tracked_files=658
+worktree_bytes=3378852
+clone_size=8.1M
+sensitive_scan_hits=0
+binary_artifacts=0
+```
+
+The public diff from the previous HEAD contains 461 added and 78 modified paths. No path tracked at `7341d8b` was deleted or overwritten by a replacement tree. This report-status update is carried by the subsequent documentation-only HEAD; the final remote HEAD is verified after that push.
 
 ## 7. Content Not Uploaded
 
