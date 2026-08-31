@@ -14,11 +14,11 @@ The existing public clone was retained and updated in place. No tracked path fro
 
 | Directory | Files | Bytes | Contents |
 |---|---:|---:|---|
-| `docs/` | 65 | 1,087,055 | Designs, specifications, reviews, arbitration, reconnaissance, experiment reports, and `INDEX.md` |
-| `tools/` | 79 | 482,366 | Benchmark/probe source, Makefiles, self-tests, inventory, and sanitized runners |
+| `docs/` | 65 | 1,087,025 | Designs, specifications, reviews, arbitration, reconnaissance, experiment reports, and `INDEX.md` |
+| `tools/` | 79 | 482,384 | Benchmark/probe source, Makefiles, self-tests, inventory, and sanitized runners |
 | `patches/` | 1 | 1,597 | Reproducibility patch for the local size-optimized glibc comparison build |
 | `data/derived/` | 54 | 178,252 | Matrix definitions, histograms, and derived TSV summaries |
-| `data/raw/` | 472 | 2,194,565 | Selected compact execution records and directly cited time series |
+| `data/raw/` | 457 | 1,622,574 | Selected compact execution records and directly cited time series |
 | `temp/` | ignored | local-only | Sanitization audit, validation builds, archive links, build roots, and large evidence locations |
 
 `temp/local_archive/` contains ignored local links to the original source workspace, complete board evidence, and build/runtime temporary trees. The original files remain in place; no source artifact was moved or deleted.
@@ -33,9 +33,9 @@ The existing public clone was retained and updated in place. No tracked path fro
 | Tool source and runners | 79 | All text source/scripts published; cyclic alloc_bench delta included |
 | Patches | 1 | Published under `patches/` |
 | Derived data | 54 | Published under `data/derived/`; existing canonical copies preserved when source differences were only line endings or alias spelling |
-| Compact raw evidence | 472 | Published under `data/raw/`; 179 command records, 179 thermal records, 92 run records/error streams, 15 process timelines, 3 time series, 3 key timelines, and 1 operation log |
+| Compact raw evidence | 472 considered; 457 published | Published under `data/raw/`; 179 command records, 179 thermal records, 92 run records/error streams, 3 time series, 3 key timelines, and 1 operation log |
 
-The selected raw set is 2,194,565 bytes, below the 20 MB publication ceiling. It contains command/key timelines and small result series needed to audit report calculations.
+The selected raw set is 1,622,574 bytes, below the 20 MB publication ceiling. It contains command/key timelines and small result series needed to audit report calculations.
 
 ### Local Only
 
@@ -45,7 +45,8 @@ The counts below describe overlapping source categories and are not additive:
 |---|---:|---|
 | Build artifacts and packages | 5,413 files, at least 640,581,351 bytes | Reproducible binaries/objects/RPMs; may retain local build strings |
 | Complete dlog/dmesg/smaps/XML evidence | 1,176 files, 86,394,410 bytes | Large, identity-rich, and superseded publicly by compact cited evidence |
-| Complete `board_results/` archive | 7,787 files, 474,180,304 bytes | Private full-fidelity evidence; selected 472-file subset published |
+| Complete `board_results/` archive | 7,787 files, 474,180,304 bytes | Private full-fidelity evidence; final 457-file compact subset published |
+| Encoded Chromium process timelines | 15 files, 571,991 bytes | Excluded after expanded scan found reversible launch bundles, a board account, and a one-time launch token; aggregate run records remain published |
 | GBS roots, sysroots, source clones, temporary runtimes | five top-level local trees, about 4.4 GB | Build cache and intermediate state, retained through ignored local archive links |
 | Real-value replacement map | 1 file | Contains sensitive source values and is explicitly ignored |
 
@@ -53,7 +54,7 @@ No credential or cookie file was selected for publication.
 
 ## 3. Sanitization Audit
 
-The previous local `desensitize_map.tsv` was reused without changing existing aliases. No new real-value mapping was required (`0` appended entries).
+The previous local `desensitize_map.tsv` was reused without changing existing aliases. One new credential-class mapping was appended for an opaque launch token found by the expanded scan (`1` appended entry).
 
 The scanner checked file paths and contents for private IPv4 addresses, product build/image identifiers, internal application/process/service names, local user paths, hosts/users, credentials, private keys, and internal repository/host names.
 
@@ -66,6 +67,8 @@ The scanner checked file paths and contents for private IPv4 addresses, product 
 | Internal process/service name | 0 |
 | Local path | 0 |
 | Host/user identity | 0 |
+| Board account identity | 0 |
+| Opaque launch token | 0 |
 | Credential/private key | 0 |
 | Internal repository/host | 0 |
 | **Total** | **0** |
@@ -91,8 +94,9 @@ The cyclic timing report remains explicit that its board scan was blocked before
 | tools | `963a580640a11b7c8806331deca3e6136894d76c` | Added cyclic allocator controls and repaired syntax-neutral public placeholders |
 | patches | `5b184b5bf2f797de4fb7d3cab059b3c07c54d031` | Added the local glibc size-build compatibility patch |
 | data | `95431057525899bb5c6ef6a8c13ae0f644686767` | Added selected compact execution evidence and updated ignore policy |
+| security | `65d271c97a32fadc5d3c86d96ffffc9485a0126e` | Removed 15 encoded identity-bearing process timelines and sanitized board-account/token references |
 
-Relative to `7341d8b`, these four commits add 475 files and modify 77 files, with zero deletions. Before this report commit the repository had 672 tracked files and 3,943,310 tracked bytes.
+Relative to `7341d8b`, the current cumulative change adds 461 files and modifies 78 files, with zero deletions of paths that existed at the previous public HEAD. The repository has 658 tracked files and 3,378,287 tracked bytes at this verification point.
 
 ## 6. Push Result
 
