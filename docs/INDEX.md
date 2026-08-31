@@ -11,6 +11,7 @@ This is the review entry point for the project. Start with the consolidated stat
 3. [`tizen_glibc_memopt_design_v2.md`](tizen_glibc_memopt_design_v2.md): frozen design rationale and proposal boundaries.
 4. [`l6_applicability_curve.md`](l6_applicability_curve.md): controlled curve for release ratio, size distribution, live-set size, and fragmentation.
 5. [`product_plateau_probe.md`](product_plateau_probe.md) and [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md): read-only product-process allocation shapes.
+6. [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md): frozen S2 board replication, M7 evidence, and the PM gate before S3.
 
 ## Experiment Timeline
 
@@ -48,6 +49,7 @@ This is the review entry point for the project. Start with the consolidated stat
 | 2026-08-14 | Host | First public-repository migration | Published the sanitized document, tool, and derived-data archive | [`repo_migration_plan.md`](repo_migration_plan.md) |
 | 2026-08-31 | Host | Established the long-term incremental workspace | Added compact execution evidence, a chronological index, patches, and the latest benchmark/report deltas | [`workspace_sync_report.md`](workspace_sync_report.md) |
 | 2026-08-31 | TEST_BOARD | Restored the RPI4 SDB channel and collected the new LLVM-image baseline | Passed the three-part identity gate on glibc 2.40; cleared S2/S3 to run later and required a fresh S4 reference grid | [`board_baseline_llvm_image_20260831.md`](board_baseline_llvm_image_20260831.md) |
+| 2026-08-31 | TEST_BOARD | Ran frozen S2 cyclic replication for mixed and medium-only | Timing and M7 bin release passed, but no glibc PD fall occurred; S2 failed and S3 awaits PM adjudication | [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md) |
 
 ## Specifications And Designs
 

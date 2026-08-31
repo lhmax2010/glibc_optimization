@@ -4,7 +4,7 @@
 
 原始执行状态（2026-08-14）：**板上扫描阻塞于 RPI4 SDB 通道；实现、host 验证与 armv7l 构建已完成。**
 
-后续状态（2026-08-31）：**SDB 通道已恢复，新镜像身份门与环境门已通过；S2/S3 板上负载仍未执行。** 详见 [`board_baseline_llvm_image_20260831.md`](board_baseline_llvm_image_20260831.md)。
+后续状态（2026-08-31）：**SDB 通道和新镜像基线已恢复；S2 已按冻结参数执行，但产品 PD 峰谷画像未复现，S3 暂停等待 PM 裁决。** 详见 [`board_baseline_llvm_image_20260831.md`](board_baseline_llvm_image_20260831.md) 和 [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md)。
 日期：2026-08-14（Asia/Shanghai）
 
 ## 1. 身份门、环境与工具扩展
@@ -114,7 +114,7 @@ M7 在 host 校准中可见：peak -> valley 的 rest 增量 6,398,826 B，unsor
 
 ### 2.2 板上复现
 
-未采集。待身份门通过后冻结为：
+2026-08-31 已在身份门通过后按以下冻结参数采集：
 
 ```text
 --threads 4 --seed 20260814 --live-set 512 --idle-release 50
@@ -123,11 +123,15 @@ M7 在 host 校准中可见：peak -> valley 的 rest 增量 6,398,826 B，unsor
 --trim-at none --warmup 0
 ```
 
-分别运行 `mixed` 与 `medium-only`。不依据首轮结果改变参数。
+`mixed` 与 `medium-only` 各运行一次，没有依据首轮结果改变参数。rise/release
+执行节奏和 M7 bin 释放成立，但内部与外部 glibc-heap PD 均没有下降；两档
+peak-valley 中位数均为 `-8 kB`，不复现产品板的 `6212 kB` 中位数。因此 S2
+总体判定不成立，完整结果见 [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md)。
 
 ## 3. S3 trim 时机扫描
 
-板上 6 格 x 3 重复尚未执行。冻结公共参数与 S2 相同，但每次 `--cycles 2`，
+板上 6 格 x 3 重复尚未执行。由于 S2 核心画像合同未通过，S3 暂停等待 PM
+决定是接受“合成 bin 驻留面”的缩窄语义，还是先修订 S2 代理方案。原冻结公共参数与 S2 相同，但每次 `--cycles 2`，
 以第二周期记录第一周期 trim 后的 refault；格为 `peak`、`fall-mid`、
 `valley`、`valley+5`、`valley+20`、`none`。
 
@@ -154,7 +158,7 @@ kernel build、glibc RPM release、MemTotal 与 zram 容量上均已变化，因
 仅保留为历史 sanity range，不能作为新镜像的同板对照或通过阈值；S4 必须先在
 新镜像补跑两项参考格。本报告没有把历史值代入尚未完成的渐进释放扫描。
 
-## 5. 失败、限制与恢复现场
+## 5. 2026-08-14 初始失败、限制与恢复现场
 
 1. 阻塞点发生在板身份门之前：SDB TCP 端口可达，但协议连接失败；SSH 关闭。
 2. 未向 `.25` 或 `.26` 推送二进制、脚本或数据，未运行负载，未触碰系统应用、
@@ -169,7 +173,9 @@ kernel build、glibc RPM release、MemTotal 与 zram 容量上均已变化，因
 
 ## 6. 原始文件
 
-当前仅有 host 验证临时结果（位于 `/tmp/cyclic-host-cal.*` 与
+2026-08-14 当时仅有 host 验证临时结果（位于 `/tmp/cyclic-host-cal.*` 与
 `/tmp/cyclic-touch-cal.*`，不属于板上证据）。板上原始目录原计划在通道恢复后
 建立为 `board_results/cyclic_profile_replication_20260814/`；截至 2026-08-31，
-通道恢复和只读基线采集均未创建该目录，S2/S3 仍未执行。
+该初始目录没有创建。后续 S2 完整原始件仅保留于本地
+`board_results/cyclic_profile_replication_s2_20260831/`，公开紧凑证据位于
+[`data/raw/cyclic_profile_replication_s2_20260831/`](../data/raw/cyclic_profile_replication_s2_20260831/)。

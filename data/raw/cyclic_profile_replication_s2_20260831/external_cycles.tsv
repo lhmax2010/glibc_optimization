@@ -1,0 +1,17 @@
+profile	cycle	samples	scheduled_start_s	external_start_kb	external_peak_window_max_kb	external_valley_window_min_kb	external_peak_minus_valley_kb	external_other_peak_window_max_kb	external_other_valley_window_min_kb	signal_rise_s	signal_peak_band_s_min	signal_peak_band_censored	signal_fall_s	fall_observed
+mixed	1	48	0.0	352	11576	11596	-20	1092	1092	3.999451	43.002827	True		False
+mixed	2	48	47.8	11596	12904	12916	-12	1092	1092	1.999369	43.000253	True		False
+mixed	3	48	95.6	12916	13448	13456	-8	1092	1092	0.995817	43.99977	True		False
+mixed	4	48	143.4	13456	13684	13692	-8	1092	1092	1.004057	43.995143	True		False
+mixed	5	47	191.2	13692	13692	13692	0	1092	1092			True		False
+mixed	6	48	239.0	13692	14052	14060	-8	1092	1092	0.999883	42.999778	True		False
+mixed	7	48	286.8	14060	14060	14060	0	1092	1092			True		False
+mixed	8	48	334.6	14060	14256	14264	-8	1092	1092	1.995864	43.000084	True		False
+medium-only	1	48	0.0	296	11700	11716	-16	1112	1112	3.99949	42.999325	True		False
+medium-only	2	48	47.8	11716	12084	12092	-8	1112	1112	2.000845	42.99996	True		False
+medium-only	3	48	95.6	12092	12692	12708	-16	1112	1112	0.999911	44.000074	True		False
+medium-only	4	48	143.4	12708	12788	12796	-8	1112	1112	0.999838	43.999658	True		False
+medium-only	5	47	191.2	12796	12796	12796	0	1112	1112			True		False
+medium-only	6	48	239.0	12796	12828	12836	-8	1112	1112	1.000001	42.999452	True		False
+medium-only	7	48	286.8	12836	12836	12836	0	1112	1112			True		False
+medium-only	8	48	334.6	12836	12836	12836	0	1112	1112			True		False

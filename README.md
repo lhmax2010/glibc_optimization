@@ -4,7 +4,7 @@ This repository is the long-term, sanitized workspace for source audits, control
 
 文中应用/进程名为代号，板标识与路径已脱敏。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）保留在本地；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
 
-**Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented. The RPI4 SDB channel and new-image baseline are restored; the S2/S3 board runs remain pending.
+**Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented. The RPI4 SDB channel and new-image baseline are restored. Frozen S2 ran on the board: timing and M7 bin-release gates passed, but the product glibc-PD peak/valley shape did not reproduce, so S3 is paused for PM adjudication.
 
 ## Current Findings
 
@@ -12,6 +12,7 @@ This repository is the long-term, sanitized workspace for source audits, control
 - **Phase-triggered reclaim (L6):** `malloc_trim(0)` is useful when the process's own glibc heap experiences bulk allocation followed by concentrated frees. Controlled media release phases reclaimed `48.52-49.37%`, totaling `10.902 MiB` across eight processes.
 - **Applicability curve:** at the measured 50% release point, reclaim was `27.91%` for 16-256 B objects, `53.55%` for mixed 16 B-64 KiB objects, and `50.60%` for medium 1-16 KiB objects. Interleaved release reduced the mixed case from `53.55%` to `40.58%`.
 - **Product allocation shapes:** a platform-type target reached a `2.36 MB` plateau. A cyclic target showed a median `6.2 MB` glibc-heap peak-to-valley range with median rise/peak/fall durations of `3.4/4.7/19.7 s`; read-only smaps cannot turn that range directly into trim-reclaim bytes.
+- **S2 replication gate:** frozen mixed and medium-only runs paced rise/release at about `3.400/19.703 s` and placed about `6.4 MiB` per cycle into rest/unsorted, but neither internal nor external board sampling showed a PD fall. The proxy therefore does not yet reproduce the product cyclic shape.
 - **Rejected or deferred directions:** mechanisms with no RSS surface include rseq disablement, guard-page removal, repeated `__libc_freeres`, and disabling dlconf for steady-state RSS. Disabling tcache, disabling fastbins, and limiting unsorted-to-tcache transfers remain experimentally rejected unless real workloads show materially larger retained structures. A whole-libc `-Os` build remains deferred pending a dedicated performance and build-compatibility program.
 - **Flash levers:** locale/gconv/NSS packaging, debug-symbol policy, cold-DSO optimization, and command-line subpackaging remain source-verified candidates whose product savings depend on the final image manifest.
 

@@ -1,0 +1,27 @@
+M7_XML_EXCERPTS
+
+mixed_cycle01_peak_top_level:
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="10" size="132757"/>
+
+mixed_cycle01_valley_arena_examples:
+<unsorted from="1033" to="859497" total="1346737" count="17"/>
+<unsorted from="1033" to="866593" total="1435741" count="13"/>
+<unsorted from="1033" to="537561" total="1658266" count="18"/>
+<unsorted from="1033" to="756369" total="1301404" count="12"/>
+mixed_cycle01_valley_top_level:
+<total type="fast" count="7" size="168"/>
+<total type="rest" count="67" size="6020134"/>
+
+medium_only_cycle01_peak_top_level:
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="17" size="168692"/>
+
+medium_only_cycle01_valley_arena_examples:
+<unsorted from="557441" to="1026537" total="1583978" count="2"/>
+<unsorted from="663057" to="1018345" total="1681402" count="2"/>
+<unsorted from="411817" to="1022441" total="1434258" count="2"/>
+<unsorted from="569609" to="1030633" total="1600242" count="2"/>
+medium_only_cycle01_valley_top_level:
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="17" size="6473348"/>
