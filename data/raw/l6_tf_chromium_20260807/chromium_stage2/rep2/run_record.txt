@@ -1,0 +1,12 @@
+rep=2
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+start_epoch=1786101744
+command=/usr/apps/AppK/bin/AppUIC file:///tmp/l6_chromium_heavy.html
+wrapper_pid=14672
+pid=14674
+pgid=14674
+lldb_threads_rc=0
+lldb_selected_rc=0
+lldb_inject_rc=0

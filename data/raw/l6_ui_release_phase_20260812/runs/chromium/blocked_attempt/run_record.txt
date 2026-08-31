@@ -1,0 +1,10 @@
+start=2026-08-13T00:18:24,137401005+0900
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+glibc-2.40-2.8.armv7l
+command=AppUIC -v -n file:///tmp/l6_ui_heavy_release.html
+main_pid=25408
+renderer_pid=25440
+LOAD_PROGRESS_1=0
+RELEASE_NAVIGATION_VERIFIED=0

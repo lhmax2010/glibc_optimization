@@ -1,0 +1,11 @@
+DATE=Thu Jul 9 14:00:23 KST 2026
+PART=A
+PROFILE=large-transient
+ACTUAL_PROFILE=large-transient
+GRID=arena4
+REP=1
+ATTEMPT=1
+THREADS=4
+EXTRA_ARGS=
+GLIBC_TUNABLES=glibc.malloc.arena_max=4
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.arena_max=4 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile large-transient  --outdir /root/alloc_bench_batch25/large-transient/arena4/rep1

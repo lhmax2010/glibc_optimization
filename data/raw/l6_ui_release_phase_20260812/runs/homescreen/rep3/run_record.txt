@@ -1,0 +1,12 @@
+target=AppUIB rep=3
+start=2026-08-13T00:08:59,213320601+0900 uptime=34147.13
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+glibc-2.40-2.8.armv7l
+restart app=AppQ old_pid=20607 epoch=1786547339.432527878
+restart app=AppQ new_pid=21210
+M7_DECISION=SKIP unsorted_delta=50684 rest_delta=-30916
+TARGET_ALIVE=1
+COMPOSITOR_ACTIVE=1
+end=2026-08-13T00:09:54,733401327+0900 EXIT=0

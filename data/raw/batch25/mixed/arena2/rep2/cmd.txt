@@ -1,0 +1,11 @@
+DATE=Thu Jul 9 13:45:48 KST 2026
+PART=A
+PROFILE=mixed
+ACTUAL_PROFILE=mixed
+GRID=arena2
+REP=2
+ATTEMPT=1
+THREADS=4
+EXTRA_ARGS=
+GLIBC_TUNABLES=glibc.malloc.arena_max=2
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.arena_max=2 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile mixed  --outdir /root/alloc_bench_batch25/mixed/arena2/rep2

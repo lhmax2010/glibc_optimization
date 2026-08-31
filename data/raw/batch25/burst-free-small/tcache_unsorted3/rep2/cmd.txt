@@ -1,0 +1,11 @@
+DATE=Thu Jul 9 14:14:05 KST 2026
+PART=B
+PROFILE=burst-free-small
+ACTUAL_PROFILE=burst-free-small
+GRID=tcache_unsorted3
+REP=2
+ATTEMPT=1
+THREADS=4
+EXTRA_ARGS=
+GLIBC_TUNABLES=glibc.malloc.tcache_unsorted_limit=3
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.tcache_unsorted_limit=3 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile burst-free-small  --outdir /root/alloc_bench_batch25/burst-free-small/tcache_unsorted3/rep2

@@ -1,0 +1,9 @@
+label=original_960x640
+input=/root/cabi.mp4
+pipeline=gst-launch-1.0 -q filesrc location=/root/cabi.mp4 ! qtdemux name=d d.video_0 ! queue ! h264parse ! avdec_h264 ! fakesink sync=false
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+start=2026-08-11T21:06:40,611231065+0900
+uptime_start=99838.39
+pid=21633

@@ -1,0 +1,11 @@
+DATE=Thu Jul 9 14:34:18 KST 2026
+PART=D
+PROFILE=mixed
+ACTUAL_PROFILE=mixed
+GRID=D-T-L3
+REP=3
+ATTEMPT=1
+THREADS=4
+EXTRA_ARGS=--idle-release 50
+GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072:glibc.malloc.trim_threshold=131072
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072:glibc.malloc.trim_threshold=131072 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 20 --profile mixed --idle-release 50 --outdir /root/alloc_bench_batch25/mixed/D-T-L3/rep3

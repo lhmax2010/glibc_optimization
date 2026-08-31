@@ -1,6 +1,7 @@
 # Local migration audit material and the real-value replacement map.
 .migration-local/
 desensitize_map.tsv
+temp/
 
 # Build products are reproducible from the published sources.
 *.armv7l
@@ -8,12 +9,17 @@ desensitize_map.tsv
 *.host-asan
 *.o
 
-# Raw board evidence stays in the private local archive.
+# Large board evidence stays in the private local archive. Compact execution
+# records and directly cited time series under data/raw/ are intentionally kept.
 board_results/
-raw/
-**/raw/
-data/raw/
 *.xml
 *.dlog
 *.dmesg
 *.log
+!data/raw/**/operations.log
+
+# Package/build work areas are local-only and reproducible.
+GBS-ROOT/
+*.rpm
+*.src.rpm
+sysroot/

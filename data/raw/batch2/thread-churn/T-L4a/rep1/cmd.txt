@@ -1,0 +1,7 @@
+DATE=Wed Jul 8 23:55:03 KST 2026
+PROFILE=thread-churn
+GRID=T-L4a
+REP=1
+ATTEMPT=1
+GLIBC_TUNABLES=glibc.malloc.tcache_count=3
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.tcache_count=3 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile thread-churn --outdir /root/alloc_bench_batch2/thread-churn/T-L4a/rep1

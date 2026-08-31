@@ -1,0 +1,19 @@
+2026-08-13T22:05:22,399950578+0900
+layer=L4
+duration=25
+url=file:///tmp/chromium_diag_l4.html
+extra=
+env_mode=plain
+command=/usr/apps/AppK/bin/AppUIC -v -n  file:///tmp/chromium_diag_l4.html
+Linux localhost 6.12.80-arm-rpi4-v7l #1 SMP Tue Jul 28 02:41:25 UTC 2026 armv7l GNU/Linux
+VERSION="11.0.0 (Tizen11.0/Unified)"
+VERSION_ID=11.0.0
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+MainPID=2600
+Result=success
+NRestarts=3050
+ActiveState=active
+SubState=running
+BROWSER_ALIVE_BEFORE_CLOSE=1
+BROWSER_EXIT=0

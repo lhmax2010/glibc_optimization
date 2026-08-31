@@ -1,0 +1,8 @@
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+command=gst_loop_decode small_320x240.mp4 2 20 40
+lanes=8 stagger_seconds=1 T1b_offset=13 T2_offset=5
+start=2026-08-12T15:18:19,857747152+0900 uptime=2307.39
+end=2026-08-12T15:19:46,976204008+0900 uptime=2394.51
+EXIT=0

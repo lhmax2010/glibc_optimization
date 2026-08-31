@@ -1,0 +1,11 @@
+DATE=Thu Jul 9 14:15:48 KST 2026
+PART=B
+PROFILE=unsorted-drain
+ACTUAL_PROFILE=unsorted-drain
+GRID=C0
+REP=1
+ATTEMPT=1
+THREADS=4
+EXTRA_ARGS=
+GLIBC_TUNABLES=<unset>
+COMMAND=env -u GLIBC_TUNABLES /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile unsorted-drain  --outdir /root/alloc_bench_batch25/unsorted-drain/C0/rep1

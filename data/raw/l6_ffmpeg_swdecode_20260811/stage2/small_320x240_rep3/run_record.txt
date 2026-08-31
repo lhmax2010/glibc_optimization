@@ -1,0 +1,16 @@
+rep=3
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+pipeline=gst-launch-1.0 -q filesrc location=/root/l6ffmpeg_probe/small_320x240.mp4 ! qtdemux name=d d.video_0 ! queue ! mpeg4videoparse ! avdec_mpeg4 ! fakesink sync=true
+phase_method=real-time decode; SIGSTOP at about 20 s; no end-of-stream release
+start=2026-08-11T21:12:21,279225732+0900
+uptime_start=100179.07
+pid=24105
+lldb_threads_rc=0
+lldb_selected_rc=0
+lldb_inject_rc=0
+ALIVE_AFTER_T4=1
+inject_rc=0
+end=2026-08-11T21:12:45,449409366+0900
+uptime_end=100203.24

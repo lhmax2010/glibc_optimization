@@ -1,0 +1,17 @@
+2026-08-13T22:14:38,282334821+0900
+mode=direct_efl
+duration=20
+url=file:///tmp/chromium_diag_l3.html
+Linux localhost 6.12.80-arm-rpi4-v7l #1 SMP Tue Jul 28 02:41:25 UTC 2026 armv7l GNU/Linux
+VERSION="11.0.0 (Tizen11.0/Unified)"
+VERSION_ID=11.0.0
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+MainPID=2600
+Result=success
+NRestarts=3050
+ActiveState=active
+SubState=running
+command=XDG_RUNTIME_DIR=/run/user/5001 WAYLAND_DISPLAY=wayland-0 /usr/apps/AppK/bin/efl_webview_app file:///tmp/chromium_diag_l3.html
+ENTRY_ALIVE_BEFORE_CLOSE=1
+ENTRY_EXIT=0

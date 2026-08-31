@@ -1,0 +1,7 @@
+DATE=Wed Jul 8 23:02:41 KST 2026
+PROFILE=small-churn
+GRID=T-L12
+REP=3
+ATTEMPT=1
+GLIBC_TUNABLES=glibc.malloc.tcache_unsorted_limit=3
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.tcache_unsorted_limit=3 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile small-churn --outdir /root/alloc_bench_batch2/small-churn/T-L12/rep3

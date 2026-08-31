@@ -1,0 +1,9 @@
+target=AppUIB rep=1
+start=2026-08-13T00:04:42,017168995+0900 uptime=33889.93
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+glibc-2.40-2.8.armv7l
+restart app=AppQ old_pid=18177 epoch=1786547082.251920050
+restart app=AppQ new_pid=19034
+MI_T1_FAILED

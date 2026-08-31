@@ -1,0 +1,12 @@
+target=systemui rep=2
+start=2026-08-13T00:11:26,506334772+0900 uptime=34294.42
+kernel=6.12.80-arm-rpi4-v7l
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+BUILD_ID=<TEST_IMAGE_B>
+glibc-2.40-2.8.armv7l
+restart app=AppX old_pid=21379 epoch=1786547486.738729624
+restart app=AppX new_pid=21438
+M7_DECISION=SKIP unsorted_delta=0 rest_delta=4149
+TARGET_ALIVE=1
+COMPOSITOR_ACTIVE=1
+end=2026-08-13T00:12:14,741409558+0900 EXIT=0

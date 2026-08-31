@@ -1,0 +1,7 @@
+DATE=Wed Jul 8 23:32:45 KST 2026
+PROFILE=large-transient
+GRID=T-L3
+REP=2
+ATTEMPT=1
+GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072:glibc.malloc.trim_threshold=131072
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.mmap_threshold=131072:glibc.malloc.trim_threshold=131072 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile large-transient --outdir /root/alloc_bench_batch2/large-transient/T-L3/rep2

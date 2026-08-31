@@ -1,0 +1,7 @@
+DATE=Wed Jul 8 23:23:19 KST 2026
+PROFILE=mixed
+GRID=T-L12
+REP=3
+ATTEMPT=1
+GLIBC_TUNABLES=glibc.malloc.tcache_unsorted_limit=3
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.tcache_unsorted_limit=3 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile mixed --outdir /root/alloc_bench_batch2/mixed/T-L12/rep3

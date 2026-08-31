@@ -1,0 +1,6 @@
+BEFORE DATE=Thu Jul  9 14:01:14 KST 2026
+BEFORE /sys/class/thermal/thermal_zone0/temp=34076
+BEFORE_MAX=34076
+AFTER DATE=Thu Jul  9 14:02:00 KST 2026
+AFTER /sys/class/thermal/thermal_zone0/temp=36511
+AFTER_MAX=36511

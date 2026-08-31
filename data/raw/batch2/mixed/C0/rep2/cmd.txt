@@ -1,0 +1,7 @@
+DATE=Wed Jul 8 23:09:32 KST 2026
+PROFILE=mixed
+GRID=C0
+REP=2
+ATTEMPT=1
+GLIBC_TUNABLES=<unset>
+COMMAND=env -u GLIBC_TUNABLES /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile mixed --outdir /root/alloc_bench_batch2/mixed/C0/rep2

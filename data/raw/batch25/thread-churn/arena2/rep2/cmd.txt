@@ -1,0 +1,11 @@
+DATE=Thu Jul 9 13:29:52 KST 2026
+PART=A
+PROFILE=thread-churn
+ACTUAL_PROFILE=thread-churn
+GRID=arena2
+REP=2
+ATTEMPT=1
+THREADS=4
+EXTRA_ARGS=
+GLIBC_TUNABLES=glibc.malloc.arena_max=2
+COMMAND=env GLIBC_TUNABLES=glibc.malloc.arena_max=2 /root/alloc_bench.armv7l --threads 4 --seed 20260708 --warmup 5 --duration 30 --idle 10 --profile thread-churn  --outdir /root/alloc_bench_batch25/thread-churn/arena2/rep2

@@ -1,0 +1,61 @@
+representative_operations_log
+host_start=2026-08-14T14:19:02,180475334+08:00
+channel=SSH ControlMaster /tmp/product_board_mux_codex_0814_a
+initial_idle_seconds=65
+CHANNEL_SWITCH=NOT_EXECUTED: no signed input/remote-control command is installed; /dev/uinput exists but injecting a new helper is outside the read-only boundary.
+All three candidate appids were verified not running before collection.
+
+[2026-08-14T14:20:07,184983474+08:00] Open ServiceK UI (not a channel switch)
+COMMAND: app_launcher -s AppC; app_launcher -r AppC
+2026-08-13T23:20:17,293697450-0700
+... successfully launched pid = 2869 with debug 0
+result: running
+EXIT=0
+
+[2026-08-14T14:20:32,670625278+08:00] Close ServiceK UI
+COMMAND: app_launcher -t AppC; app_launcher -r AppC
+2026-08-13T23:20:42,783736194-0700
+	 Terminate appId: AppC
+result: not running
+EXIT=1
+
+[2026-08-14T14:20:52,774693553+08:00] Open content browser
+COMMAND: app_launcher -s AppA; app_launcher -r AppA
+2026-08-13T23:21:02,883407939-0700
+... successfully launched pid = 3988 with debug 0
+result: not running
+EXIT=1
+
+[2026-08-14T14:21:27,921709303+08:00] Close content browser and return
+COMMAND: app_launcher -t AppA; app_launcher -r AppA
+2026-08-13T23:21:38,052058347-0700
+result: App isn't running
+result: not running
+EXIT=1
+
+[2026-08-14T14:21:48,094069061+08:00] Open AppUIF
+COMMAND: app_launcher -s AppE; app_launcher -r AppE
+2026-08-13T23:21:58,246287259-0700
+... successfully launched pid = 1025 with debug 0
+result: not running
+EXIT=1
+
+[2026-08-14T14:22:23,531365486+08:00] Close AppUIF and return
+COMMAND: app_launcher -t AppE; app_launcher -r AppE
+2026-08-13T23:22:33,644446501-0700
+result: App isn't running
+result: not running
+EXIT=1
+
+[2026-08-14T14:22:23,607233412+08:00] Post-operation app state
+COMMAND: for a in AppC AppA AppE; do echo ===$a; app_launcher -r "$a"; done; true
+2026-08-13T23:22:33,720402917-0700
+===AppC
+result: not running
+===AppA
+result: not running
+===AppE
+result: not running
+EXIT=0
+
+final_idle_begins_host=2026-08-14T14:22:23,741278857+08:00
