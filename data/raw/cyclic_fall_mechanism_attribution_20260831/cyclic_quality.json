@@ -1,0 +1,115 @@
+{
+  "source": "data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv",
+  "rows": 2640,
+  "targets": [
+    "ChannelLoader",
+    "ServiceA",
+    "ServiceB",
+    "WebRuntime"
+  ],
+  "samples": 660,
+  "missing_rows": 0,
+  "system_counter_mismatch_samples": [],
+  "pid_sets": {
+    "ChannelLoader": [
+      3740
+    ],
+    "ServiceA": [
+      3953
+    ],
+    "ServiceB": [
+      692
+    ],
+    "WebRuntime": [
+      545
+    ]
+  },
+  "pid_changes": {
+    "ChannelLoader": 0,
+    "ServiceA": 0,
+    "ServiceB": 0,
+    "WebRuntime": 0
+  },
+  "target_counters": {
+    "ChannelLoader": {
+      "minflt_first": 150613,
+      "minflt_last": 189253,
+      "minflt_delta": 38640,
+      "majflt_first": 103,
+      "majflt_last": 103,
+      "majflt_delta": 0,
+      "glibc_pd_distinct_values": 43
+    },
+    "ServiceA": {
+      "minflt_first": 415778,
+      "minflt_last": 509234,
+      "minflt_delta": 93456,
+      "majflt_first": 167,
+      "majflt_last": 167,
+      "majflt_delta": 0,
+      "glibc_pd_distinct_values": 49
+    },
+    "ServiceB": {
+      "minflt_first": 32259,
+      "minflt_last": 34028,
+      "minflt_delta": 1769,
+      "majflt_first": 414,
+      "majflt_last": 415,
+      "majflt_delta": 1,
+      "glibc_pd_distinct_values": 15
+    },
+    "WebRuntime": {
+      "minflt_first": 28406,
+      "minflt_last": 28418,
+      "minflt_delta": 12,
+      "majflt_first": 342,
+      "majflt_last": 342,
+      "majflt_delta": 0,
+      "glibc_pd_distinct_values": 1
+    }
+  },
+  "sample_interval_s": {
+    "min": 0.614598,
+    "median": 0.756541,
+    "max": 6.077082,
+    "gt_1_1_s": 106,
+    "gt_2_s": 44,
+    "gt_3_s": 15
+  },
+  "zram": {
+    "orig_first_bytes": 88961024,
+    "orig_last_bytes": 88698880,
+    "orig_total_delta_bytes": -262144,
+    "orig_min_bytes": 88698880,
+    "orig_max_bytes": 88961024,
+    "orig_positive_steps": [],
+    "orig_negative_steps": [
+      -262144
+    ],
+    "orig_step_events": [
+      {
+        "from_sample": 339,
+        "to_sample": 340,
+        "from_timestamp": "2026-08-14T02:01:53-0700",
+        "to_timestamp": "2026-08-14T02:01:58-0700",
+        "delta_bytes": -262144
+      }
+    ],
+    "used_first_kb": 92940,
+    "used_last_kb": 92684,
+    "used_total_delta_kb": -256,
+    "used_positive_steps": [],
+    "used_negative_steps": [
+      -256
+    ],
+    "used_step_events": [
+      {
+        "from_sample": 339,
+        "to_sample": 340,
+        "from_timestamp": "2026-08-14T02:01:53-0700",
+        "to_timestamp": "2026-08-14T02:01:58-0700",
+        "delta_kb": -256
+      }
+    ]
+  }
+}
