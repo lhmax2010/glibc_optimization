@@ -1,0 +1,38 @@
+diff --git a/nss/nss_files/files-initgroups.c b/nss/nss_files/files-initgroups.c
+index ec734a1761..4bab7377dd 100644
+--- a/nss/nss_files/files-initgroups.c
++++ b/nss/nss_files/files-initgroups.c
+@@ -73,11 +73,15 @@ CONCAT3(_nss_, NSSNAME, _initgroups_dyn) (const char *user, gid_t group, long in
+ #else /* nss_optfiles */
+       ssize_t n = getline (&line, &linelen, stream);
+ #endif
+-      if (n < 0)
+-	{
+-	  if (! __feof_unlocked (stream))
+-	    status = ((*errnop = errno) == ENOMEM
+-		      ? NSS_STATUS_TRYAGAIN : NSS_STATUS_UNAVAIL);
++	if (n < 0)
++	  {
++#ifdef DATAFILE_PREFIX_PATH /* nss_optfiles */
++	    if (! __feof_unlocked_body (stream))
++#else /* nss_files */
++	    if (! __feof_unlocked (stream))
++#endif
++	      status = ((*errnop = errno) == ENOMEM
++			? NSS_STATUS_TRYAGAIN : NSS_STATUS_UNAVAIL);
+ 	  break;
+ 	}
+ 
+diff --git a/packaging/glibc.spec b/packaging/glibc.spec
+index 80b9106881..429430e2bb 100755
+--- a/packaging/glibc.spec
++++ b/packaging/glibc.spec
+@@ -327,7 +327,7 @@ export LD_AS_NEEDED=0
+ # Default CFLAGS and Compiler
+ #
+ BuildFlags=$(echo %{optflags} | sed -e "s/-Wp,-D_FORTIFY_SOURCE=2//g" | sed -e "s/-ffast-math//" | sed -e "s/atom/i686/g" | sed -e "s/-fexceptions//" | sed -e "s/-fno-omit-frame-pointer//" | sed -e 's/-flto\(=[^[:space:]]\+\)\? //')
+-BuildFlags="$BuildFlags -O2 -g -U_FORTIFY_SOURCE"
++BuildFlags="$BuildFlags -Os -g -U_FORTIFY_SOURCE"
+ BuildFlags="$(echo $BuildFlags | sed -e 's#-ffortify=[0-9]*##')"
+ BuildFlags="$(echo $BuildFlags | sed -e 's#-fstack-protector-strong##')"
+ BuildFlags="$(echo $BuildFlags | sed -e 's#-fstack-protector##')"
