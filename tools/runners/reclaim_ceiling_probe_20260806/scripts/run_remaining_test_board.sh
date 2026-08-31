@@ -1,9 +1,9 @@
 #!/bin/bash
 set -u
 
-SDB=<USER_HOME>/tizen-studio/tools/sdb
-SER=<TEST_BOARD_IP>:26101
-ROOT=<WORKSPACE>/board_results/reclaim_ceiling_probe_20260806/test_board
+SDB='<USER_HOME>/tizen-studio/tools/sdb'
+SER='<TEST_BOARD_IP>:26101'
+ROOT='<WORKSPACE>/board_results/reclaim_ceiling_probe_20260806/test_board'
 
 run_one()
 {

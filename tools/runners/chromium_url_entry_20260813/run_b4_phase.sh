@@ -57,7 +57,7 @@ sleep 1
 systemd-run --no-block --collect --unit="$unit" --uid=owner --gid=users \
     -p SupplementaryGroups=display \
     -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
-    -E HOME=/opt/usr<USER_HOME> \
+    -E HOME='/opt/usr/home/<USER>' \
     /usr/apps/AppK/bin/AppUIC -v -n "$url" \
     >"$out/launch.stdout" 2>"$out/launch.stderr"
 echo "LAUNCH_EXIT=$?" >>"$out/run.txt"

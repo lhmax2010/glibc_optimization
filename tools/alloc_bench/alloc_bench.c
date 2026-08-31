@@ -24,6 +24,8 @@
 #define TOUCH_FULL_THRESHOLD (128U * 1024U)
 #define BACKGROUND_LIVE_OPS 1
 #define BACKGROUND_PHASE_OPS 8
+#define MAX_CYCLES 64
+#define RELEASE_CHECKPOINTS 4
 #define FNV_OFFSET 1469598103934665603ULL
 #define FNV_PRIME 1099511628211ULL
 
@@ -43,6 +45,22 @@ enum release_order {
     RELEASE_INTERLEAVE
 };
 
+enum trim_point {
+    TRIM_NONE = 0,
+    TRIM_PEAK,
+    TRIM_FALL_MID,
+    TRIM_VALLEY,
+    TRIM_VALLEY_DELAY
+};
+
+enum cycle_command {
+    CYCLE_WAIT = 0,
+    CYCLE_RISE,
+    CYCLE_RELEASE_FIRST,
+    CYCLE_RELEASE_SECOND,
+    CYCLE_STOP
+};
+
 enum profile_kind {
     PROFILE_SMALL_CHURN = 0,
     PROFILE_MIXED,
@@ -50,6 +68,7 @@ enum profile_kind {
     PROFILE_THREAD_CHURN,
     PROFILE_BURST_FREE_SMALL,
     PROFILE_UNSORTED_DRAIN,
+    PROFILE_MEDIUM_ONLY,
     PROFILE_EXTERNAL
 };
 
@@ -96,6 +115,14 @@ struct config {
     enum release_order release_order;
     char release_order_name[16];
     uint64_t post_trim_ops_per_thread;
+    int cycles;
+    double cycle_rise_s;
+    double cycle_peak_s;
+    double release_duration_s;
+    double cycle_valley_s;
+    enum trim_point trim_point;
+    double trim_delay_s;
+    char trim_at_name[32];
     char outdir[PATH_MAX];
     struct bucket dist[MAX_DIST];
     int dist_count;
@@ -167,6 +194,67 @@ struct alloc_slot {
 struct release_entry {
     uintptr_t addr;
     size_t index;
+};
+
+struct cycle_result {
+    struct heap_sample start_heap;
+    struct heap_sample peak_heap;
+    struct heap_sample fall_mid_heap;
+    struct heap_sample valley_heap;
+    struct heap_sample trim_pre_heap;
+    struct heap_sample trim_post_heap;
+    struct fault_sample rise_pre_faults;
+    struct fault_sample rise_post_faults;
+    struct malloc_info_stats peak_mi;
+    struct malloc_info_stats fall_mid_mi;
+    struct malloc_info_stats valley_mi;
+    struct malloc_info_stats posttrim_mi;
+    uint64_t released_bytes;
+    uint64_t released_objects;
+    uint64_t release_progress_ns[RELEASE_CHECKPOINTS];
+    uint64_t rise_elapsed_ns;
+    uint64_t release_elapsed_ns;
+    uint64_t trim_elapsed_ns;
+    uint64_t next_cycle_minflt;
+    uint64_t next_cycle_majflt;
+    int trim_return;
+    char peak_mi_path[PATH_MAX];
+    char fall_mid_mi_path[PATH_MAX];
+    char valley_mi_path[PATH_MAX];
+    char posttrim_mi_path[PATH_MAX];
+};
+
+struct cycle_control;
+
+struct cycle_worker {
+    const struct config *cfg;
+    struct cycle_control *control;
+    int ordinal;
+    pthread_t thread;
+    struct alloc_slot *pool;
+    struct release_entry *entries;
+    size_t release_count;
+    size_t release_available;
+    size_t release_done;
+    uint64_t release_sequence_start_ns;
+    uint64_t rng;
+    uint64_t released_bytes;
+    uint64_t released_objects;
+    uint64_t checkpoint_ns[RELEASE_CHECKPOINTS];
+    int failed;
+};
+
+struct cycle_control {
+    pthread_mutex_t mutex;
+    pthread_cond_t command_cv;
+    pthread_cond_t done_cv;
+    enum cycle_command command;
+    uint64_t generation;
+    uint64_t command_start_ns;
+    double command_duration_s;
+    int done_workers;
+    int ready_workers;
+    int workers;
 };
 
 struct slot {
@@ -968,6 +1056,15 @@ static int set_profile(struct config *cfg, const char *name)
         add_bucket(cfg, 16384, 12);
         add_bucket(cfg, 32768, 6);
         add_bucket(cfg, 65536, 2);
+    } else if (strcmp(name, "medium-only") == 0) {
+        cfg->profile_kind = PROFILE_MEDIUM_ONLY;
+        if (!cfg->live_set_overridden)
+            cfg->live_set = 4096;
+        add_bucket(cfg, 1024, 1);
+        add_bucket(cfg, 2048, 1);
+        add_bucket(cfg, 4096, 1);
+        add_bucket(cfg, 8192, 1);
+        add_bucket(cfg, 16384, 1);
     } else if (strcmp(name, "burst-free-small") == 0) {
         cfg->profile_kind = PROFILE_BURST_FREE_SMALL;
         if (!cfg->live_set_overridden)
@@ -1009,7 +1106,7 @@ static void usage(FILE *out)
 {
     fprintf(out,
             "usage: alloc_bench [options]\n"
-            "  --profile NAME              small-churn|mixed|large-transient|thread-churn|burst-free-small|unsorted-drain|external:FILE\n"
+            "  --profile NAME              small-churn|mixed|medium-only|large-transient|thread-churn|burst-free-small|unsorted-drain|external:FILE\n"
             "  --threads N                 worker threads (default: online CPUs)\n"
             "  --seed N                    global seed (default: 1)\n"
             "  --warmup S                  warmup seconds (default: 5)\n"
@@ -1024,6 +1121,12 @@ static void usage(FILE *out)
             "  --release-order ORDER       high|low|random|interleave (default: high)\n"
             "  --idle-trim                 call malloc_trim(0) after idle release before idle\n"
             "  --post-trim-ops-per-thread N  unmeasured live-pool ops after trim\n"
+            "  --cycles N                  run controlled allocation/release cycles (max 64)\n"
+            "  --cycle-rise S              paced allocation duration per cycle (default: 3.4)\n"
+            "  --cycle-peak S              peak hold duration per cycle (default: 4.7)\n"
+            "  --release-duration S        paced release duration; 0 keeps instant release\n"
+            "  --cycle-valley S            valley hold duration per cycle (default: 0)\n"
+            "  --trim-at POINT             none|peak|fall-mid|valley|valley+N\n"
             "  --burst-size N              burst-free-small burst pool size (default: 2048)\n"
             "  --burst-hold-ops N          burst-free-small hold ops (default: 4096)\n"
             "  --unsorted-batch N          unsorted-drain fill batch size (default: 4096)\n"
@@ -1070,6 +1173,28 @@ static int set_release_order(struct config *cfg, const char *name)
     return 0;
 }
 
+static int set_trim_at(struct config *cfg, const char *name)
+{
+    cfg->trim_delay_s = 0.0;
+    if (strcmp(name, "none") == 0)
+        cfg->trim_point = TRIM_NONE;
+    else if (strcmp(name, "peak") == 0)
+        cfg->trim_point = TRIM_PEAK;
+    else if (strcmp(name, "fall-mid") == 0)
+        cfg->trim_point = TRIM_FALL_MID;
+    else if (strcmp(name, "valley") == 0)
+        cfg->trim_point = TRIM_VALLEY;
+    else if (strncmp(name, "valley+", 7) == 0) {
+        if (parse_double_arg(name + 7, &cfg->trim_delay_s) != 0)
+            return -1;
+        cfg->trim_point = TRIM_VALLEY_DELAY;
+    } else {
+        return -1;
+    }
+    snprintf(cfg->trim_at_name, sizeof(cfg->trim_at_name), "%s", name);
+    return 0;
+}
+
 static int parse_args(int argc, char **argv, struct config *cfg)
 {
     memset(cfg, 0, sizeof(*cfg));
@@ -1086,6 +1211,11 @@ static int parse_args(int argc, char **argv, struct config *cfg)
     cfg->burst_hold_ops = 4096;
     cfg->unsorted_batch = 4096;
     set_release_order(cfg, "high");
+    cfg->cycle_rise_s = 3.4;
+    cfg->cycle_peak_s = 4.7;
+    cfg->release_duration_s = 0.0;
+    cfg->cycle_valley_s = 0.0;
+    set_trim_at(cfg, "none");
     snprintf(cfg->outdir, sizeof(cfg->outdir), ".");
 
     const char *profile = "mixed";
@@ -1186,6 +1316,46 @@ static int parse_args(int argc, char **argv, struct config *cfg)
         } else if (strncmp(arg, "--post-trim-ops-per-thread=", 27) == 0) {
             if (parse_u64(arg + 27, &cfg->post_trim_ops_per_thread) != 0)
                 return -1;
+        } else if (strcmp(arg, "--cycles") == 0 && i + 1 < argc) {
+            uint64_t x;
+            if (parse_u64(argv[++i], &x) != 0 || x == 0 || x > MAX_CYCLES)
+                return -1;
+            cfg->cycles = (int) x;
+        } else if (strncmp(arg, "--cycles=", 9) == 0) {
+            uint64_t x;
+            if (parse_u64(arg + 9, &x) != 0 || x == 0 || x > MAX_CYCLES)
+                return -1;
+            cfg->cycles = (int) x;
+        } else if (strcmp(arg, "--cycle-rise") == 0 && i + 1 < argc) {
+            if (parse_double_arg(argv[++i], &cfg->cycle_rise_s) != 0)
+                return -1;
+        } else if (strncmp(arg, "--cycle-rise=", 13) == 0) {
+            if (parse_double_arg(arg + 13, &cfg->cycle_rise_s) != 0)
+                return -1;
+        } else if (strcmp(arg, "--cycle-peak") == 0 && i + 1 < argc) {
+            if (parse_double_arg(argv[++i], &cfg->cycle_peak_s) != 0)
+                return -1;
+        } else if (strncmp(arg, "--cycle-peak=", 13) == 0) {
+            if (parse_double_arg(arg + 13, &cfg->cycle_peak_s) != 0)
+                return -1;
+        } else if (strcmp(arg, "--release-duration") == 0 && i + 1 < argc) {
+            if (parse_double_arg(argv[++i], &cfg->release_duration_s) != 0)
+                return -1;
+        } else if (strncmp(arg, "--release-duration=", 19) == 0) {
+            if (parse_double_arg(arg + 19, &cfg->release_duration_s) != 0)
+                return -1;
+        } else if (strcmp(arg, "--cycle-valley") == 0 && i + 1 < argc) {
+            if (parse_double_arg(argv[++i], &cfg->cycle_valley_s) != 0)
+                return -1;
+        } else if (strncmp(arg, "--cycle-valley=", 15) == 0) {
+            if (parse_double_arg(arg + 15, &cfg->cycle_valley_s) != 0)
+                return -1;
+        } else if (strcmp(arg, "--trim-at") == 0 && i + 1 < argc) {
+            if (set_trim_at(cfg, argv[++i]) != 0)
+                return -1;
+        } else if (strncmp(arg, "--trim-at=", 10) == 0) {
+            if (set_trim_at(cfg, arg + 10) != 0)
+                return -1;
         } else if (strcmp(arg, "--idle-release") == 0 && i + 1 < argc) {
             uint64_t x;
             if (parse_u64(argv[++i], &x) != 0 || x > 100)
@@ -1243,7 +1413,14 @@ static int parse_args(int argc, char **argv, struct config *cfg)
         cfg->burst_size < 2 || cfg->unsorted_batch < 2 ||
         (cfg->unsorted_batch & 1U) ||
         (cfg->post_trim_ops_per_thread > 0 &&
-         (!cfg->idle_trim || cfg->idle_release_pct == 0)))
+         (!cfg->idle_trim || cfg->idle_release_pct == 0)) ||
+        (cfg->cycles > 0 &&
+         (cfg->idle_release_pct == 0 || cfg->use_ops_mode ||
+          cfg->profile_kind == PROFILE_THREAD_CHURN ||
+          cfg->profile_kind == PROFILE_BURST_FREE_SMALL ||
+          cfg->profile_kind == PROFILE_UNSORTED_DRAIN ||
+          cfg->trim_delay_s > cfg->cycle_valley_s)) ||
+        (cfg->cycles == 0 && cfg->trim_point != TRIM_NONE))
         return -1;
     return 0;
 }
@@ -1570,6 +1747,365 @@ static int dump_malloc_info_file(const struct config *cfg, const char *tag,
     fclose(out);
     free(buf);
     return 0;
+}
+
+static void sleep_until_ns(uint64_t deadline)
+{
+    for (;;) {
+        uint64_t now = now_ns();
+        if (now >= deadline)
+            return;
+        uint64_t remaining = deadline - now;
+        struct timespec ts;
+        ts.tv_sec = (time_t) (remaining / 1000000000ULL);
+        ts.tv_nsec = (long) (remaining % 1000000000ULL);
+        if (nanosleep(&ts, NULL) == 0 || errno != EINTR)
+            return;
+    }
+}
+
+static size_t cycle_release_position(const struct cycle_worker *worker,
+                                     size_t ordinal)
+{
+    if (worker->cfg->release_order == RELEASE_HIGH)
+        return worker->release_available - 1U - ordinal;
+    if (worker->cfg->release_order == RELEASE_INTERLEAVE) {
+        size_t even_count = (worker->release_available + 1U) / 2U;
+        return ordinal < even_count ? 2U * ordinal :
+            2U * (ordinal - even_count) + 1U;
+    }
+    return ordinal;
+}
+
+static void cycle_prepare_release(struct cycle_worker *worker)
+{
+    worker->release_available = 0;
+    worker->release_done = 0;
+    worker->released_bytes = 0;
+    worker->released_objects = 0;
+    memset(worker->checkpoint_ns, 0, sizeof(worker->checkpoint_ns));
+
+    for (size_t i = 0; i < worker->cfg->live_set; i++) {
+        if (worker->pool[i].ptr) {
+            size_t n = worker->release_available++;
+            worker->entries[n].addr = (uintptr_t) worker->pool[i].ptr;
+            worker->entries[n].index = i;
+        }
+    }
+    worker->release_count =
+        (worker->cfg->live_set * (size_t) worker->cfg->idle_release_pct) / 100U;
+    if (worker->release_count > worker->release_available)
+        worker->release_count = worker->release_available;
+    qsort(worker->entries, worker->release_available,
+          sizeof(*worker->entries), compare_release_entry);
+    if (worker->cfg->release_order == RELEASE_RANDOM) {
+        uint64_t release_rng = worker->rng ^ UINT64_C(0xd1b54a32d192ed03);
+        shuffle_release_entries(worker->entries, worker->release_available,
+                                &release_rng);
+    }
+}
+
+static int cycle_fill_pool(struct cycle_worker *worker, uint64_t start_ns,
+                           double duration_s)
+{
+    size_t missing = 0;
+    for (size_t i = 0; i < worker->cfg->live_set; i++)
+        if (!worker->pool[i].ptr)
+            missing++;
+
+    size_t done = 0;
+    for (size_t i = 0; i < worker->cfg->live_set; i++) {
+        if (worker->pool[i].ptr)
+            continue;
+        if (duration_s > 0.0 && missing > 0) {
+            uint64_t target = start_ns + (uint64_t)
+                (duration_s * 1000000000.0 * (double) (done + 1U) /
+                 (double) missing);
+            sleep_until_ns(target);
+        }
+        size_t size = sample_dist(worker->cfg, &worker->rng);
+        void *ptr = malloc(size);
+        if (!ptr)
+            return -1;
+        touch_alloc(worker->cfg, ptr, size,
+                    worker->rng ^ (uint64_t) done);
+        worker->pool[i].ptr = ptr;
+        worker->pool[i].size = size;
+        worker->pool[i].seq++;
+        done++;
+    }
+    return 0;
+}
+
+static void cycle_release_to(struct cycle_worker *worker, size_t target_done,
+                             uint64_t segment_start_ns, double duration_s)
+{
+    size_t segment_start = worker->release_done;
+    size_t segment_count = target_done - segment_start;
+    while (worker->release_done < target_done) {
+        size_t segment_done = worker->release_done - segment_start;
+        if (duration_s > 0.0 && segment_count > 0) {
+            uint64_t target = segment_start_ns + (uint64_t)
+                (duration_s * 1000000000.0 *
+                 (double) (segment_done + 1U) / (double) segment_count);
+            sleep_until_ns(target);
+        }
+        size_t pos = cycle_release_position(worker, worker->release_done);
+        size_t idx = worker->entries[pos].index;
+        worker->released_bytes += worker->pool[idx].size;
+        worker->released_objects++;
+        free(worker->pool[idx].ptr);
+        worker->pool[idx].ptr = NULL;
+        worker->pool[idx].size = 0;
+        worker->pool[idx].seq = 0;
+        worker->release_done++;
+
+        for (size_t q = 0; q < RELEASE_CHECKPOINTS; q++) {
+            size_t threshold =
+                (worker->release_count * (q + 1U) +
+                 RELEASE_CHECKPOINTS - 1U) / RELEASE_CHECKPOINTS;
+            if (!worker->checkpoint_ns[q] &&
+                worker->release_done >= threshold) {
+                worker->checkpoint_ns[q] =
+                    now_ns() - worker->release_sequence_start_ns;
+            }
+        }
+    }
+}
+
+static void *cycle_worker_main(void *opaque)
+{
+    struct cycle_worker *worker = opaque;
+    struct cycle_control *control = worker->control;
+    uint64_t seen_generation = 0;
+
+    worker->pool = calloc(worker->cfg->live_set, sizeof(*worker->pool));
+    worker->entries = calloc(worker->cfg->live_set, sizeof(*worker->entries));
+    if (!worker->pool || !worker->entries)
+        worker->failed = 1;
+
+    pthread_mutex_lock(&control->mutex);
+    control->ready_workers++;
+    pthread_cond_broadcast(&control->done_cv);
+    for (;;) {
+        while (seen_generation == control->generation)
+            pthread_cond_wait(&control->command_cv, &control->mutex);
+        seen_generation = control->generation;
+        enum cycle_command command = control->command;
+        uint64_t command_start_ns = control->command_start_ns;
+        double command_duration_s = control->command_duration_s;
+        pthread_mutex_unlock(&control->mutex);
+
+        if (command == CYCLE_STOP)
+            break;
+        if (!worker->failed && command == CYCLE_RISE) {
+            if (cycle_fill_pool(worker, command_start_ns,
+                                command_duration_s) != 0)
+                worker->failed = 1;
+        } else if (!worker->failed && command == CYCLE_RELEASE_FIRST) {
+            cycle_prepare_release(worker);
+            worker->release_sequence_start_ns = command_start_ns;
+            cycle_release_to(worker, (worker->release_count + 1U) / 2U,
+                             command_start_ns, command_duration_s);
+        } else if (!worker->failed && command == CYCLE_RELEASE_SECOND) {
+            cycle_release_to(worker, worker->release_count,
+                             command_start_ns, command_duration_s);
+        }
+
+        pthread_mutex_lock(&control->mutex);
+        control->done_workers++;
+        pthread_cond_broadcast(&control->done_cv);
+    }
+    pthread_mutex_unlock(&control->mutex);
+
+    free_pool(worker->pool, worker->cfg->live_set);
+    free(worker->pool);
+    free(worker->entries);
+    return NULL;
+}
+
+static int cycle_dispatch(struct cycle_control *control,
+                          enum cycle_command command, double duration_s)
+{
+    pthread_mutex_lock(&control->mutex);
+    control->command = command;
+    control->command_duration_s = duration_s;
+    control->command_start_ns = now_ns();
+    control->done_workers = 0;
+    control->generation++;
+    pthread_cond_broadcast(&control->command_cv);
+    if (command != CYCLE_STOP) {
+        while (control->done_workers < control->workers)
+            pthread_cond_wait(&control->done_cv, &control->mutex);
+    }
+    pthread_mutex_unlock(&control->mutex);
+    return 0;
+}
+
+static int cycle_dump_mi(const struct config *cfg, int cycle,
+                         const char *stage, char *path, size_t pathsz,
+                         struct malloc_info_stats *stats)
+{
+    char tag[64];
+    snprintf(tag, sizeof(tag), "cycle%02d_%s", cycle + 1, stage);
+    return dump_malloc_info_file(cfg, tag, path, pathsz, stats);
+}
+
+static int cycle_trim_now(const struct config *cfg, int cycle,
+                          struct cycle_result *result)
+{
+    if (read_heap_sample(&result->trim_pre_heap) != 0)
+        return -1;
+    uint64_t start = now_ns();
+    result->trim_return = malloc_trim(0);
+    result->trim_elapsed_ns = now_ns() - start;
+    if (read_heap_sample(&result->trim_post_heap) != 0)
+        return -1;
+    return cycle_dump_mi(cfg, cycle, "posttrim", result->posttrim_mi_path,
+                         sizeof(result->posttrim_mi_path),
+                         &result->posttrim_mi);
+}
+
+static int run_cyclic_benchmark(const struct config *cfg,
+                                struct cycle_result *results)
+{
+    if (mkdir(cfg->outdir, 0777) != 0 && errno != EEXIST)
+        return -1;
+
+    struct cycle_control control;
+    memset(&control, 0, sizeof(control));
+    control.workers = cfg->threads;
+    pthread_mutex_init(&control.mutex, NULL);
+    pthread_cond_init(&control.command_cv, NULL);
+    pthread_cond_init(&control.done_cv, NULL);
+
+    struct cycle_worker *workers =
+        calloc((size_t) cfg->threads, sizeof(*workers));
+    if (!workers)
+        return -1;
+    int started = 0;
+    for (int i = 0; i < cfg->threads; i++) {
+        workers[i].cfg = cfg;
+        workers[i].control = &control;
+        workers[i].ordinal = i;
+        workers[i].rng = cfg->seed ^ (uint64_t) i;
+        if (workers[i].rng == 0)
+            workers[i].rng = UINT64_C(0x9e3779b97f4a7c15);
+        if (pthread_create(&workers[i].thread, NULL, cycle_worker_main,
+                           &workers[i]) != 0)
+            goto fail;
+        started++;
+    }
+
+    pthread_mutex_lock(&control.mutex);
+    while (control.ready_workers < cfg->threads)
+        pthread_cond_wait(&control.done_cv, &control.mutex);
+    pthread_mutex_unlock(&control.mutex);
+    for (int i = 0; i < cfg->threads; i++)
+        if (workers[i].failed)
+            goto fail;
+
+    sleep_seconds(cfg->warmup_s);
+    for (int cycle = 0; cycle < cfg->cycles; cycle++) {
+        struct cycle_result *result = &results[cycle];
+        result->trim_return = -1;
+        if (read_heap_sample(&result->start_heap) != 0 ||
+            read_fault_sample(&result->rise_pre_faults) != 0)
+            goto fail;
+
+        uint64_t rise_start = now_ns();
+        cycle_dispatch(&control, CYCLE_RISE, cfg->cycle_rise_s);
+        result->rise_elapsed_ns = now_ns() - rise_start;
+        if (read_fault_sample(&result->rise_post_faults) != 0 ||
+            read_heap_sample(&result->peak_heap) != 0 ||
+            cycle_dump_mi(cfg, cycle, "peak", result->peak_mi_path,
+                          sizeof(result->peak_mi_path), &result->peak_mi) != 0)
+            goto fail;
+        if (cycle > 0) {
+            results[cycle - 1].next_cycle_minflt =
+                result->rise_post_faults.minflt - result->rise_pre_faults.minflt;
+            results[cycle - 1].next_cycle_majflt =
+                result->rise_post_faults.majflt - result->rise_pre_faults.majflt;
+        }
+        if (cfg->trim_point == TRIM_PEAK &&
+            cycle_trim_now(cfg, cycle, result) != 0)
+            goto fail;
+
+        sleep_seconds(cfg->cycle_peak_s);
+        uint64_t release_start = now_ns();
+        cycle_dispatch(&control, CYCLE_RELEASE_FIRST,
+                       cfg->release_duration_s / 2.0);
+        if (read_heap_sample(&result->fall_mid_heap) != 0 ||
+            cycle_dump_mi(cfg, cycle, "fall_mid",
+                          result->fall_mid_mi_path,
+                          sizeof(result->fall_mid_mi_path),
+                          &result->fall_mid_mi) != 0)
+            goto fail;
+        if (cfg->trim_point == TRIM_FALL_MID &&
+            cycle_trim_now(cfg, cycle, result) != 0)
+            goto fail;
+
+        cycle_dispatch(&control, CYCLE_RELEASE_SECOND,
+                       cfg->release_duration_s / 2.0);
+        result->release_elapsed_ns = now_ns() - release_start;
+        if (read_heap_sample(&result->valley_heap) != 0 ||
+            cycle_dump_mi(cfg, cycle, "valley", result->valley_mi_path,
+                          sizeof(result->valley_mi_path),
+                          &result->valley_mi) != 0)
+            goto fail;
+
+        for (int i = 0; i < cfg->threads; i++) {
+            result->released_bytes += workers[i].released_bytes;
+            result->released_objects += workers[i].released_objects;
+            for (size_t q = 0; q < RELEASE_CHECKPOINTS; q++)
+                if (workers[i].checkpoint_ns[q] > result->release_progress_ns[q])
+                    result->release_progress_ns[q] = workers[i].checkpoint_ns[q];
+        }
+
+        if (cfg->trim_point == TRIM_VALLEY) {
+            if (cycle_trim_now(cfg, cycle, result) != 0)
+                goto fail;
+            sleep_seconds(cfg->cycle_valley_s);
+        } else if (cfg->trim_point == TRIM_VALLEY_DELAY) {
+            sleep_seconds(cfg->trim_delay_s);
+            if (cycle_trim_now(cfg, cycle, result) != 0)
+                goto fail;
+            sleep_seconds(cfg->cycle_valley_s - cfg->trim_delay_s);
+        } else {
+            if (cfg->trim_point == TRIM_NONE) {
+                result->trim_pre_heap = result->valley_heap;
+                result->trim_post_heap = result->valley_heap;
+                if (cycle_dump_mi(cfg, cycle, "posttrim",
+                                  result->posttrim_mi_path,
+                                  sizeof(result->posttrim_mi_path),
+                                  &result->posttrim_mi) != 0)
+                    goto fail;
+            }
+            sleep_seconds(cfg->cycle_valley_s);
+        }
+    }
+
+    cycle_dispatch(&control, CYCLE_STOP, 0.0);
+    for (int i = 0; i < started; i++)
+        pthread_join(workers[i].thread, NULL);
+    pthread_cond_destroy(&control.done_cv);
+    pthread_cond_destroy(&control.command_cv);
+    pthread_mutex_destroy(&control.mutex);
+    free(workers);
+    return 0;
+
+fail:
+    if (started > 0) {
+        control.workers = started;
+        cycle_dispatch(&control, CYCLE_STOP, 0.0);
+        for (int i = 0; i < started; i++)
+            pthread_join(workers[i].thread, NULL);
+    }
+    pthread_cond_destroy(&control.done_cv);
+    pthread_cond_destroy(&control.command_cv);
+    pthread_mutex_destroy(&control.mutex);
+    free(workers);
+    return -1;
 }
 
 static int start_slot(struct slot *slot, const struct config *cfg,
@@ -1938,6 +2474,123 @@ static void json_string(FILE *out, const char *s)
     fputc('"', out);
 }
 
+static void print_heap_json(const struct heap_sample *sample)
+{
+    fprintf(stdout,
+            "{\"glibc_heap_pd_kb\":%ld,\"other_anon_pd_kb\":%ld,"
+            "\"file_backed_pd_kb\":%ld,\"glibc_heap_segments\":%" PRIu64 "}",
+            sample->glibc_heap_pd_kb, sample->other_anon_pd_kb,
+            sample->file_backed_pd_kb, sample->glibc_heap_segments);
+}
+
+static void print_mi_json(const struct malloc_info_stats *stats)
+{
+    fprintf(stdout,
+            "{\"fast_bytes\":%" PRIu64 ",\"rest_bytes\":%" PRIu64
+            ",\"unsorted_bytes\":%" PRIu64 ",\"arena_count\":%" PRIu64 "}",
+            stats->fast_bytes, stats->rest_bytes, stats->unsorted_bytes,
+            stats->arena_count);
+}
+
+static void print_cyclic_json(const struct config *cfg,
+                              const struct cycle_result *results)
+{
+    fputs("{\"schema\":\"alloc_bench_v1_1\",\"mode\":\"cyclic\",\"profile\":",
+          stdout);
+    json_string(stdout, cfg->profile);
+    fprintf(stdout,
+            ",\"threads\":%d,\"seed\":%" PRIu64
+            ",\"live_set_per_thread\":%zu,\"idle_release_pct\":%d"
+            ",\"release_order\":\"%s\",\"cycles\":%d"
+            ",\"cycle_rise_s\":%.6f,\"cycle_peak_s\":%.6f"
+            ",\"release_duration_s\":%.6f,\"cycle_valley_s\":%.6f"
+            ",\"trim_at\":\"%s\",\"avg_size_bytes\":%.3f,\"histogram\":[",
+            cfg->threads, cfg->seed, cfg->live_set, cfg->idle_release_pct,
+            cfg->release_order_name, cfg->cycles, cfg->cycle_rise_s,
+            cfg->cycle_peak_s, cfg->release_duration_s, cfg->cycle_valley_s,
+            cfg->trim_at_name, cfg->avg_size);
+    for (int i = 0; i < cfg->dist_count; i++) {
+        if (i)
+            fputc(',', stdout);
+        fprintf(stdout, "{\"size\":%zu,\"weight\":%u}",
+                cfg->dist[i].size, cfg->dist[i].weight);
+    }
+    fputs("],\"cycle_data\":[", stdout);
+    for (int i = 0; i < cfg->cycles; i++) {
+        const struct cycle_result *r = &results[i];
+        int64_t a_ceiling_kb =
+            (int64_t) r->trim_pre_heap.glibc_heap_pd_kb -
+            (int64_t) r->trim_post_heap.glibc_heap_pd_kb;
+        int64_t peak_valley_kb =
+            (int64_t) r->peak_heap.glibc_heap_pd_kb -
+            (int64_t) r->valley_heap.glibc_heap_pd_kb;
+        int64_t rest_delta =
+            (int64_t) r->valley_mi.rest_bytes -
+            (int64_t) r->peak_mi.rest_bytes;
+        int64_t unsorted_delta =
+            (int64_t) r->valley_mi.unsorted_bytes -
+            (int64_t) r->peak_mi.unsorted_bytes;
+        if (i)
+            fputc(',', stdout);
+        fprintf(stdout,
+                "{\"cycle\":%d,\"released_objects\":%" PRIu64
+                ",\"released_payload_bytes\":%" PRIu64
+                ",\"rise_elapsed_ns\":%" PRIu64
+                ",\"release_elapsed_ns\":%" PRIu64
+                ",\"release_progress_ns\":[%" PRIu64 ",%" PRIu64
+                ",%" PRIu64 ",%" PRIu64 "]"
+                ",\"trim_return\":%d,\"trim_elapsed_ns\":%" PRIu64
+                ",\"a_ceiling_kb\":%" PRId64
+                ",\"peak_valley_glibc_heap_kb\":%" PRId64
+                ",\"m7_rest_delta_bytes\":%" PRId64
+                ",\"m7_unsorted_delta_bytes\":%" PRId64 ",",
+                i + 1, r->released_objects, r->released_bytes,
+                r->rise_elapsed_ns, r->release_elapsed_ns,
+                r->release_progress_ns[0], r->release_progress_ns[1],
+                r->release_progress_ns[2], r->release_progress_ns[3],
+                r->trim_return, r->trim_elapsed_ns, a_ceiling_kb,
+                peak_valley_kb, rest_delta, unsorted_delta);
+        fputs("\"heap\":{\"start\":", stdout);
+        print_heap_json(&r->start_heap);
+        fputs(",\"peak\":", stdout);
+        print_heap_json(&r->peak_heap);
+        fputs(",\"fall_mid\":", stdout);
+        print_heap_json(&r->fall_mid_heap);
+        fputs(",\"valley\":", stdout);
+        print_heap_json(&r->valley_heap);
+        fputs(",\"trim_pre\":", stdout);
+        print_heap_json(&r->trim_pre_heap);
+        fputs(",\"trim_post\":", stdout);
+        print_heap_json(&r->trim_post_heap);
+        fputs("},\"malloc_info_stats\":{\"peak\":", stdout);
+        print_mi_json(&r->peak_mi);
+        fputs(",\"fall_mid\":", stdout);
+        print_mi_json(&r->fall_mid_mi);
+        fputs(",\"valley\":", stdout);
+        print_mi_json(&r->valley_mi);
+        fputs(",\"posttrim\":", stdout);
+        print_mi_json(&r->posttrim_mi);
+        fputs("},\"faults\":{", stdout);
+        fprintf(stdout,
+                "\"rise_minflt\":%" PRIu64 ",\"rise_majflt\":%" PRIu64
+                ",\"next_cycle_minflt\":%" PRIu64
+                ",\"next_cycle_majflt\":%" PRIu64 "},",
+                r->rise_post_faults.minflt - r->rise_pre_faults.minflt,
+                r->rise_post_faults.majflt - r->rise_pre_faults.majflt,
+                r->next_cycle_minflt, r->next_cycle_majflt);
+        fputs("\"malloc_info_paths\":{\"peak\":", stdout);
+        json_string(stdout, r->peak_mi_path);
+        fputs(",\"fall_mid\":", stdout);
+        json_string(stdout, r->fall_mid_mi_path);
+        fputs(",\"valley\":", stdout);
+        json_string(stdout, r->valley_mi_path);
+        fputs(",\"posttrim\":", stdout);
+        json_string(stdout, r->posttrim_mi_path);
+        fputs("}}", stdout);
+    }
+    fputs("]}\n", stdout);
+}
+
 static void print_json(const struct config *cfg, const struct slot *slots,
                        double measure_elapsed,
                        const struct mem_sample measure_samples[3],
@@ -2171,6 +2824,21 @@ int main(int argc, char **argv)
     if (parse_args(argc, argv, &cfg) != 0) {
         usage(stderr);
         return 2;
+    }
+
+    if (cfg.cycles > 0) {
+        struct cycle_result *results =
+            calloc((size_t) cfg.cycles, sizeof(*results));
+        if (!results)
+            return 1;
+        if (run_cyclic_benchmark(&cfg, results) != 0) {
+            fprintf(stderr, "cyclic benchmark failed: %s\n", strerror(errno));
+            free(results);
+            return 1;
+        }
+        print_cyclic_json(&cfg, results);
+        free(results);
+        return 0;
     }
 
     struct slot *slots = NULL;

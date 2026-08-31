@@ -25,12 +25,12 @@ sleep 1
 {
     date -Ins
     echo "requested_url=$url"
-    echo "CMD=systemd-run --no-block --collect --unit=$unit --uid=owner --gid=users -p SupplementaryGroups=display -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 -E HOME=/opt/usr<USER_HOME> /usr/apps/AppK/bin/AppUIC -v -n $url"
+    echo "CMD=systemd-run --no-block --collect --unit=$unit --uid=<USER> --gid=users -p SupplementaryGroups=display -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 -E HOME=/opt/usr/home/<USER> /usr/apps/AppK/bin/AppUIC -v -n $url"
 } >"$out/run.txt"
 systemd-run --no-block --collect --unit="$unit" --uid=owner --gid=users \
     -p SupplementaryGroups=display \
     -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
-    -E HOME=/opt/usr<USER_HOME> \
+    -E HOME='/opt/usr/home/<USER>' \
     /usr/apps/AppK/bin/AppUIC -v -n "$url" \
     >"$out/launch.stdout" 2>"$out/launch.stderr"
 echo "LAUNCH_EXIT=$?" >>"$out/run.txt"

@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers are sanitized. Referenced raw evidence under `board_results/` is retained locally and is not published.
+> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
 
 # alloc_bench
 
@@ -29,7 +29,7 @@ make armv7l ARMV7L_CC=/path/to/gcc ARMV7L_SYSROOT=/path/to/sysroot
 
 ```text
 alloc_bench [options]
-  --profile NAME              small-churn|mixed|large-transient|thread-churn|burst-free-small|unsorted-drain|external:FILE
+  --profile NAME              small-churn|mixed|medium-only|large-transient|thread-churn|burst-free-small|unsorted-drain|external:FILE
   --threads N                 worker threads; default is online CPUs
   --seed N                    global seed; per-thread seed is seed ^ ordinal
   --warmup S                  warmup seconds; default 5
@@ -44,6 +44,12 @@ alloc_bench [options]
   --release-order ORDER       high|low|random|interleave; default high
   --idle-trim                 call malloc_trim(0) after idle release, before idle
   --post-trim-ops-per-thread N  unmeasured live-pool ops after trim; default 0
+  --cycles N                  controlled allocation/release cycles; max 64
+  --cycle-rise S              paced allocation duration/cycle; default 3.4
+  --cycle-peak S              peak hold duration/cycle; default 4.7
+  --release-duration S        paced release duration; default 0 (instant)
+  --cycle-valley S            valley hold duration/cycle; default 0
+  --trim-at POINT             none|peak|fall-mid|valley|valley+N
   --burst-size N              burst-free-small burst pool size; default 2048
   --burst-hold-ops N          burst-free-small hold ops; default 4096
   --unsorted-batch N          unsorted-drain fill batch size; default 4096
@@ -63,6 +69,7 @@ Stdout is one JSON object. `malloc_info()` XML files are written under
 |---|---|---|---:|---|
 | `small-churn` | 16, 32, 64, 128, 256 B | uniform 1:1:1:1:1 | 256 | tight random replacement in live pool |
 | `mixed` | 16 B, 64 B, 256 B, 1 KiB, 4 KiB, 16 KiB, 32 KiB, 64 KiB | 8, 12, 18, 24, 18, 12, 6, 2 | 4096 | random replacement in live pool |
+| `medium-only` | 1, 2, 4, 8, 16 KiB | uniform 1:1:1:1:1 | 4096 | random replacement in live pool; intended for medium-allocation sensitivity checks |
 | `large-transient` | same base distribution as `mixed`; every 100th op uses 256 KiB, 512 KiB, 1 MiB, or 2 MiB uniformly | base weights as `mixed`; large sizes uniform when triggered | 4096 | each large allocation is held for 100 ops before replacement |
 | `thread-churn` | same distribution as `mixed` | 8, 12, 18, 24, 18, 12, 6, 2 | 4096 | worker threads really `pthread_exit`; main recreates them every 2000 ms by default |
 | `burst-free-small` | burst pool: 16, 24, 32, 40, 48, 56, 64 B; background live pool uses the same distribution | uniform | 256 | allocate `--burst-size` objects, free 50% in deterministic PRNG order, hold survivors for `--burst-hold-ops`; background live ops interleave at 1:8 |
@@ -104,6 +111,28 @@ counters. `--post-trim-ops-per-thread N` performs N unmeasured live-pool ops per
 worker after trim and reports the resulting elapsed time and minflt/majflt
 counters; it requires both `--idle-release` and `--idle-trim`.
 
+## Controlled Cycles
+
+`--cycles N` selects a separate controlled mode for repeated allocation and
+release phases. Each worker owns a persistent live pool and allocator arena.
+At the start of each cycle it fills empty slots evenly over `--cycle-rise`,
+holds the full pool for `--cycle-peak`, releases `--idle-release PCT` evenly
+over `--release-duration`, then waits for `--cycle-valley`. A zero release
+duration preserves the original instantaneous-release behavior.
+
+`--trim-at` controls the in-process `malloc_trim(0)` call: `peak`,
+`fall-mid`, `valley`, or `valley+N` seconds. `none` is the baseline. Delayed
+trim requires `--cycle-valley` to be at least N. Cyclic mode accepts the normal
+size profiles and release orders, but rejects fixed-op mode, thread-churn,
+burst-free-small, and unsorted-drain because their phase machines are separate.
+
+The JSON schema name remains `alloc_bench_v1_1`; cyclic runs use
+`"mode":"cyclic"` and add `cycle_data`. Every cycle reports heap
+Private_Dirty at start/peak/fall-mid/valley/trim boundaries, released payload,
+trim return/time, next-cycle faults, four `malloc_info` summaries and XML paths,
+and 25/50/75/100% release checkpoint times. Existing non-cyclic JSON is
+unchanged.
+
 ## External Histogram Format
 
 Use `--profile external:<file>`. The file is plain text:
@@ -129,7 +158,7 @@ overridden with `--live-set`.
 The self-test runs:
 
 - A1 deterministic op counts and per-thread FNV-1a size-sequence hashes.
-- A2 ASan+UBSan runs for all six built-in profiles.
+- A2 ASan+UBSan runs for all seven built-in profiles.
 - A3 RSS lower-bound sanity check.
 - A4 JSON parse check with `python3 -m json.tool`.
 - A5 armv7l cross-build `file` check.
@@ -139,3 +168,4 @@ The self-test runs:
 - A8 deterministic checks for `burst-free-small` and `unsorted-drain`.
 - A9 old-field compatibility checks for the v1 four profiles.
 - A10 all four release orders and the applicability-scan JSON/XML fields.
+- A11 cyclic progressive-release timing and four-stage instrumentation.

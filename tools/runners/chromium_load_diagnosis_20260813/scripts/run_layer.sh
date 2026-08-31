@@ -22,7 +22,7 @@ case "$layer" in
     L1|L1_xdg) url='about:blank' ;;
     L2) url='data:text/html,<html><body><h1>hi</h1></body></html>' ;;
     L3|L3_xdg) url='file:///tmp/chromium_diag_l3.html' ;;
-    L3home) url='file:///opt/usr<USER_HOME>/chromium_diag_l3.html' ;;
+    L3home) url='file:///opt/usr/home/<USER>/chromium_diag_l3.html' ;;
     L4) url='file:///tmp/chromium_diag_l4.html' ;;
     L5|L5_xdg|gpu_*) url='file:///tmp/chromium_diag_l5.html' ;;
     *) echo "unknown layer: $layer" >&2; exit 2 ;;

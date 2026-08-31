@@ -2,8 +2,8 @@
 set -u
 
 sock=/tmp/product_board_mux_codex_0814_a
-host=root@<PRODUCT_BOARD_IP>
-log=<WORKSPACE>/board_results/product_release_ratio_timeseries_20260814/raw/operations.log
+host='root@<PRODUCT_BOARD_IP>'
+log='<WORKSPACE>/board_results/product_release_ratio_timeseries_20260814/raw/operations.log'
 
 board_command()
 {

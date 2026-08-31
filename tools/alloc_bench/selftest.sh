@@ -73,7 +73,7 @@ fi
 
 if run_cmd make host-asan >"$TMP/make-asan.log" 2>&1; then
     asan_ok=1
-    for profile in small-churn mixed large-transient thread-churn; do
+    for profile in small-churn mixed medium-only large-transient thread-churn; do
         if ! run_profile_asan "$profile" "$TMP/asan-$profile" >"$TMP/asan-$profile.json" 2>"$TMP/asan-$profile.err"; then
             asan_ok=0
             cat "$TMP/asan-$profile.err"
@@ -91,9 +91,9 @@ if run_cmd make host-asan >"$TMP/make-asan.log" 2>&1; then
         cat "$TMP/asan-unsorted-drain.err"
     fi
     if [ "$asan_ok" -eq 1 ]; then
-        pass "A2 ASan+UBSan six built-in profiles"
+        pass "A2 ASan+UBSan seven built-in profiles"
     else
-        fail "A2 ASan+UBSan six built-in profiles"
+        fail "A2 ASan+UBSan seven built-in profiles"
     fi
 else
     fail "A2 ASan+UBSan build"
@@ -307,6 +307,38 @@ then
     pass "A10 release orders and applicability instrumentation"
 else
     fail "A10 release orders and applicability instrumentation"
+fi
+
+mkdir -p "$TMP/a11"
+if run_cmd ./alloc_bench.host --profile mixed --threads 2 --seed 20260814 \
+    --warmup 0 --live-set 64 --idle-release 50 --release-order high \
+    --cycles 2 --cycle-rise 0.1 --cycle-peak 0.05 \
+    --release-duration 0.4 --cycle-valley 0.05 --trim-at valley \
+    --outdir "$TMP/a11" >"$TMP/a11.json" 2>"$TMP/a11.err" &&
+   python3 - "$TMP/a11.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+assert d["schema"] == "alloc_bench_v1_1"
+assert d["mode"] == "cyclic"
+assert d["cycles"] == 2
+for c in d["cycle_data"]:
+    checkpoints = c["release_progress_ns"]
+    expected = [100_000_000, 200_000_000, 300_000_000, 400_000_000]
+    for got, want in zip(checkpoints, expected):
+        assert want * 0.75 <= got <= want * 1.35, (checkpoints, expected)
+    assert checkpoints == sorted(checkpoints), checkpoints
+    assert c["release_elapsed_ns"] >= 380_000_000, c["release_elapsed_ns"]
+    assert c["released_objects"] == 64, c["released_objects"]
+    assert c["trim_return"] >= 0
+    for stage in ("peak", "fall_mid", "valley", "posttrim"):
+        assert stage in c["malloc_info_stats"]
+print("A11_RELEASE_PROGRESS_NS=" + repr(d["cycle_data"][0]["release_progress_ns"]))
+PY
+then
+    pass "A11 cyclic progressive-release timing"
+else
+    fail "A11 cyclic progressive-release timing"
+    cat "$TMP/a11.err" 2>/dev/null || true
 fi
 
 say "SUMMARY PASS=$PASS_COUNT FAIL=$FAIL_COUNT"

@@ -10,7 +10,7 @@ case "$os_release" in
     *rpi4*|*unified-dev*) echo "IDENTITY_ABORT_RPI4_OR_UNIFIED_DEV" >&2; exit 98 ;;
 esac
 case "$os_release" in
-    *<PRODUCT_IMAGE>*) ;;
+    *"<PRODUCT_IMAGE>"*) ;;
     *) echo "IDENTITY_ABORT_NOT_TIZEN10_TV" >&2; exit 99 ;;
 esac
 
