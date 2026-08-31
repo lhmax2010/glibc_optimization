@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers are sanitized. Referenced raw evidence under `board_results/` is retained locally and is not published.
+> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
 
 # alloc_bench 规格 v1.1a 修订（A7 门重定义 + L6 仪器）
 

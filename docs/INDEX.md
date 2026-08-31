@@ -1,0 +1,64 @@
+> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+
+# Document Index
+
+This is the review entry point for the project. Start with the consolidated status report, then use the timeline to reach the source evidence for each decision.
+
+## Start Here
+
+1. [`glibc_memopt_program_status_report_zh.md`](glibc_memopt_program_status_report_zh.md): current consolidated findings, evidence grades, and open work.
+2. [`glibc_memopt_feasibility_report.md`](glibc_memopt_feasibility_report.md): source and packaging feasibility audit against the audited Tizen glibc tree.
+3. [`tizen_glibc_memopt_design_v2.md`](tizen_glibc_memopt_design_v2.md): frozen design rationale and proposal boundaries.
+4. [`l6_applicability_curve.md`](l6_applicability_curve.md): controlled curve for release ratio, size distribution, live-set size, and fragmentation.
+5. [`product_plateau_probe.md`](product_plateau_probe.md) and [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md): read-only product-process allocation shapes.
+
+## Experiment Timeline
+
+| Date | Target | Activity | One-line result | Report |
+|---|---|---|---|---|
+| 2026-07-07 | Host/source | Audited Tizen glibc memory proposals and packaging | Established version-gated feasibility and rejected already-default or unavailable mechanisms | [`glibc_memopt_feasibility_report.md`](glibc_memopt_feasibility_report.md) |
+| 2026-07-07 | Host/source | Independently traced Tizen-only dlconf retention paths | Confirmed steady-state mapping cleanup with corrections to the retained-state accounting | [`review_dlconf_rss_spotcheck_codex.md`](review_dlconf_rss_spotcheck_codex.md) |
+| 2026-07-07 | Host | Three independent design-v1 reviews | Exposed missing version gates, performance risks, and measurement gaps | [`review_glibc_memopt_codex_gpt5.md`](review_glibc_memopt_codex_gpt5.md), [`review_glibc_memopt_claude-opus-4.8.md`](review_glibc_memopt_claude-opus-4.8.md), [`review_glibc_memopt_kimi.md`](review_glibc_memopt_kimi.md) |
+| 2026-07-08 | TEST_BOARD | Collected process inventory and tunables reachability | Produced the first board process, AT_SECURE, thread, and RSS inventory | [`board_inventory_run_report.md`](board_inventory_run_report.md) |
+| 2026-07-08 | TEST_BOARD | Batch 1 service A/B matrix | Captured service-level memory measurements and an AT_SECURE negative control without a rollout decision | [`board_ab_batch1_report.md`](board_ab_batch1_report.md) |
+| 2026-07-08 | Host | Implemented deterministic alloc_bench v1 | Passed host determinism, JSON, sanitizer, and ARM cross-build gates | [`alloc_bench_impl_report.md`](alloc_bench_impl_report.md) |
+| 2026-07-08 | TEST_BOARD | Batch 2 allocator matrix, 99 runs | Quantified tcache, fastbin, arena, threshold, and stack-cache surfaces | [`board_ab_batch2_report.md`](board_ab_batch2_report.md) |
+| 2026-07-09 | Host | Upgraded alloc_bench through v1.1a | Added fair fastbin/unsorted workloads, reclaim instrumentation, idle release, and trim | [`alloc_bench_v11_impl_report.md`](alloc_bench_v11_impl_report.md), [`alloc_bench_v11a_impl_report.md`](alloc_bench_v11a_impl_report.md) |
+| 2026-07-09 | TEST_BOARD | Batch 2.5 knee, burst, combination, and reclaim matrix | Measured arena contention knees, rejected L11/L12 on their intended surfaces, and validated L1+L3 | [`board_ab_batch25_report.md`](board_ab_batch25_report.md) |
+| 2026-07-09 | Host | v2.2/v2.3 adversarial review and arbitration | Converted contested claims into explicit gates and evidence grades | [`v22_review_arbitration_zh.md`](v22_review_arbitration_zh.md) |
+| 2026-07-10 | PRODUCT_BOARD | Initial product-image reconnaissance | Recorded command, kernel, procfs, glibc, UEP, and tunables capabilities | [`tv_board_recon_report.md`](tv_board_recon_report.md) |
+| 2026-07-10 | PRODUCT_BOARD | Product protocol pre-freeze reviews | Identified assumptions requiring a second reconnaissance pass | [`review_tv_protocol_v1_gpt5.md`](review_tv_protocol_v1_gpt5.md), [`review_tv_protocol_v1_claude-opus-4.8.md`](review_tv_protocol_v1_claude-opus-4.8.md), [`review_tv_protocol_v1_kimi.md`](review_tv_protocol_v1_kimi.md) |
+| 2026-08-06 | PRODUCT_BOARD/TEST_BOARD/host | Recollected board and build identities | Separated product, test-board, and workspace glibc facts and recorded optimization-fingerprint limits | [`tv_recon2_report.md`](tv_recon2_report.md), [`tv_recon3_report.md`](tv_recon3_report.md) |
+| 2026-08-06 | PRODUCT_BOARD | PG0 AT_SECURE, launch-domain, and PSI probe | Established target reachability and pressure-metric behavior without changing product configuration | [`pg0_decisive_probe.md`](pg0_decisive_probe.md) |
+| 2026-08-06 | TEST_BOARD/PRODUCT_BOARD | Reclaim-ceiling profile and pageout comparison | Showed that much of real application private memory lies outside glibc-reclaimable mappings | [`reclaim_ceiling_probe.md`](reclaim_ceiling_probe.md) |
+| 2026-08-06 | TEST_BOARD | LLDB-injected malloc_trim on real processes | Measured only `0.22-0.44 MiB` reclaim in the tested idle application states | [`a_ceiling_lldb_probe.md`](a_ceiling_lldb_probe.md) |
+| 2026-08-07 | TEST_BOARD | Browser, media, TensorFlow, and Chromium feasibility probes | Found several candidate workloads dominated by non-glibc mappings or blocked driving paths | [`l6_target_feasibility.md`](l6_target_feasibility.md), [`l6_tf_chromium_probe.md`](l6_tf_chromium_probe.md) |
+| 2026-08-11 | TEST_BOARD | ffmpeg software decode sizing probe | Confirmed small frames can enter glibc heaps, but pausing with live buffers is not a release phase | [`l6_ffmpeg_swdecode_probe.md`](l6_ffmpeg_swdecode_probe.md) |
+| 2026-08-11 | TEST_BOARD | Persistent GStreamer PLAYING-to-NULL release probe | A true decoder-release phase reclaimed about `1.36 MiB`, around `49%` of the measured glibc heap | [`l6_gst_release_phase_probe.md`](l6_gst_release_phase_probe.md) |
+| 2026-08-12 | TEST_BOARD | Eight-process release-phase scale test | Reclaimed `10.902 MiB` in aggregate with per-process ratios of `48.52-49.37%` | [`l6_release_phase_scale.md`](l6_release_phase_scale.md) |
+| 2026-08-12 | TEST_BOARD | Graphics dependency diagnosis and controlled repair | Restored compositor/application startup while preserving the glibc version and L6 baseline | [`rpi4_graphics_diagnosis.md`](rpi4_graphics_diagnosis.md), [`rpi4_graphics_install.md`](rpi4_graphics_install.md) |
+| 2026-08-13 | TEST_BOARD | Real UI release-phase measurement | M7 showed tested UI actions did not create concentrated frees in the targets' own glibc heaps | [`l6_ui_release_phase.md`](l6_ui_release_phase.md) |
+| 2026-08-13 | TEST_BOARD | 36-run controlled applicability scan | Quantified reclaim by release ratio, object size, live set, and release order | [`l6_applicability_curve.md`](l6_applicability_curve.md) |
+| 2026-08-13 | TEST_BOARD | Chromium load diagnosis | Located launch environment/security-domain constraints rather than an HDMI rendering requirement | [`chromium_load_diagnosis.md`](chromium_load_diagnosis.md) |
+| 2026-08-13 | TEST_BOARD | Chromium app-control URL entry search | Confirmed the formal application path can load, but no reusable specified-URL entry was obtained | [`chromium_url_entry.md`](chromium_url_entry.md) |
+| 2026-08-14 | PRODUCT_BOARD | Ten-minute release-ratio time series | Produced read-only peak/valley classifications for high-glibc-heap product processes | [`product_release_ratio_timeseries.md`](product_release_ratio_timeseries.md) |
+| 2026-08-14 | PRODUCT_BOARD | Repeated key-sequence plateau probe | Found platform, accumulating, nonresponsive, and previously unclassified cyclic shapes | [`product_plateau_probe.md`](product_plateau_probe.md) |
+| 2026-08-14 | PRODUCT_BOARD | One-second cyclic-target probe over eight rounds | Measured a median `6.2 MB` glibc peak-to-valley range and `3.4/4.7/19.7 s` rise/peak/fall timing | [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md) |
+| 2026-08-14 | Host | Implemented cyclic alloc_bench mode and trim timing controls | Passed 13 self-tests and ARM cross-build; board timing scan remains blocked before identity verification | [`cyclic_profile_replication.md`](cyclic_profile_replication.md) |
+| 2026-08-14 | Host | First public-repository migration | Published the sanitized document, tool, and derived-data archive | [`repo_migration_plan.md`](repo_migration_plan.md) |
+| 2026-08-31 | Host | Established the long-term incremental workspace | Added compact execution evidence, a chronological index, patches, and the latest benchmark/report deltas | [`workspace_sync_report.md`](workspace_sync_report.md) |
+
+## Specifications And Designs
+
+- Allocator benchmark contracts: [`alloc_bench_spec_v1_zh.md`](alloc_bench_spec_v1_zh.md), [`alloc_bench_spec_v1_1_delta_zh.md`](alloc_bench_spec_v1_1_delta_zh.md), [`alloc_bench_spec_v1_1a_zh.md`](alloc_bench_spec_v1_1a_zh.md).
+- Batch 1 matrix: [`ab_matrix_batch1_zh.md`](ab_matrix_batch1_zh.md).
+- Design history: [`tizen_glibc_memopt_design_v1.md`](tizen_glibc_memopt_design_v1.md), [`tizen_glibc_memopt_design_v2.md`](tizen_glibc_memopt_design_v2.md), [`tizen_glibc_memopt_design_v2_zh.md`](tizen_glibc_memopt_design_v2_zh.md).
+- Product protocols: [`tv_phase_protocol_v1.md`](tv_phase_protocol_v1.md), [`tv_phase_protocol_v1_zh.md`](tv_phase_protocol_v1_zh.md), [`tizen_glibc_protocol_v2_zh.md`](tizen_glibc_protocol_v2_zh.md).
+
+## Reviews And Operations
+
+- Consolidated-status independent reviews: [`review_program_status_gpt5.md`](review_program_status_gpt5.md), [`review_program_status_claude-opus-4.8.md`](review_program_status_claude-opus-4.8.md), [`review_program_status_kimi.md`](review_program_status_kimi.md).
+- Protocol-v2 independent reviews: [`review_protocol_v2_gpt5.md`](review_protocol_v2_gpt5.md), [`review_protocol_v2_claude-opus-4.8.md`](review_protocol_v2_claude-opus-4.8.md), [`review_protocol_v2_kimi.md`](review_protocol_v2_kimi.md).
+- SDB recovery guide: [`tv_sdbd_recovery_guide.md`](tv_sdbd_recovery_guide.md).
+
+All reported application/process names are aliases. Board identifiers, local paths, image identifiers, and private repository endpoints are sanitized consistently across this archive.

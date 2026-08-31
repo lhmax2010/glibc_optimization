@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers are sanitized. Referenced raw evidence under `board_results/` is retained locally and is not published.
+> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
 
 # TV 产品板环境基线侦察 3 与 glibc 优化等级判定
 

@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers are sanitized. Referenced raw evidence under `board_results/` is retained locally and is not published.
+> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
 
 # Tizen glibc 双轨执行协议 v2 定稿前评审 - GPT-5
 
