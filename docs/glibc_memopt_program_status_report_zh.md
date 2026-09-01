@@ -15,6 +15,9 @@
 
 > **2026-09-01 S4 更新：** 新镜像瞬时释放锚点为 mixed `51.074077%`、medium-only `50.387886%`，与 `50% × 0.98` 机制基线相容。对 S2 合成滞留表型，valley trim 回收释放 payload 的中位 `81.661264% / 84.446566%`，调用中位约 `1.23 / 1.22 ms`；下一周期相对 none 增加 `1351 / 1465` 次 minflt，majflt 为 0。该证据补齐合成代理的效果/faults 数字，不等同于产品候选的 M7 或业务延迟结论。完整报告见 [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md)。
 
+- Demo 决策叙事入口：[`demo_narrative_20260901.md`](demo_narrative_20260901.md)（逐数字复现入口由文内链接到 HQ 指南）。
+- 产品侧落点与三条件硬门：[`product_landing_recommendation_20260901.md`](product_landing_recommendation_20260901.md)。
+
 > **历史状态保留（2026-08-31，v2.6，现已被上条裁决取代）：** 当时 S2 因未复现产品 PD 峰谷而判定不成立，S3 等待 PM 在“降格为合成 bin 驻留 trim 扫描”与“修订 S2 代理方案”之间裁决。
 
 在 C 运行时层(glibc / ptmalloc)降低 Tizen 平台的运行时内存占用与系统内存压力,而非逐个应用改造。

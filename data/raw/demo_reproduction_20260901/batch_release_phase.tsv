@@ -1,0 +1,12 @@
+series	unit	reclaimed_mib	reclaim_pct	source_report_row
+single	rep1	1.359375	48.8079	docs/l6_gst_release_phase_probe.md:191
+single	rep2	1.359375	48.9451	docs/l6_gst_release_phase_probe.md:192
+single	rep3	1.359375	49.0141	docs/l6_gst_release_phase_probe.md:193
+scale	lane1	1.347656	48.5232	docs/l6_release_phase_scale.md:62
+scale	lane2	1.367188	49.1573	docs/l6_release_phase_scale.md:63
+scale	lane3	1.367188	49.2264	docs/l6_release_phase_scale.md:64
+scale	lane4	1.363281	48.9481	docs/l6_release_phase_scale.md:65
+scale	lane5	1.371094	49.3671	docs/l6_release_phase_scale.md:66
+scale	lane6	1.363281	49.0858	docs/l6_release_phase_scale.md:67
+scale	lane7	1.355469	48.7360	docs/l6_release_phase_scale.md:68
+scale	lane8	1.367188	49.2264	docs/l6_release_phase_scale.md:69
