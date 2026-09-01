@@ -7,6 +7,17 @@
 - 范围：仅 S2；`mixed` 与 `medium-only` 各一次、8 周期、无 trim；未执行 S3/S4
 - 完整原始件：仅保留在本地 `board_results/cyclic_profile_replication_s2_20260831/`，不进入公开仓库
 - 公开紧凑证据：[`data/raw/cyclic_profile_replication_s2_20260831/`](../data/raw/cyclic_profile_replication_s2_20260831/)
+- 公开复用 harness：[`tools/runners/cyclic_s2_20260831/`](../tools/runners/cyclic_s2_20260831/)；保留冻结负载与分类口径，并在发布前补入 fail-closed 采样、初始 governor 门和输入顺序校验，执行副本/发布副本哈希均见其 README
+
+> **2026-09-01 裁决追注（保留本报告执行时原文）：** 后续 F2/F3 审计确认产品
+> `ServiceA` 的旧 `19.683240 s fall_edge` 是尾窗最小值落点伪影；正式完成代理为
+> peak 后首次观测达到 `PD <= valley + 5% × (peak−valley)` 的
+> `5.223693–8.910626 s` 上界。同时，产品
+> 周期 PD 下降已自动归还，是 L6 反信号。故本报告中“等待 PM 在两个 S3 选项间
+> 裁决”的状态已关闭：两个旧选项均不采纳，S3 原语义作废；本次 S2 数据保留为
+> “约 6.4 MiB free 进入 rest/unsorted 且 PD 不降”的 bin 驻留表型板上基线，不再
+> 要求复现产品 PD 峰谷。见
+> [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md)。
 
 ## 1. 结论摘要
 

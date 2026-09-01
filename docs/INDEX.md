@@ -11,7 +11,8 @@ This is the review entry point for the project. Start with the consolidated stat
 3. [`tizen_glibc_memopt_design_v2.md`](tizen_glibc_memopt_design_v2.md): frozen design rationale and proposal boundaries.
 4. [`l6_applicability_curve.md`](l6_applicability_curve.md): controlled curve for release ratio, size distribution, live-set size, and fragmentation.
 5. [`product_plateau_probe.md`](product_plateau_probe.md) and [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md): read-only product-process allocation shapes.
-6. [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md): frozen S2 board replication, M7 evidence, and the PM gate before S3.
+6. [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md): final cyclic-fall attribution, timing-artifact correction, and product phenotype census.
+7. [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md): frozen S2 board replication and its retained-bin baseline evidence.
 
 ## Experiment Timeline
 
@@ -44,12 +45,14 @@ This is the review entry point for the project. Start with the consolidated stat
 | 2026-08-13 | TEST_BOARD | Chromium app-control URL entry search | Confirmed the formal application path can load, but no reusable specified-URL entry was obtained | [`chromium_url_entry.md`](chromium_url_entry.md) |
 | 2026-08-14 | PRODUCT_BOARD | Ten-minute release-ratio time series | Produced read-only peak/valley classifications for high-glibc-heap product processes | [`product_release_ratio_timeseries.md`](product_release_ratio_timeseries.md) |
 | 2026-08-14 | PRODUCT_BOARD | Repeated key-sequence plateau probe | Found platform, accumulating, nonresponsive, and previously unclassified cyclic shapes | [`product_plateau_probe.md`](product_plateau_probe.md) |
-| 2026-08-14 | PRODUCT_BOARD | One-second cyclic-target probe over eight rounds | Measured a median `6.2 MB` glibc peak-to-valley range and `3.4/4.7/19.7 s` rise/peak/fall timing | [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md) |
+| 2026-08-14 | PRODUCT_BOARD | One-second cyclic-target probe over eight rounds | Measured a median `6.2 MB` glibc peak-to-valley range; the original `3.4/4.7/19.7 s` timing interpretation is retained historically and corrected by the 2026-09-01 attribution | [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md) |
 | 2026-08-14 | Host | Implemented cyclic alloc_bench mode and trim timing controls | Passed 13 self-tests and ARM cross-build; board timing scan remains blocked before identity verification | [`cyclic_profile_replication.md`](cyclic_profile_replication.md) |
 | 2026-08-14 | Host | First public-repository migration | Published the sanitized document, tool, and derived-data archive | [`repo_migration_plan.md`](repo_migration_plan.md) |
 | 2026-08-31 | Host | Established the long-term incremental workspace | Added compact execution evidence, a chronological index, patches, and the latest benchmark/report deltas | [`workspace_sync_report.md`](workspace_sync_report.md) |
 | 2026-08-31 | TEST_BOARD | Restored the RPI4 SDB channel and collected the new LLVM-image baseline | Passed the three-part identity gate on glibc 2.40; cleared S2/S3 to run later and required a fresh S4 reference grid | [`board_baseline_llvm_image_20260831.md`](board_baseline_llvm_image_20260831.md) |
-| 2026-08-31 | TEST_BOARD | Ran frozen S2 cyclic replication for mixed and medium-only | Timing and M7 bin release passed, but no glibc PD fall occurred; S2 failed and S3 awaits PM adjudication | [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md) |
+| 2026-08-31 | TEST_BOARD | Ran frozen S2 cyclic replication for mixed and medium-only | Timing and M7 bin release passed while PD stayed resident; the run-time stop is retained historically, and the result is now the bin-residency baseline | [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md) |
+| 2026-08-31 | Host | Independently recomputed the product cyclic fall and stopped on the minflt wording disagreement | Upheld the PD/zram/majflt swap-exclusion chain, corrected rise-edge minflt to 698–10613, and deferred conclusion edits | [`cyclic_fall_mechanism_attribution_20260831.md`](cyclic_fall_mechanism_attribution_20260831.md) |
+| 2026-09-01 | Host | Resolved F2/F3, audited the timing artifact, and completed the product phenotype census | Reclassified the ServiceA periodic fall as an L6 anti-signal, replaced 19.683 s with a ≤about 9 s sampling upper bound, and retained S2 as a bin-residency baseline | [`cyclic_fall_f2_f3_validation_disagreement_20260901.md`](cyclic_fall_f2_f3_validation_disagreement_20260901.md), [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md) |
 
 ## Specifications And Designs
 

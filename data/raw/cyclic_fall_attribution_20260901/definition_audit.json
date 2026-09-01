@@ -1,0 +1,74 @@
+{
+  "cyclic": {
+    "path": "tools/runners/product_cyclic_target_probe_20260814/analyze_cyclic.py",
+    "sha256": "589629a65f8708757983baa642a70022eef99463c51b4b8d91646c9d93645183",
+    "definitions": {
+      "tail_minimum": {
+        "line": 119,
+        "source": "valley = min(sequence[fall_index:], key=lambda row: row[\"glibc_heap_pd_kb\"])"
+      },
+      "fall_edge": {
+        "line": 128,
+        "source": "fall_seconds = valley[\"elapsed_s\"] - fall[\"elapsed_s\"]"
+      },
+      "peak_band": {
+        "line": 127,
+        "source": "peak_seconds = fall[\"elapsed_s\"] - high_entry[\"elapsed_s\"]"
+      }
+    },
+    "uses_min_over_tail_for_edge": true,
+    "published_shape_numbers_affected": [
+      "fall_edge",
+      "peak_band"
+    ]
+  },
+  "plateau": {
+    "path": "tools/runners/product_plateau_probe_20260814/scripts/analyze_plateau.py",
+    "sha256": "7b6a573f6e92e5b9bc2bbe3506c2522e86a37b932a112fe9d4a74a0133b45c76",
+    "definitions": {
+      "stage_peak": {
+        "line": 96,
+        "source": "glibc_peaks = [int(stage_lookup[(target, stage)][\"glibc_peak_kb\"]) for stage in ROUNDS]"
+      },
+      "adjacent_peak_pair": {
+        "line": 113,
+        "source": "if abs(glibc_peaks[i] - glibc_peaks[i - 1]) < threshold:"
+      }
+    },
+    "uses_min_over_tail_for_edge": false,
+    "published_shape_numbers_affected": []
+  },
+  "release_ratio": {
+    "path": "tools/runners/product_release_ratio_timeseries_20260814/scripts/analyze_timeseries.py",
+    "sha256": "f3bf1ef6efc7c6f3d7505b6578e7c15daa2a33fe1280cc0801d4c93e476ffa95",
+    "definitions": {
+      "running_peak": {
+        "line": 158,
+        "source": "if value > peak[\"glibc_heap_pd_kb\"]:"
+      },
+      "event_trough": {
+        "line": 163,
+        "source": "if value < active[\"trough\"][\"glibc_heap_pd_kb\"]:"
+      }
+    },
+    "uses_min_over_tail_for_edge": false,
+    "published_shape_numbers_affected": []
+  },
+  "inputs": {
+    "release_ratio_timeseries_sha256": "98335d8671c6da8af6ed31856015d11c37d8b75dcaf1bef8450a22a0cdc55c70",
+    "release_ratio_baselines_sha256": "d7ac13ee2e16fcb20a669ce9e2e7e17694ce3d1c118b50689c34b6c96fb4a3c3",
+    "plateau_timeseries_sha256": "a1d4f2cfac20ee714dcf003d63e7e7ff1e4df0f8c155fdedcb824877861137f2",
+    "cyclic_timeseries_sha256": "fc0d39e4e8a4ddc7fdc068291fdb82310b53939cc43fb94123f262a4e38776ae",
+    "cyclic_key_timeline_sha256": "ec676e9abac5fb8951f2805df62ae14c394d00902fd8cf14b7a98718749f6344"
+  },
+  "classifier": {
+    "release_ratio_material_gate": "10% of S1 baseline when available; otherwise first sample in stable-PID segment",
+    "release_ratio_retained_height": "last minus first observed sample in each stable-PID segment",
+    "plateau_material_gate": "5% of final P0 sample",
+    "a": "material drawdown, no positive zram_orig delta, majflt delta zero",
+    "b": "material retained height with no material drawdown; cyclic evidence controls when available",
+    "c": "byte-exact invariant PD",
+    "n": "non-exact movement below the frozen response gate",
+    "u": "material but swap/PID/cross-probe confounded"
+  }
+}

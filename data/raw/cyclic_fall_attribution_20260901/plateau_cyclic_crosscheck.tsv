@@ -1,0 +1,11 @@
+target	classification	p0_baseline_kb	material_threshold_kb	max_rise_kb	end_minus_p0_kb	max_drawdown_kb	drawdown_zram_orig_delta_bytes	drawdown_majflt_delta	cyclic_max_drawdown_kb	cyclic_end_minus_start_kb	cyclic_floor_reference_start_kb	cyclic_final_round_valley_kb	cyclic_final_round_floor_delta_kb	cyclic_summary	note
+AppProcD	n-subthreshold	30036	1501.8	244	-252	1120	585728	0	NA	NA	NA	NA	NA	NA	not byte-exact, but below the frozen 5% response gate
+AppProcC	n-subthreshold	15348	767.4	0	-340	352	831488	0	NA	NA	NA	NA	NA	NA	not byte-exact, but below the frozen 5% response gate
+AppProcB	n-subthreshold	10540	527.0	4	-340	376	1646592	10	NA	NA	NA	NA	NA	NA	not byte-exact, but below the frozen 5% response gate
+ServiceA	a-self-reclaim+b-residual	2932	146.6	8828	340	8736	0	0	9796	784	3464	4252	788	material-self-reclaim	periodic component self-reclaims; final cyclic floor retains +788 kB over the initial floor
+ServiceD	n-subthreshold	9512	475.6	136	136	0	0	0	NA	NA	NA	NA	NA	NA	not byte-exact, but below the frozen 5% response gate
+ServiceE	c-byte-exact-no-response	8772	438.6	0	0	0	0	0	0	0	8772	8772	0	byte-exact-no-response	NA
+ServiceL	n-subthreshold	6436	321.8	32	-44	76	0	0	NA	NA	NA	NA	NA	NA	not byte-exact, but below the frozen 5% response gate
+ServiceH[ServiceK]	b-retention	11240	562.0	2360	1864	792	0	0	588	868	13252	14200	948	retained-floor	2 s plateau height 2360 kB is an upper bound; cyclic floor also rises
+ServiceB	u-cross-probe-unstable	3508	175.4	1420	380	1040	1085440	31	124	-36	3940	3860	-80	subthreshold-or-unstable	coarse plateau movement is not a stable retained surface in cyclic data
+ServiceC	n-subthreshold	3932	196.6	80	44	44	0	0	NA	NA	NA	NA	NA	NA	not byte-exact, but below the frozen 5% response gate

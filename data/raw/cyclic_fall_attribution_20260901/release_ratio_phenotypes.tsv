@@ -1,0 +1,11 @@
+target	classification	pid_segments	valid_samples	baseline_kb	baseline_source	segment_start_kb	material_threshold_kb	retained_height_kb	max_drawdown_kb	drawdown_zram_orig_delta_bytes	drawdown_zram_used_delta_kb	drawdown_majflt_delta	exact_constant	note
+AppProcD	n-subthreshold	1	300	12592	S1	12592	1259.2	56	36	-2523136	-2560	7	no	NA
+ServiceE	c-byte-exact-no-response	1	300	7804	S1	7804	780.4	0	0	0	0	0	yes	NA
+AppProcB	n-subthreshold	1	300	6056	S1	6572	605.6	280	8	0	0	0	no	NA
+ServiceH	b-retention	2	297	3384	segment-first-sample	3384	338.4	580	8	0	0	0	no	PID restart; classification uses within-PID segments only
+cynara	n-subthreshold	1	300	1652	S1	1652	165.2	-4	4	-10903552	-10752	0	no	NA
+AppProcA	n-subthreshold	1	300	1212	S1	1212	121.2	0	4	0	0	0	no	NA
+systemd	n-subthreshold	1	300	1056	S1	1124	105.6	24	0	0	0	0	no	NA
+enlightenment	a-self-reclaim	1	300	792	S1	888	79.2	1736	120	-1761280	-1792	0	no	NA
+buxton2d_worker	b-retention	1	300	760	S1	836	76.0	376	0	0	0	0	no	NA
+ServiceD	b-retention	1	300	180	S1	180	18.0	408	0	0	0	0	no	NA
