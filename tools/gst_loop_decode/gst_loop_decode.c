@@ -3,10 +3,13 @@
 #include <gst/gst.h>
 
 #include <errno.h>
+#include <malloc.h>
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/resource.h>
 #include <time.h>
 
 static volatile sig_atomic_t stop_requested;
@@ -85,6 +88,37 @@ print_marker(const char *marker, unsigned int cycle)
            (long long) realtime.tv_sec, realtime.tv_nsec,
            (long long) monotonic.tv_sec, monotonic.tv_nsec, cycle, marker);
     fflush(stdout);
+}
+
+static int64_t
+timespec_delta_ns(const struct timespec *start, const struct timespec *end)
+{
+    return (int64_t) (end->tv_sec - start->tv_sec) * INT64_C(1000000000)
+           + (int64_t) end->tv_nsec - (int64_t) start->tv_nsec;
+}
+
+static int
+wait_control_line(const char *expected, unsigned int cycle)
+{
+    char line[64];
+    size_t length;
+
+    if (fgets(line, sizeof(line), stdin) == NULL) {
+        fprintf(stderr, "cycle %u: control input ended while waiting for %s\n",
+                cycle, expected);
+        return -1;
+    }
+    length = strlen(line);
+    while (length > 0 && (line[length - 1] == '\n'
+                           || line[length - 1] == '\r')) {
+        line[--length] = '\0';
+    }
+    if (strcmp(line, expected) != 0) {
+        fprintf(stderr, "cycle %u: expected control %s, got %s\n", cycle,
+                expected, line);
+        return -1;
+    }
+    return 0;
 }
 
 static int
@@ -171,6 +205,8 @@ int
 main(int argc, char **argv)
 {
     const unsigned int initial_wait_seconds = 5;
+    const char *arm = "none";
+    int control_stdin = 0;
     GstElement *pipeline;
     unsigned int cycles;
     unsigned int play_seconds;
@@ -178,9 +214,10 @@ main(int argc, char **argv)
     unsigned int cycle;
     int status = 0;
 
-    if (argc != 5) {
+    if (argc != 5 && argc != 7) {
         fprintf(stderr,
-                "usage: %s <file> <cycles> <play_seconds> <null_seconds>\n",
+                "usage: %s <file> <cycles> <play_seconds> <null_seconds>"
+                " [none|trim-at-loop-release control-stdin]\n",
                 argv[0]);
         return 2;
     }
@@ -188,6 +225,19 @@ main(int argc, char **argv)
     cycles = parse_uint(argv[2], "cycles", 0);
     play_seconds = parse_uint(argv[3], "play_seconds", 0);
     null_seconds = parse_uint(argv[4], "null_seconds", 1);
+    if (argc == 7) {
+        arm = argv[5];
+        if (strcmp(arm, "none") != 0
+            && strcmp(arm, "trim-at-loop-release") != 0) {
+            fprintf(stderr, "invalid arm: %s\n", arm);
+            return 2;
+        }
+        if (strcmp(argv[6], "control-stdin") != 0) {
+            fprintf(stderr, "invalid control mode: %s\n", argv[6]);
+            return 2;
+        }
+        control_stdin = 1;
+    }
 
     signal(SIGINT, handle_stop);
     signal(SIGTERM, handle_stop);
@@ -204,6 +254,23 @@ main(int argc, char **argv)
         goto out;
 
     for (cycle = 1; cycle <= cycles && !stop_requested; ++cycle) {
+        struct timespec business_start;
+        struct timespec business_end;
+        struct timespec trim_start;
+        struct timespec trim_end;
+        struct rusage usage_start;
+        struct rusage usage_end;
+        long minflt_delta;
+        long majflt_delta;
+        int trim_result = -1;
+        int64_t trim_elapsed_ns = 0;
+
+        if (clock_gettime(CLOCK_MONOTONIC, &business_start) != 0
+            || getrusage(RUSAGE_SELF, &usage_start) != 0) {
+            perror("cycle start instrumentation");
+            status = 6;
+            goto out;
+        }
         print_marker("PLAYING_REQUEST", cycle);
         if (set_state_and_wait(pipeline, GST_STATE_PLAYING, "PLAYING") != 0) {
             status = 4;
@@ -219,6 +286,50 @@ main(int argc, char **argv)
             goto out;
         }
         print_marker("NULL_DONE", cycle);
+        if (clock_gettime(CLOCK_MONOTONIC, &business_end) != 0
+            || getrusage(RUSAGE_SELF, &usage_end) != 0) {
+            perror("cycle end instrumentation");
+            status = 7;
+            goto out;
+        }
+        minflt_delta = usage_end.ru_minflt - usage_start.ru_minflt;
+        majflt_delta = usage_end.ru_majflt - usage_start.ru_majflt;
+        printf("CYCLE_METRIC cycle=%u business_elapsed_ns=%lld minflt=%ld"
+               " majflt=%ld\n",
+               cycle,
+               (long long) timespec_delta_ns(&business_start, &business_end),
+               minflt_delta, majflt_delta);
+        fflush(stdout);
+
+        print_marker("RELEASE_READY", cycle);
+        if (control_stdin
+            && wait_control_line("PRE_CAPTURED", cycle) != 0) {
+            status = 8;
+            goto out;
+        }
+        if (strcmp(arm, "trim-at-loop-release") == 0) {
+            if (clock_gettime(CLOCK_MONOTONIC, &trim_start) != 0) {
+                perror("trim start instrumentation");
+                status = 9;
+                goto out;
+            }
+            trim_result = malloc_trim(0);
+            if (clock_gettime(CLOCK_MONOTONIC, &trim_end) != 0) {
+                perror("trim end instrumentation");
+                status = 10;
+                goto out;
+            }
+            trim_elapsed_ns = timespec_delta_ns(&trim_start, &trim_end);
+        }
+        printf("TRIM_METRIC cycle=%u arm=%s return=%d elapsed_ns=%lld\n",
+               cycle, arm, trim_result, (long long) trim_elapsed_ns);
+        fflush(stdout);
+        print_marker("RELEASE_DONE", cycle);
+        if (control_stdin
+            && wait_control_line("POST_CAPTURED", cycle) != 0) {
+            status = 11;
+            goto out;
+        }
         print_marker("NULL_WAIT_START", cycle);
         if (sleep_seconds(null_seconds) != 0)
             break;

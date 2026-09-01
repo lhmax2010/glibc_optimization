@@ -9,7 +9,8 @@
 - 主报告：[`demo_narrative_20260901.md`](demo_narrative_20260901.md)
 
 三个层级相互解耦。L1 可以逐字节核对已发布派生证据；L2 可以独立重跑测试板
-S4；L3 只在需要重新取得产品侧时序时执行，不是 L1/L2 的前置。
+S4 与真实多线程 GStreamer release 实验；L3 只在需要重新取得产品侧时序时执行，
+不是 L1/L2 的前置。
 
 ## L1 · 派生数字复算
 
@@ -381,6 +382,134 @@ grep -Fx DONE_GOVERNOR_FINAL "$S4_HOST/governor_final.txt"
 MemTotal 或 kernel 小版本变化不自动否决以上机制判据，但必须记录为批次协变量。
 glibc 主版本必须属于 `2.40` 系；若为 `2.41+`，停止沿用本基线，并按
 [`状态报告 §2.5`](glibc_memopt_program_status_report_zh.md#25-版本依赖) 的版本告警重新审计。
+
+<a id="l2-gst-trim-cost"></a>
+### 真实并发 GStreamer 目标的 trim 代价复跑
+
+本节复跑第 2 周的 2 臂 × 3 重复实验。冻结参数与判定规则以
+[`gst_trim_cost_20260901.md §1`](gst_trim_cost_20260901.md#1-建连前冻结规格) 为唯一来源，
+可执行合同位于
+[`tools/runners/gst_trim_cost_20260901/`](../tools/runners/gst_trim_cost_20260901/)。媒体资产
+继续使用 `l6_gst_release_phase_20260811` 的 `small_320x240.mp4`，必须从内部制品归档取得
+并核对 SHA-256
+`3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d`；公开仓库不分发媒体
+或 ARM ELF。
+
+instrumented bench 可从内部制品取得，已验 SHA-256 为
+`204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`；也可用
+GCC `14.2.0` 的 glibc-2.40 scratch root 与含 GStreamer 1.24 armv7l devel/runtime 链接
+输入的兼容 sysroot 重建：
+
+```sh
+TOOLCHAIN_ROOT=/path/to/toolchain/scratch.armv7l.0 \
+GST_SYSROOT=/path/to/gstreamer/scratch.armv7l.0 \
+  tools/runners/gst_trim_cost_20260901/build_armv7l.sh \
+  /tmp/gst_loop_decode.armv7l
+sha256sum tools/gst_loop_decode/gst_loop_decode.c /tmp/gst_loop_decode.armv7l
+```
+
+已验源码 SHA-256 为
+`4b00e4ad7fb38c5e51c772e1ba0d8a7d7eb44045d45ec34978317ecaae5d9552`。同一 toolchain、
+sysroot 和源码应重建出上述二进制 SHA；不一致时登记为新构建批次并保留 ELF、编译器、
+sysroot 与 SHA 记录，不能声称字节级复跑。
+
+先只读执行身份/环境和能力门。能力脚本会列出 GStreamer 核心、六个 element 的 RPM
+归属/安装大小，以及 `/`、`/opt/usr` 空间；若缺包，不得跳过本轮报告中的 `1.2 GiB`
+根分区余量预算和安装事务记录。
+
+```sh
+export SDB_SERIAL='<TEST_BOARD_IP>:26101'
+export GST_REMOTE='/opt/usr/glibc_memopt/gst_trim_cost_20260901'
+export GST_HOST='board_results/gst_trim_cost_20260901_reproduction'
+export GST_BENCH='/tmp/gst_loop_decode.armv7l'
+export GST_PROBE='/path/to/reclaim_probe.armv7l'
+export GST_MEDIA='/path/to/small_320x240.mp4'
+mkdir -p "$GST_HOST"
+
+sdb version
+sdb connect '<TEST_BOARD_IP>'
+sdb devices
+SDB_SERIAL="$SDB_SERIAL" sh \
+  tools/runners/gst_trim_cost_20260901/preflight_gate.sh "$GST_HOST/preflight"
+grep -Fx IDENTITY_AND_ENV_GATE_PASS "$GST_HOST/preflight/gate_verdict.txt"
+SDB_SERIAL="$SDB_SERIAL" sh \
+  tools/runners/gst_trim_cost_20260901/capability_probe.sh "$GST_HOST/capability"
+grep -Fx CAPABILITY_GATE_PASS "$GST_HOST/capability/capability_verdict.txt"
+```
+
+门通过后才创建固定 `/opt/usr` 目录并推送。下列三个资产 SHA 必须分别为
+`204d64…f62e6`、`3b0703…41e7`、`3df34a…f72d` 的完整冻结值；执行时必须检查完整
+输出而不是只比较此处缩写。
+
+```sh
+sdb -s "$SDB_SERIAL" shell "test ! -e '$GST_REMOTE' && mkdir -p '$GST_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_CREATE_WORKDIR || echo FAIL_CREATE_WORKDIR"
+sdb -s "$SDB_SERIAL" push "$GST_BENCH" "$GST_REMOTE/gst_loop_decode.armv7l"
+sdb -s "$SDB_SERIAL" push "$GST_PROBE" "$GST_REMOTE/reclaim_probe.armv7l"
+sdb -s "$SDB_SERIAL" push "$GST_MEDIA" "$GST_REMOTE/small_320x240.mp4"
+sdb -s "$SDB_SERIAL" push tools/runners/gst_trim_cost_20260901/run_gst_trim_cost_remote.sh "$GST_REMOTE/run_gst_trim_cost_remote.sh"
+sdb -s "$SDB_SERIAL" push tools/runners/gst_trim_cost_20260901/sample_smaps_1s.sh "$GST_REMOTE/sample_smaps_1s.sh"
+sdb -s "$SDB_SERIAL" shell "chmod 0755 '$GST_REMOTE/gst_loop_decode.armv7l' '$GST_REMOTE/reclaim_probe.armv7l' '$GST_REMOTE/run_gst_trim_cost_remote.sh' '$GST_REMOTE/sample_smaps_1s.sh' && cd '$GST_REMOTE' && sha256sum gst_loop_decode.armv7l reclaim_probe.armv7l small_320x240.mp4; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_ASSET_VERIFY || echo FAIL_ASSET_VERIFY"
+```
+
+controller 固定运行 `none-r1 → trim-r1 → trim-r2 → none-r2 → none-r3 → trim-r3`，每格
+51 轮、每轮 PLAYING `20 s`、NULL valley `1 s`；不要编辑脚本内矩阵：
+
+```sh
+sdb -s "$SDB_SERIAL" shell "sh '$GST_REMOTE/run_gst_trim_cost_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GST_TRIM_REMOTE_INVOKE || echo FAIL_GST_TRIM_REMOTE_INVOKE" | tee "$GST_HOST/remote_invoke.txt"
+grep -Fx RC=0 "$GST_HOST/remote_invoke.txt"
+grep -Fx DONE_GST_TRIM_REMOTE_INVOKE "$GST_HOST/remote_invoke.txt"
+grep -Fx DONE_GST_TRIM_CONTROLLER "$GST_HOST/remote_invoke.txt"
+```
+
+运行成功后生成清单、拉回并强制解析所有 JSON；只有分析器成功后才能清理：
+
+```sh
+sdb -s "$SDB_SERIAL" shell "cd '$GST_REMOTE' && find . -type f ! -name board_manifest.sha256 ! -name board_file_sizes.tsv | LC_ALL=C sort | while IFS= read -r f; do sha256sum \"\$f\" || exit 1; done > board_manifest.sha256 && find . -type f ! -name board_file_sizes.tsv | LC_ALL=C sort | while IFS= read -r f; do n=\$(wc -c < \"\$f\") || exit 1; printf '%s\\t%s\\n' \"\$n\" \"\$f\"; done > board_file_sizes.tsv; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_MANIFEST || echo FAIL_MANIFEST"
+test ! -e "$GST_HOST/board_pull"
+sdb -s "$SDB_SERIAL" pull "$GST_REMOTE" "$GST_HOST/board_pull"
+python3 tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py \
+  --pull "$GST_HOST/board_pull" --output "$GST_HOST/derived"
+
+sdb -s "$SDB_SERIAL" shell "test '$GST_REMOTE' = '/opt/usr/glibc_memopt/gst_trim_cost_20260901' && rm -rf '$GST_REMOTE' && test ! -e '$GST_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_FINAL_CLEANUP || echo FAIL_FINAL_CLEANUP"
+sdb -s "$SDB_SERIAL" shell "ok=1; n=0; for p in /sys/devices/system/cpu/cpu[0-3]/cpufreq/scaling_governor; do if g=\$(cat \"\$p\"); then echo \"\$p=\$g\"; test \"\$g\" = schedutil && n=\$((n+1)); else ok=0; fi; done; test \$ok -eq 1 && test \$n -eq 4; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GOVERNOR_FINAL || echo FAIL_GOVERNOR_FINAL"
+```
+
+当前基准批次的分析器预期输出原文为：
+
+```text
+validated cells=6 cycles=306 primary=300
+delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
+```
+
+可用发布的紧凑输入逐字节复算当前结果：
+[`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、
+[`repetitions.tsv`](../data/raw/gst_trim_cost_20260901/repetitions.tsv)、
+[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv)、
+[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) 与
+[`health.json`](../data/raw/gst_trim_cost_20260901/health.json)。完整解释见
+[`实验报告`](gst_trim_cost_20260901.md)。
+
+确定性验收项：资产 SHA 与冻结批次一致；6 格顺序、每格 51 轮、主统计每重复 50 个
+样本逐项齐全；none 臂全部是未调用哨兵、trim 臂每格恰有 51 次调用；306 组 pre/post
+JSON 均可解析且 PID 恒定；bench/sampler/controller 全部退出 0；dmesg 零 OOM/LMK；四核
+最终均为 `schedutil`；板端目录已删除。zram 三列必须取得同批前后值并报告 delta，不把
+跨批次绝对值当作常量。
+
+当前已执行批次的附加 capture-meta `majflt` 因 POSIX sh `$10` 展开错误而统一为 `S0`；
+发布 controller 已改用 `${10}`。分析器只允许整批 306 对均为这一已知缺陷或整批均为
+数值，当前批明确标作不可用；目标内逐循环 `getrusage` 与外部 1 s `/proc/stat` majflt
+仍是两条强制数值源。复跑发布版 harness 时该字段应为数值，不应再出现 `S0`。
+
+容差/判定项不使用看结果后新增的固定比例：业务 p99 仍严格按预登记门——trim 三重复
+p99 的中位数减 none 三重复 p99 的中位数，只有严格超过 none 三重复 p99 的 `max−min`
+离散带才判“代价可见”。回收量只与既有 `48.9451% / 1.359375 MiB` 做相容性对照；
+并发 trim 的 p50/p95/p99/max 必须完整报告，并与 S4 单线程约 `1.2 ms` 描述比较，不能
+用单个中位数代替尾部。
+
+当前批次的 153 次 trim p50/p95/p99/max 为
+`0.671556/0.818315/0.842185/0.856944 ms`；首次 release 为
+`51.014041–51.406250% / 1.277344–1.285156 MiB`。这些是复跑的参考结果而非新的硬阈值；
+正式业务裁决仍只用上面的预登记 p99 离散门。
 
 ## L3 · 产品板测量复现（可选）
 

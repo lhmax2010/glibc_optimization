@@ -4,7 +4,7 @@ This repository is the long-term, sanitized workspace for source audits, control
 
 文中应用/进程名为代号，板标识与路径已脱敏。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）保留在本地；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
 
-**Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented. The RPI4 SDB channel and new-image baseline are restored. The product cyclic PD fall is now classified as an automatic-reclaim anti-signal, the original S3 semantic is retired, and S4 has closed the gated-trim effect/cost baseline on the synthetic retention proxy. See the [consolidated status](docs/glibc_memopt_program_status_report_zh.md) and [Demo narrative](docs/demo_narrative_20260901.md).
+**Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented. The RPI4 SDB channel and new-image baseline are restored. The product cyclic PD fall is now classified as an automatic-reclaim anti-signal, the original S3 semantic is retired, S4 has closed the gated-trim effect/cost baseline on the synthetic retention proxy, and the week-two GStreamer matrix has measured release-point trim and next-cycle cost on a real multithreaded target while retaining direct concurrent-lock stall as an open gap. See the [consolidated status](docs/glibc_memopt_program_status_report_zh.md), [Demo narrative](docs/demo_narrative_20260901.md), and [GStreamer trim-cost report](docs/gst_trim_cost_20260901.md).
 
 ## Current Findings
 
@@ -13,6 +13,7 @@ This repository is the long-term, sanitized workspace for source audits, control
 - **Applicability curve:** at the measured 50% release point, reclaim was `27.91%` for 16-256 B objects, `53.55%` for mixed 16 B-64 KiB objects, and `50.60%` for medium 1-16 KiB objects. Interleaved release reduced the mixed case from `53.55%` to `40.58%`.
 - **Product allocation shapes:** the cyclic target's visible PD fall is an automatic-reclaim anti-signal rather than a trim opportunity; retained floors and residuals remain candidates only until M7 separates live data from allocator-held free space. See the [mechanism attribution](docs/cyclic_fall_mechanism_attribution_v2_20260901.md).
 - **S2 replication gate:** frozen mixed and medium-only runs paced rise/release at about `3.400/19.703 s` and placed about `6.4 MiB` per cycle into rest/unsorted, but neither internal nor external board sampling showed a PD fall. The proxy therefore does not yet reproduce the product cyclic shape.
+- **Real multithreaded release cost:** on the frozen GStreamer matrix, trim shifted the repeat-median loop p99 by `+6.229 ms`, below the none repeat-dispersion band of `6.784 ms`; 153 trim calls had `0.672/0.818/0.842/0.857 ms` p50/p95/p99/max. This fills the next-cycle cost and reclaim fields but not a direct per-thread all-arena lock-stall measurement. See the [full report](docs/gst_trim_cost_20260901.md).
 - **Rejected or deferred directions:** mechanisms with no RSS surface include rseq disablement, guard-page removal, repeated `__libc_freeres`, and disabling dlconf for steady-state RSS. Disabling tcache, disabling fastbins, and limiting unsorted-to-tcache transfers remain experimentally rejected unless real workloads show materially larger retained structures. A whole-libc `-Os` build remains deferred pending a dedicated performance and build-compatibility program.
 - **Flash levers:** locale/gconv/NSS packaging, debug-symbol policy, cold-DSO optimization, and command-line subpackaging remain source-verified candidates whose product savings depend on the final image manifest.
 
@@ -26,7 +27,8 @@ The figures above are measurements for the documented builds and workloads, not 
 4. [L6 applicability curve](docs/l6_applicability_curve.md)
 5. [Product plateau profile](docs/product_plateau_probe.md) and [cyclic-target profile](docs/product_cyclic_target_probe.md)
 6. [Controlled cyclic replication status](docs/cyclic_profile_replication.md)
-7. [Complete chronological document index](docs/INDEX.md)
+7. [GStreamer multithreaded trim-cost report](docs/gst_trim_cost_20260901.md)
+8. [Complete chronological document index](docs/INDEX.md)
 
 The design and audit establish version-gated mechanisms. The curve report quantifies controlled behavior. Product reports show which allocation shapes occur in real processes. Individual Batch and probe reports retain commands, quality gates, failure records, and measurement limitations.
 

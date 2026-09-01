@@ -1,0 +1,11 @@
+{
+  "business_cost_visible": false,
+  "decision_rule": "visible iff trim median-of-repeat p99 minus none median-of-repeat p99 is strictly greater than none repeat p99 max-minus-min",
+  "delta_p99_ms": 6.228611,
+  "none_p99_median_ms": 20016.408137,
+  "none_p99_repeat_dispersion_ms": 6.784167,
+  "percentile_method": "nearest-rank",
+  "primary_cycles": "2-51",
+  "primary_samples_per_repeat": 50,
+  "trim_p99_median_ms": 20022.636748
+}

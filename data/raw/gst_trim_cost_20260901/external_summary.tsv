@@ -1,0 +1,7 @@
+order	arm	rep	samples	deadline_overruns	minflt_delta	majflt_delta
+1	none	1	1085	0	6070	4
+2	trim-at-loop-release	1	1085	0	23802	0
+3	trim-at-loop-release	2	1084	0	23911	0
+4	none	2	1085	0	5984	0
+5	none	3	1086	0	4286	0
+6	trim-at-loop-release	3	1086	0	24718	0

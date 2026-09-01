@@ -1,0 +1,18 @@
+{
+  "capture_majflt_legacy_s0_pairs": 306,
+  "capture_majflt_numeric_pairs": 0,
+  "capture_majflt_status": "unavailable-posix-dollar10-defect",
+  "dmesg_increment_lines": 0,
+  "dmesg_increment_method": "prefix",
+  "governor_restored_schedutil_count": 4,
+  "oom_lmk_matches": [],
+  "zram_compressed_data_size_after": 74,
+  "zram_compressed_data_size_before": 74,
+  "zram_compressed_data_size_delta": 0,
+  "zram_mem_used_total_after": 4096,
+  "zram_mem_used_total_before": 4096,
+  "zram_mem_used_total_delta": 0,
+  "zram_original_data_size_after": 4096,
+  "zram_original_data_size_before": 4096,
+  "zram_original_data_size_delta": 0
+}

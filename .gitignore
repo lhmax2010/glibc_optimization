@@ -8,6 +8,8 @@ temp/
 *.host
 *.host-asan
 *.o
+__pycache__/
+*.pyc
 
 # Large board evidence stays in the private local archive. Compact execution
 # records and directly cited time series under data/raw/ are intentionally kept.
