@@ -28,6 +28,12 @@ release-ratio and 5% for plateau. The ServiceA residual is derived from the P0
 floor and the final fixed wall-clock round valley; the wall-clock origin is
 reconstructed independently from `key_timeline.tsv`.
 
+Release-ratio labels are component-wise: a material automatic drawdown and a
+material final retained floor may coexist as `a-self-reclaim+b-retention` when
+the drawdown is below 10% of the retained floor (outside one decimal order).
+`drawdown_to_retained_pct` and `same_order_automatic_fall` make the frozen
+scale test explicit instead of letting the a label hide the remaining floor.
+
 Run the host-only branch tests with:
 
 ```sh

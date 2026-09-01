@@ -1,0 +1,22 @@
+transport=sdb <TEST_BOARD_IP>:26101
+sdb_client=Smart Development Bridge version 4.2.25
+uname_r=6.12.80-arm-rpi4-v7l
+uname_m=armv7l
+BUILD_ID=tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l
+glibc=glibc-2.40-1.6.armv7l
+MemTotal_kB=8117408
+identity_and_environment_gate=PASS
+bench_sha256=dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd
+hist_sha256=2082e156db133f4e6e900aec7c202e44a453d2f23b60225c40251de08a27960b
+uploaded_asset_hashes_match=4/4
+controller=RC=0 DONE_S4_CONTROLLER
+remote_invoke=RC=0 DONE_S4_REMOTE_INVOKE
+manifest_hashes=198/198 OK
+size_records=199/199 OK
+json_parse=10/10 OK
+xml_parse=72/72 OK
+external_rows=850
+external_overruns=0
+workdir_removed=yes
+governor_restored_schedutil=4/4
+cleanup=RC=0 DONE_FINAL_CLEANUP

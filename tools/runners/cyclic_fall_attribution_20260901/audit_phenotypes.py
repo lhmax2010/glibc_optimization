@@ -183,6 +183,16 @@ def release_ratio_census(
                 drawdown["zram_orig_delta_bytes"] <= 0
                 and drawdown["majflt_delta"] == 0
             )
+            drawdown_to_retained_pct = (
+                drawdown["drop_kb"] / retained_height * 100
+                if retained_height > 0
+                else None
+            )
+            same_order_automatic_fall = (
+                material_fall
+                and retained_height > 0
+                and drawdown["drop_kb"] >= retained_height * 0.10
+            )
             segment_facts.append(
                 {
                     "pid": segment[0]["pid"],
@@ -196,6 +206,8 @@ def release_ratio_census(
                     "max_drawdown_kb": drawdown["drop_kb"],
                     "material_fall": material_fall,
                     "swap_out_excluded": swap_out_excluded,
+                    "drawdown_to_retained_pct": drawdown_to_retained_pct,
+                    "same_order_automatic_fall": same_order_automatic_fall,
                     **{
                         key: drawdown[key]
                         for key in (
@@ -213,14 +225,16 @@ def release_ratio_census(
         )
         retention = any(
             fact["retained_height_kb"] >= fact["threshold_kb"]
-            and not fact["material_fall"]
+            and not fact["same_order_automatic_fall"]
             for fact in segment_facts
         )
         material_confounded = any(
             fact["material_fall"] and not fact["swap_out_excluded"]
             for fact in segment_facts
         )
-        if self_reclaim:
+        if self_reclaim and retention:
+            classification = "a-self-reclaim+b-retention"
+        elif self_reclaim:
             classification = "a-self-reclaim"
         elif retention:
             classification = "b-retention"
@@ -252,11 +266,24 @@ def release_ratio_census(
                 "drawdown_zram_orig_delta_bytes": decisive["zram_orig_delta_bytes"],
                 "drawdown_zram_used_delta_kb": decisive["zram_used_delta_kb"],
                 "drawdown_majflt_delta": decisive["majflt_delta"],
+                "drawdown_to_retained_pct": (
+                    "NA"
+                    if decisive["drawdown_to_retained_pct"] is None
+                    else f'{decisive["drawdown_to_retained_pct"]:.6f}'
+                ),
+                "same_order_automatic_fall": (
+                    "yes" if decisive["same_order_automatic_fall"] else "no"
+                ),
                 "exact_constant": "yes" if exact_constant else "no",
                 "note": (
                     "PID restart; classification uses within-PID segments only"
                     if len(segments) > 1
-                    else "NA"
+                    else (
+                        "retained floor remains a candidate; automatic-reclaim "
+                        "capability is proven for the drawdown component"
+                        if self_reclaim and retention
+                        else "NA"
+                    )
                 ),
             }
         )
@@ -493,7 +520,7 @@ def main() -> None:
         "release_ratio_retained_height": "last minus first observed sample in each stable-PID segment",
         "plateau_material_gate": "5% of final P0 sample",
         "a": "material drawdown, no positive zram_orig delta, majflt delta zero",
-        "b": "material retained height with no material drawdown; cyclic evidence controls when available",
+        "b": "material retained floor without an automatic drawdown >=10% of that floor; may coexist with a smaller automatic drawdown component",
         "c": "byte-exact invariant PD",
         "n": "non-exact movement below the frozen response gate",
         "u": "material but swap/PID/cross-probe confounded",

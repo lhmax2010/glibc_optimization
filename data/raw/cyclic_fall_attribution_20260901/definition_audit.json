@@ -66,7 +66,7 @@
     "release_ratio_retained_height": "last minus first observed sample in each stable-PID segment",
     "plateau_material_gate": "5% of final P0 sample",
     "a": "material drawdown, no positive zram_orig delta, majflt delta zero",
-    "b": "material retained height with no material drawdown; cyclic evidence controls when available",
+    "b": "material retained floor without an automatic drawdown >=10% of that floor; may coexist with a smaller automatic drawdown component",
     "c": "byte-exact invariant PD",
     "n": "non-exact movement below the frozen response gate",
     "u": "material but swap/PID/cross-probe confounded"

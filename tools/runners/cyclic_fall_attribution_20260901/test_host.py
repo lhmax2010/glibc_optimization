@@ -53,6 +53,15 @@ class ReleaseRatioTests(unittest.TestCase):
             row("n", 4, 105),
             row("u", 5, 100),
             row("u", 5, 80, zram_orig=1),
+            row("dual", 6, 100),
+            row("dual", 6, 230),
+            row("dual", 6, 220),
+            row("same_order", 7, 100),
+            row("same_order", 7, 130),
+            row("same_order", 7, 120),
+            row("boundary", 8, 100),
+            row("boundary", 8, 210),
+            row("boundary", 8, 200),
         ]
         records = self.classify(rows)
         self.assertEqual(records["a"]["classification"], "a-self-reclaim")
@@ -60,6 +69,14 @@ class ReleaseRatioTests(unittest.TestCase):
         self.assertEqual(records["c"]["classification"], "c-byte-exact-no-response")
         self.assertEqual(records["n"]["classification"], "n-subthreshold")
         self.assertEqual(records["u"]["classification"], "u-confounded")
+        self.assertEqual(records["dual"]["classification"], "a-self-reclaim+b-retention")
+        self.assertEqual(records["dual"]["drawdown_to_retained_pct"], "8.333333")
+        self.assertEqual(records["dual"]["same_order_automatic_fall"], "no")
+        self.assertEqual(records["same_order"]["classification"], "a-self-reclaim")
+        self.assertEqual(records["same_order"]["same_order_automatic_fall"], "yes")
+        self.assertEqual(records["boundary"]["drawdown_to_retained_pct"], "10.000000")
+        self.assertEqual(records["boundary"]["classification"], "a-self-reclaim")
+        self.assertIn("automatic-reclaim capability is proven", records["dual"]["note"])
 
     def test_na_break_and_pid_restart_are_segmented(self) -> None:
         rows = [

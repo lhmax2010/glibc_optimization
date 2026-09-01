@@ -1,0 +1,3 @@
+profile	rep	pretrim_glibc_pd_kb	posttrim_glibc_pd_kb	reclaimed_kb	reclaim_pct_of_pretrim	reclaim_pct_of_released	release_pct	mechanism_expected_pct_of_pretrim	distance_from_expected_pp	historical_incomparable_pct	trim_return	trim_elapsed_ms	posttrim_refault_elapsed_ms	trim_minflt	trim_majflt	refault_minflt	refault_majflt	released_payload_bytes	external_samples	external_minflt_delta	external_majflt_delta	exit_code
+mixed	1	104648	51200	53448	51.074077	108.002588	50	49.0	2.074077	53.55	1	13.331907	20.887907	6	0	1655	0	50675408	41	33187	0	0
+medium-only	1	107248	53208	54040	50.387886	104.710419	50	49.0	1.387886	50.6	1	12.72324	23.079612	6	0	3093	0	52847616	41	27549	0	0

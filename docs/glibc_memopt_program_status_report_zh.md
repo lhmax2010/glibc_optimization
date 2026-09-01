@@ -2,16 +2,18 @@
 
 # Tizen glibc 内存优化 — 方案调研与实施计划总结报告
 
-- 版本：**v2.7**
-- 日期：2026-09-01（v2.7 修订：完成产品周期下降机理归因与分析伪影审计；撤销 `19.683 s` 的释放时长解释及约 20 s trim 钩子建议；S2 改定为 bin 驻留表型基线，S3 原语义作废）
+- 版本：**v2.8**
+- 日期：2026-09-01（v2.8 修订：补正 `enlightenment` a+b 双标签；完成新 LLVM 镜像 S4 锚点与合成滞留表型 trim 效果/再激活 faults 测量）
 - 范围：glibc(ptmalloc) 层内存优化的方案调研、实证结论、平台约束、实施计划
-- 证据基线：设计文档 v2.4、板级实验 Batch 1/2/2.5、环境侦察 ×3、PG0 决定性探测、**回收天花板实测**（`docs/reclaim_ceiling_probe.md`、`docs/a_ceiling_lldb_probe.md`）、新 LLVM 镜像冻结 S2（`docs/cyclic_s2_board_replication_20260831.md`）、周期下降归因 v2（`docs/cyclic_fall_mechanism_attribution_v2_20260901.md`）、六轮异构 AI 交叉评审
+- 证据基线：设计文档 v2.4、板级实验 Batch 1/2/2.5、环境侦察 ×3、PG0 决定性探测、**回收天花板实测**（`docs/reclaim_ceiling_probe.md`、`docs/a_ceiling_lldb_probe.md`）、新 LLVM 镜像冻结 S2（`docs/cyclic_s2_board_replication_20260831.md`）、周期下降归因 v2（`docs/cyclic_fall_mechanism_attribution_v2_20260901.md`）、新镜像 S4 锚点/滞留 trim（`docs/s4_reference_and_retention_trim_20260901.md`）、六轮异构 AI 交叉评审
 
 ---
 
 ## 1. 项目定位
 
 > **2026-09-01 归因裁决：** 产品 `ServiceA` 的 `6212 kB` 周期峰谷没有伴随 zram 正增长或 majflt，32 个大步也没有 glibc/other-anon 镜像迁移；该周期分量已自动离开 Private_Dirty，是 L6 反信号，不是待 trim 的驻留量。旧 `fall_edge` 中位 `19.683240 s` 是尾窗最小值落点伪影；正式替代为 peak 后首次观测达到 `PD <= valley + 5% × (peak−valley)` 的 `5.223693–8.910626 s` 上界。S3 原语义作废，先前“降格直接扫”与“修改 S2 继续拟合”两个待裁选项均不采纳。S2 保留为约 6.4 MiB free 进入 rest/unsorted 且 PD 不降的 **bin 驻留表型基线**。完整裁决见 [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md)。
+
+> **2026-09-01 S4 更新：** 新镜像瞬时释放锚点为 mixed `51.074077%`、medium-only `50.387886%`，与 `50% × 0.98` 机制基线相容。对 S2 合成滞留表型，valley trim 回收释放 payload 的中位 `81.661264% / 84.446566%`，调用中位约 `1.23 / 1.22 ms`；下一周期相对 none 增加 `1351 / 1465` 次 minflt，majflt 为 0。该证据补齐合成代理的效果/faults 数字，不等同于产品候选的 M7 或业务延迟结论。完整报告见 [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md)。
 
 > **历史状态保留（2026-08-31，v2.6，现已被上条裁决取代）：** 当时 S2 因未复现产品 PD 峰谷而判定不成立，S3 等待 PM 在“降格为合成 bin 驻留 trim 扫描”与“修订 S2 代理方案”之间裁决。
 
@@ -252,6 +254,12 @@ L6 的收益直接取决于目标在触发时刻堆内**已释放但未归还**�
 
 **与真实目标的互相印证**:媒体解码实测 48.5~49.4%,曲线中最接近的单因素点为 medium-only/50%/high 的 50.6%(差 1.2 个百分点)——受控曲线与真实实测吻合。
 
+### 3.9 新 LLVM 镜像 S4 锚点与滞留 trim（2026-09-01）
+
+历史瞬时释放格在换板换镜像后失去同板可比性；新镜像各一次的 mixed/medium-only 锚点为 `51.074077% / 50.387886%`，距 `49%` 机制预期 `+2.074077 / +1.387886 pp`。旧 `53.55% / 50.60%` 只保留为不可比参考。
+
+S2 合成滞留表型的 8 格 trim/control 测量显示：16/16 周期没有 free 后 PD 自动下降，trim 前 M7 为 MB 级 rest/unsorted；valley trim 回收 `80.175875%–85.453954%` 的 released payload，调用中位 mixed/medium-only 为 `1.233269 / 1.218361 ms`。下一周期相对 none 增加 `1351 / 1465` 次 minflt，majflt 全为 0，zram 不变。由此“反信号排除 → M7 确认 → 以已知调用/faults 代价回收”在合成代理上成立；产品候选的 live/bin、并发锁停顿、业务延迟与能耗仍未测。见 [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md)。
+
 ---
 
 ## 4. 平台约束(实测发现)
@@ -303,6 +311,7 @@ L6 的收益直接取决于目标在触发时刻堆内**已释放但未归还**�
 | 目标(代号) | 形态 | 关键数据 |
 |---|---|---|
 | `ServiceH[ServiceK]`(频道列表 loader) | **滞留型候选** | 六轮峰值 12776→13600 kB,涨幅逐轮收敛;**平台高度 2.36 MB 为上界**，1 s 交叉序列的 floor 仍净增 `+868 kB` |
+| `enlightenment` | **a 自回收 + b retained floor** | release-ratio 同 PID 段 retained `+1736 kB`、最大自动回撤 `120 kB`，两者均越过 `79.2 kB` 门；回撤仅为 retained 的 `6.912442%`，故回撤分量排除而 floor 入候选，并标注“已证实自动归还能力” |
 | `ServiceA` | **自回收周期 + 谷底残渣** | 周期峰谷中位 6.2 MB 已自动归还，是 L6 反信号；仅 P0→R8 valley `+788 kB` 保留为 live/bin 未判候选 |
 | `ServiceB` | 跨探针不稳定 | 2 s 序列有大幅波动但同窗含 zram/majflt 增长；1 s 序列无稳定 retained floor，不硬归类 |
 | Web Runtime 类 | 无响应 | 六轮**逐字节不变**(8772 kB),再次确认不是 L6 目标 |
@@ -326,7 +335,12 @@ L6 的收益直接取决于目标在触发时刻堆内**已释放但未归还**�
 2. **glibc 周期分量确实存在但已经自动归还**：glibc P-V `6.2 MB` 实跌，且无 zram 正增长、无 majflt、无 other-anon 镜像迁移。它证明周转经过 glibc 分类，却同时是 L6 反信号，不能再当成待 trim 收益。
 3. **释放在峰后至多约 9 s 的首次观测内基本完成**：逐轮旧 `fall_start` 点已释放比例为 `32.686084%–99.679693%`，形态异质；不再称“一步塌回”，也不从旧 `19.683240 s` 推导延迟钩子。
 
-**产品侧候选面更新**：不再把 `ServiceA` 的 6.2 MB 周期分量与平台高度相加。候选转为 `ServiceH[ServiceK]` 的 2.36 MB 平台上界、release-ratio 中的其他 retained floor、`ServiceA` 的 `+788 kB` 谷底残渣，以及已由 `malloc_info` 确认的批量处理释放相位类；这些仍须 M7 区分 live/bin 后才能估 trim 收益。
+> **2026-09-01 C3 复核修正：** 原普查分类器按 a 优先，使同时越过两门的
+> `enlightenment` 整体落入排除。独立复算确认其 `120 / 1736 kB = 6.912442%`，
+> 未达到分类器固定的 10% 同量级门；现改为 a+b 双标签，不撤销 a 反信号，
+> 但把 `+1736 kB` floor 补入候选，并保留“已证实自动归还能力”告警。
+
+**产品侧候选面更新**：不再把 `ServiceA` 的 6.2 MB 周期分量与平台高度相加。候选转为 `ServiceH[ServiceK]` 的 2.36 MB 平台上界、`enlightenment` 的 `+1736 kB` a+b retained floor、release-ratio 中的其他 retained floor、`ServiceA` 的 `+788 kB` 谷底残渣，以及已由 `malloc_info` 确认的批量处理释放相位类；这些仍须 M7 区分 live/bin 后才能估 trim 收益。
 
 **必须保留的限制**：只读 smaps **无法判定谷底残渣或平台高度中的 ptmalloc bin 驻留量**，也不能唯一分解 `systrim`、`heap_trim`、arena discard 与 `munmap`。产品板不能注入，候选面必须在可注入环境以 `malloc_info` M7 验证。
 
@@ -339,11 +353,11 @@ L6 的收益直接取决于目标在触发时刻堆内**已释放但未归还**�
 ### 5.2 尚未确立的
 
 
-- **滞留型平台与 `ServiceA +788 kB` 谷底残渣中的 live/bin 比例**——只读 smaps 无法判定；须在可注入代理上以 `malloc_info` M7 建立同表型证据后再测 trim
+- **滞留型平台、`enlightenment +1736 kB` floor 与 `ServiceA +788 kB` 谷底残渣中的 live/bin 比例**——只读 smaps 无法判定；须在可注入代理上以 `malloc_info` M7 建立同表型证据后再测 trim；`enlightenment` 另有已证实自动归还能力，不能把整个 floor 预设成可 trim
 - **S3 的新实验合同**——原语义和两个旧待裁选项均已作废；若恢复，应只针对已确认 bins 驻留的表型，同时冻结 refault/锁停顿代价门
 - **产品板上的 trim 实证**——受平台约束(不能注入)无法直接验证,只能以代理口径估上界
 - **满足作用条件的真实产品目标是否存在**——已排除常驻 UI 组件、Chromium/Web 内容、.NET GC、GStreamer 硬解、TFLite;媒体软解类在产品上是否存在待查
-- 主动回收的代价面:trim 期全 arena 锁停顿与 refault 延迟(既有实验均在线程静止态)——与收益同批测量,确保净收益为正
+- 主动回收的产品代价面：S4 合成代理已测调用时间、下一周期 minflt/majflt，但 trim 期全 arena 锁停顿、业务 refault 延迟与能耗仍未测——须在真实并发负载中与收益同批测量
 - 产品板上的最终收益(受平台约束阻塞)
 - **PSI 北星指标目前无法安全激发**:产品板上气球压力保持 5 分钟,PSI 全程为 0(安全窗口内无信号),该指标暂不可用作裁决依据
 
@@ -357,12 +371,14 @@ L6 的收益直接取决于目标在触发时刻堆内**已释放但未归还**�
 
 > **前置已完成**:回收天花板与 `A_ceiling` 测量方法均已跑通(§3.4),单目标测量成本为分钟级。以下计划据此调整为**先广度搜索作用点,再定向工程化**。
 
-### 第 1 周:驻留表型与 M7 作用面确认（S2 基线已完成，S3 需新合同）
+### 第 1 周:驻留表型与 M7 作用面确认（S2/S4 合成代理已完成，S3 需新合同）
 > 产品 `ServiceA` 的周期峰谷已归因为自动归还反信号；产品板仍受只读边界约束，无法判定平台/残渣的 live/bin 属性。
 
 冻结 S2 已在测试板完成：约 6.4 MiB 每周期进入 rest/unsorted，且 16/16 周期没有 PD 自动下降。它作为 bin 驻留表型基线保留，不再承担产品峰谷拟合合同。后续第 1 周工作改为：
 
-- 以 `ServiceH[ServiceK]` 平台上界、`ServiceA +788 kB` 谷底残渣和既有批量处理释放相位类为候选清单；
+S4 已对该合成表型补齐 valley trim 的回收比例、调用时间和下一周期 faults；这些数字证明门控链在代理上闭合，但不替代产品候选的 M7 与业务代价测量。
+
+- 以 `ServiceH[ServiceK]` 平台上界、`enlightenment +1736 kB` a+b floor、`ServiceA +788 kB` 谷底残渣和既有批量处理释放相位类为候选清单；
 - 只有在可注入代理上取得 `malloc_info` M7（unsorted/rest 增长）且 PD 未自动下降后，才进入 trim A/B；
 - 同批冻结 trim 期间全 arena 锁停顿、再激活 minflt/majflt 与 zram 代价门；
 - 输出候选 retained surface 的实际 trim 回收比例，不再把产品 6.2 MB 周期峰谷代入收益估计。
@@ -395,7 +411,7 @@ L6 的收益直接取决于目标在触发时刻堆内**已释放但未归还**�
 | 静置态收益低 | **已归因**:非目标问题,是触发相位错误(§3.6) | 已修正相位判据(M7);后续测量一律在释放相位触发 |
 | 满足作用条件的真实目标是否普遍存在 | **部分回答**:常驻 UI 组件已排除(§3.7);批量处理型目标(媒体/Web 内容)结构上成立但真实案例待取得 | 以受控实验刻画通用规律 + 攻克 Chromium 作为真实案例 |
 | 托管运行时区间不可达(产品板 44.5 MiB) | 已量化 | 属 libc 层方案共同边界;如需覆盖须评估页级或运行时侧机制 |
-| 主动回收的再激活代价可能抵消收益 | 未测 | 第 2 周强制测量项 |
+| 主动回收的再激活代价可能抵消收益 | **合成代理部分测量**：下一周期额外 `+1351/+1465 minflt`、`majflt=0`；业务延迟/能耗与并发锁停顿未测 | 第 2 周在真实并发目标上强制测量 |
 | 产品落地需要发布通道与代码 owner | 未定 | 第 3 周输出接口需求,交由组织层面决策 |
 | 测试板与产品板不可数字外推 | 已知 | Demo 数字定位为"机制有效性与量级证明",非产品收益承诺 |
 | 产品板存在既有进程崩溃现象 | 已观察到 | 建议向产品确认是否已知问题,可能污染后续实验噪声底 |

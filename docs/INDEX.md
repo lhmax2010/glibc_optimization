@@ -13,6 +13,7 @@ This is the review entry point for the project. Start with the consolidated stat
 5. [`product_plateau_probe.md`](product_plateau_probe.md) and [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md): read-only product-process allocation shapes.
 6. [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md): final cyclic-fall attribution, timing-artifact correction, and product phenotype census.
 7. [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md): frozen S2 board replication and its retained-bin baseline evidence.
+8. [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md): new-image instantaneous-release anchors and retained-bin trim effect/refault cost.
 
 ## Experiment Timeline
 
@@ -53,6 +54,8 @@ This is the review entry point for the project. Start with the consolidated stat
 | 2026-08-31 | TEST_BOARD | Ran frozen S2 cyclic replication for mixed and medium-only | Timing and M7 bin release passed while PD stayed resident; the run-time stop is retained historically, and the result is now the bin-residency baseline | [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md) |
 | 2026-08-31 | Host | Independently recomputed the product cyclic fall and stopped on the minflt wording disagreement | Upheld the PD/zram/majflt swap-exclusion chain, corrected rise-edge minflt to 698–10613, and deferred conclusion edits | [`cyclic_fall_mechanism_attribution_20260831.md`](cyclic_fall_mechanism_attribution_20260831.md) |
 | 2026-09-01 | Host | Resolved F2/F3, audited the timing artifact, and completed the product phenotype census | Reclassified the ServiceA periodic fall as an L6 anti-signal, replaced 19.683 s with a ≤about 9 s sampling upper bound, and retained S2 as a bin-residency baseline | [`cyclic_fall_f2_f3_validation_disagreement_20260901.md`](cyclic_fall_f2_f3_validation_disagreement_20260901.md), [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md) |
+| 2026-09-01 | Host | Rechecked the C3 classifier’s a/b overlap | Restored `enlightenment +1736 kB` as a retained-floor candidate while keeping its 120 kB automatic drawdown as an anti-signal and warning | [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md) |
+| 2026-09-01 | TEST_BOARD | Ran two new-image reference anchors and eight retained-bin trim/control cells | Anchors were 51.074%/50.388%; valley trim reclaimed 80.18–85.45% of released payload for about 1.2 ms median with +1351/+1465 next-cycle minflt and zero majflt | [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md) |
 
 ## Specifications And Designs
 

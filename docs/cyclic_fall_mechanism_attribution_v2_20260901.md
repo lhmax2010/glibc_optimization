@@ -8,6 +8,14 @@
 - 独立实现：[`analyze_attribution.py`](../tools/runners/cyclic_fall_attribution_20260901/analyze_attribution.py)、[`audit_phenotypes.py`](../tools/runners/cyclic_fall_attribution_20260901/audit_phenotypes.py)
 - 历史衔接：v1 的 minflt 停止门记录保留在 [`cyclic_fall_mechanism_attribution_20260831.md`](cyclic_fall_mechanism_attribution_20260831.md)；F2/F3 首轮数值分歧保留在 [`cyclic_fall_f2_f3_validation_disagreement_20260901.md`](cyclic_fall_f2_f3_validation_disagreement_20260901.md)
 
+> **2026-09-01 C3 复核追注：** `enlightenment` 同时越过 a 门和 b 门：冻结
+> 10% 门为 `79.2 kB`，自动回撤 `120 kB`，而同 PID 段 retained floor 为
+> `+1736 kB`；回撤仅为 retained 的 `6.912442%`。因此修正原 a 优先分类为
+> **a+b 双标签**：`120 kB` 自动回撤分量按反信号排除，`+1736 kB` floor 进入
+> L6 候选登记。`同量级` 在分类器中固定为回撤达到 floor 的 10%（相差不满
+> 一个十进数量级）；`6.912442%` 未达到。同步附“已证实自动归还能力”告警，进入 trim 前仍必须用 M7
+> 证明 floor 中确有 allocator 空闲驻留。原单标签表述保留在 Git 历史中。
+
 ## 1. 裁决摘要
 
 1. `ServiceA` 八轮 glibc-heap Private_Dirty 下降为 `4032–9796 kB`，中位 `6212 kB`；同窗没有 zram `orig` 正增长，进程 `majflt` 始终为 `167`。换出路径被排除。
@@ -96,7 +104,7 @@ R6 的唯一 zram 变化是 `orig` 与 `used` 同向减少，不支持 swap-out�
 严格判别器保留三类原语义：
 
 - `a` 自回收：达到探针既有响应门的 PD 下降，且同窗 zram `orig` 无正增长、`majflt=0`；这是 L6 反信号。
-- `b` 滞留：达到响应门的 retained floor / 平台，且无同量级自动下降；记录高度作为候选上界。
+- `b` 滞留：达到响应门的 retained floor / 平台；若同时存在 a 分量，两者按分量组合标注，而不是用 a 优先级抹除剩余 floor。`同量级` 固定为自动下降达到 retained floor 的 10%（相差不满一个十进数量级）；达到该门时不能把整体当成稳定 b 面。
 - `c` 无响应：PD 逐字节恒定；维持排除。
 
 为避免强行归类，另保留 `N`（有非零波动，但低于冻结响应门）和 `U`（PID、zram/majflt 或跨探针形态混杂）。release-ratio 沿用 S1 基线 10% 门（重启后无 S1 的新 PID 才用段首），retained 高度只取同 PID 段末减段首；plateau 沿用 P0 末值 5% 门。没有根据结果调门槛。
@@ -112,7 +120,7 @@ R6 的唯一 zram 变化是 `orig` 与 `used` 同向减少，不支持 swap-out�
 | `cynara` | N | -4 / 4 | -10903552 B / 0 | 低于门 |
 | `AppProcA` | N | 0 / 4 | 0 / 0 | 低于门 |
 | `systemd` | N | +24 / 0 | 0 / 0 | 单调但低于门 |
-| `enlightenment` | a | +1736 / 120 | -1761280 B / 0 | material drawdown；zram 只下降、无 majflt，周期分量排除 |
+| `enlightenment` | **a + b** | **+1736 / 120** | -1761280 B / 0 | `120 kB` 自动回撤仅为 retained 的 `6.912442%`：回撤分量排除，`+1736 kB` floor 入候选；告警：已证实自动归还能力 |
 | `buxton2d_worker` | b | +376 / 0 | 0 / 0 | 阶梯滞留候选 |
 | `ServiceD` | b | +408 / 0 | 0 / 0 | 阶梯滞留候选 |
 
@@ -147,7 +155,7 @@ PD 可见下降沿是 L6 反信号：该周期分量已经离开私有脏页集�
 
 候选面改为：
 
-1. 滞留型表型：release-ratio 的阶梯/retained floor，以及 `ServiceH[ServiceK]` 的平台高度；其中 `2.36 MB` 是本轮可见上界，不等同于 allocator 空闲字节。
+1. 滞留型表型：release-ratio 的阶梯/retained floor，以及 `ServiceH[ServiceK]` 的平台高度；其中 `enlightenment +1736 kB` 是 a+b 双标签 floor（已证实另有 `120 kB` 自动回撤能力），`ServiceH[ServiceK] 2.36 MB` 是平台可见上界，二者都不等同于 allocator 空闲字节。
 2. `ServiceA` 谷底残渣：P0 `3464` → R8 `4252 kB`，`+788 kB`；smaps 无法区分 live/bin，只能作为待 M7 验证的候选。
 3. 既有批量处理释放相位类：以 `malloc_info` 已确认 free 进入 unsorted/rest、且 PD 未自动下降的相位为主证据。
 

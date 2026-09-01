@@ -1,0 +1,11 @@
+group	profile	trim_at	rep	samples	overruns	pid_count	minflt_delta	majflt_delta
+A	mixed	idle-trim	1	41	0	1	33187	0
+A	medium-only	idle-trim	1	41	0	1	27549	0
+B	mixed	valley	1	96	0	1	4748	0
+B	mixed	valley	2	96	0	1	4747	0
+B	mixed	valley	3	96	0	1	4748	0
+B	mixed	none	1	96	0	1	3391	0
+B	medium-only	valley	1	96	0	1	4690	0
+B	medium-only	valley	2	96	0	1	4689	0
+B	medium-only	valley	3	96	0	1	4687	0
+B	medium-only	none	1	96	0	1	3218	0
