@@ -1,0 +1,46 @@
+{
+  "inputs": {
+    "timeseries_sha256": "fc0d39e4e8a4ddc7fdc068291fdb82310b53939cc43fb94123f262a4e38776ae",
+    "keys_sha256": "ec676e9abac5fb8951f2805df62ae14c394d00902fd8cf14b7a98718749f6344",
+    "published_analyzer": {
+      "sha256": "589629a65f8708757983baa642a70022eef99463c51b4b8d91646c9d93645183",
+      "fall_index_line": 115,
+      "fall_index_source": "fall_index = next(",
+      "valley_line": 119,
+      "valley_source": "valley = min(sequence[fall_index:], key=lambda row: row[\"glibc_heap_pd_kb\"])",
+      "peak_band_line": 127,
+      "peak_band_source": "peak_seconds = fall[\"elapsed_s\"] - high_entry[\"elapsed_s\"]",
+      "fall_edge_line": 128,
+      "fall_edge_source": "fall_seconds = valley[\"elapsed_s\"] - fall[\"elapsed_s\"]"
+    }
+  },
+  "quality": {
+    "serviceA_rows": 660,
+    "serviceA_pid_count": 1,
+    "planned_start_estimate_spread_ns": 1180
+  },
+  "F2": {
+    "large_step_threshold_kb": 100,
+    "large_step_count": 32,
+    "growth_step_count": 18,
+    "release_step_count": 14,
+    "opposite_direction_count": 2,
+    "opposite_direction_abs_ratios": [
+      0.023729,
+      0.047414
+    ],
+    "near_equal_within_20pct_count": 0,
+    "near_equal_within_50pct_count": 0,
+    "release_steps_with_total_pd_fall": 14
+  },
+  "F3": {
+    "published_fall_edge_min_s": 4.166497,
+    "published_fall_edge_max_s": 24.460553,
+    "published_fall_edge_median_s": 19.68324,
+    "valley_band_entry_delay_definition": "observed peak to first sample <= valley + 5% * (peak - valley)",
+    "valley_band_entry_delay_is_sampling_upper_bound": true,
+    "valley_band_entry_delay_min_s": 5.223693,
+    "valley_band_entry_delay_max_s": 8.910626,
+    "valley_band_entry_delay_median_s": 8.179733
+  }
+}
