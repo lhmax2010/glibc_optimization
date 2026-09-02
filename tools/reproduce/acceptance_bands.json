@@ -1,0 +1,96 @@
+{
+  "schema": "glibc-memopt-demo.acceptance.v2",
+  "effective_date": "2026-09-02",
+  "deterministic_items": {
+    "released_payload_bytes": {
+      "comparison": "byte-exact",
+      "source": "data/raw/s4_retention_20260901/b_cycles.tsv"
+    },
+    "reclaimed_bytes_page_alignment": {
+      "alignment_bytes": 4096,
+      "comparison": "exact"
+    },
+    "next_cycle_majflt": {
+      "expected": 0,
+      "comparison": "exact"
+    },
+    "zram_deltas": {
+      "fields": [
+        "original_data_size",
+        "compressed_data_size",
+        "mem_used_total"
+      ],
+      "expected": 0,
+      "comparison": "exact"
+    },
+    "dmesg_oom_lmk_matches": {
+      "expected": 0,
+      "comparison": "exact"
+    }
+  },
+  "explicitly_nondeterministic": {
+    "trim_reclaimed_bytes": {
+      "reason": "A fixed seed does not pin glibc arena assignment; a single repetition can shift by approximately 1 MiB.",
+      "replacement_acceptance": "s4_b_reclaim_pct_repeat_median"
+    }
+  },
+  "tolerance_bands": {
+    "s4_a_anchor_reclaim_pct": {
+      "center_pct": 49.0,
+      "plus_minus_pp": 4.0,
+      "unit": "one frozen anchor cell per profile"
+    },
+    "s4_b_reclaim_pct_repeat_median": {
+      "center_pct": 80.0,
+      "plus_minus_pp": 5.0,
+      "repetitions": 3,
+      "aggregation": "median of each repetition's two-cycle median, evaluated separately per profile",
+      "unit": "profile"
+    },
+    "release_point_trim_single_call_ms": {
+      "max_exclusive_ms": 5.0,
+      "applies_to": [
+        "s4:B:valley",
+        "gst:trim-at-loop-release"
+      ]
+    },
+    "s4_a_anchor_trim_single_call_ms": {
+      "max_exclusive_ms": 20.0,
+      "applies_to": [
+        "s4:A:mixed",
+        "s4:A:medium-only"
+      ],
+      "hook_cost_metric": false
+    },
+    "gst_business_p99": {
+      "decision": "visible only when the trim-minus-none repeat-median p99 exceeds the none-arm repeat dispersion band",
+      "expected_direction": "not-visible"
+    }
+  },
+  "stability_monitor": {
+    "version": 2,
+    "unregistered_attributable_alert": "FAIL",
+    "unattributed_or_foreign_alert": "REPORT_ONLY",
+    "expected_alerts": [
+      {
+        "id": "s4-a-alloc-bench-cpu-relative",
+        "workload": "S4 A anchors",
+        "binary_basename": "alloc_bench.armv7l",
+        "trigger_reason_contains": "cpu.relative",
+        "registered_windows": [
+          "A/mixed/rep1",
+          "A/medium-only/rep1"
+        ],
+        "max_count_total": 2,
+        "classification": "benign",
+        "required_disposition": [
+          "record",
+          "archive",
+          "clean",
+          "post-cleanup-recheck"
+        ],
+        "verdict_when_matched": "EXPECTED"
+      }
+    ]
+  }
+}

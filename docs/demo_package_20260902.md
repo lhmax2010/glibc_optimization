@@ -4,19 +4,24 @@
 # glibc 内存优化 Demo 演示包
 
 - 日期：2026-09-02
-- 用途：演示日单入口；不做新测量，只串联已入库叙事、数字、复算命令与边界
+- 用途：演示日入口说明；图文总入口是可离线发送的
+  [`demo_report.html`](demo_report.html)，本文件保留讲解顺序、命令和问答脚本
 - 现场依赖：本仓库、Python 3；L1 演示不连接任何板端
 - 完整复现手册：[`HQ Demo 复现指南`](demo_reproduction_guide_20260901.md)
+- 一键复现：[`tools/reproduce/reproduce.sh`](../tools/reproduce/reproduce.sh)
 
 <a id="delivery-contracts"></a>
 ## 0. 交付合同
 
 | 交付要求 | 可审计实现 | 验收入口 |
 |---|---|---|
-| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 从身份门、资产哈希到板端清理给出可照抄命令 | [`复现指南 L1`](demo_reproduction_guide_20260901.md#l1-servicea)、[`L2`](demo_reproduction_guide_20260901.md#l2-run) |
-| 同板同镜像多组对照 | S4 在同一 RPI4/Tizen 镜像上含两个锚点格与 `trim/none` 对照；gst 含两臂各三重复 | [`S4 冻结矩阵`](s4_reference_and_retention_trim_20260901.md#1-执行前冻结规格)、[`gst 冻结矩阵`](gst_trim_cost_20260901.md#1-建连前冻结规格) |
-| 结果说明价值 | 反信号先排除无需重复回收的对象，M7 阳性后才在释放相位 trim；效果、faults、业务 p99 与边界同时报告 | [`叙事文档 §4–§6`](demo_narrative_20260901.md#4-门控链与测试板实证)、[`gst 判断`](gst_trim_cost_20260901.md#6-判断) |
-| 同条件复现同数据 | 冻结 payload、页对齐、哈希和结构完整性按字节/逐值验收；调度、回收量与时延使用预登记容差带。本次 HQ 彩排证明 payload 可字节复现，但 S4 回收量仅 `10/12` 个 trim 周期逐字节一致；因而该合同的字节级部分只对指南明列的确定性字段成立 | [`L2 确定性项/容差项`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`HQ 彩排实证`](demo_rehearsal_20260902.md#s4-acceptance)、[`L1 逐字节 cmp`](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
+| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 从身份门、资产哈希到板端清理给出可照抄命令 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南快速通道`](demo_reproduction_guide_20260901.md#workflow-fast-path)、[`workflow verify`](../tools/reproduce/README.md) |
+| 同板同镜像多组对照 | S4 在同一 RPI4/Tizen 镜像上含两个锚点格与 `trim/none` 对照；gst 含两臂各三重复 | [`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
+| 结果说明价值 | 反信号先排除无需重复回收的对象，M7 阳性后才在释放相位 trim；效果、faults、业务 p99 与边界同时报告 | [`HTML 自动归还`](demo_report.html#finding-one)、[`HTML 门控效果`](demo_report.html#s4)、[`HTML 边界`](demo_report.html#boundaries) |
+| 同条件复现同数据 | payload、页对齐、majflt、zram 和 OOM/LMK 按确定性项验收；回收字节不作硬门，S4 B 按每档三重复中位 `±5 pp`，时延与 p99 按预登记带。彩排的 rep2 约 `1 MB` 台阶说明同 seed 不钉 arena 指派 | [`HTML 边界`](demo_report.html#boundaries)、[`L2 验收带`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`机器配置`](../tools/reproduce/acceptance_bands.json) |
+
+离线 HTML、手工指南与 workflow 是同一合同的三个入口：HTML 用于演示，指南是流程
+权威参考，workflow 将其机械化并给出可机读判定；三者不各自维护第二套统计口径。
 
 ## 1. 建议演示流程
 

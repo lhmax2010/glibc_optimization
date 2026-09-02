@@ -18,6 +18,7 @@
 - Demo 决策叙事入口：[`demo_narrative_20260901.md`](demo_narrative_20260901.md)（逐数字复现入口由文内链接到 HQ 指南）。
 - 产品侧落点与三条件硬门：[`product_landing_recommendation_20260901.md`](product_landing_recommendation_20260901.md)。
 - 产品 M7 路径评估与演示日入口：[`product_m7_feasibility_20260902.md`](product_m7_feasibility_20260902.md)、[`demo_package_20260902.md`](demo_package_20260902.md)。
+- HQ 最终交付入口：[`demo_report.html`](demo_report.html)（离线图文）与 [`reproduce.sh`](../tools/reproduce/reproduce.sh)（host verify / 完整板上 workflow）。
 
 > **历史状态保留（2026-08-31，v2.6，现已被上条裁决取代）：** 当时 S2 因未复现产品 PD 峰谷而判定不成立，S3 等待 PM 在“降格为合成 bin 驻留 trim 扫描”与“修订 S2 代理方案”之间裁决。
 

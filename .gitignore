@@ -2,6 +2,7 @@
 .migration-local/
 desensitize_map.tsv
 temp/
+tools/reproduce/artifacts/
 
 # Build products are reproducible from the published sources.
 *.armv7l

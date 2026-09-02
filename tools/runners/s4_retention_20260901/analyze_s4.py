@@ -126,10 +126,114 @@ def dmesg_increment(before: list[str], after: list[str]) -> tuple[list[str], str
     return [line for line in after if line not in before_set], "set-difference-fallback"
 
 
+def read_tsv(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream, delimiter="\t"))
+    require(bool(rows), f"empty public table: {path}")
+    return rows
+
+
+def replay_public(public: Path, output: Path) -> None:
+    """Validate public S4 derivatives and emit workflow acceptance inputs."""
+    a_rows = read_tsv(public / "a_cells.tsv")
+    b_cell_rows = read_tsv(public / "b_cells.tsv")
+    b_cycle_rows = read_tsv(public / "b_cycles.tsv")
+    external_rows = read_tsv(public / "external_summary.tsv")
+    health = json.loads((public / "health.json").read_text(encoding="utf-8"))
+    require(len(a_rows) == 2, f"A cell count mismatch: {len(a_rows)}")
+    require(len(b_cell_rows) == 8, f"B cell count mismatch: {len(b_cell_rows)}")
+    require(len(b_cycle_rows) == 16, f"B cycle count mismatch: {len(b_cycle_rows)}")
+    require(len(external_rows) == 10, f"external summary count mismatch: {len(external_rows)}")
+    require({row["profile"] for row in a_rows} == {"mixed", "medium-only"}, "A profile set mismatch")
+    expected_cells = {
+        (profile, trim_at, str(rep))
+        for profile in ("mixed", "medium-only")
+        for trim_at, reps in (("valley", (1, 2, 3)), ("none", (1,)))
+        for rep in reps
+    }
+    actual_cells = {(row["profile"], row["trim_at"], row["rep"]) for row in b_cell_rows}
+    require(actual_cells == expected_cells, "B public cell set mismatch")
+    require(all(int(row["exit_code"]) == 0 for row in a_rows + b_cell_rows), "non-zero public exit code")
+
+    payloads: dict[tuple[str, int], set[int]] = {}
+    trim_rows: list[dict[str, str]] = []
+    for row in b_cycle_rows:
+        profile, cycle = row["profile"], int(row["cycle"])
+        require(profile in ("mixed", "medium-only") and cycle in (1, 2), "bad B profile/cycle")
+        payloads.setdefault((profile, cycle), set()).add(int(row["released_payload_bytes"]))
+        reclaimed_kb = int(row["trim_reclaimed_kb"])
+        released = int(row["released_payload_bytes"])
+        require(released > 0, "zero released payload")
+        expected_pct = round(reclaimed_kb * 1024 * 100 / released, 6)
+        require(float(row["trim_reclaim_pct_of_released"]) == expected_pct, "B reclaim percentage mismatch")
+        if row["trim_at"] == "valley":
+            require(int(row["trim_return"]) in (0, 1) and float(row["trim_elapsed_ms"]) > 0, "bad trim row")
+            trim_rows.append(row)
+        else:
+            require(int(row["trim_return"]) == -1 and reclaimed_kb == 0, "bad none row")
+    require(all(len(values) == 1 for values in payloads.values()), "released payload drift in public table")
+    require(len(trim_rows) == 12, f"trim cycle count mismatch: {len(trim_rows)}")
+
+    profile_medians: dict[str, float] = {}
+    for profile in ("mixed", "medium-only"):
+        repetition_values = [
+            float(row["trim_reclaim_pct_of_released_median"])
+            for row in b_cell_rows
+            if row["profile"] == profile and row["trim_at"] == "valley"
+        ]
+        require(len(repetition_values) == 3, f"{profile} repetition count mismatch")
+        profile_medians[profile] = round(statistics.median(repetition_values), 6)
+
+    summary = {
+        "schema": "s4-public-replay.v1",
+        "a_anchor_reclaim_pct": {row["profile"]: float(row["reclaim_pct_of_pretrim"]) for row in a_rows},
+        "a_anchor_trim_max_ms": max(float(row["trim_elapsed_ms"]) for row in a_rows),
+        "b_reclaim_pct_repeat_median": profile_medians,
+        "b_release_point_trim_max_ms": max(float(row["trim_elapsed_ms"]) for row in trim_rows),
+        "released_payload_bytes": {
+            profile: [next(iter(payloads[(profile, cycle)])) for cycle in (1, 2)]
+            for profile in ("mixed", "medium-only")
+        },
+        "reclaimed_4k_aligned_count": sum(
+            (int(row["trim_reclaimed_kb"]) * 1024) % 4096 == 0 for row in trim_rows
+        ),
+        "reclaimed_4k_aligned_total": len(trim_rows),
+        "next_cycle_majflt_max": max(int(row["next_cycle_majflt"]) for row in b_cycle_rows),
+        "zram_deltas": {
+            "original_data_size": int(health["zram_original_data_size_delta"]),
+            "compressed_data_size": int(health["zram_compressed_data_size_delta"]),
+            "mem_used_total": int(health["zram_mem_used_total_delta"]),
+        },
+        "dmesg_oom_lmk_matches": len(health["oom_lmk_matches"]),
+        "governor_restored_schedutil_count": int(health["governor_restored_schedutil_count"]),
+    }
+    output.mkdir(parents=True, exist_ok=True)
+    with (output / "acceptance_input.json").open("w", encoding="utf-8") as stream:
+        json.dump(summary, stream, indent=2, sort_keys=True)
+        stream.write("\n")
+    anchors = summary["a_anchor_reclaim_pct"]
+    medians = summary["b_reclaim_pct_repeat_median"]
+    print(f"replayed A={len(a_rows)} cells B={len(b_cell_rows)} cells B_cycles={len(b_cycle_rows)}")
+    print(f"A anchors mixed={anchors['mixed']:.6f}% medium-only={anchors['medium-only']:.6f}%")
+    print(f"B repeat-medians mixed={medians['mixed']:.6f}% medium-only={medians['medium-only']:.6f}%")
+    zram = summary["zram_deltas"]
+    print(
+        f"deterministic payload_sets={len(payloads)} aligned={summary['reclaimed_4k_aligned_count']}/{summary['reclaimed_4k_aligned_total']} "
+        f"majflt_max={summary['next_cycle_majflt_max']} "
+        f"zram={zram['original_data_size']},{zram['compressed_data_size']},{zram['mem_used_total']} "
+        f"oom_lmk={summary['dmesg_oom_lmk_matches']}"
+    )
+
+
 parser = argparse.ArgumentParser()
-parser.add_argument("--pull", required=True, type=Path)
+mode = parser.add_mutually_exclusive_group(required=True)
+mode.add_argument("--pull", type=Path)
+mode.add_argument("--replay-public", type=Path)
 parser.add_argument("--output", required=True, type=Path)
 args = parser.parse_args()
+if args.replay_public is not None:
+    replay_public(args.replay_public, args.output)
+    raise SystemExit(0)
 pull = args.pull
 output = args.output
 validate_pull_integrity(pull)

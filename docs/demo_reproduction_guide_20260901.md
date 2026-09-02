@@ -12,6 +12,31 @@
 S4 与真实多线程 GStreamer release 实验；L3 只在需要重新取得产品侧时序时执行，
 不是 L1/L2 的前置。
 
+<a id="workflow-fast-path"></a>
+## Workflow 快速通道
+
+仓库提供单入口 [`tools/reproduce/reproduce.sh`](../tools/reproduce/reproduce.sh)，它只编排
+本指南链接的既有 harness/分析器，统计逻辑仍由各轮分析器唯一维护：
+
+```sh
+# 默认模式；host-only，分钟级
+bash tools/reproduce/reproduce.sh
+
+# 与上行等价
+bash tools/reproduce/reproduce.sh verify
+
+# 完整 L2；需本节规定的 RPI4、镜像、SDB 与内部产物包，小时级
+bash tools/reproduce/reproduce.sh board --ip <addr>
+```
+
+`verify` 依次执行全部 L1 复算与 `cmp`、重建离线 HTML、检查本地链接、运行 host
+测试，并输出逐项 `PASS/FAIL`；任一失败返回非零。`board` 执行身份/环境/能力门、资产
+哈希、S4 与 gst 冻结矩阵、拉回解析、v2 健康门、精确清理和 governor 复核。两种模式
+共同读取机器可读的
+[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)：`EXPECTED` 只表示命中
+预登记告警，板上仍必须完成归档/清理/复核；`REPORT_ONLY` 表示非我方或归属不明状态，
+不做处置；`FAIL` 使总流程失败。手工步骤仍是流程权威参考，可与 workflow 输出互验。
+
 ## L1 · 派生数字复算
 
 ### 通用环境
@@ -397,10 +422,19 @@ grep -Fx DONE_S4_CONTROLLER "$S4_HOST/remote_invoke.txt"
 ```
 
 自 2026-09-02 起，每个板上轮次还必须在负载前后分别保存
-stability-monitor/livedump 的精确文件清单和计数。若有新增告警，须从归档内部
-`dump_reason` 与 `info.json` 核对 PID、进程名和 executable path：只有可归因本轮
-PID/二进制的新增告警构成健康门硬失败，其他告警原样报告且不做处置。
-本项与 dmesg OOM/LMK、zram 和 governor 门并列，不得因数值分析成功而忽略。
+stability-monitor/livedump 的精确文件清单和计数。v1 规则保留为历史判定；v2 新增
+“预登记预期告警”类。新增件必须从归档内部 `dump_reason` 与 `info.json` 核对 PID、
+进程名、executable path、发生窗口与数量：与预登记的触发理由、窗口、owner 和数量
+上界全部匹配时，记录、归档、按精确路径清理并复核后记为 `EXPECTED` 通过；可归因
+本轮但未登记或超界的告警仍为 `FAIL`；非本轮或归属不明告警只记 `REPORT_ONLY`，
+原样报告且不处置。本项与 dmesg OOM/LMK、zram 和 governor 门并列，不得因数值分析
+成功而忽略。机器可读规则见
+[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)，报告模板与归档/清理
+命令见 [`health_gate_template.md`](../tools/reproduce/health_gate_template.md)。
+
+首条预登记为 S4 A 组：`alloc_bench.armv7l` 在 `A/mixed/rep1` 与
+`A/medium-only/rep1` 窗口因 `cpu.relative` 产生的 livedump 合计至多 `2` 个，归类为
+良性预期告警。触发理由、二进制、窗口或数量任一不符都不在该登记覆盖范围内。
 
 运行完成后在固定目录内生成 hash/size 清单，拉回并用发布的分析器验证；任何一项
 失败都先保留 host 证据，不把该格记为完成：
@@ -435,25 +469,40 @@ grep -Fx DONE_GOVERNOR_FINAL "$S4_HOST/governor_final.txt"
 <a id="l2-acceptance"></a>
 ### 验收带：确定性项与容差项
 
-确定性项来自冻结 payload、页粒度及健康门
+验收配置只维护在
+[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)；本节是它的人工可读
+解释。确定性项来自冻结 payload、页粒度及健康门
 ([逐周期 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)、
 [健康 JSON](../data/raw/s4_retention_20260901/health.json))：
 
 - released payload 字节数必须与相同 profile/cycle 的冻结值逐值一致；公开基准为
   mixed `5742256/6566672 B`、medium-only `6288384/6293504 B`。
-- trim 回收量必须是 `4 kB` 页粒度的整数倍。
+- trim 回收量必须是 `4 kB` 页粒度的整数倍，但**回收量字节值本身不是确定性项**。
 - 下一周期 `majflt=0`；zram `orig/compressed/mem_used_total` 三项 `Δ=0`。
-- dmesg 增量中 OOM/LMK 必须零命中，bench/sampler/控制器必须均有远端
-  `RC=0` 和对应 `DONE_*`。
+- dmesg 增量中 OOM/LMK 必须零命中。
+
+上述五类（payload 字节、4 kB 对齐、majflt、zram、OOM/LMK）是固定的数值确定性
+清单。bench/sampler/controller 的远端 `RC=0/DONE_*`、JSON/XML 可解析、manifest 和
+现场恢复属于流程完整性前置；任一失败同样终止该格，但不另行扩充“确定性数字”清单。
 
 容差项是本指南的跨板/跨批次建议判据，不是新增测量值；中心值依据
 [`S4 结果`](s4_reference_and_retention_trim_20260901.md#3-a-组结果新镜像锚点)：
 
 - A 组瞬时释放回收率：`49% ±4 pp`。
-- B 组 trim 回收/已释放：按每个 profile 的重复中位验收 `80% ±5 pp`，不把单格极值
-  当作硬上限。
-- 单次 trim 调用：`<5 ms`。
+- B 组 trim 回收/已释放：验收单位固定为每个 profile 的三重复中位，即先取每个重复
+  两周期的中位、再取三重复中位，以 `80% ±5 pp` 验收；不以单重复或单周期的回收
+  字节值作硬门。
+- 释放点 trim（B 组 valley 与 gst loop-release）：每次调用 `<5 ms`。
+- A 组瞬时锚点 trim：每次调用 `<20 ms`；它是大释放锚点的完成时延，不是运行时
+  钩子代价数字。
 - 下一周期 minflt 增量应与回收页数处于同一数量级；仍要求 majflt 为零。
+
+固定 `seed` 决定负载随机序列，但不钉死 glibc arena 指派。因调度与 arena 归属变化，
+单重复可出现约 `1 MB` 的页粒度台阶；HQ 彩排的 medium-only `rep2` 两个周期就是该
+实例，分别比发布批少 `1024000 B`。这不改写发布数字，也不把差异“放宽”为任意波动：
+预登记协议用每档三重复中位和 `±5 pp` 带吸收该离散，payload 字节、4 kB 对齐、
+majflt、zram 与 OOM/LMK 五类确定性门仍须精确成立。实例证据见
+[`彩排报告 §8.2`](demo_rehearsal_20260902.md#82-s4-验收带对照)。
 
 MemTotal 或 kernel 小版本变化不自动否决以上机制判据，但必须记录为批次协变量。
 glibc 主版本必须属于 `2.40` 系；若为 `2.41+`，停止沿用本基线，并按
@@ -572,9 +621,9 @@ JSON 均可解析且 PID 恒定；bench/sampler/controller 全部退出 0；dmes
 最终均为 `schedutil`；板端目录已删除。zram 三列必须取得同批前后值并报告 delta，不把
 跨批次绝对值当作常量。
 
-同一 stability-monitor 健康门也适用于 gst：运行前后记录告警清单与计数，
-对新增件逐一做 PID/进程/可执行路径归因。可归因本轮的新增告警是健康门
-硬失败；非本轮或归属不明的新增告警只报告、不动。
+同一 stability-monitor v2 健康门也适用于 gst：运行前后记录告警清单与计数，
+对新增件逐一做 PID/进程/可执行路径归因。当前没有 gst 预登记项，因此可归因本轮的
+新增告警仍是 `FAIL`；非本轮或归属不明的新增告警记 `REPORT_ONLY`、只报告不动。
 
 当前已执行批次的附加 capture-meta `majflt` 因 POSIX sh `$10` 展开错误而统一为 `S0`；
 发布 controller 已改用 `${10}`。分析器只允许整批 306 对均为这一已知缺陷或整批均为
@@ -651,5 +700,7 @@ sdb -s "$PRODUCT_SERIAL" shell 'test /tmp/product_cyclic_target_probe_20260814 =
 - 链接先于结果冻结的参数规格，禁止依据结果回改；
 - 分开列确定性验收项与跨板/跨批次容差带；
 - 给出身份门、完整性、退出标志、现场恢复与清理的判定方法。
-- 给出 stability-monitor 运行前后告警计数与新增归因；本轮 PID/二进制引发的
-  新告警按健康门硬失败报告，其他告警不得擅自清理。
+- 给出 stability-monitor 运行前后告警计数与新增归因；按 v2 区分预登记
+  `EXPECTED`、未登记我方 `FAIL` 与非我方/不明 `REPORT_ONLY`。预期告警必须满足理由、
+  窗口、owner 和数量上界，并完成归档、精确清理与二次复核；登记表与报告字段见
+  [`health_gate_template.md`](../tools/reproduce/health_gate_template.md)。

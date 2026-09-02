@@ -17,6 +17,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ANALYZER = HERE / "analyze_s4.py"
 SAMPLER = HERE / "sample_smaps_1s.sh"
+REPO_ROOT = HERE.parents[2]
+PUBLIC_EVIDENCE = REPO_ROOT / "data/raw/s4_retention_20260901"
 
 
 def write_external(path: Path) -> None:
@@ -157,6 +159,30 @@ class AnalyzerTests(unittest.TestCase):
             ["python3", str(ANALYZER), "--pull", str(pull), "--output", str(output)],
             text=True, capture_output=True, check=False, env=env,
         )
+
+    def run_replay(self, public: Path, output: Path) -> subprocess.CompletedProcess[str]:
+        env = os.environ.copy()
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+        return subprocess.run(
+            ["python3", str(ANALYZER), "--replay-public", str(public), "--output", str(output)],
+            text=True, capture_output=True, check=False, env=env,
+        )
+
+    def test_public_replay_emits_acceptance_inputs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "replay"
+            result = self.run_replay(PUBLIC_EVIDENCE, output)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(
+                result.stdout,
+                "replayed A=2 cells B=8 cells B_cycles=16\n"
+                "A anchors mixed=51.074077% medium-only=50.387886%\n"
+                "B repeat-medians mixed=81.661264% medium-only=84.446566%\n"
+                "deterministic payload_sets=4 aligned=12/12 majflt_max=0 zram=0,0,0 oom_lmk=0\n",
+            )
+            summary = json.loads((output / "acceptance_input.json").read_text())
+            self.assertEqual(summary["released_payload_bytes"]["mixed"], [5742256, 6566672])
+            self.assertEqual(summary["b_reclaim_pct_repeat_median"]["medium-only"], 84.446566)
 
     def test_complete_matrix_validates(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
