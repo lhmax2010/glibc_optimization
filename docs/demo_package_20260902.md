@@ -53,7 +53,7 @@ python3 data/raw/cyclic_fall_mechanism_attribution_20260831/recompute_cyclic.py 
   --output "$OUT/cyclic"
 ```
 
-重点读最后两行：`median_P-V_kB 6212.0`、全窗口 zram 总变化，以及
+重点读最后三行：`median_P-V_kB 6212.0`、全窗口 zram 总变化，以及
 `missing_rows 0`/各目标 PID 不变。再运行：
 
 ```sh
@@ -99,6 +99,15 @@ for profile in ("mixed", "medium-only"):
     extra = int(cells["valley"]["cycle1_next_minflt"]) - int(cells["none"]["cycle1_next_minflt"])
     med = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
     print("%s trim_ms_median=%s next_minflt_extra=%+d" % (profile, med, extra))
+payloads = {}
+for r in c:
+    payloads.setdefault((r["profile"], int(r["cycle"])), set()).add(int(r["released_payload_bytes"]))
+assert all(len(values) == 1 for values in payloads.values())
+print("released_payload_bytes: " + " ".join(
+    "%s=%s" % (profile, ",".join(str(next(iter(payloads[(profile, cycle)]))) for cycle in (1, 2)))
+    for profile in ("mixed", "medium-only")
+))
+print("reclaimed_4k_aligned=%d/%d" % (sum((int(r["trim_reclaimed_kb"]) * 1024) % 4096 == 0 for r in v), len(v)))
 print("majflt_all_zero=%s" % str(all(int(r["next_cycle_majflt"]) == 0 for r in c)).lower())
 print("zram_deltas=%d,%d,%d dmesg_increment=%d oom_lmk=%d" % (h["zram_original_data_size_delta"], h["zram_compressed_data_size_delta"], h["zram_mem_used_total_delta"], h["dmesg_increment_lines"], len(h["oom_lmk_matches"])))
 PY
