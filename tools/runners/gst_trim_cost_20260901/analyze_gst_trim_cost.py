@@ -23,6 +23,27 @@ CELLS = (
     (5, "none", 3),
     (6, "trim-at-loop-release", 3),
 )
+CYCLE_FIELDS = (
+    "order",
+    "arm",
+    "rep",
+    "cycle",
+    "primary_business_sample",
+    "business_elapsed_ms",
+    "trim_return",
+    "trim_elapsed_ms",
+    "glibc_pd_pre_kb",
+    "glibc_pd_post_kb",
+    "glibc_pd_reclaimed_kb",
+    "reclaim_pct_of_pre",
+    "cycle_minflt",
+    "cycle_majflt",
+    "capture_minflt",
+    "capture_majflt",
+    "external_samples",
+    "external_overruns",
+    "exit_code",
+)
 
 
 def require(condition: bool, message: str) -> None:
@@ -154,17 +175,197 @@ def dmesg_increment(before: list[str], after: list[str]) -> tuple[list[str], str
     return [line for line in after if line not in before_set], "set-difference-fallback"
 
 
+def normalize_cycle_row(raw: dict[str, object]) -> dict[str, object]:
+    require(tuple(raw) == CYCLE_FIELDS, f"unexpected cycles.tsv fields: {tuple(raw)}")
+    integer_fields = (
+        "order",
+        "rep",
+        "cycle",
+        "primary_business_sample",
+        "trim_return",
+        "glibc_pd_pre_kb",
+        "glibc_pd_post_kb",
+        "glibc_pd_reclaimed_kb",
+        "cycle_minflt",
+        "cycle_majflt",
+        "capture_minflt",
+        "external_samples",
+        "external_overruns",
+        "exit_code",
+    )
+    float_fields = ("business_elapsed_ms", "trim_elapsed_ms", "reclaim_pct_of_pre")
+    row: dict[str, object] = {"arm": str(raw["arm"])}
+    try:
+        row.update({field: int(raw[field]) for field in integer_fields})
+        row.update({field: float(raw[field]) for field in float_fields})
+        capture_majflt = str(raw["capture_majflt"])
+        row["capture_majflt"] = capture_majflt if capture_majflt == "NA" else int(capture_majflt)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"invalid cycles.tsv scalar: {raw}") from error
+    require(
+        all(math.isfinite(float(row[field])) for field in float_fields),
+        f"non-finite cycles.tsv scalar: {raw}",
+    )
+    return {field: row[field] for field in CYCLE_FIELDS}
+
+
+def read_cycle_table(path: Path) -> list[dict[str, object]]:
+    with path.open(newline="", encoding="utf-8") as stream:
+        reader = csv.DictReader(stream, delimiter="\t")
+        require(tuple(reader.fieldnames or ()) == CYCLE_FIELDS, f"unexpected cycles.tsv header: {reader.fieldnames}")
+        return [normalize_cycle_row(dict(row)) for row in reader]
+
+
+def derive_cycle_summaries(
+    raw_cycle_rows: list[dict[str, object]],
+) -> tuple[list[dict[str, object]], list[dict[str, object]], dict[str, object]]:
+    cycle_rows = [normalize_cycle_row(row) for row in raw_cycle_rows]
+    require(len(cycle_rows) == len(CELLS) * CYCLES, f"cycle row count mismatch: {len(cycle_rows)}")
+    expected_cells = {(order, arm, rep) for order, arm, rep in CELLS}
+    actual_cells = {(int(row["order"]), str(row["arm"]), int(row["rep"])) for row in cycle_rows}
+    require(actual_cells == expected_cells, f"cell set mismatch: {sorted(actual_cells)}")
+
+    repetition_rows: list[dict[str, object]] = []
+    for order, arm, rep in CELLS:
+        rows = [
+            row
+            for row in cycle_rows
+            if (int(row["order"]), str(row["arm"]), int(row["rep"])) == (order, arm, rep)
+        ]
+        rows.sort(key=lambda row: int(row["cycle"]))
+        require([int(row["cycle"]) for row in rows] == list(range(1, CYCLES + 1)), f"cycle set mismatch: {order}/{arm}/{rep}")
+        for row in rows:
+            cycle = int(row["cycle"])
+            require(int(row["primary_business_sample"]) == (1 if cycle in PRIMARY_CYCLES else 0), f"primary marker mismatch: {order}/{arm}/{rep}/{cycle}")
+            require(float(row["business_elapsed_ms"]) >= 0, f"negative business time: {order}/{arm}/{rep}/{cycle}")
+            require(int(row["glibc_pd_reclaimed_kb"]) == int(row["glibc_pd_pre_kb"]) - int(row["glibc_pd_post_kb"]), f"reclaim arithmetic mismatch: {order}/{arm}/{rep}/{cycle}")
+            pre = int(row["glibc_pd_pre_kb"])
+            expected_pct = round(int(row["glibc_pd_reclaimed_kb"]) * 100 / pre, 6) if pre else 0.0
+            require(float(row["reclaim_pct_of_pre"]) == expected_pct, f"reclaim percentage mismatch: {order}/{arm}/{rep}/{cycle}")
+            require(int(row["cycle_minflt"]) >= 0 and int(row["cycle_majflt"]) >= 0, f"negative faults: {order}/{arm}/{rep}/{cycle}")
+            require(int(row["capture_minflt"]) >= 0, f"negative capture minflt: {order}/{arm}/{rep}/{cycle}")
+            require(row["capture_majflt"] == "NA" or int(row["capture_majflt"]) >= 0, f"bad capture majflt: {order}/{arm}/{rep}/{cycle}")
+            if arm == "none":
+                require(int(row["trim_return"]) == -1 and float(row["trim_elapsed_ms"]) == 0.0, f"none trim sentinel mismatch: {order}/{rep}/{cycle}")
+            else:
+                require(int(row["trim_return"]) in (0, 1) and float(row["trim_elapsed_ms"]) > 0, f"trim metric mismatch: {order}/{rep}/{cycle}")
+
+        for field in ("external_samples", "external_overruns", "exit_code"):
+            require(len({int(row[field]) for row in rows}) == 1, f"non-constant {field}: {order}/{arm}/{rep}")
+        external_samples = int(rows[0]["external_samples"])
+        external_overruns = int(rows[0]["external_overruns"])
+        exit_code = int(rows[0]["exit_code"])
+        require(external_samples > 0 and external_overruns >= 0 and exit_code == 0, f"bad cell metadata: {order}/{arm}/{rep}")
+
+        primary = [row for row in rows if int(row["primary_business_sample"]) == 1]
+        require(len(primary) == 50, f"primary sample count mismatch: {order}/{arm}/{rep}")
+        business = [float(row["business_elapsed_ms"]) for row in primary]
+        trim_values = [float(row["trim_elapsed_ms"]) for row in rows if arm != "none"]
+        reclaim = [float(row["glibc_pd_reclaimed_kb"]) for row in rows]
+        reclaim_pct = [float(row["reclaim_pct_of_pre"]) for row in rows]
+        repetition_rows.append({
+            "order": order,
+            "arm": arm,
+            "rep": rep,
+            "business_samples": len(business),
+            "business_p50_ms": round(nearest_rank(business, 0.50), 6),
+            "business_p95_ms": round(nearest_rank(business, 0.95), 6),
+            "business_p99_ms": round(nearest_rank(business, 0.99), 6),
+            "business_min_ms": round(min(business), 6),
+            "business_max_ms": round(max(business), 6),
+            "trim_calls": len(trim_values),
+            "trim_p50_ms": round(nearest_rank(trim_values, 0.50), 6) if trim_values else 0.0,
+            "trim_p95_ms": round(nearest_rank(trim_values, 0.95), 6) if trim_values else 0.0,
+            "trim_p99_ms": round(nearest_rank(trim_values, 0.99), 6) if trim_values else 0.0,
+            "trim_max_ms": round(max(trim_values), 6) if trim_values else 0.0,
+            "reclaimed_median_kb": round(statistics.median(reclaim), 6),
+            "reclaimed_min_kb": round(min(reclaim), 6),
+            "reclaimed_max_kb": round(max(reclaim), 6),
+            "reclaim_pct_of_pre_median": round(statistics.median(reclaim_pct), 6),
+            "primary_minflt_sum": sum(int(row["cycle_minflt"]) for row in primary),
+            "primary_majflt_sum": sum(int(row["cycle_majflt"]) for row in primary),
+            "external_samples": external_samples,
+            "external_overruns": external_overruns,
+            "exit_code": exit_code,
+        })
+
+    arm_rows: list[dict[str, object]] = []
+    for arm in ("none", "trim-at-loop-release"):
+        rows = [row for row in repetition_rows if row["arm"] == arm]
+        require(len(rows) == 3 and sorted(int(row["rep"]) for row in rows) == [1, 2, 3], f"repeat set mismatch: {arm}")
+        summary: dict[str, object] = {"arm": arm, "repeats": 3}
+        for metric in ("business_p50_ms", "business_p95_ms", "business_p99_ms"):
+            values = [float(row[metric]) for row in rows]
+            summary[f"{metric}_median"] = round(statistics.median(values), 6)
+            summary[f"{metric}_range"] = round(max(values) - min(values), 6)
+        for metric in ("trim_p50_ms", "trim_p95_ms", "trim_p99_ms", "trim_max_ms", "reclaimed_median_kb", "reclaim_pct_of_pre_median"):
+            summary[f"{metric}_across_repeats"] = round(statistics.median(float(row[metric]) for row in rows), 6)
+        summary["primary_minflt_sum_median"] = statistics.median(int(row["primary_minflt_sum"]) for row in rows)
+        summary["primary_majflt_sum_max"] = max(int(row["primary_majflt_sum"]) for row in rows)
+        arm_rows.append(summary)
+
+    by_arm = {str(row["arm"]): row for row in arm_rows}
+    none_p99 = float(by_arm["none"]["business_p99_ms_median"])
+    trim_p99 = float(by_arm["trim-at-loop-release"]["business_p99_ms_median"])
+    baseline_dispersion = float(by_arm["none"]["business_p99_ms_range"])
+    delta_p99 = trim_p99 - none_p99
+    comparison = {
+        "decision_rule": "visible iff trim median-of-repeat p99 minus none median-of-repeat p99 is strictly greater than none repeat p99 max-minus-min",
+        "primary_cycles": "2-51",
+        "primary_samples_per_repeat": 50,
+        "percentile_method": "nearest-rank",
+        "none_p99_median_ms": round(none_p99, 6),
+        "trim_p99_median_ms": round(trim_p99, 6),
+        "delta_p99_ms": round(delta_p99, 6),
+        "none_p99_repeat_dispersion_ms": round(baseline_dispersion, 6),
+        "business_cost_visible": delta_p99 > baseline_dispersion,
+    }
+    return repetition_rows, arm_rows, comparison
+
+
+def write_cycle_summaries(
+    output: Path,
+    repetition_rows: list[dict[str, object]],
+    arm_rows: list[dict[str, object]],
+    comparison: dict[str, object],
+) -> None:
+    output.mkdir(parents=True, exist_ok=True)
+    write_tsv(output / "repetitions.tsv", repetition_rows)
+    write_tsv(output / "arm_summary.tsv", arm_rows)
+    with (output / "comparison.json").open("w", encoding="utf-8") as stream:
+        json.dump(comparison, stream, indent=2, sort_keys=True)
+        stream.write("\n")
+
+
+def print_cycle_summary(prefix: str, repetition_rows: list[dict[str, object]], comparison: dict[str, object]) -> None:
+    print(f"{prefix} cells={len(repetition_rows)} cycles={len(repetition_rows) * CYCLES} primary={len(repetition_rows) * 50}")
+    print(
+        f"delta_p99_ms={float(comparison['delta_p99_ms']):.6f} "
+        f"none_dispersion_ms={float(comparison['none_p99_repeat_dispersion_ms']):.6f} "
+        f"visible={str(comparison['business_cost_visible']).lower()}"
+    )
+
+
 parser = argparse.ArgumentParser()
-parser.add_argument("--pull", required=True, type=Path)
+source = parser.add_mutually_exclusive_group(required=True)
+source.add_argument("--pull", type=Path)
+source.add_argument("--replay-cycles", type=Path)
 parser.add_argument("--output", required=True, type=Path)
 args = parser.parse_args()
-pull = args.pull
 output = args.output
+if args.replay_cycles is not None:
+    replay_rows = read_cycle_table(args.replay_cycles)
+    replay_repetitions, replay_arms, replay_comparison = derive_cycle_summaries(replay_rows)
+    write_cycle_summaries(output, replay_repetitions, replay_arms, replay_comparison)
+    print_cycle_summary("replayed", replay_repetitions, replay_comparison)
+    raise SystemExit(0)
+
+pull = args.pull
+require(pull is not None, "--pull is required in full validation mode")
 validate_pull_integrity(pull)
 output.mkdir(parents=True, exist_ok=True)
 
 cycle_rows: list[dict[str, object]] = []
-repetition_rows: list[dict[str, object]] = []
 external_rows: list[dict[str, object]] = []
 capture_majflt_numeric_pairs = 0
 capture_majflt_legacy_s0_pairs = 0
@@ -191,7 +392,6 @@ for order, arm, rep in CELLS:
         "minflt_delta": int(external[-1]["minflt"]) - int(external[0]["minflt"]),
         "majflt_delta": int(external[-1]["majflt"]) - int(external[0]["majflt"]),
     })
-    cell_cycle_rows: list[dict[str, object]] = []
     for cycle in range(1, CYCLES + 1):
         pre = read_profile(cell / f"cycle_{cycle:02d}_pre.json", pid)
         post = read_profile(cell / f"cycle_{cycle:02d}_post.json", pid)
@@ -236,78 +436,18 @@ for order, arm, rep in CELLS:
             "cycle_majflt": cycle_metric["majflt"],
             "capture_minflt": int(post_capture_minflt) - int(pre_capture_minflt),
             "capture_majflt": capture_majflt,
+            "external_samples": len(external),
+            "external_overruns": overruns,
+            "exit_code": int(exits["bench_rc"]),
         }
         cycle_rows.append(row)
-        cell_cycle_rows.append(row)
-
-    primary = [row for row in cell_cycle_rows if row["primary_business_sample"] == 1]
-    require(len(primary) == 50, f"primary sample count mismatch: {cell}")
-    business = [float(row["business_elapsed_ms"]) for row in primary]
-    trim_values = [float(row["trim_elapsed_ms"]) for row in cell_cycle_rows if arm != "none"]
-    reclaim = [float(row["glibc_pd_reclaimed_kb"]) for row in cell_cycle_rows]
-    reclaim_pct = [float(row["reclaim_pct_of_pre"]) for row in cell_cycle_rows]
-    repetition_rows.append({
-        "order": order,
-        "arm": arm,
-        "rep": rep,
-        "business_samples": len(business),
-        "business_p50_ms": round(nearest_rank(business, 0.50), 6),
-        "business_p95_ms": round(nearest_rank(business, 0.95), 6),
-        "business_p99_ms": round(nearest_rank(business, 0.99), 6),
-        "business_min_ms": round(min(business), 6),
-        "business_max_ms": round(max(business), 6),
-        "trim_calls": len(trim_values),
-        "trim_p50_ms": round(nearest_rank(trim_values, 0.50), 6) if trim_values else 0.0,
-        "trim_p95_ms": round(nearest_rank(trim_values, 0.95), 6) if trim_values else 0.0,
-        "trim_p99_ms": round(nearest_rank(trim_values, 0.99), 6) if trim_values else 0.0,
-        "trim_max_ms": round(max(trim_values), 6) if trim_values else 0.0,
-        "reclaimed_median_kb": round(statistics.median(reclaim), 6),
-        "reclaimed_min_kb": round(min(reclaim), 6),
-        "reclaimed_max_kb": round(max(reclaim), 6),
-        "reclaim_pct_of_pre_median": round(statistics.median(reclaim_pct), 6),
-        "primary_minflt_sum": sum(int(row["cycle_minflt"]) for row in primary),
-        "primary_majflt_sum": sum(int(row["cycle_majflt"]) for row in primary),
-        "external_samples": len(external),
-        "external_overruns": overruns,
-        "exit_code": 0,
-    })
-
-arm_rows: list[dict[str, object]] = []
-for arm in ("none", "trim-at-loop-release"):
-    rows = [row for row in repetition_rows if row["arm"] == arm]
-    require(len(rows) == 3 and sorted(int(row["rep"]) for row in rows) == [1, 2, 3], f"repeat set mismatch: {arm}")
-    summary: dict[str, object] = {"arm": arm, "repeats": 3}
-    for metric in ("business_p50_ms", "business_p95_ms", "business_p99_ms"):
-        values = [float(row[metric]) for row in rows]
-        summary[f"{metric}_median"] = round(statistics.median(values), 6)
-        summary[f"{metric}_range"] = round(max(values) - min(values), 6)
-    for metric in ("trim_p50_ms", "trim_p95_ms", "trim_p99_ms", "trim_max_ms", "reclaimed_median_kb", "reclaim_pct_of_pre_median"):
-        summary[f"{metric}_across_repeats"] = round(statistics.median(float(row[metric]) for row in rows), 6)
-    summary["primary_minflt_sum_median"] = statistics.median(int(row["primary_minflt_sum"]) for row in rows)
-    summary["primary_majflt_sum_max"] = max(int(row["primary_majflt_sum"]) for row in rows)
-    arm_rows.append(summary)
-
-by_arm = {row["arm"]: row for row in arm_rows}
 require(
     (capture_majflt_numeric_pairs == len(cycle_rows) and capture_majflt_legacy_s0_pairs == 0)
     or (capture_majflt_numeric_pairs == 0 and capture_majflt_legacy_s0_pairs == len(cycle_rows)),
     "mixed capture majflt encoding within one matrix",
 )
-none_p99 = float(by_arm["none"]["business_p99_ms_median"])
-trim_p99 = float(by_arm["trim-at-loop-release"]["business_p99_ms_median"])
-baseline_dispersion = float(by_arm["none"]["business_p99_ms_range"])
-delta_p99 = trim_p99 - none_p99
-comparison = {
-    "decision_rule": "visible iff trim median-of-repeat p99 minus none median-of-repeat p99 is strictly greater than none repeat p99 max-minus-min",
-    "primary_cycles": "2-51",
-    "primary_samples_per_repeat": 50,
-    "percentile_method": "nearest-rank",
-    "none_p99_median_ms": round(none_p99, 6),
-    "trim_p99_median_ms": round(trim_p99, 6),
-    "delta_p99_ms": round(delta_p99, 6),
-    "none_p99_repeat_dispersion_ms": round(baseline_dispersion, 6),
-    "business_cost_visible": delta_p99 > baseline_dispersion,
-}
+cycle_rows = [normalize_cycle_row(row) for row in cycle_rows]
+repetition_rows, arm_rows, comparison = derive_cycle_summaries(cycle_rows)
 
 before = (pull / "dmesg_before.txt").read_text(encoding="utf-8", errors="replace").splitlines()
 after = (pull / "dmesg_after.txt").read_text(encoding="utf-8", errors="replace").splitlines()
@@ -340,13 +480,11 @@ require(not bad_lines, "OOM/LMK evidence found in dmesg increment")
 require(health["governor_restored_schedutil_count"] == 4, "governor restore failed")
 
 write_tsv(output / "cycles.tsv", cycle_rows)
-write_tsv(output / "repetitions.tsv", repetition_rows)
-write_tsv(output / "arm_summary.tsv", arm_rows)
+write_cycle_summaries(output, repetition_rows, arm_rows, comparison)
 write_tsv(output / "external_summary.tsv", external_rows)
-for name, payload in (("comparison.json", comparison), ("health.json", health)):
+for name, payload in (("health.json", health),):
     with (output / name).open("w", encoding="utf-8") as stream:
         json.dump(payload, stream, indent=2, sort_keys=True)
         stream.write("\n")
 
-print(f"validated cells={len(repetition_rows)} cycles={len(cycle_rows)} primary={len(repetition_rows) * 50}")
-print(f"delta_p99_ms={delta_p99:.6f} none_dispersion_ms={baseline_dispersion:.6f} visible={str(comparison['business_cost_visible']).lower()}")
+print_cycle_summary("validated", repetition_rows, comparison)

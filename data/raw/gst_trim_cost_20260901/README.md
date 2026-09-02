@@ -7,7 +7,9 @@ Application/process names are aliases and the board address is represented as
 `<TEST_BOARD_IP>`.
 
 - `cycles.tsv`: all 306 cycle records, including business time, trim time,
-  pre/post glibc heap PD, reclaim, and faults.
+  pre/post glibc heap PD, reclaim, faults, and repeated cell-level sampler/exit
+  metadata. The repeated fields make this the sole input needed to reproduce the
+  three statistical derivatives below.
 - `repetitions.tsv`: per-cell nearest-rank percentiles and repeat summaries.
 - `arm_summary.tsv`: median-of-repeat statistics and repeat ranges by arm.
 - `external_summary.tsv`: counts, overruns, and full-run faults for the six
@@ -24,3 +26,12 @@ ARM binaries remain only in the private local `board_results/` archive. Rebuild
 the compact tables with
 [`analyze_gst_trim_cost.py`](../../../tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py)
 after pulling a complete manifest-backed board directory.
+
+Alternatively, rebuild `repetitions.tsv`, `arm_summary.tsv`, and
+`comparison.json` from this public directory alone:
+
+```sh
+python3 tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py \
+  --replay-cycles data/raw/gst_trim_cost_20260901/cycles.tsv \
+  --output /tmp/gst-trim-cost-replay
+```

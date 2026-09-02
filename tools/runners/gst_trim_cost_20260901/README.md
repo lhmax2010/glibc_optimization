@@ -32,6 +32,25 @@ python3 tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py \
   --output board_results/gst_trim_cost_20260901/derived
 ```
 
+Host-only replay from the public compact cycle table requires no private board
+archive and writes only the three mathematical derivatives used by the Demo:
+
+```sh
+python3 tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py \
+  --replay-cycles data/raw/gst_trim_cost_20260901/cycles.tsv \
+  --output /tmp/gst-trim-cost-replay
+cmp /tmp/gst-trim-cost-replay/repetitions.tsv \
+  data/raw/gst_trim_cost_20260901/repetitions.tsv
+cmp /tmp/gst-trim-cost-replay/arm_summary.tsv \
+  data/raw/gst_trim_cost_20260901/arm_summary.tsv
+cmp /tmp/gst-trim-cost-replay/comparison.json \
+  data/raw/gst_trim_cost_20260901/comparison.json
+```
+
+`cycles.tsv` repeats the cell-level external sample count, sampler overrun count,
+and exit code on every cycle row. This deliberate redundancy makes the compact
+table a self-contained replay input; the replay path reads no other evidence file.
+
 Rebuild with a glibc-2.40 GCC 14.2 scratch root and a compatible armv7l
 GStreamer sysroot (the two roots may be different):
 

@@ -14,6 +14,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ANALYZER = HERE / "analyze_gst_trim_cost.py"
+REPO_ROOT = HERE.parents[2]
+PUBLIC_EVIDENCE = REPO_ROOT / "data/raw/gst_trim_cost_20260901"
 CELLS = (
     (1, "none", 1),
     (2, "trim-at-loop-release", 1),
@@ -94,6 +96,10 @@ class AnalyzerTests(unittest.TestCase):
         env = os.environ.copy(); env["PYTHONDONTWRITEBYTECODE"] = "1"
         return subprocess.run(["python3", str(ANALYZER), "--pull", str(pull), "--output", str(output)], text=True, capture_output=True, check=False, env=env)
 
+    def run_replay(self, cycles: Path, output: Path) -> subprocess.CompletedProcess[str]:
+        env = os.environ.copy(); env["PYTHONDONTWRITEBYTECODE"] = "1"
+        return subprocess.run(["python3", str(ANALYZER), "--replay-cycles", str(cycles), "--output", str(output)], text=True, capture_output=True, check=False, env=env)
+
     def test_complete_matrix_validates(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); make_fixture(root / "pull")
@@ -102,6 +108,61 @@ class AnalyzerTests(unittest.TestCase):
             self.assertIn("cells=6 cycles=306 primary=300", result.stdout)
             comparison = json.loads((root / "out/comparison.json").read_text())
             self.assertTrue(comparison["business_cost_visible"])
+
+    def test_full_output_replays_three_derivatives_byte_exactly(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); make_fixture(root / "pull")
+            full = self.run_analyzer(root / "pull", root / "full")
+            self.assertEqual(full.returncode, 0, full.stderr)
+            replay = self.run_replay(root / "full/cycles.tsv", root / "replay")
+            self.assertEqual(replay.returncode, 0, replay.stderr)
+            self.assertIn("replayed cells=6 cycles=306 primary=300", replay.stdout)
+            self.assertEqual(
+                {path.name for path in (root / "replay").iterdir()},
+                {"repetitions.tsv", "arm_summary.tsv", "comparison.json"},
+            )
+            for name in ("repetitions.tsv", "arm_summary.tsv", "comparison.json"):
+                self.assertEqual((root / "full" / name).read_bytes(), (root / "replay" / name).read_bytes(), name)
+
+    def test_public_cycles_replay_matches_published_derivatives(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "replay"
+            result = self.run_replay(PUBLIC_EVIDENCE / "cycles.tsv", output)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(
+                result.stdout,
+                "replayed cells=6 cycles=306 primary=300\n"
+                "delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false\n",
+            )
+            for name in ("repetitions.tsv", "arm_summary.tsv", "comparison.json"):
+                self.assertEqual((PUBLIC_EVIDENCE / name).read_bytes(), (output / name).read_bytes(), name)
+
+    def test_replay_rejects_nonconstant_cell_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); make_fixture(root / "pull")
+            full = self.run_analyzer(root / "pull", root / "full")
+            self.assertEqual(full.returncode, 0, full.stderr)
+            cycles = root / "full/cycles.tsv"
+            cycles.write_text(cycles.read_text().replace("\t2\t0\t0\n", "\t3\t0\t0\n", 1))
+            replay = self.run_replay(cycles, root / "replay")
+            self.assertNotEqual(replay.returncode, 0)
+            self.assertIn("non-constant external_samples", replay.stderr)
+
+    def test_replay_rejects_nonfinite_scalar(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); make_fixture(root / "pull")
+            full = self.run_analyzer(root / "pull", root / "full")
+            self.assertEqual(full.returncode, 0, full.stderr)
+            cycles = root / "full/cycles.tsv"
+            lines = cycles.read_text().splitlines()
+            header = lines[0].split("\t")
+            first_row = lines[1].split("\t")
+            first_row[header.index("business_elapsed_ms")] = "nan"
+            lines[1] = "\t".join(first_row)
+            cycles.write_text("\n".join(lines) + "\n")
+            replay = self.run_replay(cycles, root / "replay")
+            self.assertNotEqual(replay.returncode, 0)
+            self.assertIn("non-finite cycles.tsv scalar", replay.stderr)
 
     def test_none_sentinel_mismatch_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

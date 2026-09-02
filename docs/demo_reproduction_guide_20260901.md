@@ -218,6 +218,64 @@ majflt_all_zero=true
 zram_deltas=0,0,0 dmesg_increment=0 oom_lmk=0
 ```
 
+<a id="l1-gst-trim-cost"></a>
+### GStreamer 真实多线程目标的业务 p99、trim 分布与首次回收
+
+这一入口只读取公开紧凑件
+[`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)。格级 external 样本数、
+overrun 与退出码已在每个 cycle 行中重复保存，因此该文件可以独立重建
+[`repetitions.tsv`](../data/raw/gst_trim_cost_20260901/repetitions.tsv)、
+[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv) 和
+[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json)，不读取本地
+`board_results/` 或其他公开证据文件。
+
+```sh
+python3 tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py \
+  --replay-cycles data/raw/gst_trim_cost_20260901/cycles.tsv \
+  --output "$OUT/gst-trim-cost"
+cmp "$OUT/gst-trim-cost/repetitions.tsv" \
+  data/raw/gst_trim_cost_20260901/repetitions.tsv
+cmp "$OUT/gst-trim-cost/arm_summary.tsv" \
+  data/raw/gst_trim_cost_20260901/arm_summary.tsv
+cmp "$OUT/gst-trim-cost/comparison.json" \
+  data/raw/gst_trim_cost_20260901/comparison.json
+```
+
+分析器预期输出原文如下；三个 `cmp` 均应静默返回成功。分位口径仍是
+nearest-rank，主统计仍固定取每重复 cycle 2–51 的 50 个样本。
+
+```text
+replayed cells=6 cycles=306 primary=300
+delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
+```
+
+trim 合并分布与三个首次 release 直接从同一输入逐值复算：
+
+```sh
+python3 - <<'PY'
+import csv, math
+from pathlib import Path
+p = Path("data/raw/gst_trim_cost_20260901")
+rows = list(csv.DictReader((p / "cycles.tsv").open(), delimiter="\t"))
+def nr(values, q):
+    values = sorted(values)
+    return values[max(1, math.ceil(q * len(values))) - 1]
+trim = [float(r["trim_elapsed_ms"]) for r in rows if r["arm"] == "trim-at-loop-release"]
+first = [r for r in rows if r["arm"] == "trim-at-loop-release" and r["cycle"] == "1"]
+pct = [float(r["reclaim_pct_of_pre"]) for r in first]
+mib = [int(r["glibc_pd_reclaimed_kb"]) / 1024 for r in first]
+print("gst trim calls=%d p50=%.6f p95=%.6f p99=%.6f max=%.6f ms" %
+      (len(trim), nr(trim, .50), nr(trim, .95), nr(trim, .99), max(trim)))
+print("gst first-release=%.6f-%.6f%% / %.6f-%.6f MiB" %
+      (min(pct), max(pct), min(mib), max(mib)))
+PY
+```
+
+```text
+gst trim calls=153 p50=0.671556 p95=0.818315 p99=0.842185 max=0.856944 ms
+gst first-release=51.014041-51.406250% / 1.277344-1.285156 MiB
+```
+
 ### Demo 数字到公开输入的总表
 
 | Demo 展示值 | 公开输入 | 复算入口 |
@@ -231,6 +289,9 @@ zram_deltas=0,0,0 dmesg_increment=0 oom_lmk=0
 | S4 `51.074077% / 50.387886%` | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](#l1-s4) |
 | S4 `80.175875%–85.453954%`、`1.233269/1.218361 ms`、`+1351/+1465 minflt` | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](#l1-s4) |
 | S4 `majflt=0`、zram 三项 `Δ=0`、OOM/LMK `0` | [`health.json`](../data/raw/s4_retention_20260901/health.json) | [S4](#l1-s4) |
+| gst p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`，判定 `false` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
+| gst trim `0.671556/0.818315/0.842185/0.856944 ms`（p50/p95/p99/max） | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
+| gst 首次 release `51.014041%–51.406250% / 1.277344–1.285156 MiB` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
 
 ## L2 · 测试板实验复跑
 
