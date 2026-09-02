@@ -337,6 +337,11 @@ sha256sum tools/alloc_bench/alloc_bench.armv7l
 先核对源文件、GCC、scratch root 和 flags；仍不一致时只能登记为新构建批次，不能把
 它称为本 S4 的字节级复跑。
 
+因此“全新 clone + 单独使用本仓库”不足以启动 L2。交付方必须在开始前另行提供
+带 SHA-256 manifest 的内部产物包（S4 bench，gst bench/probe/media），或提供可用的
+scratch root/sysroot 路径。仓库不记录内部制品库坐标；未获得上述交付时应标成
+外部前置阻断，不得在板上即兴找文件替代。
+
 <a id="l2-run"></a>
 ### 完整执行命令
 
@@ -391,6 +396,12 @@ grep -Fx DONE_S4_REMOTE_INVOKE "$S4_HOST/remote_invoke.txt"
 grep -Fx DONE_S4_CONTROLLER "$S4_HOST/remote_invoke.txt"
 ```
 
+自 2026-09-02 起，每个板上轮次还必须在负载前后分别保存
+stability-monitor/livedump 的精确文件清单和计数。若有新增告警，须从归档内部
+`dump_reason` 与 `info.json` 核对 PID、进程名和 executable path：只有可归因本轮
+PID/二进制的新增告警构成健康门硬失败，其他告警原样报告且不做处置。
+本项与 dmesg OOM/LMK、zram 和 governor 门并列，不得因数值分析成功而忽略。
+
 运行完成后在固定目录内生成 hash/size 清单，拉回并用发布的分析器验证；任何一项
 失败都先保留 host 证据，不把该格记为完成：
 
@@ -411,6 +422,10 @@ python3 tools/runners/s4_retention_20260901/analyze_s4.py \
 sdb -s "$SDB_SERIAL" shell "test '$S4_REMOTE' = '/opt/usr/glibc_memopt/s4_retention_20260901' && rm -rf '$S4_REMOTE' && test ! -e '$S4_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_FINAL_CLEANUP || echo FAIL_FINAL_CLEANUP" | tee "$S4_HOST/cleanup.txt"
 grep -Fx RC=0 "$S4_HOST/cleanup.txt"
 grep -Fx DONE_FINAL_CLEANUP "$S4_HOST/cleanup.txt"
+
+sdb -s "$SDB_SERIAL" shell "rmdir /opt/usr/glibc_memopt && test ! -e /opt/usr/glibc_memopt; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_EMPTY_PARENT_CLEANUP || echo FAIL_EMPTY_PARENT_CLEANUP" | tee "$S4_HOST/parent_cleanup.txt"
+grep -Fx RC=0 "$S4_HOST/parent_cleanup.txt"
+grep -Fx DONE_EMPTY_PARENT_CLEANUP "$S4_HOST/parent_cleanup.txt"
 
 sdb -s "$SDB_SERIAL" shell "n=0; for p in /sys/devices/system/cpu/cpu[0-3]/cpufreq/scaling_governor; do g=\$(cat \"\$p\") || exit 1; echo \"\$p=\$g\"; test \"\$g\" = schedutil && n=\$((n+1)); done; test \$n -eq 4; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GOVERNOR_FINAL || echo FAIL_GOVERNOR_FINAL" | tee "$S4_HOST/governor_final.txt"
 grep -Fx RC=0 "$S4_HOST/governor_final.txt"
@@ -532,6 +547,7 @@ python3 tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py \
   --pull "$GST_HOST/board_pull" --output "$GST_HOST/derived"
 
 sdb -s "$SDB_SERIAL" shell "test '$GST_REMOTE' = '/opt/usr/glibc_memopt/gst_trim_cost_20260901' && rm -rf '$GST_REMOTE' && test ! -e '$GST_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_FINAL_CLEANUP || echo FAIL_FINAL_CLEANUP"
+sdb -s "$SDB_SERIAL" shell "rmdir /opt/usr/glibc_memopt && test ! -e /opt/usr/glibc_memopt; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_EMPTY_PARENT_CLEANUP || echo FAIL_EMPTY_PARENT_CLEANUP"
 sdb -s "$SDB_SERIAL" shell "ok=1; n=0; for p in /sys/devices/system/cpu/cpu[0-3]/cpufreq/scaling_governor; do if g=\$(cat \"\$p\"); then echo \"\$p=\$g\"; test \"\$g\" = schedutil && n=\$((n+1)); else ok=0; fi; done; test \$ok -eq 1 && test \$n -eq 4; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GOVERNOR_FINAL || echo FAIL_GOVERNOR_FINAL"
 ```
 
@@ -555,6 +571,10 @@ delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
 JSON 均可解析且 PID 恒定；bench/sampler/controller 全部退出 0；dmesg 零 OOM/LMK；四核
 最终均为 `schedutil`；板端目录已删除。zram 三列必须取得同批前后值并报告 delta，不把
 跨批次绝对值当作常量。
+
+同一 stability-monitor 健康门也适用于 gst：运行前后记录告警清单与计数，
+对新增件逐一做 PID/进程/可执行路径归因。可归因本轮的新增告警是健康门
+硬失败；非本轮或归属不明的新增告警只报告、不动。
 
 当前已执行批次的附加 capture-meta `majflt` 因 POSIX sh `$10` 展开错误而统一为 `S0`；
 发布 controller 已改用 `${10}`。分析器只允许整批 306 对均为这一已知缺陷或整批均为
@@ -631,3 +651,5 @@ sdb -s "$PRODUCT_SERIAL" shell 'test /tmp/product_cyclic_target_probe_20260814 =
 - 链接先于结果冻结的参数规格，禁止依据结果回改；
 - 分开列确定性验收项与跨板/跨批次容差带；
 - 给出身份门、完整性、退出标志、现场恢复与清理的判定方法。
+- 给出 stability-monitor 运行前后告警计数与新增归因；本轮 PID/二进制引发的
+  新告警按健康门硬失败报告，其他告警不得擅自清理。

@@ -8,8 +8,8 @@
 - 演示入口：[`demo_package_20260902.md`](demo_package_20260902.md)
 - 基线：[`board_baseline_llvm_image_20260831.md`](board_baseline_llvm_image_20260831.md)
 - 可执行审计件：[`tools/runners/demo_rehearsal_20260902/`](../tools/runners/demo_rehearsal_20260902/)
-- 约束：L1 在独立干净 clone 中执行；板端仅做只读探查，不推送、不建目录、不运行负载、
-  不改 governor、不装卸包、不重启、不清理
+- 轮次边界：初始彩排的 L1 和卫生审计为只读；PM 裁决后追加精确残留清理与
+  S4/gst 全量 L2 复跑。全部写入都限于指定工作目录和可归属归档，未装卸包、未重启。
 
 ## 1. 结论先行
 
@@ -19,14 +19,21 @@
    指南已经要求的 released-payload 与 4 kB 对齐两行输出。
 2. **板身份与环境门通过。** 内核含 `rpi4`、架构严格为 `armv7l`、`BUILD_ID`、glibc
    和 `MemTotal` 均与 2026-08-31 基线一致。
-3. **演示板卫生门暂未闭合。** 工作目录只剩空的 `/opt/usr/glibc_memopt`，但 crash
-   目录中有两个可由内部元数据精确归属到 S4 `alloc_bench` 的 stability-monitor
-   livedump。二者已列入“我方残留，建议清除”，等待 PM 批准；本轮没有删除。
-4. **没有运行板上演示负载。** 当前演示包明确规定四组现场命令均为 host-only，因而
-   不存在需要彩排的板上现场段；同时卫生清理尚未获批，也不满足进入可选板上段的前提。
-5. livedump 表明 stability-monitor 在 S4 期间因 `cpu.relative` 阈值生成了现场快照，
-   并非本轮发现仍有测试进程，也没有 OOM/LMK/segfault 事件。这不改变已发布 Demo 数字；
-   是否把 stability-monitor 零告警加入后续板上健康门，属于新的规格选择，留给 PM 裁决。
+3. **残留清理裁决已执行并闭合。** 两个 S4 livedump 先拉回本地、校验 SHA
+   和内部元数据，再按精确路径删除；空 `/opt/usr/glibc_memopt` 用 `rmdir` 删除。
+   删除后三个目标均不存在，stability-monitor 归档计数从 `2` 变为 `0`。
+4. **L2 “假扮 HQ”全程已完成。** 在 `HEAD=1ebbf03` 的全新 clone 中，仅按复现
+   指南及其链接执行 S4 10 格和 gst 6 格全矩阵；两者均完成 manifest 校验、
+   JSON 解析、清理和 governor 恢复。
+5. **数值验收与健康验收必须分开。** S4 的锚点、B 组三重复中位、payload、
+   页对齐、faults、zram 和 OOM/LMK 均过带；追加的回收量字节审计只有 `10/12`
+   周期与发布批相同，确认同 seed 不保证该量逐字节重现。另有两个明确归因本轮
+   `alloc_bench` 的 stability-monitor 告警，因此 S4 的新健康门为硬失败；gst 的
+   stability-monitor 前后均为 `0`，该门通过。
+6. **stability-monitor 长期规则已冻结。** 每轮记录运行前后告警计数并归因新增件；
+   只有可归因我方 PID/二进制的新告警构成硬失败，其他告警原样报告、不动。
+7. **一项规格范围等待 PM 裁决。** 指南的“单次 trim `<5 ms`”没有说明是否覆盖
+   A 组大释放锚点；A 组发布/本次均约 `12.4–13.7 ms`，B 组则落带。本轮不改规格。
 
 ## 2. Host L1 完整彩排
 
@@ -133,7 +140,7 @@ RC=0
 DONE_MEMTOTAL
 ```
 
-五项均通过，与[新 LLVM 镜像基线](board_baseline_llvm_image_20260831.md#4-新镜像环境基线)
+五项均通过，与[新 LLVM 镜像基线](board_baseline_llvm_image_20260831.md#4-新镜像基线)
 一致，允许进入只读卫生审计。
 
 ## 4. 卫生审计
@@ -187,20 +194,23 @@ DONE_DMESG_EVENT_AUDIT
 
 | 精确目标 | 归属证据 | 建议处置 | 本轮状态 |
 |---|---|---|---|
-| `/opt/usr/glibc_memopt` | 固定项目工作根；内部为空；mtime 位于 gst 轮完成后 | 在两个 livedump 处置后用精确 `rmdir` 删除 | 等 PM 批准，未执行 |
-| `/opt/usr/share/crash/livedump/alloc_bench.armv7l_31200_20260901172715.zip` | `info.json` 的 executable path 指向 S4 工作目录；大小 `359978 B`；SHA-256 `0a5a8780c0edb2427795330123fe6715b5157933c738a32b0ebe09168799cfa0` | 精确文件名删除 | 等 PM 批准，未执行 |
-| `/opt/usr/share/crash/livedump/alloc_bench.armv7l_31971_20260901172754.zip` | 同上；大小 `361579 B`；SHA-256 `fd7a56db8385f4066e7181f0970bf5d100c125d6145e42f08a959ca51bb0661e` | 精确文件名删除 | 等 PM 批准，未执行 |
+| `/opt/usr/glibc_memopt` | 固定项目工作根；内部为空；mtime 位于 gst 轮完成后 | 在两个 livedump 处置后用精确 `rmdir` 删除 | `RC=0/DONE_ADJUDICATED_RESIDUAL_CLEANUP`；二次复核不存在 |
+| `/opt/usr/share/crash/livedump/alloc_bench.armv7l_31200_20260901172715.zip` | `info.json` 的 executable path 指向 S4 工作目录；大小 `359978 B`；SHA-256 `0a5a8780c0edb2427795330123fe6715b5157933c738a32b0ebe09168799cfa0` | 先归档校验，再按精确文件名删除 | host 归档 SHA 匹配；删除后不存在 |
+| `/opt/usr/share/crash/livedump/alloc_bench.armv7l_31971_20260901172754.zip` | 同上；大小 `361579 B`；SHA-256 `fd7a56db8385f4066e7181f0970bf5d100c125d6145e42f08a959ca51bb0661e` | 先归档校验，再按精确文件名删除 | host 归档 SHA 匹配；删除后不存在 |
 
 两个压缩包的 `dump_reason` 分别报告 `cpu.relative` 实际值 `3.8203134021870864` 和
 `3.8165405446011791` 超过允许值 `3.7999999999999998`；调用栈停在
 `usleep`/`nanosleep`。它们是 stability-monitor 生成的 live snapshot，不是仍存活进程；
-但作为历轮落盘物仍应清除。建议批准后只执行下列精确命令，不使用通配符：
+但作为历轮落盘物仍应清除。PM 批准后实际执行了下列精确范围，未使用通配符：
 
 ```sh
 export SDB_SERIAL='<TEST_BOARD_IP>:26101'
 sdb -s "$SDB_SERIAL" shell '
-rm -f /opt/usr/share/crash/livedump/alloc_bench.armv7l_31200_20260901172715.zip \
-      /opt/usr/share/crash/livedump/alloc_bench.armv7l_31971_20260901172754.zip
+f1=/opt/usr/share/crash/livedump/alloc_bench.armv7l_31200_20260901172715.zip
+f2=/opt/usr/share/crash/livedump/alloc_bench.armv7l_31971_20260901172754.zip
+test "$(sha256sum "$f1" | awk "{print \$1}")" = 0a5a8780c0edb2427795330123fe6715b5157933c738a32b0ebe09168799cfa0 &&
+test "$(sha256sum "$f2" | awk "{print \$1}")" = fd7a56db8385f4066e7181f0970bf5d100c125d6145e42f08a959ca51bb0661e &&
+rm -f "$f1" "$f2"
 rc=$?
 echo RC=$rc
 if [ $rc -eq 0 ]; then echo DONE_APPROVED_LIVEDUMP_CLEANUP; else echo FAIL_APPROVED_LIVEDUMP_CLEANUP; fi'
@@ -217,6 +227,25 @@ rc=$?
 echo RC=$rc
 if [ $rc -eq 0 ]; then echo DONE_APPROVED_CLEANUP_RECHECK; else echo FAIL_APPROVED_CLEANUP_RECHECK; fi'
 ```
+
+二次复核原文为三个目标均 `ABSENT`、`STABILITY_MONITOR_FILE_COUNT=0`、
+`RC=0/DONE_POST_CLEANUP_VERIFY`。完整 ZIP、`dump_reason`、`info.json` 和拉回哈希保留在
+本地 `board_results/demo_rehearsal_20260902/residual_cleanup_20260902/`。
+
+#### 与 S4 正式格时间线对照
+
+- PID `31200` 的归档名时刻 `17:27:15`，mtime `17:27:20.179999635 +0900`，落在
+  `A/mixed/rep1` 的 `17:27:07.575874569–17:27:48.610417285 +0900` 正式窗口。
+- PID `31971` 的归档名时刻 `17:27:54`，mtime `17:27:59.839999612 +0900`，落在
+  `A/medium-only/rep1` 的 `17:27:48.648846785–17:28:29.684120242 +0900` 正式窗口。
+- 两个 `info.json` 的 executable path 均指向正式 S4 二进制，PID 也与对应格的
+  XML 文件名一致；因此“落在正式格窗口”和“可归因我方负载”均确立。
+
+两格 bench/sampler 均退出 `0`、各保留 `41` 个 1 s 样本，JSON/XML 解析和 controller
+`DONE_A_*` 均成功，没有证据表明 livedump 改写了堆或导致数据缺失。但生成 live
+snapshot 仍是正式窗口内的外部干扰，现有证据不能证明其对调度和系统负载“绝对
+零影响”。因而已发布 A 组回收率仍作为可解析、内部自洽的锚点，同时附上
+stability-monitor 干扰告警；不将它描述为“已证明完全不受影响”。
 
 ### 4.3 非我方观察清单
 
@@ -235,14 +264,17 @@ if [ $rc -eq 0 ]; then echo DONE_APPROVED_CLEANUP_RECHECK; else echo FAIL_APPROV
 |---|---|---|---|
 | A 组说明写“最后两行”，实际需读三个摘要行 | 文档笔误 | 改为“最后三行” | 已闭合 |
 | C 组命令少打印 payload 与 4 kB 对齐两项，不能匹配指南冻结的 8 行 | 文档漏项，不涉及数据/规格 | 复用指南中同输入的既有计算代码补齐，并在干净 clone 重跑 | 已闭合 |
-| 两个 S4 livedump 与空工作根仍在板上 | 演示板卫生阻断 | 等 PM 批准后按精确清单清除并二次审计 | **开放** |
-| stability-monitor 是否纳入后续“零平台告警”健康门 | 新规格决策 | 不回改 S4 数字或结论，等 PM 裁决 | **开放，不阻断 host Demo** |
+| 两个 S4 livedump 与空工作根仍在板上 | 演示板卫生阻断 | 先归档校验，再按精确清单清除并二次审计 | **已闭合** |
+| stability-monitor 是否纳入后续健康门 | 新规格决策 | 冻结为“前后计数 + 新增归因”；只有我方 PID/二进制新告警为硬失败 | **已闭合** |
+| 全新 clone 中无法从公开仓取得 ARM ELF/媒体 | 外部前置 | 本次以本地历轮已验 SHA 归档作为“内部制品交付”的最小假设；指南已明确需 PM/交付方预先给出产物包或 sysroot | **外部依赖，已文档化** |
+| `<5 ms` 未指明适用组，字面上会误伤 A 组大释放锚点 | 涉及验收规格，彩排无权改写 | 保留指南原文；记录 A 组发布/本次约 `12.4–13.7 ms`，B 组本次最大 `1.575833 ms` | **待 PM 裁决，不影响本次按 B 组读取时的数值核验** |
+| L2 按轮次删除子目录后会留下空工作根 | 指南清理漏项 | S4/gst 清理段均补 `rmdir /opt/usr/glibc_memopt` 和不存在复核 | **已闭合** |
 
 ## 6. 演示日顺序检查单
 
 预计总耗时约 **10–15 分钟**，主要取决于受控重启后 SDB 恢复；四组 L1 本身为秒级。
-下列命令按顺序执行。先由 PM 批准并完成 §4.2 的精确清理；若未批准或二次审计不通过，
-只做 host L1，不把该板标成“卫生已通过”。
+§4.2 的历史残留已按 PM 裁决清理并二次复核。演示日仍应按下列顺序重做核心卫生门；
+若当日复核不通过，只做 host L1，不把该板标成“卫生已通过”。
 
 ### 6.1 Host 与版本门
 
@@ -347,6 +379,8 @@ rm -rf -- "$OUT"
 - 无项目工作目录、我方文件和测试进程；
 - 无 08-31 镜像时间后的包安装；
 - event-level dmesg 无 OOM/LMK/segfault；
+- 每个板上轮次记录 stability-monitor 前后告警清单与计数；可归因本轮 PID/二进制的
+  新告警是健康门硬失败，非我方或归属不明告警只报告不动；
 - A/C/D stdout 逐字符一致，B/D 共五个 `cmp` 静默。
 
 ### 7.3 容差与人工判定项
@@ -356,8 +390,109 @@ rm -rf -- "$OUT"
 - crash、`/tmp` 和进程列表必须按归属纪律人工判定，不能把非我方对象批量删除；
 - 彩排耗时只用于演示排程，换机、换批次不要求复现，也不进入 Demo 结论。
 
-## 8. 原始件与公开边界
+<a id="l2-hq-rehearsal"></a>
+## 8. L2 全程“假扮 HQ”彩排
+
+### 8.1 独立性、前置与计时
+
+在新建临时目录中从 `origin/main` 做全新 clone，确认 `HEAD=1ebbf03`、跟踪文件
+无修改。执行期间只阅读 [`HQ 复现指南 L2`](demo_reproduction_guide_20260901.md#l2-run)
+及其直接链接的 runner/报告。公开 clone 不包含 ARM ELF 和媒体；本次以本地历轮
+已验 SHA 归档充当“内部制品交付”的最小假设后继续。这是外部前置，不是公开
+仓的自含能力；指南已补明交付方必须事先提供产物包或 sysroot。
+
+| 前置门 | 冻结值 | 本次 HQ 彩排 | 判定 |
+|---|---|---|---|
+| 身份/环境 | kernel 含 `rpi4`；`armv7l`；冻结 `BUILD_ID`；`glibc-2.40-1.6.armv7l`；`MemTotal≈8117408 kB` | 清理前、S4 前和 gst 前均重复通过，均有远端 `RC=0/DONE_*` | PASS |
+| S4 bench / hist SHA-256 | `dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd` / `2082e156db133f4e6e900aec7c202e44a453d2f23b60225c40251de08a27960b` | host 与板端逐项相同；因已命中冻结产物，未重建 | PASS |
+| gst bench / probe / media SHA-256 | `204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6` / `3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7` / `3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d` | host 与板端逐项相同；因已命中冻结产物，未重建 | PASS |
+| governor | 初始/最终四核 `schedutil`，运行态 `performance` | S4、gst 均按该状态机执行并在退出后复核 | PASS |
+
+| 阶段 | 实测墙钟 | 说明 |
+|---|---:|---|
+| 干净 clone | `1.70 s` | 仅作彩排排程，不进入 Demo 性能结论 |
+| S4 前置门 | `0.72 s` | 身份/环境门本身 |
+| S4 controller | `851.44 s` | 2 个 A 格 + 8 个 B 格 |
+| S4 拉回 / 分析 | `10.61 / 0.05 s` | manifest 校验和 JSON/XML 解析已包含 |
+| gst 身份门 / 能力门 | `0.72 / 2.85 s` | 未安装任何包 |
+| gst controller | `6511.50 s` | 6 格 × 51 循环 |
+| gst 拉回 / 分析 | `85.99 / 0.18 s` | `1922` 文件，零跳过 |
+
+上述计时只用于证明 HQ 执行成本和安排窗口，不进入效果或业务代价结论。
+
+<a id="s4-acceptance"></a>
+### 8.2 S4 验收带对照
+
+| 指标 | published 值 | 本次 HQ 彩排值 | 冻结带/规则 | 判定 |
+|---|---:|---:|---|---|
+| A mixed 瞬时释放回收率 | `51.074077%` | `51.997998%` | `49% ±4 pp` | PASS |
+| A medium-only 瞬时释放回收率 | `50.387886%` | `49.278061%` | `49% ±4 pp` | PASS |
+| B mixed 三重复中位回收/released | `81.661264%` | `81.661264%` | `80% ±5 pp` | PASS |
+| B medium-only 三重复中位回收/released | `84.446566%` | `84.446566%` | `80% ±5 pp` | PASS；但 rep2 单格中位为 `68.169197%`，不用单格代替预登记的三重复中位规则 |
+| B mixed trim 耗时 | 中位 `1.233269 ms` | 中位 `1.309306 ms`，最大 `1.575833 ms` | 指南原文单次 `<5 ms` | PASS（若该带用于 B 组） |
+| B medium-only trim 耗时 | 中位 `1.218361 ms` | 中位 `1.239269 ms`，最大 `1.261981 ms` | 指南原文单次 `<5 ms` | PASS（若该带用于 B 组） |
+| A 组 trim 耗时 | `13.331907/12.723240 ms` | `13.737370/12.438482 ms` | 指南原文单次 `<5 ms` | **规格范围歧义：若覆盖 A 组则 FAIL；不在彩排中改带** |
+| mixed 下一周期 minflt 增量 | `+1351` | `+1351` | 与回收页数同数量级 | PASS |
+| medium-only 下一周期 minflt 增量 | `+1465` | `+1465` | 与回收页数同数量级 | PASS |
+
+确定性项单独验收：
+
+| 项 | published 值 | 本次 HQ 彩排值 | 冻结规则 | 判定 |
+|---|---|---|---|---|
+| B 组 released payload | mixed `5742256/6566672 B`；medium-only `6288384/6293504 B`，各重复相同 | `16/16` 周期逐字节相同 | 相同 profile/cycle 逐值一致 | PASS |
+| B 组 trim 回收量（追加审计） | 12 个 trim 周期的发布 TSV 值 | `10/12` 相同；medium-only/valley/rep2 两周期分别由 `5246976/5378048 B` 变为 `4222976/4354048 B`，各少 `1024000 B` | 不属于指南冻结的字节确定性字段；本轮按要求单列 | **不具备字节级复现性；同 seed 不是充分条件** |
+| 回收量 4 kB 对齐 | `12/12` | `12/12` | 每个 trim 回收量是 `4096 B` 整数倍 | PASS |
+| 下一周期 majflt | `16/16` 为 `0` | `16/16` 为 `0` | 必须为 `0` | PASS |
+| zram `orig/compressed/mem_used_total` | `Δ=0/0/0` | `Δ=0/0/0` | 三项必须为 `0` | PASS |
+| dmesg OOM/LMK | 增量 `0`，命中 `0` | 增量 `0`，命中 `0` | OOM/LMK 零命中 | PASS |
+| bench/sampler/controller | 10 格均完成 | 10 格均 `RC=0/DONE_*` | 远端退出码和 DONE 双门 | PASS |
+| stability-monitor | 发布时未列为健康门；事后发现两个可归属告警 | `0 → 2`；新增件均指向本轮 S4 bench | 新增且可归因本轮即硬失败 | **HARD FAIL** |
+
+两个新告警分别落在本次 `A/mixed` 和 `A/medium-only` 窗口，触发理由仍是
+`cpu.relative` 略高于阈值。ZIP 已拉回本地并校验，板上按精确哈希二次确认后删除。
+这使 S4 本次彩排的数值分析可用，但整体健康门不通过；不得写成“S4 全部 PASS”。
+
+### 8.3 gst 验收带对照
+
+| 指标 | published 值 | 本次 HQ 彩排值 | 冻结带/规则 | 判定 |
+|---|---:|---:|---|---|
+| trim 与 none 的 p99 中位差 | `+6.228611 ms` | `+2.343963 ms` | 仅当严格大于 none 重复离散才“可见” | 方向 PASS；仍为 `false` |
+| none p99 重复离散 | `6.784167 ms` | `5.903519 ms` | 预登记比较带 | 用于上行判定 |
+| 153 次 trim p50/p95/p99/max | `0.671556/0.818315/0.842185/0.856944 ms` | `0.666944/0.842963/0.910444/0.932537 ms` | 完整报告；单次 `<5 ms` | PASS |
+| 三格首次 release | `51.014041–51.406250%` / `1.277344–1.285156 MiB` | `51.250000–51.486698%` / `1.281250–1.285156 MiB` | 与既有约半数、约 `1.3 MiB` 量级作相容性对照，无新设百分比硬带 | 相容 |
+
+gst 确定性项：
+
+| 项 | published 值 | 本次 HQ 彩排值 | 冻结规则 | 判定 |
+|---|---|---|---|---|
+| 资产 SHA | 三个冻结 SHA | 三项 host/板端逐字一致 | 必须逐字一致 | PASS |
+| 格/周期/主样本 | `6×51=306` / `300` | `6×51=306` / `300` | 格顺序、循环数、每重复 50 个主样本齐全 | PASS |
+| JSON/PID | `306` 对可解析、格内 PID 恒定 | `306` 对可解析、格内 PID 恒定 | 全量通过 | PASS |
+| trim/none 合同 | `153` 次调用 / `153` 个未调用哨兵 | `153` / `153` | 数量逐项一致 | PASS |
+| majflt | 目标内和外部 1 s 序列均为 `0`；旧 capture-meta 为已知 `S0` | 目标内、capture-meta、外部 1 s 序列均为数值 `0` | 发布版 harness 的 capture-meta 不得再为 `S0`；其余必须为 `0` | PASS |
+| zram 三项 | `Δ=0/0/0` | `Δ=0/0/0` | 必须为 `0` | PASS |
+| dmesg OOM/LMK | 增量 `0`，命中 `0` | 增量 `0`，命中 `0` | 零命中 | PASS |
+| stability-monitor | 历史 gst 未发现可归属残留 | `0 → 0` | 可归因本轮新增件为硬失败 | PASS |
+| 退出/清理 | 全格退出 0、governor 恢复、轮次目录删除 | 全格退出 0；项目工作根也删除；governor 四核 `schedutil` | RC/DONE、目录、进程和 governor 全部闭合 | PASS |
+
+本次 capture-meta 已全批为数值 `0`，不再出现发布批的旧 `S0` 字段缺陷。
+
+### 8.4 指南阻断项、直接修正与最终现场
+
+| 发现 | 是否需要文档外知识 | 处置 |
+|---|---|---|
+| 公开 clone 不含 ARM ELF/媒体，指南又不可能公开内部制品库坐标 | 是 | 用已验本地归档做最小假设继续；指南明确它是 PM/交付方必须预供的外部前置 |
+| S4 `<5 ms` 字面未限定 B 组，会与已发布 A 组约 `13 ms` 相冲突 | 否，可由指南链接证据自证 | 涉及验收规格，未改指南；列为 PM 待裁决项 |
+| 清理段只删轮次子目录，会留空项目根 | 否 | S4/gst 都补精确 `rmdir` 和复核 |
+| 指南未含 stability-monitor 前后计数与归因 | 否，PM 已冻结规则 | 写入 L2 健康门和后续板上报告模板 |
+
+最终复核：`/opt/usr/glibc_memopt` 不存在，无 `alloc_bench`/`gst_loop_decode`/
+采样器进程，四核 governor 均为 `schedutil`，stability-monitor 归档计数为 `0`，
+`RC=0/DONE_FINAL_BOARD_HYGIENE`。
+
+## 9. 原始件与公开边界
 
 完整命令记录、全量 `ps`、包列表、目录清单和带真实连接标识的原始输出保留在本地
 `board_results/demo_rehearsal_20260902/`，不推公开仓库。本报告只收录能支持裁决的紧凑、
-脱敏摘录；本轮没有产生新的 Demo 测量数字。
+脱敏摘录。L2 彩排数值只用于本报告的复现验收，不替换公开 Demo 头条数字；
+彩排计时也不进入机制、效果或业务代价结论。

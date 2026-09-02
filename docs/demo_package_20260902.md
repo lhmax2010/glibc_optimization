@@ -8,6 +8,16 @@
 - 现场依赖：本仓库、Python 3；L1 演示不连接任何板端
 - 完整复现手册：[`HQ Demo 复现指南`](demo_reproduction_guide_20260901.md)
 
+<a id="delivery-contracts"></a>
+## 0. 交付合同
+
+| 交付要求 | 可审计实现 | 验收入口 |
+|---|---|---|
+| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 从身份门、资产哈希到板端清理给出可照抄命令 | [`复现指南 L1`](demo_reproduction_guide_20260901.md#l1-servicea)、[`L2`](demo_reproduction_guide_20260901.md#l2-run) |
+| 同板同镜像多组对照 | S4 在同一 RPI4/Tizen 镜像上含两个锚点格与 `trim/none` 对照；gst 含两臂各三重复 | [`S4 冻结矩阵`](s4_reference_and_retention_trim_20260901.md#1-执行前冻结规格)、[`gst 冻结矩阵`](gst_trim_cost_20260901.md#1-建连前冻结规格) |
+| 结果说明价值 | 反信号先排除无需重复回收的对象，M7 阳性后才在释放相位 trim；效果、faults、业务 p99 与边界同时报告 | [`叙事文档 §4–§6`](demo_narrative_20260901.md#4-门控链与测试板实证)、[`gst 判断`](gst_trim_cost_20260901.md#6-判断) |
+| 同条件复现同数据 | 冻结 payload、页对齐、哈希和结构完整性按字节/逐值验收；调度、回收量与时延使用预登记容差带。本次 HQ 彩排证明 payload 可字节复现，但 S4 回收量仅 `10/12` 个 trim 周期逐字节一致；因而该合同的字节级部分只对指南明列的确定性字段成立 | [`L2 确定性项/容差项`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`HQ 彩排实证`](demo_rehearsal_20260902.md#s4-acceptance)、[`L1 逐字节 cmp`](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
+
 ## 1. 建议演示流程
 
 按以下顺序演示，主讲内容直接使用第 1 周叙事的对应章节：
