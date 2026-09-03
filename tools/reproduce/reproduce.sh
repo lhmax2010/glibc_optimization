@@ -186,7 +186,8 @@ link_check()
       "$repo/docs/demo_package_20260902.md" \
       "$repo/docs/demo_narrative_20260901.md" \
       "$repo/docs/demo_reproduction_guide_20260901.md" \
-      "$repo/docs/product_landing_recommendation_20260901.md"
+      "$repo/docs/product_landing_recommendation_20260901.md" \
+      "$repo/docs/tool_provenance_20260903.md"
     if [ -f "$repo/README.zh-CN.md" ]; then
         set -- "$@" "$repo/README.zh-CN.md"
     fi
@@ -203,7 +204,8 @@ host_tests()
       tools/runners/gst_trim_cost_20260901/test_host.py \
       tools/report/test_build_demo_report.py \
       tools/reproduce/test_host.py \
-      tools/reproduce/test_board_workflow_mocked_sdb.py
+      tools/reproduce/test_board_workflow_mocked_sdb.py \
+      tools/runners/tool_provenance_20260903/test_host.py
 }
 
 cd "$repo" || exit 2

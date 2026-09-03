@@ -418,7 +418,9 @@ cp usr/bin/reclaim_probe /path/to/gbs-bundle/reclaim_probe.armv7l
 `20260814.092727` 和其 build metadata 指向的 Base `20260813.050338`。RPM NVR、体积、
 SHA、buildroot 编译器/glibc 版本及三 ELF 的 `gbs_build_sha256` 记录在
 [`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) 和
-[`GBS 构建记录`](../data/raw/gbs_package_20260903/README.md)。`verify` 会静态检查 spec
+[`GBS 构建记录`](../data/raw/gbs_package_20260903/README.md)。官方四仓按包名、Provides、
+filelists 的来源排查及五项 BuildRequires 版本复核见
+[`三工具来源声明`](tool_provenance_20260903.md)。`verify` 会静态检查 spec
 与 `%files`；有 `gbs` 时还会实跑并核对已登记产物，无 `gbs` 时明确输出 `SKIPPED`。
 
 GBS 三项 ELF 尚待下一轮板上重基线，因此本轮只闭合 host 构建链；在重基线完成前，

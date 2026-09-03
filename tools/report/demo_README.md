@@ -62,7 +62,10 @@ For the three ELF files, the preferred HQ path is a real `git clone` followed by
 `alloc_bench`, `gst_loop_decode`, and `reclaim_probe`; verify its NVR and all hashes
 against [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json).
 The exact extraction commands are in the
-[L2 GBS section](docs/demo_reproduction_guide_20260901.md#l2-gbs-build).
+[L2 GBS section](docs/demo_reproduction_guide_20260901.md#l2-gbs-build). The
+[tool provenance audit](docs/tool_provenance_20260903.md) records the zero result
+from package-name, Provides, and file-list searches across all four configured
+official repositories and independently resolves every spec BuildRequires.
 
 The GBS artifacts are host-built but still await board rebaselining. Until that
 next round closes, L2 acceptance continues to use the frozen bundle; the frozen

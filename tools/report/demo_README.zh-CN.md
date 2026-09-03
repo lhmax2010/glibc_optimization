@@ -55,7 +55,9 @@ M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_tri
 [`glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec) 会生成一个同时包含
 `alloc_bench`、`gst_loop_decode`、`reclaim_probe` 的 RPM；NVR 与全部哈希按
 [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json) 核对。完整提取命令见
-[L2 GBS 小节](docs/demo_reproduction_guide_20260901.md#l2-gbs-build)。
+[L2 GBS 小节](docs/demo_reproduction_guide_20260901.md#l2-gbs-build)。四个配置官方仓的包名、
+Provides、filelists 零命中结果及 spec 全部 BuildRequires 的独立版本复核见
+[`三工具来源声明`](docs/tool_provenance_20260903.md)。
 
 GBS 产物已完成 host 构建，但仍待下一轮板上重基线；闭合前，L2 验收继续以冻结 bundle
 为准，冻结制品和固定目录交叉构建降为备选。GBS 不提供媒体文件，媒体仍是仓库外的交付

@@ -1,0 +1,32 @@
+{
+  "buildrequires": [
+    "clang",
+    "pkg-config",
+    "glibc-devel",
+    "glib2-devel",
+    "gstreamer-devel"
+  ],
+  "configs": [
+    "config/gbs_llvm.conf",
+    "config/gbs.conf"
+  ],
+  "matching": "case-insensitive alphanumeric normalization of package name, Provide name, or complete file path",
+  "outcome": "ZERO_HITS",
+  "repositories": 4,
+  "schema": "glibc-memopt-tool-provenance-audit.v1",
+  "targets": {
+    "alloc_bench": [
+      "alloc_bench",
+      "alloc-bench"
+    ],
+    "gst_loop_decode": [
+      "gst_loop_decode",
+      "gst-loop-decode"
+    ],
+    "reclaim_probe": [
+      "reclaim_probe",
+      "reclaim-probe"
+    ]
+  },
+  "tool_hits": 0
+}
