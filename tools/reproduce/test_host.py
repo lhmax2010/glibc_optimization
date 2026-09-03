@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -22,6 +23,41 @@ STABILITY = HERE / "stability_monitor.py"
 
 
 class ReproduceTests(unittest.TestCase):
+    def _run_delivery_identity_clone(self, branch: str, include_delivery_tag: bool) -> subprocess.CompletedProcess[str]:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            seed = root / "seed"
+            clone = root / "clone"
+            (seed / "tools/reproduce").mkdir(parents=True)
+            (seed / "data/raw/product_cyclic_target_probe_20260814/raw").mkdir(parents=True)
+            shutil.copy2(HERE / "reproduce.sh", seed / "tools/reproduce/reproduce.sh")
+            shutil.copy2(HERE / "delivery_refs.json", seed / "tools/reproduce/delivery_refs.json")
+            (seed / "tools/reproduce/acceptance_bands.json").write_text("{}\n", encoding="utf-8")
+            (seed / "data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv").write_text(
+                "fixture\n", encoding="utf-8"
+            )
+            subprocess.run(["git", "init", "-b", "main"], cwd=seed, check=True, capture_output=True)
+            subprocess.run(["git", "config", "user.name", "Delivery Test"], cwd=seed, check=True)
+            subprocess.run(["git", "config", "user.email", "delivery@example.invalid"], cwd=seed, check=True)
+            subprocess.run(["git", "add", "tools", "data"], cwd=seed, check=True)
+            subprocess.run(["git", "commit", "-m", "fixture"], cwd=seed, check=True, capture_output=True)
+            if branch == "demo":
+                subprocess.run(["git", "branch", "demo"], cwd=seed, check=True)
+            if include_delivery_tag:
+                subprocess.run(["git", "tag", "demo-v2"], cwd=seed, check=True)
+
+            clone_command = ["git", "clone", "--branch", branch]
+            if not include_delivery_tag:
+                clone_command.append("--no-tags")
+            clone_command.extend([str(seed), str(clone)])
+            subprocess.run(clone_command, check=True, capture_output=True)
+            env = {**os.environ, "_REPRODUCE_IDENTITY_TEST_ONLY": "1"}
+            env.pop("REPRODUCE_EXPECTED_SHA", None)
+            return subprocess.run(
+                ["bash", "tools/reproduce/reproduce.sh", "verify"],
+                cwd=clone, env=env, text=True, capture_output=True, check=False,
+            )
+
     def test_verify_entrypoint_passes(self) -> None:
         env = os.environ.copy()
         env["REPRODUCE_ALLOW_DIRTY"] = "1"
@@ -182,6 +218,23 @@ class ReproduceTests(unittest.TestCase):
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
         self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v2"})
         self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v2"})
+
+    def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
+        result = self._run_delivery_identity_clone("main", include_delivery_tag=False)
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn(
+            "REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; "
+            "checkout demo-v2 (reference unavailable in this clone)",
+            result.stdout,
+        )
+        self.assertIn("OVERALL\tPASS", result.stdout)
+
+    def test_delivery_snapshot_required_identity_passes(self) -> None:
+        result = self._run_delivery_identity_clone("demo", include_delivery_tag=True)
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertNotIn("REPORT_ONLY\tdelivery-identity", result.stdout)
+        self.assertIn("PASS\tclean-environment", result.stdout)
+        self.assertIn("OVERALL\tPASS", result.stdout)
 
     def test_acceptance_v3_separates_determinism_validity_and_direction(self) -> None:
         bands = json.loads(BANDS.read_text(encoding="utf-8"))

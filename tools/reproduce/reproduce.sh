@@ -79,11 +79,21 @@ clean_environment()
         identity=$(python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); r=p["branch_refs"].get(sys.argv[2],p["default"]); print(r["mode"]+"\t"+r["ref"])' "$repo/tools/reproduce/delivery_refs.json" "$branch") || { printf 'cannot read delivery reference\n' >&2; return 1; }
         identity_mode=${identity%%	*}
         reference=${identity#*	}
-        expected=$(git -C "$repo" rev-parse "${reference}^{commit}" 2>/dev/null) || { printf 'cannot resolve recorded delivery ref %s\n' "$reference" >&2; return 1; }
     fi
     if [ "$identity_mode" = report_only ]; then
-        printf 'REPORT_ONLY\tdelivery-identity\tHEAD=%s is a development snapshot; checkout %s for frozen delivery verification\n' "$head" "$reference"
+        if expected=$(git -C "$repo" rev-parse "${reference}^{commit}" 2>/dev/null); then
+            if [ "$head" = "$expected" ]; then
+                printf 'REPORT_ONLY\tdelivery-identity\tthis branch is not the delivery snapshot; checkout %s for required verification\n' "$reference"
+            else
+                printf 'REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; checkout %s (HEAD=%s, delivery=%s)\n' "$reference" "$head" "$expected"
+            fi
+        else
+            printf 'REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; checkout %s (reference unavailable in this clone)\n' "$reference"
+        fi
         return 0
+    fi
+    if [ -z "${REPRODUCE_EXPECTED_SHA:-}" ]; then
+        expected=$(git -C "$repo" rev-parse "${reference}^{commit}" 2>/dev/null) || { printf 'cannot resolve recorded delivery ref %s\n' "$reference" >&2; return 1; }
     fi
     [ "$head" = "$expected" ] || { printf 'HEAD %s does not equal delivery SHA %s\n' "$head" "$expected" >&2; return 1; }
 }
@@ -200,6 +210,14 @@ cd "$repo" || exit 2
 printf 'MODE\thost verify\n'
 printf 'SOURCE\t%s\n' "$(git rev-parse HEAD 2>/dev/null || printf unknown)"
 check clean-environment clean_environment
+if [ "${_REPRODUCE_IDENTITY_TEST_ONLY:-0}" = 1 ]; then
+    if [ "$failures" -ne 0 ]; then
+        printf 'OVERALL\tFAIL\titems=%s\n' "$failures"
+        exit 1
+    fi
+    printf 'OVERALL\tPASS\n'
+    exit 0
+fi
 check servicea-cyclic-cmp cyclic_replay
 check f2-f3-attribution-cmp attribution_replay
 check phenotype-cmp phenotype_replay
