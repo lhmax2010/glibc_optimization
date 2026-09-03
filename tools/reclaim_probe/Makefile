@@ -11,10 +11,13 @@ ARMV7L_SYSROOT ?=
 COMMON_CFLAGS := -std=c99 -O2 -g -Wall -Wextra -Werror
 HOST_CFLAGS ?=
 ARMV7L_CFLAGS ?= -O2 -g
+ARMV7L_BUILD_DIR ?= .build/armv7l
+ARMV7L_REPRO_CFLAGS := -fdebug-prefix-map=$(CURDIR)=.
 
 SRC := reclaim_probe.c
 HOST_BIN := reclaim_probe.host
 ARMV7L_BIN := reclaim_probe.armv7l
+ARMV7L_BUILD_BIN := $(ARMV7L_BUILD_DIR)/reclaim_probe.armv7l
 
 .PHONY: all host armv7l clean
 
@@ -27,8 +30,12 @@ armv7l: $(ARMV7L_BIN)
 $(HOST_BIN): $(SRC)
 	$(HOST_CC) $(COMMON_CFLAGS) $(HOST_CFLAGS) -o $@ $<
 
-$(ARMV7L_BIN): $(SRC)
-	$(ARMV7L_CC) $(COMMON_CFLAGS) $(ARMV7L_CFLAGS) $(if $(ARMV7L_SYSROOT),--sysroot=$(ARMV7L_SYSROOT),) -o $@ $<
+$(ARMV7L_BIN): $(ARMV7L_BUILD_BIN)
+	cp $< $@
+
+$(ARMV7L_BUILD_BIN): $(SRC)
+	mkdir -p $(ARMV7L_BUILD_DIR)
+	$(ARMV7L_CC) $(COMMON_CFLAGS) $(ARMV7L_CFLAGS) $(ARMV7L_REPRO_CFLAGS) $(if $(ARMV7L_SYSROOT),--sysroot=$(ARMV7L_SYSROOT),) -o $@ $<
 
 clean:
-	rm -f $(HOST_BIN) $(ARMV7L_BIN)
+	rm -f $(HOST_BIN) $(ARMV7L_BIN) $(ARMV7L_BUILD_BIN)

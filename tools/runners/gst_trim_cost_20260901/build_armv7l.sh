@@ -23,13 +23,15 @@ command -v bwrap >/dev/null 2>&1 || usage
 
 repo=$(CDPATH= cd -- "$(dirname -- "$0")/../../.." && pwd)
 src=tools/gst_loop_decode/gst_loop_decode.c
+build_dir=${GST_BUILD_DIR:-$repo/.build/armv7l/gst_loop_decode}
+build_output=$build_dir/gst_loop_decode.armv7l
 
 case "$output" in
     /*) ;;
     *) output="$(pwd)/$output" ;;
 esac
 
-mkdir -p "$(dirname -- "$output")"
+mkdir -p "$(dirname -- "$output")" "$build_dir"
 cd "$repo"
 
 bwrap \
@@ -43,15 +45,20 @@ bwrap \
     "$toolchain_root/emul/usr/bin/armv7l-tizen-linux-gnueabi-gcc" \
     -B/usr/lib/gcc/armv7l-tizen-linux-gnueabi/14.2.0/ \
     -std=c99 -O2 -g -Wall -Wextra -Werror \
+    "-fdebug-prefix-map=$repo=." \
+    "-fdebug-prefix-map=$toolchain_root=/toolchain" \
+    "-fdebug-prefix-map=$gst_sysroot=/gst-sysroot" \
     -I"$gst_sysroot/usr/include/gstreamer-1.0" \
     -I"$gst_sysroot/usr/include/glib-2.0" \
     -I"$gst_sysroot/usr/lib/glib-2.0/include" \
-    -o "$output" "$src" \
+    -o "$build_output" "$src" \
     -L"$gst_sysroot/usr/lib" \
     -Wl,-rpath-link,"$gst_sysroot/usr/lib" \
     -Wl,--allow-shlib-undefined \
     -l:libgstreamer-1.0.so.0 -l:libgobject-2.0.so.0 \
     -l:libglib-2.0.so.0 -pthread
+
+cp "$build_output" "$output"
 
 file "$output"
 sha256sum "$src" "$output"

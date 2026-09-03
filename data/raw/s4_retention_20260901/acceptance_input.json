@@ -1,0 +1,63 @@
+{
+  "a_anchor_reclaim_pct": {
+    "medium-only": 50.387886,
+    "mixed": 51.074077
+  },
+  "a_anchor_trim_max_ms": 13.331907,
+  "b_reclaim_pct_repeat_median": {
+    "medium-only": 84.446566,
+    "mixed": 81.661264
+  },
+  "b_release_point_trim_max_ms": 1.850704,
+  "dmesg_oom_lmk_matches": 0,
+  "governor_restored_schedutil_count": 4,
+  "next_cycle_majflt_max": 0,
+  "reclaimed_4k_aligned_count": 12,
+  "reclaimed_4k_aligned_total": 12,
+  "released_payload_bytes": {
+    "medium-only": [
+      6288384,
+      6293504
+    ],
+    "mixed": [
+      5742256,
+      6566672
+    ]
+  },
+  "schema": "s4-public-replay.v2",
+  "trim_reclaimed_kb_by_profile_rep_cycle": {
+    "medium-only": {
+      "1": [
+        5124,
+        5252
+      ],
+      "2": [
+        5124,
+        5252
+      ],
+      "3": [
+        5124,
+        5252
+      ]
+    },
+    "mixed": {
+      "1": [
+        4496,
+        5332
+      ],
+      "2": [
+        4496,
+        5332
+      ],
+      "3": [
+        4496,
+        5332
+      ]
+    }
+  },
+  "zram_deltas": {
+    "compressed_data_size": 0,
+    "mem_used_total": 0,
+    "original_data_size": 0
+  }
+}

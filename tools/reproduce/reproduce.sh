@@ -54,14 +54,24 @@ check()
 
 clean_environment()
 {
-    command -v python3 >/dev/null 2>&1 || return 1
-    command -v git >/dev/null 2>&1 || return 1
-    [ -d "$repo/.git" ] || return 1
-    [ -f "$repo/data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv" ] || return 1
-    [ -f "$repo/tools/reproduce/acceptance_bands.json" ] || return 1
+    command -v python3 >/dev/null 2>&1 || { printf 'python3 is not available\n' >&2; return 1; }
+    command -v git >/dev/null 2>&1 || { printf 'git is not available\n' >&2; return 1; }
+    [ -d "$repo/.git" ] || { printf 'not a git clone: ZIP/source export is unsupported\n' >&2; return 1; }
+    [ -f "$repo/data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv" ] || { printf 'missing public ServiceA input\n' >&2; return 1; }
+    [ -f "$repo/tools/reproduce/acceptance_bands.json" ] || { printf 'missing acceptance_bands.json\n' >&2; return 1; }
+    [ -f "$repo/tools/reproduce/delivery_refs.json" ] || { printf 'missing delivery_refs.json\n' >&2; return 1; }
     if [ "${REPRODUCE_ALLOW_DIRTY:-0}" != 1 ]; then
-        [ -z "$(git -C "$repo" status --porcelain)" ] || return 1
+        [ -z "$(git -C "$repo" status --porcelain)" ] || { printf 'working tree is dirty; set REPRODUCE_ALLOW_DIRTY=1 only for development\n' >&2; return 1; }
     fi
+    head=$(git -C "$repo" rev-parse HEAD 2>/dev/null) || { printf 'cannot resolve HEAD\n' >&2; return 1; }
+    if [ -n "${REPRODUCE_EXPECTED_SHA:-}" ]; then
+        expected=$(git -C "$repo" rev-parse "${REPRODUCE_EXPECTED_SHA}^{commit}" 2>/dev/null) || { printf 'cannot resolve REPRODUCE_EXPECTED_SHA=%s\n' "$REPRODUCE_EXPECTED_SHA" >&2; return 1; }
+    else
+        branch=$(git -C "$repo" branch --show-current 2>/dev/null)
+        reference=$(python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); print(p["branch_refs"].get(sys.argv[2],p["default_ref"]))' "$repo/tools/reproduce/delivery_refs.json" "$branch") || { printf 'cannot read delivery reference\n' >&2; return 1; }
+        expected=$(git -C "$repo" rev-parse "${reference}^{commit}" 2>/dev/null) || { printf 'cannot resolve recorded delivery ref %s\n' "$reference" >&2; return 1; }
+    fi
+    [ "$head" = "$expected" ] || { printf 'HEAD %s does not equal delivery SHA %s\n' "$head" "$expected" >&2; return 1; }
 }
 
 cyclic_replay()
@@ -100,6 +110,7 @@ phenotype_replay()
 
 batch_replay()
 {
+    python3 "$repo/tools/reproduce/check_batch_transcription.py" --repo-root "$repo" >/dev/null || return 1
     output=$(python3 -c 'import csv,statistics,sys; r=list(csv.DictReader(open(sys.argv[1]),delimiter="\t")); s=[x for x in r if x["series"]=="single"]; m=[x for x in r if x["series"]=="scale"]; print("single median=%.4f%%/%.6fMiB; demo=48.9%%/1.36MiB"%(statistics.median(float(x["reclaim_pct"]) for x in s),statistics.median(float(x["reclaimed_mib"]) for x in s))); print("scale process_count=%d pct_range=%.4f-%.4f%%"%(len(m),min(float(x["reclaim_pct"]) for x in m),max(float(x["reclaim_pct"]) for x in m)))' "$repo/data/raw/demo_reproduction_20260901/batch_release_phase.tsv") || return 1
     expected='single median=48.9451%/1.359375MiB; demo=48.9%/1.36MiB
 scale process_count=8 pct_range=48.5232-49.3671%'
@@ -109,7 +120,8 @@ scale process_count=8 pct_range=48.5232-49.3671%'
 s4_replay()
 {
     python3 "$repo/tools/runners/s4_retention_20260901/analyze_s4.py" \
-      --replay-public "$repo/data/raw/s4_retention_20260901" --output "$tmp/s4"
+      --replay-public "$repo/data/raw/s4_retention_20260901" --output "$tmp/s4" || return 1
+    cmp "$tmp/s4/acceptance_input.json" "$repo/data/raw/s4_retention_20260901/acceptance_input.json"
 }
 
 gst_replay()
@@ -144,10 +156,14 @@ link_check()
 {
     set -- \
       "$repo/README.md" \
+      "$repo/docs/INDEX.md" \
       "$repo/docs/demo_package_20260902.md" \
       "$repo/docs/demo_narrative_20260901.md" \
       "$repo/docs/demo_reproduction_guide_20260901.md" \
       "$repo/docs/product_landing_recommendation_20260901.md"
+    if [ -f "$repo/README.zh-CN.md" ]; then
+        set -- "$@" "$repo/README.zh-CN.md"
+    fi
     if [ -f "$repo/docs/demo_report.html" ]; then
         set -- "$@" "$repo/docs/demo_report.html"
     fi
@@ -173,7 +189,7 @@ check phenotype-cmp phenotype_replay
 check batch-release-output batch_replay
 check s4-public-replay s4_replay
 check gst-public-replay-cmp gst_replay
-check acceptance-v2 acceptance_replay
+check acceptance-v3 acceptance_replay
 if [ -f "$repo/docs/demo_report.html" ] && [ -f "$repo/tools/report/source_commit.txt" ]; then
     check offline-report-byte-cmp report_rebuild
 else
@@ -183,7 +199,7 @@ check local-link-check link_check
 if [ "${REPRODUCE_SKIP_TESTS:-0}" != 1 ]; then
     check host-tests host_tests
 fi
-printf 'EXPECTED\tstability-monitor s4-a-alloc-bench-cpu-relative\tregistered max=2; archive/clean/recheck when observed\n'
+printf 'REGISTERED/NOT-EVALUATED\tstability-monitor s4-a-alloc-bench-cpu-relative\tknown-alert waiver max=2; no observation in host verify\n'
 if [ "$failures" -ne 0 ]; then
     printf 'OVERALL\tFAIL\titems=%s\n' "$failures"
     exit 1

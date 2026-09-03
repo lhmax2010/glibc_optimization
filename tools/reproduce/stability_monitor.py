@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Diff and classify stability-monitor artifacts for the v2 health gate."""
+"""Diff and classify stability-monitor artifacts for the v2 known-alert waiver."""
 
 from __future__ import annotations
 
@@ -128,7 +128,7 @@ def classify(args: argparse.Namespace) -> int:
             item["explanation"] = (
                 "matched preregistered reason/window/owner/count but remained after cleanup"
                 if present_after else
-                "matched preregistered reason/window/owner/count; archived and absent after cleanup"
+                "known-alert waiver matched reason/window/owner/count; archived and absent after cleanup; root cause not proven"
                 if post_rows is not None else
                 "matched preregistered reason/window/owner/count; cleanup pending"
             )
@@ -164,7 +164,7 @@ def classify(args: argparse.Namespace) -> int:
     for item in alerts:
         print(f"{item['verdict']}\t{item['remote_path']}\t{item['window']}")
     if not alerts:
-        print(f"PASS\t{args.workload}\tno-new-alert")
+        print(f"REGISTERED/NOT-EVALUATED\t{args.workload}\tno-new-alert")
     return 1 if any(item["verdict"] == "FAIL" for item in alerts) or present_expected else 0
 
 

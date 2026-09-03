@@ -20,8 +20,10 @@ classifying any new stability-monitor artifact.
 
 An attributable alert that is not preregistered is `FAIL`. A foreign or
 unattributed alert is `REPORT_ONLY` and must not be altered. A preregistered alert
-is `EXPECTED` only when its reason, workload window, binary and count all match;
-it must still be recorded, archived, removed by exact path, and rechecked.
+uses a **known-alert waiver**: it is `EXPECTED` only when its reason, workload
+window, binary and count all match, and it has been recorded, archived, removed by
+exact path, and rechecked. If it is not observed, report
+`REGISTERED/NOT-EVALUATED`; registration alone is never an `EXPECTED` result.
 
 ## Preregistered expected alerts
 
@@ -29,9 +31,10 @@ it must still be recorded, archived, removed by exact path, and rechecked.
 |---|---|---|---:|---|---|
 | `s4-a-alloc-bench-cpu-relative` | `cpu.relative` / `alloc_bench.armv7l` | `A/mixed/rep1`, `A/medium-only/rep1` | 2 total | record → archive → exact cleanup → recheck | `EXPECTED` |
 
-These livedumps are benign monitoring artifacts, not hook-cost measurements. A
-different trigger, binary, window, or a third matching file is not covered by the
-registration.
+For the registered observations, the trigger reason and workload window are
+reproducible; their root cause has **not** been proven. They are not hook-cost
+measurements. A different trigger, binary, window, or a third matching file is not
+covered by the waiver.
 
 ## Archive and exact cleanup pattern
 

@@ -185,13 +185,28 @@ def replay_public(public: Path, output: Path) -> None:
         profile_medians[profile] = round(statistics.median(repetition_values), 6)
 
     summary = {
-        "schema": "s4-public-replay.v1",
+        "schema": "s4-public-replay.v2",
         "a_anchor_reclaim_pct": {row["profile"]: float(row["reclaim_pct_of_pretrim"]) for row in a_rows},
         "a_anchor_trim_max_ms": max(float(row["trim_elapsed_ms"]) for row in a_rows),
         "b_reclaim_pct_repeat_median": profile_medians,
         "b_release_point_trim_max_ms": max(float(row["trim_elapsed_ms"]) for row in trim_rows),
         "released_payload_bytes": {
             profile: [next(iter(payloads[(profile, cycle)])) for cycle in (1, 2)]
+            for profile in ("mixed", "medium-only")
+        },
+        "trim_reclaimed_kb_by_profile_rep_cycle": {
+            profile: {
+                str(rep): [
+                    int(next(
+                        row["trim_reclaimed_kb"] for row in trim_rows
+                        if row["profile"] == profile
+                        and int(row["rep"]) == rep
+                        and int(row["cycle"]) == cycle
+                    ))
+                    for cycle in (1, 2)
+                ]
+                for rep in (1, 2, 3)
+            }
             for profile in ("mixed", "medium-only")
         },
         "reclaimed_4k_aligned_count": sum(
