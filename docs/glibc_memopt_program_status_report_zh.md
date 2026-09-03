@@ -16,6 +16,7 @@
 > **2026-09-01 S4 更新：** 新镜像瞬时释放锚点为 mixed `51.074077%`、medium-only `50.387886%`，与 `50% × 0.98` 机制基线相容。对 S2 合成滞留表型，valley trim 回收释放 payload 的中位 `81.661264% / 84.446566%`，两档统一对客调用中位为 `1.233269 ms`；下一周期相对 none 增加 `1351 / 1465` 次 minflt，majflt 为 0。该证据补齐合成代理的效果/faults 数字，不等同于产品候选的 M7 或业务延迟结论。完整报告见 [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md)。
 
 - Demo 决策叙事入口：[`demo_narrative_20260901.md`](demo_narrative_20260901.md)（逐数字复现入口由文内链接到 HQ 指南）。
+- 2026-09-03 三方评审修复闭环：[`review_fix_20260903.md`](review_fix_20260903.md)（acceptance v3、交付资产、对客一致性与 demo-v2 冻结记录）。
 - 产品侧落点与三条件硬门：[`product_landing_recommendation_20260901.md`](product_landing_recommendation_20260901.md)。
 - 产品 M7 路径评估与演示日入口：[`product_m7_feasibility_20260902.md`](product_m7_feasibility_20260902.md)、[`demo_package_20260902.md`](demo_package_20260902.md)。
 - HQ 最终交付入口：[`demo_report.html`](demo_report.html)（离线图文）与 [`reproduce.sh`](../tools/reproduce/reproduce.sh)（host verify / 完整板上 workflow）。
