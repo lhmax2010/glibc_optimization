@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import shutil
 import subprocess
@@ -70,6 +71,99 @@ class ReproduceTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("--ip <address>", result.stdout)
 
+    def test_stability_snapshot_remote_body_hashes_nonempty_directory(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        line = next(
+            row.strip()
+            for row in workflow.splitlines()
+            if row.strip().startswith("body='d=/opt/usr/share/crash/livedump;")
+        )
+        self.assertTrue(line.endswith("'"), line)
+        remote_body = line[len("body='") : -1]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive = root / "alloc_bench.armv7l_42_fixture.zip"
+            archive.write_bytes(b"fixture-livedump\n")
+            remote_body = remote_body.replace("/opt/usr/share/crash/livedump", str(root))
+            result = subprocess.run(
+                ["sh", "-c", remote_body], text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            fields = result.stdout.rstrip("\n").split("\t")
+            self.assertEqual(len(fields), 4, result.stdout)
+            self.assertEqual(fields[0], str(archive))
+            self.assertEqual(fields[1], str(archive.stat().st_size))
+            self.assertEqual(fields[3], hashlib.sha256(archive.read_bytes()).hexdigest())
+
+    def test_remote_commands_do_not_consume_cleanup_list_stdin(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        start = workflow.index("run_remote()\n")
+        end = workflow.index("\nsnapshot_stability()", start)
+        run_remote = workflow[start:end]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            mock_bin = root / "bin"
+            mock_bin.mkdir()
+            mock_sdb = mock_bin / "sdb"
+            mock_sdb.write_text(
+                "#!/bin/sh\n"
+                "IFS= read -r stolen || true\n"
+                "echo RC=0\n"
+                "echo DONE_CLEAN\n",
+                encoding="utf-8",
+            )
+            mock_sdb.chmod(0o755)
+            cleanup_list = root / "cleanup.txt"
+            cleanup_list.write_text("first\nsecond\n", encoding="utf-8")
+            script = root / "exercise.sh"
+            script.write_text(
+                "#!/bin/sh\nset -eu\n"
+                f"serial=mock\noutput={root}\n"
+                + run_remote
+                + f"\n: > {root}/seen\n"
+                + f"while IFS= read -r item; do run_remote CLEAN true {root}/$item.log; echo \"$item\" >> {root}/seen; done < {cleanup_list}\n",
+                encoding="utf-8",
+            )
+            result = subprocess.run(
+                ["sh", str(script)],
+                env={**os.environ, "PATH": f"{mock_bin}:{os.environ['PATH']}"},
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertEqual((root / "seen").read_text(encoding="utf-8"), "first\nsecond\n")
+
+    def test_logged_command_preserves_failure_status(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        start = workflow.index("run_logged()\n")
+        end = workflow.index("\nprepare_artifacts ||", start)
+        run_logged = workflow[start:end]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            log = root / "command.log"
+            script = root / "exercise.sh"
+            script.write_text(
+                "#!/bin/sh\nset -u\n"
+                + run_logged
+                + f"\nrun_logged {log} sh -c 'printf failed-output; exit 7'\n",
+                encoding="utf-8",
+            )
+            result = subprocess.run(
+                ["sh", str(script)], text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 7, result.stderr + result.stdout)
+            self.assertEqual(result.stdout, "failed-output")
+            self.assertEqual(log.read_text(encoding="utf-8"), "failed-output")
+
+    def test_s4_stability_failure_stops_before_gst(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        classification = workflow.index("classify_and_clean s4")
+        guard = workflow.index('[ "$s4_stability_rc" -eq 0 ] || die "S4 stability gate"')
+        gst_start = workflow.index('snapshot_stability "$output/gst/stability_before.tsv"')
+        self.assertLess(classification, guard)
+        self.assertLess(guard, gst_start)
+
     def test_expected_s4_alert_is_expected_after_archive_and_cleanup(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -81,8 +175,9 @@ class ReproduceTests(unittest.TestCase):
             post.write_text(header)
             archive_dir = root / "archives"; archive_dir.mkdir()
             with zipfile.ZipFile(archive_dir / Path(remote).name, "w") as archive:
-                archive.writestr("dump_reason", "Exceeded parameter: cpu.relative\n")
-                archive.writestr("info.json", json.dumps({"exe_file_path": "/opt/usr/glibc_memopt/s4_retention_20260901/alloc_bench.armv7l", "threads": {"pid": 42}}))
+                prefix = "alloc_bench.armv7l_42_fixture"
+                archive.writestr(f"{prefix}/{prefix}.dump_reason", "Exceeded parameter: cpu.relative\n")
+                archive.writestr(f"{prefix}/{prefix}.info.json", json.dumps({"exe_file_path": "/opt/usr/glibc_memopt/s4_retention_20260901/alloc_bench.armv7l", "threads": {"pid": 42}}))
             pull = root / "pull/A/mixed/rep1"; pull.mkdir(parents=True)
             (pull / "pid.txt").write_text("42\n")
             result = subprocess.run(

@@ -38,7 +38,12 @@ def new_paths(before: Path, after: Path) -> list[str]:
 
 
 def zip_member(archive: zipfile.ZipFile, basename: str) -> str:
-    matches = [name for name in archive.namelist() if PurePosixPath(name).name == basename]
+    matches = [
+        name
+        for name in archive.namelist()
+        if PurePosixPath(name).name == basename
+        or PurePosixPath(name).name.endswith(f".{basename}")
+    ]
     if len(matches) != 1:
         raise ValueError(f"expected one {basename} in {archive.filename}, got {matches}")
     return matches[0]
