@@ -109,13 +109,15 @@ h = json.loads((p / "health.json").read_text())
 print("A anchors: " + " ".join("{}={:.6f}%".format(r["profile"], float(r["reclaim_pct_of_pretrim"])) for r in a))
 v = [r for r in c if r["trim_at"] == "valley"]
 print("B reclaim/released range=%.6f-%.6f%%" % (min(float(r["trim_reclaim_pct_of_released"]) for r in v), max(float(r["trim_reclaim_pct_of_released"]) for r in v)))
-times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == "mixed"]
 for profile in ("mixed", "medium-only"):
     cells = {r["trim_at"]: r for r in b if r["profile"] == profile and r["rep"] == "1"}
     extra = int(cells["valley"]["cycle1_next_minflt"]) - int(cells["none"]["cycle1_next_minflt"])
     print("%s next_minflt_extra=%+d" % (profile, extra))
-med = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
-print("trim_ms_merged_median=%s" % med)
+medians = {}
+for profile in ("mixed", "medium-only"):
+    times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == profile]
+    medians[profile] = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+print("trim_ms_median_by_profile: mixed=%s medium-only=%s" % (medians["mixed"], medians["medium-only"]))
 payloads = {}
 for r in c:
     payloads.setdefault((r["profile"], int(r["cycle"])), set()).add(int(r["released_payload_bytes"]))
@@ -161,13 +163,13 @@ delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
 
 | 演示数字 | 结论用途 | 证据 | L1 复算 |
 |---|---|---|---|
-| ServiceA 峰谷中位 `6212 KiB`（`6.2 MiB`） | 自动归还反信号案例的下降体量 | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](demo_reproduction_guide_20260901.md#l1-servicea) |
+| ServiceA 峰谷中位 `6212 KiB`（`6.07 MiB`） | 自动归还反信号案例的下降体量 | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](demo_reproduction_guide_20260901.md#l1-servicea) |
 | ServiceA 首次观测释放完成上界 `5.223693–8.910626 s`；旧 `19.683240 s` 撤销时长解释 | 不上 20 s 延迟钩子的依据 | [`summary.json`](../data/raw/cyclic_fall_attribution_20260901/summary.json) | [ServiceA](demo_reproduction_guide_20260901.md#l1-servicea) |
 | `enlightenment +1736 KiB` a+b floor | 最大 retained-floor 候选之一，另带自动归还能力告警 | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
 | `ServiceH 2360/+868/+580 KiB`、`ServiceA +788 KiB` | 平台上界、跨探针 floor 与谷底残渣候选 | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
 | 批量释放 `48.9451% / 1.359375 MiB`，同表型扩到 8 进程 | 来自 `<TEST_IMAGE_B>` / `glibc-2.40-2.8` 的相容性对照，非冻结矩阵 | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](demo_reproduction_guide_20260901.md#l1-batch-release) |
 | S4 锚点 `51.07% / 50.39%`（各 n=1，of pre-trim heap） | 新镜像机制锚点 | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
-| S4 回收/released `80.175875%–85.453954%`；统一调用中位 `1.233269 ms`；下一周期 `+1351/+1465 minflt`、`majflt=0` | 合成驻留表型的效果与再激活代价 | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
+| S4 回收/released `80.175875%–85.453954%`；调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期 `+1351/+1465 minflt`、`majflt=0` | 合成驻留表型的效果与再激活代价 | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
 | gst p99 差 `+6.228611 ms`，none 重复离散 `6.784167 ms`，margin `0.555556 ms`（门槛 `91.8%`）；同规则 p50 `+1.870462` vs `0.173927 ms`，另 `+359 minflt/循环` | 真实多线程 pipeline 的预登记规则；p99 方向为 `REPORT_ONLY` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv)、[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 | gst trim p50/p95/p99/max `0.671556/0.818315/0.842185/0.856944 ms` | release-point 调用分布；不等于并发分配锁停顿 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 | gst 首次 release `51.014041%–51.406250% / 1.277344–1.285156 MiB` | 与既有批量释放机制量级相容 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
@@ -195,8 +197,8 @@ trim。`ServiceA` 的下降分量有 PD 实跌、zram 无正增量、majflt 恒�
 不能。GStreamer 的 `+6.228611 ms` 没有严格超过 `6.784167 ms` 基线重复离散，只表示
 按预登记门“本批未检出”；每重复只有 50 个主样本，nearest-rank p99 就是最大值
 ([正式裁决](gst_trim_cost_20260901.md#a-每循环-release-trim-的业务代价是否可见))。trim 又在
-pipeline NULL release 后执行，不能量化其他线程仍在分配时的直接锁停顿。S4 的统一
-`1.233269 ms` 中位也只是合成代理调用时间，不是产品 SLA。若其他板按同一规则判 p99
+pipeline NULL release 后执行，不能量化其他线程仍在分配时的直接锁停顿。S4 的分档
+中位 mixed `1.233269 ms` / medium-only `1.218361 ms` 也只是合成代理调用时间，不是产品 SLA。若其他板按同一规则判 p99
 “可见”，应保留三重复原始值，报告 delta、none 离散与 margin，并作为批次差异上报；
 方向仍是 `REPORT_ONLY`，不改冻结参数，也不把 workflow 判成失败。
 

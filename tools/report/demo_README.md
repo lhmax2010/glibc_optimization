@@ -12,7 +12,8 @@ visible automatic reclaim as an anti-signal, confirm allocator-retained free spa
 with M7, then call `malloc_trim(0)` only at a known release phase while accepting
 reclaim, refault, latency, and health evidence together. On the frozen RPI4/Tizen
 glibc-2.40-1.6.armv7l matrix, anchors were about 50%, gated trim reclaimed about
-80%–85% of released payload with a merged median of 1.233269 ms, and the gst p99
+80%–85% of released payload; per-profile median calls were mixed 1.233269 ms and
+medium-only 1.218361 ms, and the gst p99
 direction was not visible by the preregistered rule. These are mechanism and scale
 results, not a product-memory-benefit promise.
 
@@ -21,7 +22,7 @@ results, not a product-memory-benefit promise.
 | Comparison | Frozen result | Report | Compact evidence |
 |---|---|---|---|
 | Instant-release anchors | mixed `51.07%`, medium-only `50.39%`; each `n=1`, denominator is pre-trim heap | [HTML summary](docs/demo_report.html#summary) | [`a_cells.tsv`](data/raw/s4_retention_20260901/a_cells.tsv) |
-| Gated valley trim vs none | `80.18%–85.45%` of released payload; merged median `1.233269 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
+| Gated valley trim vs none | `80.18%–85.45%` of released payload; median call mixed `1.233269 ms` / medium-only `1.218361 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` vs none dispersion `6.784167 ms`: margin `0.555556 ms`, 91.8% of threshold, `REPORT_ONLY` not visible; the same p50 rule is visible (`+1.870462` vs `0.173927 ms`); `+359 minflt/cycle` | [Real concurrency](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json), [`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
 
 The batch release reference `48.9% / 1.36 MiB × 8 processes` comes from
@@ -45,12 +46,28 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
   `BUILD_ID=tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l`;
 - exact `glibc-2.40-1.6.armv7l`, SDB 4.2.25 reference, and the three-part identity gate;
 - remote `id -u=0`, writable four-core governor controls, and writable `/opt/usr`;
-- the internal SHA-pinned ARM/media bundle described by
-  [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json), obtained
-  through its internal delivery-channel/owner placeholders.
+- the SHA-pinned ARM/media bundle described by
+  [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json); the
+  deliverer supplies the media acquisition location with the delivery email, and
+  the recipient verifies it against the manifest SHA-256.
 
 Without that internal bundle, board mode cannot start. The media asset has no
 established redistributable provenance and is delivered outside this repository.
+
+### Preferred HQ GBS build
+
+For the three ELF files, the preferred HQ path is a real `git clone` followed by
+`gbs -c config/gbs_llvm.conf build -A armv7l --overwrite`. The pinned config and
+[`glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec) build one RPM containing
+`alloc_bench`, `gst_loop_decode`, and `reclaim_probe`; verify its NVR and all hashes
+against [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json).
+The exact extraction commands are in the
+[L2 GBS section](docs/demo_reproduction_guide_20260901.md#l2-gbs-build).
+
+The GBS artifacts are host-built but still await board rebaselining. Until that
+next round closes, L2 acceptance continues to use the frozen bundle; the frozen
+artifacts and fixed-directory cross-build are fallback paths. GBS does not provide
+the media file, which remains an out-of-repository delivery prerequisite.
 
 ## Repository map
 

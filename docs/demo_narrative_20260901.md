@@ -22,7 +22,7 @@ Private_Dirty、allocator 内确有已释放驻留、回收后的再激活与并
 
 ## 2. 核心发现一：自动归还是反信号
 
-`ServiceA` 的周期 glibc-heap Private_Dirty 峰谷中位看起来有 **6.2 MiB**，精确复算为
+`ServiceA` 的周期 glibc-heap Private_Dirty 峰谷中位为 **6.07 MiB**，精确复算为
 `6212 KiB`（[证据 TSV](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv)；
 [HQ 复算](demo_reproduction_guide_20260901.md#l1-servicea)）。但峰谷下降期间：
 
@@ -97,7 +97,7 @@ faults 与健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留表�
 - valley trim 回收已释放 payload 的逐周期范围为 **80.18%–85.45%**
   （[证据 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
-- 两档统一对客调用中位为 **1.233269 ms**
+- 调用耗时按档中位为 **mixed 1.233269 ms / medium-only 1.218361 ms**
   （[证据 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
 - 下一周期相对 none 增加 **+1351 / +1465 minflt**，`majflt=0`

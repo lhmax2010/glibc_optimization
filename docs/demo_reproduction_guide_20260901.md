@@ -76,7 +76,7 @@ python3 data/raw/cyclic_fall_mechanism_attribution_20260831/recompute_cyclic.py 
 
 预期输出原文如下。这里同时复核逐轮 PD 实跌、zram 没有正增量、majflt
 下降窗为零、无缺行和无 PID 变化；中位峰谷为 `6212 KiB`，即 Demo 中的
-`6.2 MiB`。这些值也已固化在
+`6.07 MiB`。这些值也已固化在
 [`cyclic_rounds.tsv`](../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv)
 与
 [`cyclic_quality.json`](../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json)。
@@ -223,9 +223,11 @@ for profile in ("mixed", "medium-only"):
     cells = {r["trim_at"]: r for r in b if r["profile"] == profile and r["rep"] == "1"}
     extra = int(cells["valley"]["cycle1_next_minflt"]) - int(cells["none"]["cycle1_next_minflt"])
     print("%s next_minflt_extra=%+d" % (profile, extra))
-times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == "mixed"]
-med = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
-print("trim_ms_merged_median=%s" % med)
+medians = {}
+for profile in ("mixed", "medium-only"):
+    times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == profile]
+    medians[profile] = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+print("trim_ms_median_by_profile: mixed=%s medium-only=%s" % (medians["mixed"], medians["medium-only"]))
 payloads = {}
 for r in c:
     payloads.setdefault((r["profile"], int(r["cycle"])), set()).add(int(r["released_payload_bytes"]))
@@ -247,7 +249,7 @@ A anchors: mixed=51.074077% medium-only=50.387886%
 B reclaim/released range=80.175875-85.453954%
 mixed next_minflt_extra=+1351
 medium-only next_minflt_extra=+1465
-trim_ms_merged_median=1.233269
+trim_ms_median_by_profile: mixed=1.233269 medium-only=1.218361
 released_payload_bytes: mixed=5742256,6566672 medium-only=6288384,6293504
 reclaimed_4k_aligned=12/12
 majflt_all_zero=true
@@ -316,14 +318,14 @@ gst first-release=51.014041-51.406250% / 1.277344-1.285156 MiB
 
 | Demo 展示值 | 公开输入 | 复算入口 |
 |---|---|---|
-| ServiceA `6.2 MiB`（精确中位 `6212 KiB`） | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](#l1-servicea) |
+| ServiceA `6.07 MiB`（精确中位 `6212 KiB`） | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](#l1-servicea) |
 | 旧 `19.683240 s` 为伪影 | [`summary.json`](../data/raw/cyclic_fall_attribution_20260901/summary.json) | [ServiceA](#l1-servicea) |
 | `enlightenment +1736 KiB` | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](#l1-phenotypes) |
 | `ServiceH 2360/+868/+580 KiB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](#l1-phenotypes) |
 | `ServiceA +788 KiB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv) | [表型](#l1-phenotypes) |
 | 批量相位 `48.9% / 1.36 MiB × 8`（`<TEST_IMAGE_B>` / `glibc-2.40-2.8` 相容性对照，非冻结矩阵） | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](#l1-batch-release) |
 | S4 `51.07% / 50.39%`（各 n=1，of pre-trim heap） | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](#l1-s4) |
-| S4 `80.175875%–85.453954%`、统一中位 `1.233269 ms`、`+1351/+1465 minflt` | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](#l1-s4) |
+| S4 `80.175875%–85.453954%`、调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`、`+1351/+1465 minflt` | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](#l1-s4) |
 | S4 `majflt=0`、zram 三项 `Δ=0`、OOM/LMK `0` | [`health.json`](../data/raw/s4_retention_20260901/health.json) | [S4](#l1-s4) |
 | gst p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`，margin `0.555556 ms`（91.8%）；同规则 p50 `+1.870462` 对 `0.173927 ms`；`+359 minflt/循环` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv) | [gst L1](#l1-gst-trim-cost) |
 | gst trim `0.671556/0.818315/0.842185/0.856944 ms`（p50/p95/p99/max） | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
@@ -371,23 +373,58 @@ sha256sum tools/alloc_bench/alloc_bench.armv7l
 
 `file` 应报告动态链接的 ARM EABI5 ELF。旧冻结制品 SHA 与当前固定路径、
 `-fdebug-prefix-map=<dir>=.` 构建链的可复现 SHA 分开登记，不能混为一个预期值；完整
-SHA、体积、内部交付渠道和责任人占位以
+SHA、体积与交付方式以
 [`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) 为唯一 manifest。
 可在两条不同 checkout 路径运行以下 host 测试，核验三个可构建 ELF 的路径独立 SHA：
 
 ```sh
-python3 tools/reproduce/test_reproducible_build_paths.py
+python3 tools/reproduce/check_reproducible_build_paths.py
 ```
 
 若当前工具链构建值与 manifest 的 `reproducible_build_sha256` 不同，先核对源码、GCC、
 scratch/sysroot 和 flags；仍不一致时登记为新构建批次，不能称为字节级复跑。
 
-因此“全新 clone + 单独使用本仓库”不足以启动 L2。交付方必须在开始前另行提供
+因此“全新 clone + 单独使用本仓库”仍不足以启动含媒体输入的 L2。交付方必须在开始前另行提供
 带 SHA-256 manifest 的内部产物包（S4 bench，gst bench/probe/media），或提供可用的
 scratch root/sysroot 路径。媒体资产的自产/可再分发 provenance 尚未建立，因此不入
-公开仓库，按 manifest 的 `external-package` 渠道随包外交付；渠道坐标和责任人保留 PM
-交付占位。**没有内部 bundle 时 board 模式不可启动**，必须登记为外部前置阻断，
+公开仓库；由交付方随交付邮件提供获取位置，收到后按 manifest SHA-256 核对。
+**没有内部 bundle 时 board 模式不可启动**，必须登记为外部前置阻断，
 不得在板上即兴找文件替代。
+
+<a id="l2-gbs-build"></a>
+### HQ 首选：GBS 构建三项 ELF
+
+对三项 ELF，HQ 首选从真实 `git clone` 使用仓库内 spec 和固定快照配置构建：
+
+```sh
+git clone <repository-url> glibc_optimization
+cd glibc_optimization
+gbs -c config/gbs_llvm.conf build -A armv7l --overwrite
+RPM=/tmp/glibc-memopt-gbs-llvm/local/repos/tizen_unified_standard/armv7l/RPMS/glibc-memopt-tools-1.0.0-1.armv7l.rpm
+rpm -qpl "$RPM"
+mkdir -p /tmp/glibc-memopt-rpm && cd /tmp/glibc-memopt-rpm
+rpm2cpio "$RPM" | cpio -idm --quiet
+sha256sum usr/bin/alloc_bench usr/bin/gst_loop_decode usr/bin/reclaim_probe
+mkdir -p /path/to/gbs-bundle
+cp usr/bin/alloc_bench /path/to/gbs-bundle/alloc_bench.armv7l
+cp usr/bin/gst_loop_decode /path/to/gbs-bundle/gst_loop_decode.armv7l
+cp usr/bin/reclaim_probe /path/to/gbs-bundle/reclaim_probe.armv7l
+# Add the separately delivered, SHA-verified small_320x240.mp4 before board mode.
+```
+
+[`glibc-memopt-tools.spec`](../packaging/glibc-memopt-tools.spec) 一次生成
+`alloc_bench`、`gst_loop_decode` 和 `reclaim_probe`；
+[`gbs_llvm.conf`](../config/gbs_llvm.conf) 固定到与镜像 BUILD_ID 同源的 Unified
+`20260814.092727` 和其 build metadata 指向的 Base `20260813.050338`。RPM NVR、体积、
+SHA、buildroot 编译器/glibc 版本及三 ELF 的 `gbs_build_sha256` 记录在
+[`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) 和
+[`GBS 构建记录`](../data/raw/gbs_package_20260903/README.md)。`verify` 会静态检查 spec
+与 `%files`；有 `gbs` 时还会实跑并核对已登记产物，无 `gbs` 时明确输出 `SKIPPED`。
+
+GBS 三项 ELF 尚待下一轮板上重基线，因此本轮只闭合 host 构建链；在重基线完成前，
+L2 正式判定仍默认使用已冻结制品。旧冻结 bundle 与上节固定路径交叉构建均降为备选。
+即使三项 ELF 由 GBS 产生，媒体仍须按 manifest 的包外方式交付。要显式试用 GBS
+bundle，使用 `reproduce.sh board --artifact-source gbs ...`，不得把它误写成已验证基线。
 
 <a id="l2-run"></a>
 ### 完整执行命令
@@ -403,6 +440,7 @@ export SDB_SERIAL='<TEST_BOARD_IP>:26101'
 export S4_REMOTE='/opt/usr/glibc_memopt/s4_retention_20260901'
 export S4_HOST='board_results/s4_retention_20260901_reproduction'
 export S4_BENCH='/path/to/alloc_bench.armv7l'
+export S4_EXPECTED_SHA='dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd'
 mkdir -p "$S4_HOST"
 
 sdb version
@@ -412,6 +450,10 @@ SDB_SERIAL="$SDB_SERIAL" sh \
   tools/runners/s4_retention_20260901/preflight_gate.sh "$S4_HOST/preflight"
 grep -Fx IDENTITY_AND_ENV_GATE_PASS "$S4_HOST/preflight/gate_verdict.txt"
 sha256sum "$S4_BENCH"
+
+sdb -s "$SDB_SERIAL" shell 'd=/opt/usr/share/crash/livedump; if [ -d "$d" ]; then find "$d" -maxdepth 1 -type f -name "*.zip" | LC_ALL=C sort | while IFS= read -r f; do n=$(wc -c < "$f") || exit 1; m=$(stat -c %Y "$f") || exit 1; h=$(sha256sum "$f" | awk "{print \$1}") || exit 1; printf "%s\t%s\t%s\t%s\n" "$f" "$n" "$m" "$h"; done; fi; rc=$?; echo RC=$rc; test $rc -eq 0 && echo DONE_STABILITY_SNAPSHOT || echo FAIL_STABILITY_SNAPSHOT' >"$S4_HOST/stability_before.tsv.raw"
+printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$S4_HOST/stability_before.tsv"
+tr -d '\r' <"$S4_HOST/stability_before.tsv.raw" | awk -F '\t' 'NF==4 && $1 ~ /^\/opt\/usr\/share\/crash\/livedump\// {print}' >>"$S4_HOST/stability_before.tsv"
 ```
 
 只有上述门全部成功后才创建固定工作目录并推送四个资产：
@@ -437,10 +479,14 @@ grep -Fx DONE_ASSET_VERIFY "$S4_HOST/asset_verify.txt"
 S4 §1 顺序运行 A/B 全格，并在所有退出路径恢复 `schedutil`：
 
 ```sh
-sdb -s "$SDB_SERIAL" shell "sh '$S4_REMOTE/run_s4_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_S4_REMOTE_INVOKE || echo FAIL_S4_REMOTE_INVOKE" | tee "$S4_HOST/remote_invoke.txt"
+sdb -s "$SDB_SERIAL" shell "EXPECTED_ALLOC_SHA='$S4_EXPECTED_SHA' sh '$S4_REMOTE/run_s4_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_S4_REMOTE_INVOKE || echo FAIL_S4_REMOTE_INVOKE" | tee "$S4_HOST/remote_invoke.txt"
 grep -Fx RC=0 "$S4_HOST/remote_invoke.txt"
 grep -Fx DONE_S4_REMOTE_INVOKE "$S4_HOST/remote_invoke.txt"
 grep -Fx DONE_S4_CONTROLLER "$S4_HOST/remote_invoke.txt"
+
+sdb -s "$SDB_SERIAL" shell 'd=/opt/usr/share/crash/livedump; if [ -d "$d" ]; then find "$d" -maxdepth 1 -type f -name "*.zip" | LC_ALL=C sort | while IFS= read -r f; do n=$(wc -c < "$f") || exit 1; m=$(stat -c %Y "$f") || exit 1; h=$(sha256sum "$f" | awk "{print \$1}") || exit 1; printf "%s\t%s\t%s\t%s\n" "$f" "$n" "$m" "$h"; done; fi; rc=$?; echo RC=$rc; test $rc -eq 0 && echo DONE_STABILITY_SNAPSHOT || echo FAIL_STABILITY_SNAPSHOT' >"$S4_HOST/stability_after.tsv.raw"
+printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$S4_HOST/stability_after.tsv"
+tr -d '\r' <"$S4_HOST/stability_after.tsv.raw" | awk -F '\t' 'NF==4 && $1 ~ /^\/opt\/usr\/share\/crash\/livedump\// {print}' >>"$S4_HOST/stability_after.tsv"
 ```
 
 自 2026-09-02 起，每个板上轮次还必须在负载前后分别保存
@@ -580,6 +626,9 @@ export GST_HOST='board_results/gst_trim_cost_20260901_reproduction'
 export GST_BENCH='/tmp/gst_loop_decode.armv7l'
 export GST_PROBE='/path/to/reclaim_probe.armv7l'
 export GST_MEDIA='/path/to/small_320x240.mp4'
+export GST_EXPECTED_SHA='204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6'
+export GST_PROBE_EXPECTED_SHA='3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7'
+export GST_MEDIA_EXPECTED_SHA='3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d'
 mkdir -p "$GST_HOST"
 
 sdb version
@@ -591,6 +640,10 @@ grep -Fx IDENTITY_AND_ENV_GATE_PASS "$GST_HOST/preflight/gate_verdict.txt"
 SDB_SERIAL="$SDB_SERIAL" sh \
   tools/runners/gst_trim_cost_20260901/capability_probe.sh "$GST_HOST/capability"
 grep -Fx CAPABILITY_GATE_PASS "$GST_HOST/capability/capability_verdict.txt"
+
+sdb -s "$SDB_SERIAL" shell 'd=/opt/usr/share/crash/livedump; if [ -d "$d" ]; then find "$d" -maxdepth 1 -type f -name "*.zip" | LC_ALL=C sort | while IFS= read -r f; do n=$(wc -c < "$f") || exit 1; m=$(stat -c %Y "$f") || exit 1; h=$(sha256sum "$f" | awk "{print \$1}") || exit 1; printf "%s\t%s\t%s\t%s\n" "$f" "$n" "$m" "$h"; done; fi; rc=$?; echo RC=$rc; test $rc -eq 0 && echo DONE_STABILITY_SNAPSHOT || echo FAIL_STABILITY_SNAPSHOT' >"$GST_HOST/stability_before.tsv.raw"
+printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$GST_HOST/stability_before.tsv"
+tr -d '\r' <"$GST_HOST/stability_before.tsv.raw" | awk -F '\t' 'NF==4 && $1 ~ /^\/opt\/usr\/share\/crash\/livedump\// {print}' >>"$GST_HOST/stability_before.tsv"
 ```
 
 门通过后才创建固定 `/opt/usr` 目录并推送。下列三个资产 SHA 必须分别为
@@ -611,10 +664,14 @@ controller 固定运行 `none-r1 → trim-r1 → trim-r2 → none-r2 → none-r3
 51 轮、每轮 PLAYING `20 s`、NULL valley `1 s`；不要编辑脚本内矩阵：
 
 ```sh
-sdb -s "$SDB_SERIAL" shell "sh '$GST_REMOTE/run_gst_trim_cost_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GST_TRIM_REMOTE_INVOKE || echo FAIL_GST_TRIM_REMOTE_INVOKE" | tee "$GST_HOST/remote_invoke.txt"
+sdb -s "$SDB_SERIAL" shell "EXPECTED_GST_SHA='$GST_EXPECTED_SHA' EXPECTED_RECLAIM_SHA='$GST_PROBE_EXPECTED_SHA' EXPECTED_MEDIA_SHA='$GST_MEDIA_EXPECTED_SHA' sh '$GST_REMOTE/run_gst_trim_cost_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GST_TRIM_REMOTE_INVOKE || echo FAIL_GST_TRIM_REMOTE_INVOKE" | tee "$GST_HOST/remote_invoke.txt"
 grep -Fx RC=0 "$GST_HOST/remote_invoke.txt"
 grep -Fx DONE_GST_TRIM_REMOTE_INVOKE "$GST_HOST/remote_invoke.txt"
 grep -Fx DONE_GST_TRIM_CONTROLLER "$GST_HOST/remote_invoke.txt"
+
+sdb -s "$SDB_SERIAL" shell 'd=/opt/usr/share/crash/livedump; if [ -d "$d" ]; then find "$d" -maxdepth 1 -type f -name "*.zip" | LC_ALL=C sort | while IFS= read -r f; do n=$(wc -c < "$f") || exit 1; m=$(stat -c %Y "$f") || exit 1; h=$(sha256sum "$f" | awk "{print \$1}") || exit 1; printf "%s\t%s\t%s\t%s\n" "$f" "$n" "$m" "$h"; done; fi; rc=$?; echo RC=$rc; test $rc -eq 0 && echo DONE_STABILITY_SNAPSHOT || echo FAIL_STABILITY_SNAPSHOT' >"$GST_HOST/stability_after.tsv.raw"
+printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$GST_HOST/stability_after.tsv"
+tr -d '\r' <"$GST_HOST/stability_after.tsv.raw" | awk -F '\t' 'NF==4 && $1 ~ /^\/opt\/usr\/share\/crash\/livedump\// {print}' >>"$GST_HOST/stability_after.tsv"
 ```
 
 运行成功后生成清单、拉回并强制解析所有 JSON；只有分析器成功后才能清理：
@@ -667,8 +724,8 @@ FAIL。若复跑板上得到“可见”，应保留三重复原值，报告超�
 作为该批业务代价发现上报，不改写为 workflow 故障。回收量只与既有
 `48.9451% / 1.359375 MiB` 做相容性对照；该值来自 `<TEST_IMAGE_B>` /
 `glibc-2.40-2.8`，是相容性参考、非冻结矩阵。
-并发 trim 的 p50/p95/p99/max 必须完整报告，并与 S4 合成释放点统一对客中位
-`1.233269 ms` 比较，不能
+并发 trim 的 p50/p95/p99/max 必须完整报告，并与 S4 合成释放点分档中位
+mixed `1.233269 ms` / medium-only `1.218361 ms` 比较，不能
 用单个中位数代替尾部。
 
 当前批次的 153 次 trim p50/p95/p99/max 为

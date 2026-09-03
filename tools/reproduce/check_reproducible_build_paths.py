@@ -76,8 +76,14 @@ def main() -> int:
     parser.add_argument("--toolchain-root", type=Path, default=os.environ.get("DEMO_TOOLCHAIN_ROOT"))
     parser.add_argument("--gst-sysroot", type=Path, default=os.environ.get("DEMO_GST_SYSROOT"))
     args = parser.parse_args()
-    if args.toolchain_root is None or args.gst_sysroot is None:
-        parser.error("set --toolchain-root/DEMO_TOOLCHAIN_ROOT and --gst-sysroot/DEMO_GST_SYSROOT")
+    missing = []
+    if args.toolchain_root is None:
+        missing.append("DEMO_TOOLCHAIN_ROOT")
+    if args.gst_sysroot is None:
+        missing.append("DEMO_GST_SYSROOT")
+    if missing:
+        print("SKIPPED\treproducible-build-paths\tmissing " + ",".join(missing))
+        return 0
     with tempfile.TemporaryDirectory(prefix="glibc-memopt-build-path-a-") as first_dir, tempfile.TemporaryDirectory(prefix="glibc-memopt-build-path-b-") as second_dir:
         first = build(Path(first_dir) / "checkout", args.toolchain_root.resolve(), args.gst_sysroot.resolve())
         second = build(Path(second_dir) / "checkout", args.toolchain_root.resolve(), args.gst_sysroot.resolve())

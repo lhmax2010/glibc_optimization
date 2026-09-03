@@ -38,14 +38,14 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="demo_reproduction_guide_20260901.md#l2-acceptance">复现指南验收带</a></p>
   <div class="grid">
     <div class="card"><small>新镜像瞬时释放锚点（n=1/profile）</small><strong class="metric">51.07% / 50.39%</strong><span>of pre-trim heap</span><br><a href="../data/raw/s4_retention_20260901/a_cells.tsv">证据 TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a></div>
-    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">80.18%–85.45%</strong><span>合并中位 1.233269 ms；majflt 0</span><br><a href="../data/raw/s4_retention_20260901/b_cycles.tsv">证据 TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a></div>
+    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">80.18%–85.45%</strong><span>调用中位 mixed 1.233269 / medium-only 1.218361 ms；majflt 0</span><br><a href="../data/raw/s4_retention_20260901/b_cycles.tsv">证据 TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a></div>
     <div class="card"><small>gst 业务 p99 预登记判定（REPORT_ONLY）</small><strong class="metric">+6.229 ms &lt; 6.784 ms</strong><span class="pill">未检出；margin 0.556 ms（阈值 91.8%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="demo_reproduction_guide_20260901.md#l1-gst-trim-cost">L1 复算</a></div>
   </div>
 </section>
 
 <section id="finding-one">
   <span class="pill">发现一</span><h2>ServiceA：自动归还是反信号</h2>
-  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv">6212 KiB（6.2 MiB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">-262144 B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">167→167</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">32 个大步中近等幅迁移为 0</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
+  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv">6212 KiB（6.07 MiB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">-262144 B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">167→167</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">32 个大步中近等幅迁移为 0</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
   <figure>
 <svg class="chart" viewBox="0 0 980 360" role="img" aria-labelledby="servicea-title servicea-desc">
   <title id="servicea-title">ServiceA glibc heap Private Dirty 周期时间线</title>
@@ -97,8 +97,8 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
 </svg><p><a href="../data/raw/s4_retention_20260901/b_cells.tsv">格级证据</a> · <a href="demo_reproduction_guide_20260901.md#l2-acceptance">中位验收规则</a></p></div>
   </div>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
-    <tr><td>mixed</td><td class="number">81.66%</td><td class="number" rowspan="2">合并中位 1.233269 ms</td><td class="number">+1351</td><td class="number">0</td></tr>
-    <tr><td>medium-only</td><td class="number">84.45%</td><td class="number">+1465</td><td class="number">0</td></tr>
+    <tr><td>mixed</td><td class="number">81.66%</td><td class="number">1.233269 ms</td><td class="number">+1351</td><td class="number">0</td></tr>
+    <tr><td>medium-only</td><td class="number">84.45%</td><td class="number">1.218361 ms</td><td class="number">+1465</td><td class="number">0</td></tr>
   </tbody></table>
   <p class="source-links"><a href="../data/raw/s4_retention_20260901/b_cells.tsv">代价证据 TSV</a> · <a href="../data/raw/s4_retention_20260901/health.json">健康证据 JSON</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a>。zram 三项 Δ=0/0/0，OOM/LMK=0。</p>
   <p class="source-links">时延带分开解释：B 组释放点 trim 单次 &lt;5 ms；A 组锚点实测最大 13.331907 ms，以 &lt;20 ms 验收，且不作为钩子代价。<a href="../data/raw/s4_retention_20260901/a_cells.tsv">A 组证据</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></p>

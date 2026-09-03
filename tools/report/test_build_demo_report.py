@@ -49,6 +49,8 @@ class DemoReportTests(unittest.TestCase):
                 "51.07% / 50.39%",
                 "80.18%–85.45%",
                 "1.233269 ms",
+                "1.218361 ms",
+                "6212 KiB（6.07 MiB）",
                 "+6.229 ms &lt; 6.784 ms",
                 "margin 0.556 ms",
                 "阈值 91.8%",
@@ -86,12 +88,19 @@ class DemoReportTests(unittest.TestCase):
             "narrative": REPO / "docs/demo_narrative_20260901.md",
             "package": REPO / "docs/demo_package_20260902.md",
             "guide": REPO / "docs/demo_reproduction_guide_20260901.md",
+            "s4-report": REPO / "docs/s4_reference_and_retention_trim_20260901.md",
+            "status": REPO / "docs/glibc_memopt_program_status_report_zh.md",
             "demo-en": REPO / "tools/report/demo_README.md",
             "demo-zh": REPO / "tools/report/demo_README.zh-CN.md",
         }
         documents = {name: path.read_text(encoding="utf-8") for name, path in surfaces.items()}
         for name, document in documents.items():
             self.assertIn("1.233269 ms", document, name)
+            self.assertIn("1.218361 ms", document, name)
+            self.assertNotIn("合并中位", document, name)
+            self.assertNotIn("merged median", document.lower(), name)
+        for name in ("narrative", "package", "guide", "demo-en", "demo-zh"):
+            document = documents[name]
             self.assertIn("<TEST_IMAGE_B>", document, name)
             self.assertIn("glibc-2.40-2.8", document, name)
         for name in ("package", "guide", "demo-en", "demo-zh"):
@@ -99,6 +108,22 @@ class DemoReportTests(unittest.TestCase):
             self.assertIn("0.555556 ms", document, name)
             self.assertIn("91.8%", document, name)
             self.assertIn("+359", document, name)
+
+    def test_gbs_delivery_surfaces_share_status_and_manifest(self) -> None:
+        for path in (
+            REPO / "README.md",
+            REPO / "docs/demo_reproduction_guide_20260901.md",
+            REPO / "tools/report/demo_README.md",
+            REPO / "tools/report/demo_README.zh-CN.md",
+        ):
+            document = path.read_text(encoding="utf-8")
+            self.assertIn("gbs_llvm.conf", document, path.name)
+            self.assertTrue(
+                "pending board rebaseline" in document or "await board rebaselining" in document
+                if path.name in {"README.md", "demo_README.md"}
+                else "待下一轮板上重基线" in document,
+                path.name,
+            )
 
     def test_checked_in_report_matches_rebuild(self) -> None:
         checked_in = REPO / "docs/demo_report.html"

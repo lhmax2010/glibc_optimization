@@ -1,14 +1,27 @@
 {
-  "schema": "glibc-memopt-demo.deliverables.v1",
+  "schema": "glibc-memopt-demo.deliverables.v2",
   "effective_date": "2026-09-03",
-  "delivery_channel": "<INTERNAL_ARTIFACT_CHANNEL>",
-  "responsible_owner": "<ARTIFACT_OWNER>",
+  "gbs_build": {
+    "config": "config/gbs_llvm.conf",
+    "base_snapshot": "tizen-base-toolchain_20260813.050338",
+    "unified_snapshot": "tizen-unified-toolchain_20260814.092727",
+    "command": "gbs -c config/gbs_llvm.conf build -A armv7l --include-all --overwrite",
+    "source_commit": "PENDING_SOURCE_COMMIT",
+    "rpm_nvr": "glibc-memopt-tools-1.0.0-1",
+    "rpm_arch": "armv7l",
+    "rpm_size_bytes": 32970,
+    "rpm_sha256": "735ff7e8f2169792c34ebf801045baf37c77292ed5d196083440c14de49ba8c0",
+    "compiler": "clang-22.1.8-1.6.armv7l",
+    "glibc": "glibc-2.40-1.6.armv7l",
+    "status": "built_host_only_pending_board_rebaseline"
+  },
   "artifacts": [
     {
       "name": "alloc_bench.armv7l",
       "frozen_sha256": "dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd",
       "frozen_size_bytes": 176656,
-      "reproducible_build_sha256": "45b0c5984740e96d48fc49878097b5b57310e11399ee45ed69aca0cc58183d8a",
+      "reproducible_build_sha256": "4e4832b53b77881395b9be13e627be8994bfb9e077dc8bdd71b577c639169924",
+      "gbs_build_sha256": "88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa",
       "source": "tools/alloc_bench/",
       "delivery": "internal bundle or documented reproducible build"
     },
@@ -16,7 +29,8 @@
       "name": "gst_loop_decode.armv7l",
       "frozen_sha256": "204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6",
       "frozen_size_bytes": 51616,
-      "reproducible_build_sha256": "10f40c6a914ec9d9641c9fa7bac431034c64dc5ae9e8f20f340405d9132fc17b",
+      "reproducible_build_sha256": "ae247ca6b5e9527ff2741d50de0c3de018c9f7e54ed0155bd2ecc74687442f90",
+      "gbs_build_sha256": "7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034",
       "source": "tools/gst_loop_decode/",
       "delivery": "internal bundle or documented reproducible build"
     },
@@ -24,7 +38,8 @@
       "name": "reclaim_probe.armv7l",
       "frozen_sha256": "3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7",
       "frozen_size_bytes": 30260,
-      "reproducible_build_sha256": "2074f1d500000d749c3f655487bcc00c0cd4000ace84a01226d70828d56699e5",
+      "reproducible_build_sha256": "298777f9845b057a2f3838994972fee3a6a9884f8f2d86618eaa63c165dd0fe3",
+      "gbs_build_sha256": "e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31",
       "source": "tools/reclaim_probe/",
       "delivery": "internal bundle or documented reproducible build"
     },
@@ -33,9 +48,10 @@
       "frozen_sha256": "3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d",
       "frozen_size_bytes": 1679164,
       "reproducible_build_sha256": null,
+      "gbs_build_sha256": null,
       "source": "l6_gst_release_phase_20260811 media asset",
       "redistribution_status": "not established",
-      "delivery": "external-package channel via <INTERNAL_ARTIFACT_CHANNEL>; not stored in the public repository"
+      "delivery": "由交付方随交付邮件提供获取位置,收到后按本清单 SHA-256 核对"
     }
   ]
 }

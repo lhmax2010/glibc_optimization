@@ -263,7 +263,7 @@ compressed data `74 B`、total memory `4096 B`、memory limit `0 B`、peak memor
 
 ### 10.1 S2 是否成立
 
-**不成立。** 冻结负载在板上准确执行了 rise/free 节奏，且 M7 证明约 6.4 MiB 每周期进入 rest/unsorted；但核心合同——复现 `ServiceA` 的约 6.2 MiB glibc PD 峰谷和约 19.7 s PD 下降沿——在内部与外部两种口径均失败。因此不能把当前 S2 标记为产品板周期画像的有效代理。
+**不成立。** 冻结负载在板上准确执行了 rise/free 节奏，且 M7 证明约 6.4 MiB 每周期进入 rest/unsorted；但核心合同——复现 `ServiceA` 的 `6212 KiB`（约 `6.07 MiB`）glibc PD 峰谷和约 19.7 s PD 下降沿——在内部与外部两种口径均失败。因此不能把当前 S2 标记为产品板周期画像的有效代理。
 
 ### 10.2 S3 能否直接开跑
 

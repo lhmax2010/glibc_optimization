@@ -12,4 +12,6 @@ identical rebuild from that marker.
 
 `demo_README.md` and `demo_README.zh-CN.md` are the maintained delivery-entry
 templates. The `demo` snapshot copies them to the repository root; `main` retains
-its engineering README.
+its engineering README. The local-link checker treats these two files as templates:
+their root-relative links are validated after the snapshot copy, not from
+`tools/report/` on `main`.

@@ -20,10 +20,12 @@ Artifacts:
 - `test_host.py`: host-only regression tests; it never opens an sdb channel.
 
 The fixed board work path is
-`/opt/usr/glibc_memopt/s4_retention_20260901`. The required bench is the S2
-artifact with SHA-256
+`/opt/usr/glibc_memopt/s4_retention_20260901`. The frozen reference bench is the
+S2 artifact with SHA-256
 `dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd`.
-The controller refuses a different binary or histogram, requires the exact
+The host workflow selects the expected binary SHA from the deliverables manifest
+and passes it as `EXPECTED_ALLOC_SHA`; the controller contains no frozen/rebuilt/GBS
+binary hash. It refuses a different binary or histogram, requires the exact
 LLVM image identity/glibc baseline, requires all four governors to start at
 `schedutil`, switches them to `performance`, and restores all four to
 `schedutil` on every trapped exit.

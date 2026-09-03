@@ -10,6 +10,7 @@ usage()
 usage:
   bash tools/reproduce/reproduce.sh [verify]
   bash tools/reproduce/reproduce.sh board --ip <address> [--output <host-dir>] [--artifact-dir <dir>]
+       [--artifact-source frozen|reproducible|gbs]
 
 verify is host-only and is the default. board performs the complete S4 + gst L2
 workflow and requires the frozen ARM/media artifact bundle or documented build roots.
@@ -43,7 +44,11 @@ check()
     shift
     log="$tmp/$(printf '%s' "$label" | tr -c 'A-Za-z0-9._-' '_').log"
     if "$@" >"$log" 2>&1; then
-        printf 'PASS\t%s\n' "$label"
+        if grep -Eq '^(SKIPPED|REPORT_ONLY)[[:space:]]' "$log"; then
+            grep -E '^(SKIPPED|REPORT_ONLY)[[:space:]]' "$log"
+        else
+            printf 'PASS\t%s\n' "$label"
+        fi
     else
         rc=$?
         printf 'FAIL\t%s\tRC=%s\n' "$label" "$rc"
@@ -66,10 +71,18 @@ clean_environment()
     head=$(git -C "$repo" rev-parse HEAD 2>/dev/null) || { printf 'cannot resolve HEAD\n' >&2; return 1; }
     if [ -n "${REPRODUCE_EXPECTED_SHA:-}" ]; then
         expected=$(git -C "$repo" rev-parse "${REPRODUCE_EXPECTED_SHA}^{commit}" 2>/dev/null) || { printf 'cannot resolve REPRODUCE_EXPECTED_SHA=%s\n' "$REPRODUCE_EXPECTED_SHA" >&2; return 1; }
+        identity_mode=required
+        reference=$REPRODUCE_EXPECTED_SHA
     else
         branch=$(git -C "$repo" branch --show-current 2>/dev/null)
-        reference=$(python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); print(p["branch_refs"].get(sys.argv[2],p["default_ref"]))' "$repo/tools/reproduce/delivery_refs.json" "$branch") || { printf 'cannot read delivery reference\n' >&2; return 1; }
+        identity=$(python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); r=p["branch_refs"].get(sys.argv[2],p["default"]); print(r["mode"]+"\t"+r["ref"])' "$repo/tools/reproduce/delivery_refs.json" "$branch") || { printf 'cannot read delivery reference\n' >&2; return 1; }
+        identity_mode=${identity%%	*}
+        reference=${identity#*	}
         expected=$(git -C "$repo" rev-parse "${reference}^{commit}" 2>/dev/null) || { printf 'cannot resolve recorded delivery ref %s\n' "$reference" >&2; return 1; }
+    fi
+    if [ "$identity_mode" = report_only ]; then
+        printf 'REPORT_ONLY\tdelivery-identity\tHEAD=%s is a development snapshot; checkout %s for frozen delivery verification\n' "$head" "$reference"
+        return 0
     fi
     [ "$head" = "$expected" ] || { printf 'HEAD %s does not equal delivery SHA %s\n' "$head" "$expected" >&2; return 1; }
 }
@@ -129,6 +142,8 @@ gst_replay()
     out="$tmp/gst"
     python3 "$repo/tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py" \
       --replay-cycles "$repo/data/raw/gst_trim_cost_20260901/cycles.tsv" --output "$out" || return 1
+    cp "$repo/data/raw/gst_trim_cost_20260901/cycles.tsv" "$out/cycles.tsv" || return 1
+    cp "$repo/data/raw/gst_trim_cost_20260901/health.json" "$out/health.json" || return 1
     for name in repetitions.tsv arm_summary.tsv comparison.json; do
         cmp "$out/$name" "$repo/data/raw/gst_trim_cost_20260901/$name" || return 1
     done
@@ -140,7 +155,7 @@ acceptance_replay()
     python3 "$repo/tools/reproduce/evaluate_acceptance.py" \
       --bands "$repo/tools/reproduce/acceptance_bands.json" \
       --s4-summary "$tmp/s4/acceptance_input.json" \
-      --gst-derived "$repo/data/raw/gst_trim_cost_20260901" \
+      --gst-derived "$tmp/gst" \
       --output "$tmp/acceptance.json"
 }
 
@@ -176,7 +191,8 @@ host_tests()
       tools/runners/s4_retention_20260901/test_host.py \
       tools/runners/gst_trim_cost_20260901/test_host.py \
       tools/report/test_build_demo_report.py \
-      tools/reproduce/test_host.py
+      tools/reproduce/test_host.py \
+      tools/reproduce/test_board_workflow_mocked_sdb.py
 }
 
 cd "$repo" || exit 2
@@ -196,6 +212,8 @@ else
     printf 'SKIP\toffline-report-byte-cmp\tnot checked in yet\n'
 fi
 check local-link-check link_check
+check reproducible-build-paths python3 "$repo/tools/reproduce/check_reproducible_build_paths.py"
+check gbs-package python3 "$repo/tools/reproduce/check_gbs_package.py" --repo-root "$repo"
 if [ "${REPRODUCE_SKIP_TESTS:-0}" != 1 ]; then
     check host-tests host_tests
 fi

@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 import zipfile
@@ -156,10 +157,31 @@ class ReproduceTests(unittest.TestCase):
         self.assertIn('"-fdebug-prefix-map=$repo=."', gst)
         manifest = json.loads((HERE / "deliverables_manifest.json").read_text())
         artifacts = {item["name"]: item for item in manifest["artifacts"]}
+        self.assertEqual(manifest["schema"], "glibc-memopt-demo.deliverables.v2")
         self.assertEqual(len(artifacts), 4)
         for name in ("alloc_bench.armv7l", "gst_loop_decode.armv7l", "reclaim_probe.armv7l"):
             self.assertRegex(artifacts[name]["reproducible_build_sha256"], r"^[0-9a-f]{64}$")
-        self.assertEqual(artifacts["small_320x240.mp4"]["delivery"].split()[0], "external-package")
+            self.assertRegex(artifacts[name]["gbs_build_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(
+            artifacts["small_320x240.mp4"]["delivery"],
+            "由交付方随交付邮件提供获取位置,收到后按本清单 SHA-256 核对",
+        )
+        self.assertNotIn("channel", manifest)
+        self.assertNotIn("owner", manifest)
+
+    def test_gbs_spec_static_contract_without_gbs(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(HERE / "check_gbs_package.py"), "--repo-root", str(REPO)],
+            env={**os.environ, "PATH": ""}, text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("PASS\tgbs-spec-static", result.stdout)
+        self.assertIn("SKIPPED\tgbs-build\tgbs is not installed", result.stdout)
+
+    def test_delivery_identity_marks_main_report_only(self) -> None:
+        refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v2"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v2"})
 
     def test_acceptance_v3_separates_determinism_validity_and_direction(self) -> None:
         bands = json.loads(BANDS.read_text(encoding="utf-8"))

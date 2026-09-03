@@ -27,6 +27,24 @@ or statistical logic. Set `DEMO_ARTIFACT_DIR` or pass `--artifact-dir` for the
 bundle. Results default to a new `board_results/demo_workflow_<UTC timestamp>`
 directory.
 
+For the fallback fixed-directory cross-build, set both
+`DEMO_TOOLCHAIN_ROOT=/path/to/scratch.armv7l.0` and
+`DEMO_GST_SYSROOT=/path/to/gstreamer/scratch.armv7l.0`. The first supplies the
+ARM compiler/sysroot used by `alloc_bench` and `reclaim_probe`; the second must
+contain the GStreamer/GLib ARM headers, pkg-config metadata, and link libraries for
+`gst_loop_decode`. `check_reproducible_build_paths.py` builds from two different
+checkout paths and compares all three hashes; if either variable is absent it
+prints an explicit `SKIPPED` row.
+
+The preferred HQ build is now
+`gbs -c config/gbs_llvm.conf build -A armv7l --overwrite`, which uses
+[`packaging/glibc-memopt-tools.spec`](../../packaging/glibc-memopt-tools.spec) and
+produces one RPM with all three ELF files. `check_gbs_package.py` always validates
+spec syntax/`%files` and runs GBS when available. GBS artifacts still await board
+rebaseline; until then the frozen bundle is the L2 default. To exercise a prepared
+GBS bundle explicitly, add `--artifact-source gbs`. The media file is never built
+by either path and must come from the delivery location supplied with the package.
+
 Both modes read [`acceptance_bands.json`](acceptance_bands.json). `PASS` means a
 deterministic item, validity gate, or tolerance band passed. `EXPECTED` means an
 observed preregistered stability-monitor alert matched its waiver and was archived,

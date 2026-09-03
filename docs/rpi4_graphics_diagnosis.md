@@ -99,7 +99,7 @@ libwayland-tbm-server-0.9.0-0.armv7l
 
 ### 2.3 官方仓库 provider
 
-查询的是 workspace [`gbs.conf`](../gbs.conf) 配置的两个 reference 仓库：
+查询的是 workspace [`config/gbs.conf`](../config/gbs.conf) 配置的两个 reference 仓库：
 
 ```text
 Tizen-Base/reference/repos/standard/packages/

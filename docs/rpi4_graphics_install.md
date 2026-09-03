@@ -70,7 +70,7 @@ rpm -qa | sort > /root/pre_install_rpm_list.txt
 
 ### 2.1 下载件
 
-来源为 workspace [`gbs.conf`](../gbs.conf) 配置的 Tizen Unified 官方 reference 仓库。
+来源为 workspace [`config/gbs.conf`](../config/gbs.conf) 配置的 Tizen Unified 官方 reference 仓库。
 
 | RPM | URL | SHA-256 | 解包后安装尺寸 |
 |---|---|---|---:|

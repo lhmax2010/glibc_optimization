@@ -10,7 +10,8 @@
 M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_trim(0)`，并把回收、
 再激活、时延和健康证据作为同一合同验收。在冻结的 RPI4/Tizen
 `glibc-2.40-1.6.armv7l` 矩阵上，锚点约 50%，门控 trim 回收已释放 payload 的约
-80%–85%，全部释放点调用合并中位 `1.233269 ms`；gst p99 方向按预登记规则未检出。
+80%–85%，调用耗时分档中位为 mixed `1.233269 ms` / medium-only `1.218361 ms`；gst p99
+方向按预登记规则未检出。
 这些是机制与量级结果，不是产品内存收益承诺。
 
 ## 头条结果
@@ -18,7 +19,7 @@ M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_tri
 | 对照 | 冻结结果 | 报告 | 紧凑证据 |
 |---|---|---|---|
 | 瞬时释放锚点 | mixed `51.07%`、medium-only `50.39%`；各 `n=1`，分母为 pre-trim heap | [HTML 摘要](docs/demo_report.html#summary) | [`a_cells.tsv`](data/raw/s4_retention_20260901/a_cells.tsv) |
-| 门控 valley trim vs none | 已释放 payload 的 `80.18%–85.45%`；合并中位 `1.233269 ms`；下一周期 `+1351/+1465 minflt`，`majflt=0` | [S4 效果](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
+| 门控 valley trim vs none | 已释放 payload 的 `80.18%–85.45%`；调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期 `+1351/+1465 minflt`，`majflt=0` | [S4 效果](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`：margin `0.555556 ms`、达门槛 91.8%，`REPORT_ONLY` 未检出；同规则 p50 判可见（`+1.870462` 对 `0.173927 ms`）；`+359 minflt/循环` | [真实并发](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json)、[`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
 
 批量释放相位的 `48.9% / 1.36 MiB × 8 进程` 来自 `<TEST_IMAGE_B>` /
@@ -41,11 +42,24 @@ M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_tri
   `tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l`；
 - 精确 `glibc-2.40-1.6.armv7l`、SDB 4.2.25 参考版本及三重身份门；
 - 远端 `id -u=0`、四核 governor 可写、`/opt/usr` 可写；
-- 按 [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json) 从内部渠道/
-  责任人占位取得 SHA 固定的 ARM/媒体 bundle。
+- 按 [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json) 取得 SHA 固定的
+  ARM/媒体 bundle；媒体获取位置由交付方随交付邮件提供，收到后按清单 SHA-256 核对。
 
 没有内部 bundle 时 board 模式不可启动。媒体资产尚无可再分发 provenance，随包外内部
 渠道交付，不进入公开仓库。
+
+### HQ 首选 GBS 构建
+
+三项 ELF 的 HQ 首选路径是真实 `git clone` 后执行
+`gbs -c config/gbs_llvm.conf build -A armv7l --overwrite`。固定快照配置与
+[`glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec) 会生成一个同时包含
+`alloc_bench`、`gst_loop_decode`、`reclaim_probe` 的 RPM；NVR 与全部哈希按
+[`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json) 核对。完整提取命令见
+[L2 GBS 小节](docs/demo_reproduction_guide_20260901.md#l2-gbs-build)。
+
+GBS 产物已完成 host 构建，但仍待下一轮板上重基线；闭合前，L2 验收继续以冻结 bundle
+为准，冻结制品和固定目录交叉构建降为备选。GBS 不提供媒体文件，媒体仍是仓库外的交付
+前置。
 
 ## 仓库地图
 

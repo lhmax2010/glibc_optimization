@@ -15,7 +15,11 @@ Files:
 - `analyze_gst_trim_cost.py`: mandatory integrity and result validator.
 - `test_host.py`: host-only regression tests; it never invokes SDB.
 
-The controller expects these board assets in the fixed work directory:
+The controller expects these board assets in the fixed work directory. The host
+workflow selects frozen/rebuilt/GBS hashes from the deliverables manifest and
+passes them as `EXPECTED_GST_SHA`, `EXPECTED_RECLAIM_SHA`, and
+`EXPECTED_MEDIA_SHA`; the controller itself contains no selected binary hash.
+The frozen reference values are:
 
 - `gst_loop_decode.armv7l` SHA-256
   `204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`

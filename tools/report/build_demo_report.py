@@ -202,11 +202,14 @@ def build(repo: Path, source_commit: str) -> str:
         profile: statistics.median(float(row["trim_reclaim_pct_of_released_median"]) for row in rows)
         for profile, rows in b_by_profile.items()
     }
-    s4_trim_headline_ms = float(statistics.median(
-        Decimal(row["trim_elapsed_ms"])
-        for row in b_cycles
-        if row["trim_at"] == "valley" and row["profile"] == "mixed"
-    ).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
+    s4_trim_median_by_profile = {
+        profile: float(statistics.median(
+            Decimal(row["trim_elapsed_ms"])
+            for row in b_cycles
+            if row["trim_at"] == "valley" and row["profile"] == profile
+        ).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
+        for profile in ("mixed", "medium-only")
+    }
     batch_single = [row for row in batch_rows if row["series"] == "single"]
     batch_scale = [row for row in batch_rows if row["series"] == "scale"]
     batch_pct = statistics.median(float(row["reclaim_pct"]) for row in batch_single)
@@ -243,6 +246,8 @@ def build(repo: Path, source_commit: str) -> str:
     # Positive-control assertions deliberately fail the build when a public
     # evidence fixture drifts; they are not estimates or duplicated analysis.
     assert peak_valley_median == 6212
+    assert Decimal(str(peak_valley_median)) / Decimal(1024) == Decimal("6.06640625")
+    assert round(peak_valley_median / 1024, 2) == 6.07
     assert attribution["F3"]["valley_band_entry_delay_min_s"] == 5.223693
     assert attribution["F3"]["valley_band_entry_delay_max_s"] == 8.910626
     assert attribution["F2"]["large_step_count"] == 32
@@ -267,7 +272,7 @@ def build(repo: Path, source_commit: str) -> str:
     assert b_ratio == {"mixed": 81.661264, "medium-only": 84.446566}
     assert min(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 80.175875
     assert max(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 85.453954
-    assert s4_trim_headline_ms == 1.233269
+    assert s4_trim_median_by_profile == {"mixed": 1.233269, "medium-only": 1.218361}
     assert next_fault == {"mixed": 1351, "medium-only": 1465}
     assert gst_comparison["delta_p99_ms"] == 6.228611
     assert gst_comparison["none_p99_repeat_dispersion_ms"] == 6.784167
@@ -329,14 +334,14 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="{guide}#l2-acceptance">复现指南验收带</a></p>
   <div class="grid">
     <div class="card"><small>新镜像瞬时释放锚点（n=1/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>of pre-trim heap</span><br><a href="{evidence_s4_a}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
-    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>合并中位 {s4_trim_headline_ms:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
+    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>调用中位 mixed {s4_trim_median_by_profile['mixed']:.6f} / medium-only {s4_trim_median_by_profile['medium-only']:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
     <div class="card"><small>gst 业务 p99 预登记判定（REPORT_ONLY）</small><strong class="metric">+{gst_comparison['delta_p99_ms']:.3f} ms &lt; {gst_comparison['none_p99_repeat_dispersion_ms']:.3f} ms</strong><span class="pill">未检出；margin {gst_p99_margin:.3f} ms（阈值 {gst_p99_threshold_pct:.1f}%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="{guide}#l1-gst-trim-cost">L1 复算</a></div>
   </div>
 </section>
 
 <section id="finding-one">
   <span class="pill">发现一</span><h2>ServiceA：自动归还是反信号</h2>
-  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="{evidence_service}">{peak_valley_median:.0f} KiB（6.2 MiB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">{zram_total} B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">{service_counter['majflt_first']}→{service_counter['majflt_last']}</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">{attribution['F2']['large_step_count']} 个大步中近等幅迁移为 {attribution['F2']['near_equal_within_50pct_count']}</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
+  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="{evidence_service}">{peak_valley_median:.0f} KiB（{peak_valley_median / 1024:.2f} MiB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">{zram_total} B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">{service_counter['majflt_first']}→{service_counter['majflt_last']}</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">{attribution['F2']['large_step_count']} 个大步中近等幅迁移为 {attribution['F2']['near_equal_within_50pct_count']}</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
   <figure>{servicea_chart(service_rows, rounds)}<figcaption>图 1 · ServiceA 1 s 时序与八轮峰谷。<a href="../data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv">原始时序</a> · <a href="{evidence_service}">逐轮标注</a> · <a href="{guide}#l1-servicea">复算命令</a></figcaption></figure>
   <div class="flow">PD 实跌 → zram 无正增长 → majflt 恒零 → other-anon 无镜像迁移 → 自动归还反信号</div>
   <div class="callout">旧“下降沿 {attribution['F3']['published_fall_edge_median_s']:.6f} s”是尾窗最小值落点伪影。按 1 s 采样上界，释放在峰后 {attribution['F3']['valley_band_entry_delay_min_s']:.6f}–{attribution['F3']['valley_band_entry_delay_max_s']:.6f} s 内基本完成。<a href="../data/raw/cyclic_fall_attribution_20260901/summary.json">证据 JSON</a> · <a href="{guide}#l1-servicea">L1 复算</a></div>
@@ -365,8 +370,8 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     <div class="card wide"><h3>B 组三重复中位</h3>{bar_chart([('mixed trim', b_ratio['mixed'], 'trim'), ('mixed none', 0.0, 'none'), ('medium trim', b_ratio['medium-only'], 'trim'), ('medium none', 0.0, 'none')], title='S4 B 组 trim/none 回收已释放 payload', unit='reclaim / released (%)', ceiling=100)}<p><a href="../data/raw/s4_retention_20260901/b_cells.tsv">格级证据</a> · <a href="{guide}#l2-acceptance">中位验收规则</a></p></div>
   </div>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
-    <tr><td>mixed</td><td class="number">{b_ratio['mixed']:.2f}%</td><td class="number" rowspan="2">合并中位 {s4_trim_headline_ms:.6f} ms</td><td class="number">+{next_fault['mixed']}</td><td class="number">0</td></tr>
-    <tr><td>medium-only</td><td class="number">{b_ratio['medium-only']:.2f}%</td><td class="number">+{next_fault['medium-only']}</td><td class="number">0</td></tr>
+    <tr><td>mixed</td><td class="number">{b_ratio['mixed']:.2f}%</td><td class="number">{s4_trim_median_by_profile['mixed']:.6f} ms</td><td class="number">+{next_fault['mixed']}</td><td class="number">0</td></tr>
+    <tr><td>medium-only</td><td class="number">{b_ratio['medium-only']:.2f}%</td><td class="number">{s4_trim_median_by_profile['medium-only']:.6f} ms</td><td class="number">+{next_fault['medium-only']}</td><td class="number">0</td></tr>
   </tbody></table>
   <p class="source-links"><a href="../data/raw/s4_retention_20260901/b_cells.tsv">代价证据 TSV</a> · <a href="../data/raw/s4_retention_20260901/health.json">健康证据 JSON</a> · <a href="{guide}#l1-s4">L1 复算</a>。zram 三项 Δ={s4_health['zram_original_data_size_delta']}/{s4_health['zram_compressed_data_size_delta']}/{s4_health['zram_mem_used_total_delta']}，OOM/LMK={len(s4_health['oom_lmk_matches'])}。</p>
   <p class="source-links">时延带分开解释：B 组释放点 trim 单次 &lt;{acceptance['tolerance_bands']['release_point_trim_single_call_ms']['max_exclusive_ms']:g} ms；A 组锚点实测最大 {max(anchor_trim.values()):.6f} ms，以 &lt;{acceptance['tolerance_bands']['s4_a_anchor_trim_single_call_ms']['max_exclusive_ms']:g} ms 验收，且不作为钩子代价。<a href="{evidence_s4_a}">A 组证据</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></p>
