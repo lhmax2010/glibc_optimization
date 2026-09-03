@@ -1,11 +1,17 @@
 {
-  "schema": "glibc-memopt-demo.acceptance.v2",
-  "effective_date": "2026-09-02",
+  "schema": "glibc-memopt-demo.acceptance.v3",
+  "effective_date": "2026-09-03",
   "deterministic_items": {
     "released_payload_bytes": {
       "comparison": "byte-exact",
+      "expected_by_profile_cycle": {
+        "medium-only": [6288384, 6293504],
+        "mixed": [5742256, 6566672]
+      },
       "source": "data/raw/s4_retention_20260901/b_cycles.tsv"
-    },
+    }
+  },
+  "validity_gates": {
     "reclaimed_bytes_page_alignment": {
       "alignment_bytes": 4096,
       "comparison": "exact"
@@ -15,17 +21,32 @@
       "comparison": "exact"
     },
     "zram_deltas": {
-      "fields": [
-        "original_data_size",
-        "compressed_data_size",
-        "mem_used_total"
-      ],
+      "fields": ["original_data_size", "compressed_data_size", "mem_used_total"],
       "expected": 0,
       "comparison": "exact"
     },
     "dmesg_oom_lmk_matches": {
       "expected": 0,
       "comparison": "exact"
+    }
+  },
+  "banded_references": {
+    "s4_b_trim_reclaimed_kb_per_cycle": {
+      "comparison": "published value plus/minus one observed arena/page step",
+      "plus_minus_kb": 1024,
+      "published_by_profile_rep_cycle": {
+        "medium-only": {
+          "1": [5124, 5252],
+          "2": [5124, 5252],
+          "3": [5124, 5252]
+        },
+        "mixed": {
+          "1": [4496, 5332],
+          "2": [4496, 5332],
+          "3": [4496, 5332]
+        }
+      },
+      "source": "data/raw/s4_retention_20260901/b_cycles.tsv"
     }
   },
   "explicitly_nondeterministic": {
@@ -41,34 +62,36 @@
       "unit": "one frozen anchor cell per profile"
     },
     "s4_b_reclaim_pct_repeat_median": {
-      "center_pct": 80.0,
+      "center_pct_by_profile": {
+        "medium-only": 84.446566,
+        "mixed": 81.661264
+      },
       "plus_minus_pp": 5.0,
       "repetitions": 3,
       "aggregation": "median of each repetition's two-cycle median, evaluated separately per profile",
+      "anchoring": "published profile value",
+      "limit": "with n=3, the median can absorb at most one outlier",
       "unit": "profile"
     },
     "release_point_trim_single_call_ms": {
       "max_exclusive_ms": 5.0,
-      "applies_to": [
-        "s4:B:valley",
-        "gst:trim-at-loop-release"
-      ]
+      "applies_to": ["s4:B:valley", "gst:trim-at-loop-release"]
     },
     "s4_a_anchor_trim_single_call_ms": {
       "max_exclusive_ms": 20.0,
-      "applies_to": [
-        "s4:A:mixed",
-        "s4:A:medium-only"
-      ],
+      "applies_to": ["s4:A:mixed", "s4:A:medium-only"],
       "hook_cost_metric": false
     },
     "gst_business_p99": {
+      "acceptance": "REPORT_ONLY",
       "decision": "visible only when the trim-minus-none repeat-median p99 exceeds the none-arm repeat dispersion band",
-      "expected_direction": "not-visible"
+      "percentile_method": "nearest-rank",
+      "rule_validation": "recompute per-repeat p99, repeat medians, none max-minus-min dispersion, and comparison direction"
     }
   },
   "stability_monitor": {
     "version": 2,
+    "policy_name": "known-alert waiver",
     "unregistered_attributable_alert": "FAIL",
     "unattributed_or_foreign_alert": "REPORT_ONLY",
     "expected_alerts": [
@@ -77,19 +100,13 @@
         "workload": "S4 A anchors",
         "binary_basename": "alloc_bench.armv7l",
         "trigger_reason_contains": "cpu.relative",
-        "registered_windows": [
-          "A/mixed/rep1",
-          "A/medium-only/rep1"
-        ],
+        "registered_windows": ["A/mixed/rep1", "A/medium-only/rep1"],
         "max_count_total": 2,
-        "classification": "benign",
-        "required_disposition": [
-          "record",
-          "archive",
-          "clean",
-          "post-cleanup-recheck"
-        ],
-        "verdict_when_matched": "EXPECTED"
+        "classification": "known-alert waiver",
+        "root_cause_status": "trigger reason and window are reproducible; root cause is not proven",
+        "required_disposition": ["record", "archive", "clean", "post-cleanup-recheck"],
+        "verdict_when_matched": "EXPECTED",
+        "verdict_when_not_observed": "REGISTERED/NOT-EVALUATED"
       }
     ]
   }

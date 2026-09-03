@@ -1,5 +1,6 @@
-> Public archive note: application/process names are aliases. Board identifiers and
-> local paths use the project’s sanitized mapping.
+> Public archive note: application/process names are aliases. Host-side paths are
+> sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is
+> intentionally public for reproducibility.
 
 # 第 1 周 Demo 叙事：从自动归还反信号到表型门控 trim
 
@@ -21,8 +22,8 @@ Private_Dirty、allocator 内确有已释放驻留、回收后的再激活与并
 
 ## 2. 核心发现一：自动归还是反信号
 
-`ServiceA` 的周期 glibc-heap Private_Dirty 峰谷中位看起来有 **6.2 MB**，精确复算为
-`6212 kB`（[证据 TSV](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv)；
+`ServiceA` 的周期 glibc-heap Private_Dirty 峰谷中位看起来有 **6.2 MiB**，精确复算为
+`6212 KiB`（[证据 TSV](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv)；
 [HQ 复算](demo_reproduction_guide_20260901.md#l1-servicea)）。但峰谷下降期间：
 
 - glibc-heap PD 与 total PD 同步实跌；
@@ -40,7 +41,8 @@ Private_Dirty、allocator 内确有已释放驻留、回收后的再激活与并
 此前把 **19.7 s** 当成“下降沿”的说法来自尾窗最小值落点，精确旧中位为
 `19.683240 s`；它是推导伪影，不是释放时长
 （[证据 JSON](../data/raw/cyclic_fall_attribution_20260901/summary.json)；
-[HQ 复算](demo_reproduction_guide_20260901.md#l1-servicea)）。教训很直接：观察到
+[HQ 复算](demo_reproduction_guide_20260901.md#l1-servicea)）。修正口径是峰后首次进入
+valley ±5% 带的 `5.223693–8.910626 s`，且它仍是 1 s 采样上界。教训很直接：观察到
 PD 下降时，应先判定页面是否已经自动归还，不能再把这段下降当作等待主动 trim 的收益。
 
 ## 3. 核心发现二：滞留表型才是作用面
@@ -59,21 +61,27 @@ PD 下降时，应先判定页面是否已经自动归还，不能再把这段�
 | N | 有波动但低于冻结响应门 | `AppProcD` | 不建立作用面 |
 | U | PID、swap/fault 或跨探针形态混杂 | `ServiceB` | 不硬归类，先补质量证据 |
 
+两张表不跨表合并计数：`ServiceD` 在 release-ratio 表为 `b-retention`，在
+plateau/cyclic 表为 `N-subthreshold`。这是已披露的跨表分类冲突，须保留各自采样窗口与
+冻结门，不能择一覆盖；见
+[`归因 v2 §5`](cyclic_fall_mechanism_attribution_v2_20260901.md#5-十目标表型普查)。
+
 当前候选登记是：
 
-- `enlightenment` 的 retained floor 为 **+1736 kB**，同时已有自动归还能力告警；只排除
+- `enlightenment` 的 retained floor 为 **+1736 KiB**，同时已有自动归还能力告警；只排除
   自动下降分量，floor 仍进候选（[证据 TSV](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-phenotypes)）。
-- `ServiceH[ServiceK]` 的平台可见高度 **2.36 MB** 只作为上界；独立时序还留下
-  **+868 kB / +580 kB** floor，且 PID 分段、探针代号边界必须保留
+- `ServiceH[ServiceK]` 的平台可见高度 **2360 KiB（2.30 MiB）** 只作为上界；独立时序还留下
+  **+868 KiB / +580 KiB** floor，且 PID 分段、探针代号边界必须保留
   （[plateau/cyclic 证据 TSV](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、
   [release-ratio 证据 TSV](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-phenotypes)）。
-- `ServiceA` 只保留谷底缓升 **+788 kB** 残渣；smaps 无法判断其 live/bin 属性
+- `ServiceA` 只保留谷底缓升 **+788 KiB** 残渣；smaps 无法判断其 live/bin 属性
   （[证据 TSV](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-phenotypes)）。
-- 批量处理释放相位类已有 M7 证据：单进程演示值 **48.9% / 1.36 MiB**，同一表型已扩展到
-  **8 个进程**（[证据 TSV](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv)；
+- 批量处理释放相位类已有 M7 证据：来自 `<TEST_IMAGE_B>` / `glibc-2.40-2.8` 的相容性
+  对照为单进程 **48.9% / 1.36 MiB**、同一表型扩展到 **8 个进程**；它不是冻结矩阵
+  （[证据 TSV](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-batch-release)）。
 
 这些都是“待用 M7 判 live/bin”的候选面，不是可以直接相加的产品收益。
@@ -83,13 +91,13 @@ PD 下降时，应先判定页面是否已经自动归还，不能再把这段�
 门控链是：**反信号排除 → M7 确认 rest/unsorted 驻留 → valley trim → 同批记录调用、
 faults 与健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留表型闭合：
 
-- 两个瞬时释放锚点为 **51.07% / 50.39%**
+- 两个瞬时释放锚点为 **51.07% / 50.39%**（各 `n=1`，分母为 pre-trim heap）
   （[证据 TSV](../data/raw/s4_retention_20260901/a_cells.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
 - valley trim 回收已释放 payload 的逐周期范围为 **80.18%–85.45%**
   （[证据 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
-- 两档调用中位均约 **1.2 ms**
+- 两档统一对客调用中位为 **1.233269 ms**
   （[证据 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
 - 下一周期相对 none 增加 **+1351 / +1465 minflt**，`majflt=0`

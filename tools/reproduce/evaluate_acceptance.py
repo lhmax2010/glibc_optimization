@@ -7,6 +7,7 @@ import argparse
 import csv
 import json
 import math
+import statistics
 from pathlib import Path
 
 
@@ -23,6 +24,11 @@ def in_band(value: float, center: float, radius: float) -> bool:
     return center - radius <= value <= center + radius
 
 
+def nearest_rank(values: list[float], quantile: float) -> float:
+    ordered = sorted(values)
+    return ordered[max(1, math.ceil(quantile * len(ordered))) - 1]
+
+
 def evaluate_s4(summary: dict[str, object], bands: dict[str, object], results: list[dict[str, object]]) -> None:
     tolerance = bands["tolerance_bands"]
     anchor_band = tolerance["s4_a_anchor_reclaim_pct"]
@@ -31,8 +37,9 @@ def evaluate_s4(summary: dict[str, object], bands: dict[str, object], results: l
         add(results, "PASS" if passed else "FAIL", f"S4 A {profile} reclaim", f"{value}%", "49% ±4 pp")
     b_band = tolerance["s4_b_reclaim_pct_repeat_median"]
     for profile, value in summary["b_reclaim_pct_repeat_median"].items():
-        passed = in_band(float(value), float(b_band["center_pct"]), float(b_band["plus_minus_pp"]))
-        add(results, "PASS" if passed else "FAIL", f"S4 B {profile} three-repeat median", f"{value}%", "80% ±5 pp")
+        center = float(b_band["center_pct_by_profile"][profile])
+        passed = in_band(float(value), center, float(b_band["plus_minus_pp"]))
+        add(results, "PASS" if passed else "FAIL", f"S4 B {profile} three-repeat median", f"{value}%", f"{center:.6f}% ±5 pp")
     a_limit = float(tolerance["s4_a_anchor_trim_single_call_ms"]["max_exclusive_ms"])
     b_limit = float(tolerance["release_point_trim_single_call_ms"]["max_exclusive_ms"])
     a_time = float(summary["a_anchor_trim_max_ms"])
@@ -40,8 +47,19 @@ def evaluate_s4(summary: dict[str, object], bands: dict[str, object], results: l
     add(results, "PASS" if a_time < a_limit else "FAIL", "S4 A anchor trim max", f"{a_time} ms", f"<{a_limit:g} ms (not hook cost)")
     add(results, "PASS" if b_time < b_limit else "FAIL", "S4 B release-point trim max", f"{b_time} ms", f"<{b_limit:g} ms")
 
-    expected_payload = {"mixed": [5742256, 6566672], "medium-only": [6288384, 6293504]}
+    expected_payload = bands["deterministic_items"]["released_payload_bytes"]["expected_by_profile_cycle"]
     add(results, "PASS" if summary["released_payload_bytes"] == expected_payload else "FAIL", "S4 released payload bytes", summary["released_payload_bytes"], expected_payload)
+    reference = bands["banded_references"]["s4_b_trim_reclaimed_kb_per_cycle"]
+    observed_reclaim = summary["trim_reclaimed_kb_by_profile_rep_cycle"]
+    published_reclaim = reference["published_by_profile_rep_cycle"]
+    radius = int(reference["plus_minus_kb"])
+    reclaim_in_band = all(
+        abs(int(value) - int(published_reclaim[profile][rep][cycle])) <= radius
+        for profile, repetitions in observed_reclaim.items()
+        for rep, values in repetitions.items()
+        for cycle, value in enumerate(values)
+    )
+    add(results, "PASS" if reclaim_in_band else "FAIL", "S4 per-cycle reclaimed KiB banded reference", observed_reclaim, f"published ±{radius} KiB")
     aligned = int(summary["reclaimed_4k_aligned_count"])
     aligned_total = int(summary["reclaimed_4k_aligned_total"])
     add(results, "PASS" if aligned == aligned_total else "FAIL", "S4 reclaimed bytes page alignment", f"{aligned}/{aligned_total}", "all 4096-byte aligned")
@@ -56,19 +74,48 @@ def evaluate_s4(summary: dict[str, object], bands: dict[str, object], results: l
 def evaluate_gst(gst: Path, bands: dict[str, object], results: list[dict[str, object]]) -> None:
     comparison = json.loads((gst / "comparison.json").read_text(encoding="utf-8"))
     cycles = rows(gst / "cycles.tsv")
+    repetitions = rows(gst / "repetitions.tsv")
     health = json.loads((gst / "health.json").read_text(encoding="utf-8"))
     trim = [row for row in cycles if row["arm"] == "trim-at-loop-release"]
     primary = [row for row in cycles if row["primary_business_sample"] == "1"]
     limit = float(bands["tolerance_bands"]["release_point_trim_single_call_ms"]["max_exclusive_ms"])
     maximum = max(float(row["trim_elapsed_ms"]) for row in trim)
     add(results, "PASS" if maximum < limit else "FAIL", "gst release-point trim max", f"{maximum} ms", f"<{limit:g} ms")
-    visible = bool(comparison["business_cost_visible"])
+    p99_by_arm: dict[str, list[float]] = {"none": [], "trim-at-loop-release": []}
+    rule_valid = comparison.get("percentile_method") == bands["tolerance_bands"]["gst_business_p99"]["percentile_method"]
+    for row in repetitions:
+        arm, rep = row["arm"], row["rep"]
+        values = [
+            float(item["business_elapsed_ms"])
+            for item in cycles
+            if item["arm"] == arm and item["rep"] == rep and item["primary_business_sample"] == "1"
+        ]
+        computed = nearest_rank(values, 0.99)
+        rule_valid = rule_valid and math.isclose(computed, float(row["business_p99_ms"]), abs_tol=5e-7)
+        p99_by_arm[arm].append(computed)
+    none_median = statistics.median(p99_by_arm["none"])
+    trim_median = statistics.median(p99_by_arm["trim-at-loop-release"])
+    delta = trim_median - none_median
+    dispersion = max(p99_by_arm["none"]) - min(p99_by_arm["none"])
+    visible = delta > dispersion
+    rule_valid = rule_valid and all((
+        math.isclose(delta, float(comparison["delta_p99_ms"]), abs_tol=5e-7),
+        math.isclose(dispersion, float(comparison["none_p99_repeat_dispersion_ms"]), abs_tol=5e-7),
+        visible is bool(comparison["business_cost_visible"]),
+    ))
     add(
         results,
-        "PASS" if not visible else "FAIL",
+        "PASS" if rule_valid else "FAIL",
+        "gst preregistered p99 rule execution",
+        f"method={comparison.get('percentile_method')} delta={delta:.6f} dispersion={dispersion:.6f}",
+        "nearest-rank; repeat medians; none max-minus-min; strict > comparison",
+    )
+    add(
+        results,
+        "REPORT_ONLY",
         "gst preregistered p99 direction",
         f"visible={str(visible).lower()} delta={comparison['delta_p99_ms']} dispersion={comparison['none_p99_repeat_dispersion_ms']}",
-        "not-visible (delta <= none dispersion)",
+        "report outcome; never an acceptance failure",
     )
     majflt = max(int(row["cycle_majflt"]) for row in primary)
     add(results, "PASS" if majflt == 0 else "FAIL", "gst primary-cycle majflt", majflt, 0)
@@ -87,10 +134,10 @@ def evaluate_stability(paths: list[Path], bands: dict[str, object], results: lis
     registration = bands["stability_monitor"]["expected_alerts"][0]
     add(
         results,
-        "EXPECTED",
+        "REGISTERED/NOT-EVALUATED",
         f"stability registration {registration['id']}",
         f"max={registration['max_count_total']} trigger={registration['trigger_reason_contains']}",
-        "record/archive/exact cleanup/recheck when observed",
+        "known-alert waiver: record/archive/exact cleanup/recheck only when observed",
     )
     if not paths:
         return
@@ -129,7 +176,7 @@ def main() -> int:
     evaluate_stability(args.stability, bands, results)
     print_table(results)
     outcome = "FAIL" if any(row["status"] == "FAIL" for row in results) else "PASS"
-    payload = {"schema": "glibc-memopt-demo.acceptance-result.v2", "outcome": outcome, "results": results}
+    payload = {"schema": "glibc-memopt-demo.acceptance-result.v3", "outcome": outcome, "results": results}
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

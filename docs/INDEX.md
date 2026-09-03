@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # Document Index
 
@@ -46,7 +46,7 @@ This is the review entry point for the project. Start with the consolidated stat
 | 2026-08-13 | TEST_BOARD | Chromium app-control URL entry search | Confirmed the formal application path can load, but no reusable specified-URL entry was obtained | [`chromium_url_entry.md`](chromium_url_entry.md) |
 | 2026-08-14 | PRODUCT_BOARD | Ten-minute release-ratio time series | Produced read-only peak/valley classifications for high-glibc-heap product processes | [`product_release_ratio_timeseries.md`](product_release_ratio_timeseries.md) |
 | 2026-08-14 | PRODUCT_BOARD | Repeated key-sequence plateau probe | Found platform, accumulating, nonresponsive, and previously unclassified cyclic shapes | [`product_plateau_probe.md`](product_plateau_probe.md) |
-| 2026-08-14 | PRODUCT_BOARD | One-second cyclic-target probe over eight rounds | Measured a median `6.2 MB` glibc peak-to-valley range; the original `3.4/4.7/19.7 s` timing interpretation is retained historically and corrected by the 2026-09-01 attribution | [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md) |
+| 2026-08-14 | PRODUCT_BOARD | One-second cyclic-target probe over eight rounds | Measured a median `6.2 MiB` glibc peak-to-valley range; the original `3.4/4.7/19.7 s` timing interpretation is retained historically and corrected by the 2026-09-01 attribution | [`product_cyclic_target_probe.md`](product_cyclic_target_probe.md) |
 | 2026-08-14 | Host | Implemented cyclic alloc_bench mode and trim timing controls | Passed 13 self-tests and ARM cross-build; board timing scan remains blocked before identity verification | [`cyclic_profile_replication.md`](cyclic_profile_replication.md) |
 | 2026-08-14 | Host | First public-repository migration | Published the sanitized document, tool, and derived-data archive | [`repo_migration_plan.md`](repo_migration_plan.md) |
 | 2026-08-31 | Host | Established the long-term incremental workspace | Added compact execution evidence, a chronological index, patches, and the latest benchmark/report deltas | [`workspace_sync_report.md`](workspace_sync_report.md) |
@@ -62,6 +62,7 @@ This is the review entry point for the project. Start with the consolidated stat
 | 2026-09-02 | Host/TEST_BOARD | Rehearsed all four host L1 demonstrations and audited the Demo board read-only | Closed two documentation-only rehearsal issues; identity/environment stayed on baseline, while an empty work root and two attributable S4 livedumps remain pending PM-approved cleanup | [`demo_rehearsal_20260902.md`](demo_rehearsal_20260902.md), [`read_only_board_audit.sh`](../tools/runners/demo_rehearsal_20260902/read_only_board_audit.sh) |
 | 2026-09-02 | Host/TEST_BOARD | Executed the approved residual cleanup and a full pretend-HQ L2 rehearsal | Archived and removed the attributable S4 dumps, froze the stability-monitor attribution gate, and completed S4/gst matrices; S4 passed numeric bands but hard-failed on two attributable alerts, while gst passed with no new alert | [`demo_rehearsal_20260902.md#l2-hq-rehearsal`](demo_rehearsal_20260902.md#l2-hq-rehearsal), [`demo_reproduction_guide_20260901.md#l2-run`](demo_reproduction_guide_20260901.md#l2-run), [`demo_package_20260902.md#delivery-contracts`](demo_package_20260902.md#delivery-contracts) |
 | 2026-09-02 | Host | Finalized the offline Demo delivery and v2 acceptance contract | Added the evidence-built single-file HTML, one-command host/board workflow, machine-readable bands, expected-alert handling, and frozen demo snapshot entry points without new measurements | [`demo_report.html`](demo_report.html), [`demo_reproduction_guide_20260901.md#workflow-fast-path`](demo_reproduction_guide_20260901.md#workflow-fast-path), [`reproduce.sh`](../tools/reproduce/reproduce.sh) |
+| 2026-09-03 | Host | Closed the PM-merged three-party Demo review list | Promoted gst direction to REPORT_ONLY, finalized acceptance schema v3/known-alert waiver, pinned L2 deliverables and reproducible builds, synchronized customer-facing numbers and sanitization, and prepared the annotated demo-v2 snapshot without new measurements | [`review_fix_20260903.md`](review_fix_20260903.md), [`demo_report.html`](demo_report.html), [`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json), [`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) |
 
 ## Specifications And Designs
 
@@ -76,4 +77,7 @@ This is the review entry point for the project. Start with the consolidated stat
 - Protocol-v2 independent reviews: [`review_protocol_v2_gpt5.md`](review_protocol_v2_gpt5.md), [`review_protocol_v2_claude-opus-4.8.md`](review_protocol_v2_claude-opus-4.8.md), [`review_protocol_v2_kimi.md`](review_protocol_v2_kimi.md).
 - SDB recovery guide: [`tv_sdbd_recovery_guide.md`](tv_sdbd_recovery_guide.md).
 
-All reported application/process names are aliases. Board identifiers, local paths, image identifiers, and private repository endpoints are sanitized consistently across this archive.
+All reported application/process names are aliases. Host-side paths, board identities,
+private image-delivery coordinates, and private repository endpoints are sanitized;
+board runtime paths are retained. The frozen test-image BUILD_ID is intentionally
+public for reproducibility.

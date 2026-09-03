@@ -43,6 +43,7 @@ serial="$ip:26101"
 s4_remote=/opt/usr/glibc_memopt/s4_retention_20260901
 gst_remote=/opt/usr/glibc_memopt/gst_trim_cost_20260901
 bands="$repo/tools/reproduce/acceptance_bands.json"
+deliverables="$repo/tools/reproduce/deliverables_manifest.json"
 build_tmp=$(mktemp -d /tmp/glibc-memopt-board-build.XXXXXX) || exit 2
 cleanup_authorized=0
 workflow_complete=0
@@ -74,6 +75,11 @@ sha_of()
     sha256sum "$1" | awk '{print $1}'
 }
 
+asset_field()
+{
+    python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); print(next(x for x in p["artifacts"] if x["name"]==sys.argv[2])[sys.argv[3]])' "$deliverables" "$1" "$2"
+}
+
 prepare_artifacts()
 {
     mkdir -p "$build_tmp/alloc" "$build_tmp/probe" "$build_tmp/gst" || return 1
@@ -81,17 +87,22 @@ prepare_artifacts()
     probe="$artifact_dir/reclaim_probe.armv7l"
     gst="$artifact_dir/gst_loop_decode.armv7l"
     media="$artifact_dir/small_320x240.mp4"
+    alloc_source=frozen
+    probe_source=frozen
+    gst_source=frozen
     if [ ! -f "$alloc" ]; then
         [ -n "${DEMO_TOOLCHAIN_ROOT:-}" ] || die "missing alloc_bench.armv7l and DEMO_TOOLCHAIN_ROOT"
         cp "$repo/tools/alloc_bench/alloc_bench.c" "$repo/tools/alloc_bench/Makefile" "$build_tmp/alloc/" || return 1
         make -C "$build_tmp/alloc" armv7l ARMV7L_ROOT="$DEMO_TOOLCHAIN_ROOT" || return 1
         alloc="$build_tmp/alloc/alloc_bench.armv7l"
+        alloc_source=reproducible_build
     fi
     if [ ! -f "$probe" ]; then
         [ -n "${DEMO_TOOLCHAIN_ROOT:-}" ] || die "missing reclaim_probe.armv7l and DEMO_TOOLCHAIN_ROOT"
         cp "$repo/tools/reclaim_probe/reclaim_probe.c" "$repo/tools/reclaim_probe/Makefile" "$build_tmp/probe/" || return 1
         make -C "$build_tmp/probe" armv7l ARMV7L_ROOT="$DEMO_TOOLCHAIN_ROOT" || return 1
         probe="$build_tmp/probe/reclaim_probe.armv7l"
+        probe_source=reproducible_build
     fi
     if [ ! -f "$gst" ]; then
         [ -n "${DEMO_TOOLCHAIN_ROOT:-}" ] || die "missing gst_loop_decode.armv7l and DEMO_TOOLCHAIN_ROOT"
@@ -99,18 +110,23 @@ prepare_artifacts()
         TOOLCHAIN_ROOT="$DEMO_TOOLCHAIN_ROOT" GST_SYSROOT="$DEMO_GST_SYSROOT" \
           sh "$repo/tools/runners/gst_trim_cost_20260901/build_armv7l.sh" "$build_tmp/gst/gst_loop_decode.armv7l" || return 1
         gst="$build_tmp/gst/gst_loop_decode.armv7l"
+        gst_source=reproducible_build
     fi
     [ -f "$media" ] || die "missing required media asset: $media"
+    alloc_expected=$(asset_field alloc_bench.armv7l "${alloc_source}_sha256") || return 1
+    gst_expected=$(asset_field gst_loop_decode.armv7l "${gst_source}_sha256") || return 1
+    probe_expected=$(asset_field reclaim_probe.armv7l "${probe_source}_sha256") || return 1
+    media_expected=$(asset_field small_320x240.mp4 frozen_sha256) || return 1
     {
         printf 'alloc_bench.armv7l\t%s\t%s\n' "$(sha_of "$alloc")" "$alloc"
         printf 'gst_loop_decode.armv7l\t%s\t%s\n' "$(sha_of "$gst")" "$gst"
         printf 'reclaim_probe.armv7l\t%s\t%s\n' "$(sha_of "$probe")" "$probe"
         printf 'small_320x240.mp4\t%s\t%s\n' "$(sha_of "$media")" "$media"
     } >"$output/artifact_manifest.tsv"
-    [ "$(sha_of "$alloc")" = dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd ] || die "alloc_bench SHA mismatch"
-    [ "$(sha_of "$gst")" = 204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6 ] || die "gst bench SHA mismatch"
-    [ "$(sha_of "$probe")" = 3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7 ] || die "reclaim_probe SHA mismatch"
-    [ "$(sha_of "$media")" = 3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d ] || die "media SHA mismatch"
+    [ "$(sha_of "$alloc")" = "$alloc_expected" ] || die "alloc_bench SHA mismatch"
+    [ "$(sha_of "$gst")" = "$gst_expected" ] || die "gst bench SHA mismatch"
+    [ "$(sha_of "$probe")" = "$probe_expected" ] || die "reclaim_probe SHA mismatch"
+    [ "$(sha_of "$media")" = "$media_expected" ] || die "media SHA mismatch"
 }
 
 run_remote()
@@ -225,7 +241,7 @@ sdb -s "$serial" push "$alloc" "$s4_remote/alloc_bench.armv7l" >"$output/s4/push
 sdb -s "$serial" push "$repo/tools/runners/s4_retention_20260901/run_s4_remote.sh" "$s4_remote/run_s4_remote.sh" >"$output/s4/push_runner.txt" 2>&1 || die "S4 runner push"
 sdb -s "$serial" push "$repo/tools/runners/s4_retention_20260901/sample_smaps_1s.sh" "$s4_remote/sample_smaps_1s.sh" >"$output/s4/push_sampler.txt" 2>&1 || die "S4 sampler push"
 sdb -s "$serial" push "$repo/tools/runners/s4_retention_20260901/medium_1k_16k.hist" "$s4_remote/medium_1k_16k.hist" >"$output/s4/push_hist.txt" 2>&1 || die "S4 hist push"
-run_remote S4_ASSET_VERIFY "chmod 0755 '$s4_remote/alloc_bench.armv7l' '$s4_remote/run_s4_remote.sh' '$s4_remote/sample_smaps_1s.sh' && test \$(sha256sum '$s4_remote/alloc_bench.armv7l' | awk '{print \$1}') = dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd && test \$(sha256sum '$s4_remote/medium_1k_16k.hist' | awk '{print \$1}') = 2082e156db133f4e6e900aec7c202e44a453d2f23b60225c40251de08a27960b" "$output/s4/asset_verify.txt" || die "S4 asset verification"
+run_remote S4_ASSET_VERIFY "chmod 0755 '$s4_remote/alloc_bench.armv7l' '$s4_remote/run_s4_remote.sh' '$s4_remote/sample_smaps_1s.sh' && test \$(sha256sum '$s4_remote/alloc_bench.armv7l' | awk '{print \$1}') = '$alloc_expected' && test \$(sha256sum '$s4_remote/medium_1k_16k.hist' | awk '{print \$1}') = 2082e156db133f4e6e900aec7c202e44a453d2f23b60225c40251de08a27960b" "$output/s4/asset_verify.txt" || die "S4 asset verification"
 run_remote S4_REMOTE_INVOKE "sh '$s4_remote/run_s4_remote.sh'" "$output/s4/remote_invoke.txt" || die "S4 controller"
 grep -F DONE_S4_CONTROLLER "$output/s4/remote_invoke.txt" >/dev/null || die "S4 controller marker"
 snapshot_stability "$output/s4/stability_after.tsv" || die "S4 stability after"
@@ -245,7 +261,7 @@ sdb -s "$serial" push "$probe" "$gst_remote/reclaim_probe.armv7l" >"$output/gst/
 sdb -s "$serial" push "$media" "$gst_remote/small_320x240.mp4" >"$output/gst/push_media.txt" 2>&1 || die "gst media push"
 sdb -s "$serial" push "$repo/tools/runners/gst_trim_cost_20260901/run_gst_trim_cost_remote.sh" "$gst_remote/run_gst_trim_cost_remote.sh" >"$output/gst/push_runner.txt" 2>&1 || die "gst runner push"
 sdb -s "$serial" push "$repo/tools/runners/gst_trim_cost_20260901/sample_smaps_1s.sh" "$gst_remote/sample_smaps_1s.sh" >"$output/gst/push_sampler.txt" 2>&1 || die "gst sampler push"
-run_remote GST_ASSET_VERIFY "chmod 0755 '$gst_remote/gst_loop_decode.armv7l' '$gst_remote/reclaim_probe.armv7l' '$gst_remote/run_gst_trim_cost_remote.sh' '$gst_remote/sample_smaps_1s.sh' && test \$(sha256sum '$gst_remote/gst_loop_decode.armv7l' | awk '{print \$1}') = 204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6 && test \$(sha256sum '$gst_remote/reclaim_probe.armv7l' | awk '{print \$1}') = 3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7 && test \$(sha256sum '$gst_remote/small_320x240.mp4' | awk '{print \$1}') = 3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d" "$output/gst/asset_verify.txt" || die "gst asset verification"
+run_remote GST_ASSET_VERIFY "chmod 0755 '$gst_remote/gst_loop_decode.armv7l' '$gst_remote/reclaim_probe.armv7l' '$gst_remote/run_gst_trim_cost_remote.sh' '$gst_remote/sample_smaps_1s.sh' && test \$(sha256sum '$gst_remote/gst_loop_decode.armv7l' | awk '{print \$1}') = '$gst_expected' && test \$(sha256sum '$gst_remote/reclaim_probe.armv7l' | awk '{print \$1}') = '$probe_expected' && test \$(sha256sum '$gst_remote/small_320x240.mp4' | awk '{print \$1}') = '$media_expected'" "$output/gst/asset_verify.txt" || die "gst asset verification"
 run_remote GST_REMOTE_INVOKE "sh '$gst_remote/run_gst_trim_cost_remote.sh'" "$output/gst/remote_invoke.txt" || die "gst controller"
 grep -F DONE_GST_TRIM_CONTROLLER "$output/gst/remote_invoke.txt" >/dev/null || die "gst controller marker"
 snapshot_stability "$output/gst/stability_after.tsv" || die "gst stability after"

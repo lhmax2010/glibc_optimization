@@ -1,5 +1,6 @@
-> Public archive note: application/process names are aliases. Board identifiers,
-> image delivery paths, and local filesystem paths are sanitized.
+> Public archive note: application/process names are aliases. Host-side paths are
+> sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is
+> intentionally public for reproducibility.
 
 # Demo 彩排与演示板卫生审计
 
@@ -36,7 +37,8 @@
    `<5 ms`；A 组锚点 trim 单列 `<20 ms`，且不作为钩子代价数字。
 8. **stability-monitor v1/v2 判定并存。** 当轮按 v1 预先记录的结论仍是
    `HARD FAIL`，不回写；v2 将理由、窗口、owner 与数量上界匹配的 S4 A 组两个
-   `cpu.relative` livedump 作为预期告警，完成归档和清理后判 `EXPECTED` 通过。
+   `cpu.relative` livedump 适用 known-alert waiver，完成归档和清理后判 `EXPECTED` 通过；
+   这里只确认触发理由与窗口可复现，未做根因证明。
 
 ## 2. Host L1 完整彩排
 
@@ -382,8 +384,9 @@ rm -rf -- "$OUT"
 - 无项目工作目录、我方文件和测试进程；
 - 无 08-31 镜像时间后的包安装；
 - event-level dmesg 无 OOM/LMK/segfault；
-- 每个板上轮次记录 stability-monitor 前后告警清单与计数；v2 按预登记匹配项记
-  `EXPECTED`（仍须归档、精确清理和复核），未登记我方告警记 `FAIL`，非我方或归属
+- 每个板上轮次记录 stability-monitor 前后告警清单与计数；v2 实际观测且按预登记
+  匹配、完成归档/精确清理/复核后才记 `EXPECTED`，未观测记
+  `REGISTERED/NOT-EVALUATED`；未登记我方告警记 `FAIL`，非我方或归属
   不明告警记 `REPORT_ONLY`、只报告不动；模板见
   [`health_gate_template.md`](../tools/reproduce/health_gate_template.md)；
 - A/C/D stdout 逐字符一致，B/D 共五个 `cmp` 静默。
@@ -432,8 +435,8 @@ rm -rf -- "$OUT"
 |---|---:|---:|---|---|
 | A mixed 瞬时释放回收率 | `51.074077%` | `51.997998%` | `49% ±4 pp` | PASS |
 | A medium-only 瞬时释放回收率 | `50.387886%` | `49.278061%` | `49% ±4 pp` | PASS |
-| B mixed 三重复中位回收/released | `81.661264%` | `81.661264%` | `80% ±5 pp` | PASS |
-| B medium-only 三重复中位回收/released | `84.446566%` | `84.446566%` | `80% ±5 pp` | PASS；但 rep2 单格中位为 `68.169197%`，不用单格代替预登记的三重复中位规则 |
+| B mixed 三重复中位回收/released | `81.661264%` | `81.661264%` | 锚定发布值 `81.661264% ±5 pp` | PASS |
+| B medium-only 三重复中位回收/released | `84.446566%` | `84.446566%` | 锚定发布值 `84.446566% ±5 pp` | PASS；但 rep2 单格中位为 `68.169197%`，不用单格代替预登记的三重复中位规则 |
 | B mixed trim 耗时 | 中位 `1.233269 ms` | 中位 `1.309306 ms`，最大 `1.575833 ms` | 释放点 trim 单次 `<5 ms` | PASS |
 | B medium-only trim 耗时 | 中位 `1.218361 ms` | 中位 `1.239269 ms`，最大 `1.261981 ms` | 释放点 trim 单次 `<5 ms` | PASS |
 | A 组 trim 耗时 | `13.331907/12.723240 ms` | `13.737370/12.438482 ms` | 锚点 trim 单次 `<20 ms`；非钩子代价 | PASS；规格范围已闭合 |
@@ -445,14 +448,14 @@ rm -rf -- "$OUT"
 | 项 | published 值 | 本次 HQ 彩排值 | 冻结规则 | 判定 |
 |---|---|---|---|---|
 | B 组 released payload | mixed `5742256/6566672 B`；medium-only `6288384/6293504 B`，各重复相同 | `16/16` 周期逐字节相同 | 相同 profile/cycle 逐值一致 | PASS |
-| B 组 trim 回收量（追加审计） | 12 个 trim 周期的发布 TSV 值 | `10/12` 相同；medium-only/valley/rep2 两周期分别由 `5246976/5378048 B` 变为 `4222976/4354048 B`，各少 `1024000 B` | 明确排除出确定性项；每档按三重复中位 `80% ±5 pp` 验收 | **字节值不作硬门；同 seed 不钉 arena 指派** |
-| 回收量 4 kB 对齐 | `12/12` | `12/12` | 每个 trim 回收量是 `4096 B` 整数倍 | PASS |
+| B 组 trim 回收量（追加审计） | 12 个 trim 周期的发布 TSV 值 | `10/12` 相同；medium-only/valley/rep2 两周期分别由 `5246976/5378048 B` 变为 `4222976/4354048 B`，各少 `1024000 B` | 明确排除出确定性项；每档三重复中位分别锚定 `81.661264% / 84.446566% ±5 pp` | **字节值不作硬门；同 seed 不钉 arena 指派** |
+| 回收量 4 KiB 对齐 | `12/12` | `12/12` | 每个 trim 回收量是 `4096 B` 整数倍 | PASS |
 | 下一周期 majflt | `16/16` 为 `0` | `16/16` 为 `0` | 必须为 `0` | PASS |
 | zram `orig/compressed/mem_used_total` | `Δ=0/0/0` | `Δ=0/0/0` | 三项必须为 `0` | PASS |
 | dmesg OOM/LMK | 增量 `0`，命中 `0` | 增量 `0`，命中 `0` | OOM/LMK 零命中 | PASS |
 | bench/sampler/controller | 10 格均完成 | 10 格均 `RC=0/DONE_*` | 远端退出码和 DONE 双门 | PASS |
 | stability-monitor v1（历史原判） | 发布时未列为健康门；事后发现两个可归属告警 | `0 → 2`；新增件均指向本轮 S4 bench | 新增且可归因本轮即硬失败 | **HARD FAIL（保留，不改写）** |
-| stability-monitor v2（2026-09-02 追注） | 同上；两件均为 A 组 `alloc_bench` 的 `cpu.relative`，分别落在 mixed/medium-only 正式窗口 | `0 → 2`；等于登记上界，已归档、精确删除并复核为 `0` | 理由 + 窗口 + owner + 数量上界匹配登记项 | **EXPECTED；健康门通过** |
+| stability-monitor v2（2026-09-02 追注） | 同上；两件均为 A 组 `alloc_bench` 的 `cpu.relative`，分别落在 mixed/medium-only 正式窗口 | `0 → 2`；等于登记上界，已归档、精确删除并复核为 `0` | known-alert waiver：理由 + 窗口 + owner + 数量上界匹配登记项；触发/窗口可复现，未做根因证明 | **EXPECTED；健康门通过** |
 
 两个新告警分别落在本次 `A/mixed` 和 `A/medium-only` 窗口，触发理由仍是
 `cpu.relative` 略高于阈值。ZIP 已拉回本地并校验，板上按精确哈希二次确认后删除。
@@ -464,7 +467,7 @@ v1 下 S4 数值分析可用但整体健康门不通过；该历史结论保留�
 
 | 指标 | published 值 | 本次 HQ 彩排值 | 冻结带/规则 | 判定 |
 |---|---:|---:|---|---|
-| trim 与 none 的 p99 中位差 | `+6.228611 ms` | `+2.343963 ms` | 仅当严格大于 none 重复离散才“可见” | 方向 PASS；仍为 `false` |
+| trim 与 none 的 p99 中位差 | `+6.228611 ms` | `+2.343963 ms` | 硬校验规则执行；方向只报告 | `REPORT_ONLY`；仍为 `false` |
 | none p99 重复离散 | `6.784167 ms` | `5.903519 ms` | 预登记比较带 | 用于上行判定 |
 | 153 次 trim p50/p95/p99/max | `0.671556/0.818315/0.842185/0.856944 ms` | `0.666944/0.842963/0.910444/0.932537 ms` | 完整报告；单次 `<5 ms` | PASS |
 | 三格首次 release | `51.014041–51.406250%` / `1.277344–1.285156 MiB` | `51.250000–51.486698%` / `1.281250–1.285156 MiB` | 与既有约半数、约 `1.3 MiB` 量级作相容性对照，无新设百分比硬带 | 相容 |

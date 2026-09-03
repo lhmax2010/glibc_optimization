@@ -1,5 +1,6 @@
-> Public archive note: application/process names are aliases. Board identifiers and
-> local paths use the project’s sanitized mapping.
+> Public archive note: application/process names are aliases. Host-side paths are
+> sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is
+> intentionally public for reproducibility.
 
 # 产品侧 L6 落点建议
 

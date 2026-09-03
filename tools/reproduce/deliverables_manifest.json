@@ -1,0 +1,41 @@
+{
+  "schema": "glibc-memopt-demo.deliverables.v1",
+  "effective_date": "2026-09-03",
+  "delivery_channel": "<INTERNAL_ARTIFACT_CHANNEL>",
+  "responsible_owner": "<ARTIFACT_OWNER>",
+  "artifacts": [
+    {
+      "name": "alloc_bench.armv7l",
+      "frozen_sha256": "dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd",
+      "frozen_size_bytes": 176656,
+      "reproducible_build_sha256": "45b0c5984740e96d48fc49878097b5b57310e11399ee45ed69aca0cc58183d8a",
+      "source": "tools/alloc_bench/",
+      "delivery": "internal bundle or documented reproducible build"
+    },
+    {
+      "name": "gst_loop_decode.armv7l",
+      "frozen_sha256": "204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6",
+      "frozen_size_bytes": 51616,
+      "reproducible_build_sha256": "10f40c6a914ec9d9641c9fa7bac431034c64dc5ae9e8f20f340405d9132fc17b",
+      "source": "tools/gst_loop_decode/",
+      "delivery": "internal bundle or documented reproducible build"
+    },
+    {
+      "name": "reclaim_probe.armv7l",
+      "frozen_sha256": "3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7",
+      "frozen_size_bytes": 30260,
+      "reproducible_build_sha256": "2074f1d500000d749c3f655487bcc00c0cd4000ace84a01226d70828d56699e5",
+      "source": "tools/reclaim_probe/",
+      "delivery": "internal bundle or documented reproducible build"
+    },
+    {
+      "name": "small_320x240.mp4",
+      "frozen_sha256": "3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d",
+      "frozen_size_bytes": 1679164,
+      "reproducible_build_sha256": null,
+      "source": "l6_gst_release_phase_20260811 media asset",
+      "redistribution_status": "not established",
+      "delivery": "external-package channel via <INTERNAL_ARTIFACT_CHANNEL>; not stored in the public repository"
+    }
+  ]
+}

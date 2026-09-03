@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # 周期下降机理归因 v2：伪影修正与产品表型普查
 
@@ -18,7 +18,7 @@
 
 ## 1. 裁决摘要
 
-1. `ServiceA` 八轮 glibc-heap Private_Dirty 下降为 `4032–9796 kB`，中位 `6212 kB`；同窗没有 zram `orig` 正增长，进程 `majflt` 始终为 `167`。换出路径被排除。
+1. `ServiceA` 八轮 glibc-heap Private_Dirty 下降为 `4032–9796 kB`，中位 `6212 KiB`；同窗没有 zram `orig` 正增长，进程 `majflt` 始终为 `167`。换出路径被排除。
 2. 32 个 `|Δglibc_heap_pd| >= 100 kB` 相邻步中没有与 other-anon 方向相反且近等幅的镜像互补；14/14 个释放步的 total PD 同步实跌。桶迁移解释被排除。
 3. 已发表 `fall_edge` 把“首次跌出 90% 峰值带”到“尾窗最小值落点”的等待时间当成下降沿。`4.166497–24.460553 s`、中位 `19.683240 s` 是该定义的结果，不是释放时长。
 4. 正式替代口径为 peak 后首次观测进入 `valley + 5% × (peak-valley)` 带的延迟：`5.223693–8.910626 s`，中位 `8.179733 s`。它是标称 1 s 时序的**首次观测上界**；采集 overrun 使实际相邻空档最长为 `6.077082 s`，不得升级成精确机制时长。
@@ -79,7 +79,7 @@ R6 的唯一 zram 变化是 `orig` 与 `used` 同向减少，不支持 swap-out�
 
 | 已发表量 | 判定 | 依据与处理 |
 |---|---|---|
-| glibc peak、valley 数值及 P-V | 稳健 | peak 是轮内最大、valley 是峰后最小；F3 改变的是最小值落点的时长解释，不改变观测幅度。`6212 kB` 中位和 `4032–9796 kB` 范围保留。 |
+| glibc peak、valley 数值及 P-V | 稳健 | peak 是轮内最大、valley 是峰后最小；F3 改变的是最小值落点的时长解释，不改变观测幅度。`6212 KiB` 中位和 `4032–9796 kB` 范围保留。 |
 | valley 水平与 P0→R8 `+788 kB` | 稳健 | 依赖 valley 数值而非把 valley 时刻当完成点；R7 回落也保留，趋势仍是非严格单调。 |
 | rise edge `3.406 s` 中位 | 不受该伪影污染 | 只用 low/high entry，不读 `fall_start` 后尾窗；仍受离散采样上界限制。 |
 | peak 时刻及其前序 key 关联 | 不受该伪影污染 | peak 选择发生在 fall/valley 之前。 |

@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # RPI4 coregl/mesa 安装记录
 
@@ -6,7 +6,8 @@
 - 目标：`<TEST_BOARD_IP>:26101`
 - 通道：`<USER_HOME>/tizen-studio/tools/sdb -s <TEST_BOARD_IP>:26101`
 - 变更范围：安装 `coregl-0.4.0-0.armv7l`、`mesa-24.3.4-0.armv7l`；未安装或升级其他 RPM，未重启整机或 service。
-- 原始证据：[`board_results/rpi4_graphics_install_20260812/`](../board_results/rpi4_graphics_install_20260812/)
+- 原始证据：`board_results/rpi4_graphics_install_20260812/`
+- 公开归档说明：完整原始件仅在 host 本地留存，可按请求提供；下文文件名均为非链接引用。
 
 ## 1. 身份门与安装前快照
 
@@ -27,7 +28,7 @@ BUILD_ID=<TEST_IMAGE_B>
 uid=0(root) ... groups=44(video),201(display),...
 ```
 
-证据：[`identity_gate.txt`](../board_results/rpi4_graphics_install_20260812/identity_gate.txt)。
+证据：`identity_gate.txt`。
 
 ### 1.2 RPM 回滚基线
 
@@ -39,7 +40,7 @@ rpm -qa | sort > /root/pre_install_rpm_list.txt
 
 - 安装前 RPM 数：1268
 - 安装前清单 SHA-256：`9683274d4e66827f3da9c73b4fa83fb7865419857d3baaed768b791ec18e1983`
-- 已拉回：[`pre_install_rpm_list.txt`](../board_results/rpi4_graphics_install_20260812/pre/pre_install_rpm_list.txt)
+- 已拉回：`pre_install_rpm_list.txt`
 
 安装后清单与安装前清单的完整 diff 只有：
 
@@ -48,7 +49,7 @@ rpm -qa | sort > /root/pre_install_rpm_list.txt
 +mesa-24.3.4-0.armv7l
 ```
 
-证据：[`rpm_list_diff.txt`](../board_results/rpi4_graphics_install_20260812/post/rpm_list_diff.txt)、[`post_install_rpm_list.txt`](../board_results/rpi4_graphics_install_20260812/post/post_install_rpm_list.txt)。因此本轮回滚集合可精确限定为这两个新增 RPM；本轮未执行回滚。
+证据：`rpm_list_diff.txt`、`post_install_rpm_list.txt`。因此本轮回滚集合可精确限定为这两个新增 RPM；本轮未执行回滚。
 
 ### 1.3 系统基线
 
@@ -63,7 +64,7 @@ rpm -qa | sort > /root/pre_install_rpm_list.txt
 | `display-manager` | `activating/auto-restart`，主进程 `status=127`，`NRestarts=3042` |
 | failed units | `0 loaded units listed`；该列表不把 auto-restart unit 算作 failed |
 
-完整状态见 [`system_snapshot.txt`](../board_results/rpi4_graphics_install_20260812/pre/system_snapshot.txt)。
+完整状态见 `system_snapshot.txt`。
 
 ## 2. RPM 获取与依赖检查
 
@@ -78,7 +79,7 @@ rpm -qa | sort > /root/pre_install_rpm_list.txt
 
 host 与板端 SHA-256 一致。`rpm -Kv` 的 header SHA256/SHA1、payload SHA256 和 MD5 均为 `OK`；输出没有 GPG signature 项，因此本轮只验证了摘要完整性，没有可记录的 RPM GPG 签名验证。
 
-RPM 与审核原文保留在 [`rpms/`](../board_results/rpi4_graphics_install_20260812/rpms/)。
+RPM 与审核原文保留在 `rpms/`。
 
 ### 2.2 依赖与事务预检
 
@@ -113,7 +114,7 @@ rpm -Uvh --test /root/coregl-0.4.0-0.armv7l.rpm \
 warning: Plugin msm: hook tsm_post failed
 ```
 
-该警告未变成依赖/文件冲突，预检退出码仍为 0。完整原文：[`board_test_transaction.txt`](../board_results/rpi4_graphics_install_20260812/rpms/board_test_transaction.txt)。
+该警告未变成依赖/文件冲突，预检退出码仍为 0。完整原文：`board_test_transaction.txt`。
 
 ## 3. 安装与库验证
 
@@ -142,7 +143,7 @@ INSTALL_EXIT=0
 /sbin/ldconfig: Cannot lstat /lib/libLLVM.so.22.1: Permission denied
 ```
 
-这两个文件在安装前已经存在，owner 分别为 `gdbm-1.8.3-1.9.armv7l` 和 `libllvm-22.1.8-2.1.armv7l`，Smack label 为 `User::Shell`。事务未因此失败。带 RPM 进度控制字符的完整输出见 [`install_output.txt`](../board_results/rpi4_graphics_install_20260812/install_output.txt)。
+这两个文件在安装前已经存在，owner 分别为 `gdbm-1.8.3-1.9.armv7l` 和 `libllvm-22.1.8-2.1.armv7l`，Smack label 为 `User::Shell`。事务未因此失败。带 RPM 进度控制字符的完整输出见 `install_output.txt`。
 
 ### 3.2 文件与 loader
 
@@ -165,7 +166,7 @@ libEGL.so.1 => /lib/libEGL.so.1
 libGLESv2.so.2 => /lib/libGLESv2.so.2
 ```
 
-`/lib -> usr/lib`，因此以上路径对应 `coregl` 文件。完整证据：[`library_verification.txt`](../board_results/rpi4_graphics_install_20260812/post/library_verification.txt)、[`final_health.txt`](../board_results/rpi4_graphics_install_20260812/post/final_health.txt)。
+`/lib -> usr/lib`，因此以上路径对应 `coregl` 文件。完整证据：`library_verification.txt`、`final_health.txt`。
 
 ## 4. Compositor 与应用启动
 
@@ -190,7 +191,7 @@ Aug 12 23:21:00 ... Started Display manager.
 
 dlog 记录 `COREGL` 初始化完成、`Driver GL version 3.2`，AppUIB 经 VC4 TBM backend 从 display server 获得 authenticated DRM fd，并创建 1920x1080 surface queue。此前两个 HDMI connector 均 disconnected，但本轮 compositor 没有因无物理输出拒绝启动，因此没有尝试 headless 配置或环境变量。
 
-原始证据：[`compositor_after_install.txt`](../board_results/rpi4_graphics_install_20260812/post/compositor_after_install.txt)、[`app_launch_verification.txt`](../board_results/rpi4_graphics_install_20260812/post/app_launch_verification.txt)。
+原始证据：`compositor_after_install.txt`、`app_launch_verification.txt`。
 
 ## 5. S4 回归确认
 
@@ -212,7 +213,7 @@ d5e36dd6339e95adedcbb01b655bc3df46d233fbba5d98f24105192eb8935015
 
 glibc RPM 与二进制均未变化。
 
-临时 LLDB 22.1.8 的 sleep 门通过：`getpid()` 返回正确 PID，`malloc_trim(0)=1`，detach 后 sleep 仍存活。证据：[`lldb_smoke.txt`](../board_results/rpi4_graphics_install_20260812/regression/lldb_smoke.txt)。
+临时 LLDB 22.1.8 的 sleep 门通过：`getpid()` 返回正确 PID，`malloc_trim(0)=1`，detach 后 sleep 仍存活。证据：`lldb_smoke.txt`。
 
 ### 5.2 单路 320x240 释放相位
 
@@ -239,7 +240,7 @@ T4 -> T5 faults = 523 minor / 0 major
 LLDB injection envelope = 1.08 s
 ```
 
-`1.355469 MiB / 48.7360%` 落在合同给出的历史复现窗口 `1.35-1.37 MiB / 约 49%` 内。完整数据：[`regression/`](../board_results/rpi4_graphics_install_20260812/regression/)，派生原文见 [`derived.txt`](../board_results/rpi4_graphics_install_20260812/regression/derived.txt)。
+`1.355469 MiB / 48.7360%` 落在合同给出的历史复现窗口 `1.35-1.37 MiB / 约 49%` 内。完整数据：`regression/`，派生原文见 `derived.txt`。
 
 ## 6. 异常与限制
 
@@ -254,5 +255,5 @@ LLDB injection envelope = 1.08 s
 - 板上保留安装状态：`coregl-0.4.0-0.armv7l`、`mesa-24.3.4-0.armv7l`。
 - 本轮推入 `/root` 的 RPM、LLDB、探针、视频副本、结果目录和临时软链接均已删除并逐项验证 absent。
 - 未删除安装前已存在的 `/root/cabi.mp4`、`/lib/libLLVM.so.22.1` 或其他既有文件。
-- 安装前/后 RPM 清单、两个原始 RPM、SHA-256 和全部测量数据均保留在 host；文件清单见 [`raw_manifest.tsv`](../board_results/rpi4_graphics_install_20260812/raw_manifest.tsv)。
-- 清理后 Enlightenment 仍 active，AppUIB/AppUIA PID 仍存活，glibc 仍为 `2.40-2.8.armv7l`。证据：[`cleanup.txt`](../board_results/rpi4_graphics_install_20260812/post/cleanup.txt)。
+- 安装前/后 RPM 清单、两个原始 RPM、SHA-256 和全部测量数据均保留在 host；文件清单见 `raw_manifest.tsv`。
+- 清理后 Enlightenment 仍 active，AppUIB/AppUIA PID 仍存活，glibc 仍为 `2.40-2.8.armv7l`。证据：`cleanup.txt`。

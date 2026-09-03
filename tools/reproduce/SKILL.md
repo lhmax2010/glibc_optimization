@@ -10,7 +10,8 @@ Run from the repository root:
 - Host verification: `bash tools/reproduce/reproduce.sh` (or `verify`).
 - Full board replay: `bash tools/reproduce/reproduce.sh board --ip <address>`.
 
-Interpret `PASS`, `EXPECTED`, `REPORT_ONLY`, and `FAIL` using
+Interpret `PASS`, observed-waiver `EXPECTED`, unobserved
+`REGISTERED/NOT-EVALUATED`, direction-only `REPORT_ONLY`, and `FAIL` using
 [`README.md`](README.md) and the machine-readable
 [`acceptance_bands.json`](acceptance_bands.json). Do not change frozen runner
 parameters or duplicate their analysis logic; follow links to the HQ guide when a

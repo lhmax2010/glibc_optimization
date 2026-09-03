@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # RPI4 图形环境诊断
 
@@ -6,7 +6,8 @@
 - 目标：`<TEST_BOARD_IP>:26101`
 - 通道：`<USER_HOME>/tizen-studio/tools/sdb -s <TEST_BOARD_IP>:26101`
 - 操作范围：只读查询；未安装/下载 RPM，未修改配置，未重启服务，未向板上写入临时文件。
-- 原始证据目录：[`board_results/rpi4_graphics_diagnosis_20260812/`](../board_results/rpi4_graphics_diagnosis_20260812/)
+- 原始证据目录：`board_results/rpi4_graphics_diagnosis_20260812/`
+- 公开归档说明：完整原始件仅在 host 本地留存，可按请求提供；下文文件名均为非链接引用。
 
 ## 1. 身份门
 
@@ -27,7 +28,7 @@ BUILD_ID=<TEST_IMAGE_B>
 uid=0(root) ... groups=44(video),201(display),...
 ```
 
-证据：[`identity.txt`](../board_results/rpi4_graphics_diagnosis_20260812/identity.txt)。身份门通过，确认不是 `<PRODUCT_IMAGE>` 产品板。
+证据：`identity.txt`。身份门通过，确认不是 `<PRODUCT_IMAGE>` 产品板。
 
 ## 2. 缺失库与提供包
 
@@ -45,7 +46,7 @@ ldd /usr/apps/AppQ/bin/runner
 | `/usr/bin/enlightenment` | `libEGL.so.1`, `libGLESv2.so.2` | 两者均 `not found` |
 | `/usr/apps/AppQ/bin/runner` | `libEGL.so.1`, `libGLESv2.so.2` | 两者均 `not found`；出现在 runner 的依赖闭包内 |
 
-除这两个 SONAME 外，两份 `ldd` 输出没有其他 `not found`。完整原文见 [`ldd_full.txt`](../board_results/rpi4_graphics_diagnosis_20260812/ldd_full.txt)。
+除这两个 SONAME 外，两份 `ldd` 输出没有其他 `not found`。完整原文见 `ldd_full.txt`。
 
 对两个缺失库均执行：
 
@@ -54,7 +55,7 @@ find / -name 'libEGL.so*' 2>/dev/null
 find / -name 'libGLESv2.so*' 2>/dev/null
 ```
 
-两个查询均无结果，是真缺失，不是已有文件未进入 `ld.so` 路径。板上只有相邻但不能替代该 ABI 的 `libtpl-egl.so.1`、`libwayland-egl.so.1` 等。证据：[`library_search.txt`](../board_results/rpi4_graphics_diagnosis_20260812/library_search.txt)。
+两个查询均无结果，是真缺失，不是已有文件未进入 `ld.so` 路径。板上只有相邻但不能替代该 ABI 的 `libtpl-egl.so.1`、`libwayland-egl.so.1` 等。证据：`library_search.txt`。
 
 `rpm -V enlightenment` 还直接报告：
 
@@ -64,7 +65,7 @@ Unsatisfied dependencies for enlightenment-0.20.0-tz11_2.26.0.armv7l:
     libGLESv2.so.2 is needed ...
 ```
 
-证据：[`target_rpm_requirements.txt`](../board_results/rpi4_graphics_diagnosis_20260812/target_rpm_requirements.txt)。该文件中的 license/preload 文件缺失与本次动态链接失败无关，但已保留原文。
+证据：`target_rpm_requirements.txt`。该文件中的 license/preload 文件缺失与本次动态链接失败无关，但已保留原文。
 
 ### 2.2 板上图形包现状
 
@@ -94,7 +95,7 @@ libwayland-tbm-client-0.9.0-0.armv7l
 libwayland-tbm-server-0.9.0-0.armv7l
 ```
 
-`coregl` 和 `mesa` 均未安装。完整筛选及相关 EFL/TBM 包见 [`rpm_graphics.txt`](../board_results/rpi4_graphics_diagnosis_20260812/rpm_graphics.txt)。
+`coregl` 和 `mesa` 均未安装。完整筛选及相关 EFL/TBM 包见 `rpm_graphics.txt`。
 
 ### 2.3 官方仓库 provider
 
@@ -114,7 +115,7 @@ Tizen-Unified/reference/repos/standard/packages/
 
 就当前普通动态链接器搜索所见，`coregl` 的 `/usr/lib` 文件会直接补齐 `ldd` 缺口；`mesa` 文件位于 HAL driver 目录，是 VC4/V3D 后端候选，不能把单独安装 `mesa` 等同于补齐当前 `/usr/lib` ABI。
 
-元数据证据：[`provider_dependency_summary.txt`](../board_results/rpi4_graphics_diagnosis_20260812/repo_query/provider_dependency_summary.txt)、[`rpi4_display_chain.txt`](../board_results/rpi4_graphics_diagnosis_20260812/repo_query/rpi4_display_chain.txt)、[`unified_filelists.xml.gz`](../board_results/rpi4_graphics_diagnosis_20260812/repo_query/unified_filelists.xml.gz)。板上 capability 对照见 [`coregl_board_requirements.txt`](../board_results/rpi4_graphics_diagnosis_20260812/coregl_board_requirements.txt) 和 [`mesa_board_requirements.txt`](../board_results/rpi4_graphics_diagnosis_20260812/mesa_board_requirements.txt)。
+元数据证据：`provider_dependency_summary.txt`、`rpi4_display_chain.txt`、`unified_filelists.xml.gz`。板上 capability 对照见 `coregl_board_requirements.txt` 和 `mesa_board_requirements.txt`。
 
 ### 2.4 镜像包关系不完整
 
@@ -133,7 +134,7 @@ building-blocks-sub2-Preset_boards-RPI4_HAL_Backend-Display-11.0.0-0.armv7l
   -> mesa-24.3.4-0.armv7l
 ```
 
-板上已有 `/hal/lib/libhal-backend-{tbm,tdm}-vc4.so*` 文件，但 `rpm -qf` 显示这些文件没有 RPM owner；对应两个 backend RPM 也未安装。证据：[`image_composition_state.txt`](../board_results/rpi4_graphics_diagnosis_20260812/image_composition_state.txt)、[`display_building_blocks.txt`](../board_results/rpi4_graphics_diagnosis_20260812/display_building_blocks.txt)。
+板上已有 `/hal/lib/libhal-backend-{tbm,tdm}-vc4.so*` 文件，但 `rpm -qf` 显示这些文件没有 RPM owner；对应两个 backend RPM 也未安装。证据：`image_composition_state.txt`、`display_building_blocks.txt`。
 
 ## 3. GPU、DRM 与显示连接
 
@@ -147,7 +148,7 @@ building-blocks-sub2-Preset_boards-RPI4_HAL_Backend-Display-11.0.0-0.armv7l
 | HDMI | `HDMI-A-1=disconnected`, `HDMI-A-2=disconnected`；当前没有显示器连接 |
 | kernel log | `dmesg | grep -iE 'vc4|v3d|drm|gpu'` 无输出；`/proc/modules` 也无匹配。内核配置不可读，因此无法由本次证据区分 built-in 与 module；sysfs driver binding 和设备节点证明驱动当前已绑定并创建设备。 |
 
-证据：[`hardware_drm.txt`](../board_results/rpi4_graphics_diagnosis_20260812/hardware_drm.txt)、[`hardware_detail.txt`](../board_results/rpi4_graphics_diagnosis_20260812/hardware_detail.txt)。
+证据：`hardware_drm.txt`、`hardware_detail.txt`。
 
 结论限于硬件侧事实：GPU/DRM 节点与 VC4/V3D 绑定具备；“无 GPU”不成立。当前同时存在 HDMI 未连接和用户态 EGL/Mesa 包缺失两个独立事实。
 
@@ -163,7 +164,7 @@ building-blocks-sub2-Preset_boards-RPI4_HAL_Backend-Display-11.0.0-0.armv7l
 | `weston.service` / `weston` | unit 不存在，命令也不存在 |
 | Wayland socket | `/run/wayland-0` 不存在；只有 `/run/user/5001/wayland-0 -> /run/wayland-0` 的悬空软链接 |
 
-状态原文：[`compositor_status.txt`](../board_results/rpi4_graphics_diagnosis_20260812/compositor_status.txt)、[`display_manager_journal.txt`](../board_results/rpi4_graphics_diagnosis_20260812/display_manager_journal.txt)。`journalctl` 只记录 127，没有打印 loader 的 SONAME；缺失 SONAME 由同一 ELF 的 `ldd` 和 RPM 未满足依赖独立确认。
+状态原文：`compositor_status.txt`、`display_manager_journal.txt`。`journalctl` 只记录 127，没有打印 loader 的 SONAME；缺失 SONAME 由同一 ELF 的 `ldd` 和 RPM 未满足依赖独立确认。
 
 ### 4.2 启动方式与环境
 
@@ -195,7 +196,7 @@ TBM_DISPLAY_SERVER=1
 HOME=/var/lib/enlightenment
 ```
 
-未设置 `LD_LIBRARY_PATH`。`ExecStartPost` 从未执行，因此不会生成 `/run/.wm_ready` 和 `/run/enlightenment.pid`，monitor 只能持续看到 display server 未就绪。另有 `/etc/isu/enlightenment/system-services/display-manager.service` 模板，但当前 `FragmentPath` 证明它不是活动 unit。完整 unit、sysconfig、monitor 脚本与 ISU 模板见 [`compositor_config.txt`](../board_results/rpi4_graphics_diagnosis_20260812/compositor_config.txt) 和 [`compositor_detail.txt`](../board_results/rpi4_graphics_diagnosis_20260812/compositor_detail.txt)。
+未设置 `LD_LIBRARY_PATH`。`ExecStartPost` 从未执行，因此不会生成 `/run/.wm_ready` 和 `/run/enlightenment.pid`，monitor 只能持续看到 display server 未就绪。另有 `/etc/isu/enlightenment/system-services/display-manager.service` 模板，但当前 `FragmentPath` 证明它不是活动 unit。完整 unit、sysconfig、monitor 脚本与 ISU 模板见 `compositor_config.txt` 和 `compositor_detail.txt`。
 
 ## 5. 仓库可得性与依赖链
 

@@ -1,0 +1,2 @@
+profile	trim_at	rep	cycles	released_payload_median_bytes	trim_reclaimed_median_kb	trim_reclaim_pct_of_released_median	published_trim_reclaimed_median_kb	published_pct	byte_delta_each_cycle	source
+medium-only	valley	2	2	6290944	4188.0	68.169197	5188.0	84.446566	-1024000	2026-09-02 L2 HQ rehearsal compact derivative

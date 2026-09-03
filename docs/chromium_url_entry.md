@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # Chromium 指定 URL 驱动路径
 
@@ -115,7 +115,7 @@ SYSTEMD_RUN_EXIT=0
 systemd-run --no-block --collect --unit=chromium-url-entry-AppUIC \
   --uid='<USER>' --gid=users -p SupplementaryGroups=display \
   -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
-  -E HOME=/opt/usr<USER_HOME> \
+  -E HOME=/opt/usr/<USER_HOME> \
   /usr/apps/AppK/bin/AppUIC -v -n \
   file:///tmp/chromium_url_entry_simple.html
 ```

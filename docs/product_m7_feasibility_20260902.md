@@ -1,5 +1,6 @@
-> Public archive note: application/process names are aliases. Board identifiers,
-> image delivery paths, and local filesystem paths are sanitized.
+> Public archive note: application/process names are aliases. Host-side paths are
+> sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is
+> intentionally public for reproducibility.
 
 # 产品候选 M7 可行性评估
 

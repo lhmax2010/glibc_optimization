@@ -48,12 +48,57 @@ class DemoReportTests(unittest.TestCase):
             for expected in (
                 "51.07% / 50.39%",
                 "80.18%–85.45%",
+                "1.233269 ms",
                 "+6.229 ms &lt; 6.784 ms",
-                "未检出可见代价",
-                "EXPECTED",
+                "margin 0.556 ms",
+                "阈值 91.8%",
+                "+359 minflt/循环",
+                "未检出；margin",
+                "REGISTERED/NOT-EVALUATED",
                 "同 seed 不钉 arena 指派",
+                "68.169197%",
+                "release-ratio 标签",
+                "plateau/cyclic 标签",
+                "ServiceD",
+                "&lt;TEST_IMAGE_B&gt;/glibc-2.40-2.8",
             ):
                 self.assertIn(expected, document)
+
+    def test_record_source_commit_uses_git_head(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output, marker = root / "report.html", root / "source_commit.txt"
+            result = subprocess.run(
+                ["python3", str(BUILDER), "--repo-root", str(REPO), "--output", str(output),
+                 "--record-source-commit", "--marker-output", str(marker)],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            head = subprocess.run(
+                ["git", "-C", str(REPO), "rev-parse", "HEAD"],
+                text=True, capture_output=True, check=True,
+            ).stdout.strip()
+            self.assertEqual(marker.read_text(encoding="utf-8"), head + "\n")
+            self.assertIn(head, output.read_text(encoding="utf-8"))
+
+    def test_customer_surfaces_share_headline_contract(self) -> None:
+        surfaces = {
+            "narrative": REPO / "docs/demo_narrative_20260901.md",
+            "package": REPO / "docs/demo_package_20260902.md",
+            "guide": REPO / "docs/demo_reproduction_guide_20260901.md",
+            "demo-en": REPO / "tools/report/demo_README.md",
+            "demo-zh": REPO / "tools/report/demo_README.zh-CN.md",
+        }
+        documents = {name: path.read_text(encoding="utf-8") for name, path in surfaces.items()}
+        for name, document in documents.items():
+            self.assertIn("1.233269 ms", document, name)
+            self.assertIn("<TEST_IMAGE_B>", document, name)
+            self.assertIn("glibc-2.40-2.8", document, name)
+        for name in ("package", "guide", "demo-en", "demo-zh"):
+            document = documents[name]
+            self.assertIn("0.555556 ms", document, name)
+            self.assertIn("91.8%", document, name)
+            self.assertIn("+359", document, name)
 
     def test_checked_in_report_matches_rebuild(self) -> None:
         checked_in = REPO / "docs/demo_report.html"

@@ -37,4 +37,11 @@ memtotal=$(awk '/^MemTotal:/ {print $2; exit}' "$outdir/memtotal.txt")
 case "$memtotal" in ''|*[!0-9]*) exit 19;; esac
 [ "$memtotal" -ge 8036234 ] && [ "$memtotal" -le 8198582 ] || exit 20
 
+run_remote ROOT_UID 'test "$(id -u)" = 0 && id -u' root_uid.txt || exit 21
+first_uid=$(sed -n '1p' "$outdir/root_uid.txt" | tr -d '\r')
+[ "$first_uid" = 0 ] || exit 22
+
+run_remote GOVERNOR_WRITABLE 'n=0; for p in /sys/devices/system/cpu/cpu[0-3]/cpufreq/scaling_governor; do test -w "$p" && n=$((n+1)); done; printf "writable=%s\n" "$n"; test "$n" -eq 4' governor_writable.txt || exit 23
+run_remote OPT_USR_WRITABLE 'test -d /opt/usr && test -w /opt/usr && printf "writable=/opt/usr\n"' opt_usr_writable.txt || exit 24
+
 printf 'IDENTITY_AND_ENV_GATE_PASS\n' | tee "$outdir/gate_verdict.txt"

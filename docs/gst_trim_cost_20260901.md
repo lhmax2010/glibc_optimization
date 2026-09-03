@@ -1,7 +1,14 @@
-> Public archive note: application/process names are aliases. Board identifiers and
-> local paths use the project’s sanitized mapping.
+> Public archive note: application/process names are aliases. Host-side paths are
+> sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is
+> intentionally public for reproducibility.
 
 # GStreamer 并发解码目标的 trim 回收与业务代价
+
+> **2026-09-03 验收语义修正：** §1.4 的 nearest-rank、三重复中位、none
+> `max−min` 离散带与严格 `>` 规则保持不变；workflow 只把“规则是否正确执行”作为
+> PASS/FAIL，所得 p99 方向改为 `REPORT_ONLY`。本批仍如实记录
+> `visible=false`，但该方向不是交付验收通过条件；若复跑得到 `visible=true`，须保留
+> 三重复原值、报告越过离散带的 margin，并作为批次业务代价发现上报。
 
 - 日期：2026-09-01
 - 板端：`<TEST_BOARD_IP>`（SDB/26101；禁止用地址判板）
@@ -69,11 +76,12 @@ gst_loop_decode small_320x240.mp4 51 20 1 <arm> control-stdin
   这一有限样本限制。
 - 每个 arm 先报告三个重复各自的 p50/p95/p99，再报告三个重复统计量的中位数与
   `max−min` 离散带。臂间差固定为 `median(trim) − median(none)`。
-- 业务代价“可见”的唯一预登记门：
+- 业务代价可见性方向的预登记计算规则：
   `Δp99 = median(trim 三重复 p99) − median(none 三重复 p99)`；仅当
   `Δp99 > max(none p99) − min(none p99)` 时判“可见”，否则判“未越过本批基线重复
   离散带”。依据是先要求臂间位移严格大于同批 none 的 run-to-run 抖动；不使用结果后
-  选择的固定百分比门。该门只裁本批可见性，不是等价性或产品 SLA 证明。
+  选择的固定百分比门。交付验收只校验该计算是否正确执行，方向结果
+  `REPORT_ONLY`；该结果不是等价性或产品 SLA 证明。
 - trim 耗时报告 p50/p95/p99/max 和逐重复分布；回收报告每轮 kB、每重复中位及范围；
   faults 报每轮和每重复汇总，majflt 必须单列。
 - 与历史 `48.9451% / 1.359375 MiB` 只做不同镜像、不同注入方式的相容性对照，不设
@@ -211,10 +219,12 @@ cycle 2–51 的 50 个预登记业务样本；nearest-rank p99 因而就是该�
 | p95 | 20011.546673 / 6.451573 ms | 20011.997933 / 3.728407 ms | +0.451260 ms |
 | p99 | 20016.408137 / **6.784167 ms** | 20022.636748 / 13.192204 ms | **+6.228611 ms** |
 
-预登记门要求 `Δp99 > 6.784167 ms`；实测 `6.228611 ms`，低 `0.555556 ms`，故
+预登记规则要求 `Δp99 > 6.784167 ms`；实测 `6.228611 ms`，margin 为
+`0.555556 ms`，达到门槛的 `91.8%`，故
 [`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) 的正式裁决为
-`business_cost_visible=false`。这只表示本批没有越过 none 重复离散，不证明等价，也不
-外推为产品 SLA。
+`business_cost_visible=false`。方向按交付验收记 `REPORT_ONLY`；这只表示本批没有越过
+none 重复离散，不证明等价，也不外推为产品 SLA。作为灵敏度披露，同样规则若用于 p50，
+`+1.870462 ms > 0.173927 ms`，会判“可见”。
 
 ## 4. trim 并发耗时、回收与 faults
 
@@ -270,7 +280,8 @@ cycle 2–51 的 150 次稳态重复中位降为 `988 kB / 36.461794%`，范围
 | trim | 3 | 23431 | 0 | 24718 | 0 |
 
 主统计窗口的三重复 minflt 总和中位为 none `4640`、trim `22604`，差
-`+17964/50 cycles`；合并逐循环中位为 `90.5 → 454.0`，差 `+363.5 minflt/cycle`。
+`+17964/50 cycles`，即约 `+359 minflt/循环`；合并逐循环中位为
+`90.5 → 454.0`，差 `+363.5 minflt/cycle`（另一种聚合口径）。
 150/150 个 trim 后再激活主循环与 150/150 个 none 主循环的 majflt 均为 0。外部序列
 唯一的 majflt 增量是矩阵第一格首次冷启动在 elapsed `6.015 s` 出现的 `0→4`，同格
 cycle 1 的目标内计数也为 4；它发生在任何 trim 之前，cycle 2–51 为零，不归因于 trim。
@@ -296,9 +307,11 @@ majflt 与外部 1 s majflt 均为合法单调数值并已纳入 §4.3。完整�
 
 ### a) 每循环 release trim 的业务代价是否可见
 
-**按预登记门判“不明显/未可见”。** trim 相对 none 的三重复 p99 中位差为
+**方向结果：`REPORT_ONLY`，本批按规则未检出可见。** trim 相对 none 的三重复 p99 中位差为
 `+6.228611 ms`，没有严格超过 none p99 的 `6.784167 ms` 重复离散带，差门槛
-`0.555556 ms`。p50/p95 的描述性差分别为 `+1.870462/+0.451260 ms`。由于每重复只有
+`0.555556 ms`，达到门槛的 `91.8%`。p50/p95 的描述性差分别为
+`+1.870462/+0.451260 ms`；同规则在 p50 会因 `+1.870462 > 0.173927 ms` 判可见。
+由于每重复只有
 50 个主样本、p99 即最大值，本结论是“本批未检出”，不是零代价或 SLA 等价证明。
 
 ### b) 与 S4 单线程约 1.2 ms 的关系
@@ -356,7 +369,7 @@ GST_SYSROOT=/path/to/gstreamer/scratch.armv7l.0 \
 gst_loop_decode small_320x240.mp4 51 20 1 <arm> control-stdin
 ```
 
-### 7.1 确定性验收项
+### 7.1 流程完整性与 validity gates
 
 - 三个核心资产 SHA 与 §1.1 一致；同一构建批次的源码/ELF SHA 应逐字节一致。
 - 6 格严格按 §1.2 顺序，每格 51 轮；业务主统计固定取 cycle 2–51 共 50 个样本。
@@ -366,12 +379,13 @@ gst_loop_decode small_320x240.mp4 51 20 1 <arm> control-stdin
 - controller/host 两次复核 cpu0–3 最终均为 `schedutil`；精确板端工作目录已删除。
 - zram 三列必须取得同批前后值并报告 delta；绝对值不要求跨批次相同。
 
-### 7.2 容差与裁决项
+### 7.2 容差与 `REPORT_ONLY` 裁决项
 
-- 业务代价不设事后百分比阈值，只复用 §1.4：`Δp99` 必须严格大于 none 三重复 p99
-  的 `max−min` 才判“可见”；这不是等价性或 SLA 证明。
-- 回收量与 `48.9451% / 1.359375 MiB` 只作不同批次的机制相容性对照，不要求逐值一致。
-- trim 必须报告 p50/p95/p99/max 全分布并与 S4 单线程约 `1.2 ms` 描述比较；跨板复跑
-  以分布量级和上述 p99 裁决是否同向为验收，不用单点绝对相等。
+- 业务代价不设事后百分比阈值，只复用 §1.4；workflow 对规则执行作硬校验，所得 p99
+  方向始终为 `REPORT_ONLY`。若判可见，保留三重复、量化超带 margin 并上报。
+- 回收量与 `48.9451% / 1.359375 MiB` 只作机制相容性对照，不要求逐值一致；该值来自
+  `<TEST_IMAGE_B>` / `glibc-2.40-2.8`，非本轮冻结矩阵。
+- trim 必须报告 p50/p95/p99/max 全分布并与 S4 合成格合并中位 `1.233269 ms` 比较；
+  释放点单次调用验收带为 `<5 ms`，不用单点绝对相等。
 - kernel 小版本或 MemTotal 小幅变化必须记为协变量；glibc 必须仍属 2.40 系，否则停止
   沿用本批判据，并按状态报告 §2.5 的版本告警重审。
