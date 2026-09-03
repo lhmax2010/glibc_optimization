@@ -56,7 +56,7 @@ REPORT_ONLY、未观测告警为 REGISTERED/NOT-EVALUATED）；报告可按 sour
 - 同步基线：`24ab0125eb09c1bcdcb3656a9685537e54e7dc98`（执行时的 `origin/main`）
 - 范围：host-only；没有连接测试板，没有产生新板上测量数字
 - 源码修复提交：`20ab8c80d7b357254542dd841212ed8d7e7085c8`
-- GBS 产物登记与派生 HTML 提交：`EVIDENCE_COMMIT`
+- GBS 产物登记与派生 HTML 提交：`a6cf8fccc8478b5f06573d4189c5f7841fb55c5b`
 - 后续交付：本轮不切 `demo`；两轮板上重基线完成后统一切 `demo-v3`
 
 第一轮表格作为当时裁决和实施记录保留。下面凡标“更正”的条目，以本轮为当前口径，
@@ -64,21 +64,21 @@ REPORT_ONLY、未观测告警为 REGISTERED/NOT-EVALUATED）；报告可按 sour
 
 | 第 2 轮编号 | 修复提交 | 闭环内容 | 验证方式 |
 |---|---|---|---|
-| A-1 | `20ab8c8`, `EVIDENCE_COMMIT` | 更正第一轮 P0-2：取消“合并中位”口径；S4 按 profile 报 mixed `1.233269 ms`、medium-only `1.218361 ms`。HTML 表逐档显示，指南 L1 字段为 `trim_ms_median_by_profile`；S4 原报告、状态报告、叙事、包、双语入口同步。builder 直接从 `b_cycles.tsv` 的逐行 `trim_elapsed_ms` 独立重算两档中位。 | builder 正控 + `test_customer_surfaces_share_headline_contract` 跨载体检查；提交版 HTML byte-cmp。 |
+| A-1 | `20ab8c8`, `a6cf8fc` | 更正第一轮 P0-2：取消“合并中位”口径；S4 按 profile 报 mixed `1.233269 ms`、medium-only `1.218361 ms`。HTML 表逐档显示，指南 L1 字段为 `trim_ms_median_by_profile`；S4 原报告、状态报告、叙事、包、双语入口同步。builder 直接从 `b_cycles.tsv` 的逐行 `trim_elapsed_ms` 独立重算两档中位。 | builder 正控 + `test_customer_surfaces_share_headline_contract` 跨载体检查；提交版 HTML byte-cmp。 |
 | A-2 | `20ab8c8` | S4/gst remote runner 不再内置 ELF/media SHA；`board_workflow.sh` 按 `frozen_sha256` / `reproducible_build_sha256` / `gbs_build_sha256` 选择 manifest 字段，并通过环境合同注入执行器。 | `test_board_workflow_mocked_sdb.py` 用 fake SDB 对 frozen/reproducible/gbs 三路径逐一核验两次 remote invocation 所见 SHA。 |
 | A-3 | `20ab8c8` | manifest 删除内部渠道/责任人占位；媒体交付固定写为“由交付方随交付邮件提供获取位置,收到后按本清单 SHA-256 核对”，指南与双语入口一致。 | manifest schema host test + 旧 `external-package`/占位措辞扫描零命中。 |
 | A-4 | `20ab8c8` | 更正第一轮 P0-4 的测试名：改为 `check_reproducible_build_paths.py` 并纳入 verify；只有同时给出 `DEMO_TOOLCHAIN_ROOT`/`DEMO_GST_SYSROOT` 才做双路径真实构建，否则明确 `SKIPPED` 和缺失变量。 | 显式指向本轮 GBS scratch 后，两条临时 checkout 路径的三 ELF 各自逐字节一致并匹配 manifest；不设置变量的标准 verify 仍明确 `SKIPPED`，不伪装成已执行。 |
-| A-5 | `20ab8c8`, `EVIDENCE_COMMIT` | `6212 KiB` 的二进制换算统一为 `6.07 MiB`；撤销第一轮 P2 中错误的 `6.2 MiB` 展示。 | builder 用 Decimal 正控 `6212/1024=6.06640625` 且两位显示 `6.07`；跨文档旧换算扫描、HTML byte-cmp。 |
+| A-5 | `20ab8c8`, `a6cf8fc` | `6212 KiB` 的二进制换算统一为 `6.07 MiB`；撤销第一轮 P2 中错误的 `6.2 MiB` 展示。 | builder 用 Decimal 正控 `6212/1024=6.06640625` 且两位显示 `6.07`；跨文档旧换算扫描、HTML byte-cmp。 |
 | A-6 | `20ab8c8` | 修复 graphics diagnosis/install 两处指向错误层级的 `gbs.conf` 链接。更正第一轮 P1-11 计数说明：基线实际是 **74 个 Markdown 链接，分布在 45 行**；双语入口 2 处只是本地原始件说明，不属于链接，不能相加称为“76 条链接”。 | 对基线 `9183bcc` 的 Markdown 链接正则复算为 74/45；当前树 `board_results` Markdown 链接零命中；local-link-check。 |
 | A-7 | `20ab8c8` | L2 手工 S4/gst 命令各补负载前后 stability-monitor 快照，字段和筛选逻辑与 workflow 同源；手工 remote invocation 同样显式注入选择后的 SHA。 | 指南命令静态审计 + shell harness 合同测试；本轮 host-only 不执行板命令。 |
 | A-8 | `20ab8c8` | `delivery_refs.json` 升为分支感知：`demo` 强制匹配 `demo-v2`，`main` 仅输出开发快照 `REPORT_ONLY` 并提示切换冻结标签；显式 `REPRODUCE_EXPECTED_SHA` 仍可覆盖。 | `test_delivery_identity_marks_main_report_only`；verify 的 clean-environment 行在 main 显式显示 REPORT_ONLY。 |
 | A-9 | `20ab8c8` | workflow README 解释两个构建环境变量与 `--artifact-source`；template README 的 root-relative 链接说明只在复制到快照根目录后检查；acceptance replay 只读本轮已生成的 `$tmp/gst`。 | 文档关键词/链接审计；`reproduce.sh verify` 的 gst replay → acceptance 数据流通过。 |
-| A-10 | `20ab8c8`, `EVIDENCE_COMMIT` | `deliverables_manifest.json` 升到 v2；三 ELF 均增加 `gbs_build_sha256`，顶层登记 GBS source commit、RPM NVR/arch/size/SHA 和 buildroot 版本；媒体该字段为 null。 | JSON schema host test；`check_gbs_package.py` 提取 RPM 后逐个核对三 ELF。 |
+| A-10 | `20ab8c8`, `a6cf8fc` | `deliverables_manifest.json` 升到 v2；三 ELF 均增加 `gbs_build_sha256`，顶层登记 GBS source commit、RPM NVR/arch/size/SHA 和 buildroot 版本；媒体该字段为 null。 | JSON schema host test；`check_gbs_package.py` 提取 RPM 后逐个核对三 ELF。 |
 | GBS-11 | `20ab8c8` | 新增 `glibc-memopt-tools-1.0.0-1` spec，一个 armv7l RPM 的 `%files` 精确包含 `/usr/bin/alloc_bench`、`/usr/bin/gst_loop_decode`、`/usr/bin/reclaim_probe`。BuildRequires 的 `-devel` 集合固定为 `glibc-devel`、`glib2-devel`、`gstreamer-devel`。 | `rpmspec -P`、portable static checker、实际 RPM `rpm -qpl` 三重核验。 |
-| GBS-12 | `20ab8c8`, `EVIDENCE_COMMIT` | 使用 `config/gbs_llvm.conf`，固定 Unified `20260814.092727` 与其 build metadata 指向的 Base `20260813.050338`；成功构建 armv7l RPM，登记 clang/LLVM/GCC、glibc 与三项 devel 的 buildroot 版本、RPM 和 ELF 哈希。 | [`build_summary.json`](../data/raw/gbs_package_20260903/build_summary.json)；`check_gbs_package.py` 对精确 source commit 重建 NVR、架构、`%files` 和三 ELF；RPM wrapper SHA 作为该次构建身份记录，后续 archive metadata 差异只报告。 |
+| GBS-12 | `20ab8c8`, `a6cf8fc` | 使用 `config/gbs_llvm.conf`，固定 Unified `20260814.092727` 与其 build metadata 指向的 Base `20260813.050338`；成功构建 armv7l RPM，登记 clang/LLVM/GCC、glibc 与三项 devel 的 buildroot 版本、RPM 和 ELF 哈希。 | [`build_summary.json`](../data/raw/gbs_package_20260903/build_summary.json)；`check_gbs_package.py` 对精确 source commit 重建 NVR、架构、`%files` 和三 ELF；RPM wrapper SHA 作为该次构建身份记录，后续 archive metadata 差异只报告。 |
 | GBS-13 | `20ab8c8` | main README、HQ 指南和双语交付模板新增 GBS 路径：HQ 首选 GBS，冻结件/固定目录交叉构建为备选；明确 GBS 产物待板上重基线，闭合前 L2 仍以冻结件为准，媒体仍须包外交付。 | 跨载体 GBS 状态测试 + local-link-check。 |
 | GBS-14 | `20ab8c8` | verify 新增 spec name/version/BuildRequires/`%files` 静态检查与 `rpmspec -P`；有 GBS 时实跑并检查 RPM/ELF，无 GBS 时显式 SKIPPED。 | `test_gbs_spec_static_contract_without_gbs` 覆盖无 GBS；本机 GBS 2.0.8 路径实际构建通过。 |
 
 GBS RPM 哈希依赖被打包源码提交。为避免 manifest 自引用，先以 `20ab8c8` 固定
-spec、源码、配置和文档，再对该精确提交构建；`EVIDENCE_COMMIT` 只登记产物哈希、构建
+spec、源码、配置和文档，再对该精确提交构建；`a6cf8fc` 只登记产物哈希、构建
 摘要和由同一输入重建的 HTML。该语义与现有 HTML parent-source marker 一致。
