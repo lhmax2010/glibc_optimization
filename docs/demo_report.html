@@ -33,19 +33,19 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
     <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 身份门、哈希、矩阵、拉回、恢复现场。</small></div>
     <div class="card contract"><strong>同板同镜像对照</strong><small>S4 锚点 + trim/none；gst 两臂各三重复。</small></div>
     <div class="card contract"><strong>结果说明价值</strong><small>收益、faults、业务 p99、健康门和边界同批呈现。</small></div>
-    <div class="card contract"><strong>同条件复现同数据</strong><small>确定性字段逐值；调度、回收与时延按预登记容差带。</small></div>
+    <div class="card contract"><strong>同条件复现同数据</strong><small>payload 确定性字节逐值一致；容差项落带；validity gates 全部通过。</small></div>
   </div>
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="demo_reproduction_guide_20260901.md#l2-acceptance">复现指南验收带</a></p>
   <div class="grid">
-    <div class="card"><small>新镜像瞬时释放锚点</small><strong class="metric">51.07% / 50.39%</strong><a href="../data/raw/s4_retention_20260901/a_cells.tsv">证据 TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a></div>
-    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">80.18%–85.45%</strong><span>约 1.2 ms；majflt 0</span><br><a href="../data/raw/s4_retention_20260901/b_cycles.tsv">证据 TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a></div>
-    <div class="card"><small>gst 业务 p99 预登记判定</small><strong class="metric">+6.229 ms &lt; 6.784 ms</strong><span class="pill">未检出可见代价</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="demo_reproduction_guide_20260901.md#l1-gst-trim-cost">L1 复算</a></div>
+    <div class="card"><small>新镜像瞬时释放锚点（n=1/profile）</small><strong class="metric">51.07% / 50.39%</strong><span>of pre-trim heap</span><br><a href="../data/raw/s4_retention_20260901/a_cells.tsv">证据 TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a></div>
+    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">80.18%–85.45%</strong><span>合并中位 1.233269 ms；majflt 0</span><br><a href="../data/raw/s4_retention_20260901/b_cycles.tsv">证据 TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a></div>
+    <div class="card"><small>gst 业务 p99 预登记判定（REPORT_ONLY）</small><strong class="metric">+6.229 ms &lt; 6.784 ms</strong><span class="pill">未检出；margin 0.556 ms（阈值 91.8%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="demo_reproduction_guide_20260901.md#l1-gst-trim-cost">L1 复算</a></div>
   </div>
 </section>
 
 <section id="finding-one">
   <span class="pill">发现一</span><h2>ServiceA：自动归还是反信号</h2>
-  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv">6212 kB（6.2 MB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">-262144 B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">167→167</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">32 个大步中近等幅迁移为 0</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
+  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv">6212 KiB（6.2 MiB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">-262144 B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">167→167</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">32 个大步中近等幅迁移为 0</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
   <figure>
 <svg class="chart" viewBox="0 0 980 360" role="img" aria-labelledby="servicea-title servicea-desc">
   <title id="servicea-title">ServiceA glibc heap Private Dirty 周期时间线</title>
@@ -64,15 +64,16 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
 
 <section id="finding-two">
   <span class="pill">发现二</span><h2>滞留表型才是作用面</h2>
-  <div class="grid">
-    <div class="card"><small>标签 a</small><strong class="metric">1</strong><span>目标/分量</span></div><div class="card"><small>标签 b</small><strong class="metric">4</strong><span>目标/分量</span></div><div class="card"><small>标签 c</small><strong class="metric">1</strong><span>目标/分量</span></div><div class="card"><small>标签 N</small><strong class="metric">5</strong><span>目标/分量</span></div><div class="card"><small>标签 U</small><strong class="metric">1</strong><span>目标/分量</span></div>
-  </div>
-  <p class="source-links">分类摘要来自 <a href="../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv">release-ratio TSV</a> 与 <a href="../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv">plateau/cyclic TSV</a>；完整十目标口径见 <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">L1 表型复算</a>。双标签按分量计数，不能与目标数相加。</p>
+  <h3>release-ratio 表（10 个目标，双标签按分量计）</h3>
+  <div class="grid"><div class="card"><small>release-ratio 标签 a</small><strong class="metric">1</strong><span>目标/分量</span></div><div class="card"><small>release-ratio 标签 b</small><strong class="metric">4</strong><span>目标/分量</span></div><div class="card"><small>release-ratio 标签 c</small><strong class="metric">1</strong><span>目标/分量</span></div><div class="card"><small>release-ratio 标签 N</small><strong class="metric">5</strong><span>目标/分量</span></div></div>
+  <h3>plateau/cyclic 表（10 个目标，双标签按分量计）</h3>
+  <div class="grid"><div class="card"><small>plateau/cyclic 标签 a</small><strong class="metric">1</strong><span>目标/分量</span></div><div class="card"><small>plateau/cyclic 标签 b</small><strong class="metric">2</strong><span>目标/分量</span></div><div class="card"><small>plateau/cyclic 标签 c</small><strong class="metric">1</strong><span>目标/分量</span></div><div class="card"><small>plateau/cyclic 标签 N</small><strong class="metric">6</strong><span>目标/分量</span></div><div class="card"><small>plateau/cyclic 标签 U</small><strong class="metric">1</strong><span>目标/分量</span></div></div>
+  <p class="source-links">两组计数分别来自 <a href="../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv">release-ratio TSV</a> 与 <a href="../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv">plateau/cyclic TSV</a>，不跨表合并。ServiceD 在前表为 b-retention、后表为 N-subthreshold；这是采样窗口/阈值造成的跨表分类冲突，按 <a href="cyclic_fall_mechanism_attribution_v2_20260901.md#5-十目标表型普查">归因 v2</a> 原样披露。完整复算见 <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">L1 表型复算</a>。</p>
   <table><thead><tr><th>候选</th><th>已登记 floor / 上界</th><th>门控含义</th><th>证据</th></tr></thead><tbody>
-    <tr><td>enlightenment</td><td class="number">+1736 kB</td><td>a 周期分量排除；b floor 保留，并附自动归还能力告警</td><td><a href="../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">复算</a></td></tr>
-    <tr><td>ServiceH[ServiceK]</td><td class="number">2.36 MB 上界；+868/+580 kB floor</td><td>PID/探针边界保留；需产品侧 M7</td><td><a href="../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">复算</a></td></tr>
-    <tr><td>ServiceA</td><td class="number">+788 kB 谷底残渣</td><td>周期分量排除；残渣 live/bin 未判</td><td><a href="../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">复算</a></td></tr>
-    <tr><td>批量释放相位类</td><td class="number">48.9% / 1.36 MiB × 8 进程</td><td>已有 M7 释放相位证据</td><td><a href="../data/raw/demo_reproduction_20260901/batch_release_phase.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-batch-release">复算</a></td></tr>
+    <tr><td>enlightenment</td><td class="number">+1736 KiB</td><td>a 周期分量排除；b floor 保留，并附自动归还能力告警</td><td><a href="../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">复算</a></td></tr>
+    <tr><td>ServiceH[ServiceK]</td><td class="number">2360 KiB（2.30 MiB）上界；+868/+580 KiB floor</td><td>PID/探针边界保留；需产品侧 M7</td><td><a href="../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">复算</a></td></tr>
+    <tr><td>ServiceA</td><td class="number">+788 KiB 谷底残渣</td><td>周期分量排除；残渣 live/bin 未判</td><td><a href="../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-phenotypes">复算</a></td></tr>
+    <tr><td>批量释放相位类</td><td class="number">48.9% / 1.36 MiB × 8 进程</td><td>来自 &lt;TEST_IMAGE_B&gt;/glibc-2.40-2.8 的相容性对照，非冻结矩阵</td><td><a href="../data/raw/demo_reproduction_20260901/batch_release_phase.tsv">TSV</a> · <a href="demo_reproduction_guide_20260901.md#l1-batch-release">复算</a></td></tr>
   </tbody></table>
 </section>
 
@@ -80,12 +81,12 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
   <span class="pill">效果</span><h2>S4：M7 阳性后，valley trim 回收驻留页</h2>
   <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → valley trim → faults / 时延 / 健康门</div>
   <div class="grid">
-    <div class="card wide"><h3>瞬时释放锚点</h3>
+    <div class="card wide"><h3>瞬时释放锚点（n=1/profile）</h3>
 <svg class="chart" viewBox="0 0 820 300" role="img" aria-label="S4 A 组回收率锚点">
   <title>S4 A 组回收率锚点</title>
   <line x1="80" y1="246" x2="780" y2="246" class="axis"/>
   <rect x="200.0" y="67.2" width="110.0" height="178.8" class="bar trim"/><text x="255.0" y="58.2" text-anchor="middle" class="value">51.074</text><text x="255.0" y="269.0" text-anchor="middle">mixed</text><rect x="550.0" y="69.6" width="110.0" height="176.4" class="bar trim"/><text x="605.0" y="60.6" text-anchor="middle" class="value">50.388</text><text x="605.0" y="269.0" text-anchor="middle">medium-only</text>
-  <text x="20" y="141.0" transform="rotate(-90 20 141.0)" text-anchor="middle">reclaim / pretrim (%)</text>
+  <text x="20" y="141.0" transform="rotate(-90 20 141.0)" text-anchor="middle">reclaim / pre-trim heap (%)</text>
 </svg><p><a href="../data/raw/s4_retention_20260901/a_cells.tsv">A 组证据</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">复算</a></p></div>
     <div class="card wide"><h3>B 组三重复中位</h3>
 <svg class="chart" viewBox="0 0 820 300" role="img" aria-label="S4 B 组 trim/none 回收已释放 payload">
@@ -96,22 +97,23 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
 </svg><p><a href="../data/raw/s4_retention_20260901/b_cells.tsv">格级证据</a> · <a href="demo_reproduction_guide_20260901.md#l2-acceptance">中位验收规则</a></p></div>
   </div>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
-    <tr><td>mixed</td><td class="number">81.66%</td><td class="number">1.369 ms</td><td class="number">+1351</td><td class="number">0</td></tr>
-    <tr><td>medium-only</td><td class="number">84.45%</td><td class="number">1.218 ms</td><td class="number">+1465</td><td class="number">0</td></tr>
+    <tr><td>mixed</td><td class="number">81.66%</td><td class="number" rowspan="2">合并中位 1.233269 ms</td><td class="number">+1351</td><td class="number">0</td></tr>
+    <tr><td>medium-only</td><td class="number">84.45%</td><td class="number">+1465</td><td class="number">0</td></tr>
   </tbody></table>
   <p class="source-links"><a href="../data/raw/s4_retention_20260901/b_cells.tsv">代价证据 TSV</a> · <a href="../data/raw/s4_retention_20260901/health.json">健康证据 JSON</a> · <a href="demo_reproduction_guide_20260901.md#l1-s4">L1 复算</a>。zram 三项 Δ=0/0/0，OOM/LMK=0。</p>
   <p class="source-links">时延带分开解释：B 组释放点 trim 单次 &lt;5 ms；A 组锚点实测最大 13.331907 ms，以 &lt;20 ms 验收，且不作为钩子代价。<a href="../data/raw/s4_retention_20260901/a_cells.tsv">A 组证据</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></p>
 </section>
 
 <section id="gst">
-  <span class="pill">真实并发</span><h2>gst：按预登记业务 p99 门未检出可见代价</h2>
-  <p>trim 臂 repeat-median p99 相对 none 增加 <a class="number" href="../data/raw/gst_trim_cost_20260901/comparison.json">6.228611 ms</a>，没有超过 none 重复离散带 <a class="number" href="../data/raw/gst_trim_cost_20260901/comparison.json">6.784167 ms</a>。结论只能写“按本门未检出”，不能写“零代价”。</p>
+  <span class="pill">真实并发</span><h2>gst：方向只报告；本批按预登记业务 p99 门未检出</h2>
+  <p>trim 臂 repeat-median p99 相对 none 增加 <a class="number" href="../data/raw/gst_trim_cost_20260901/comparison.json">6.228611 ms</a>，低于 none 重复离散带 <a class="number" href="../data/raw/gst_trim_cost_20260901/comparison.json">6.784167 ms</a>，margin 为 <strong>0.556 ms</strong>，达到门槛的 <strong>91.8%</strong>。同一规则用于 p50 时判可见：<strong>+1.870 ms</strong> 对 <strong>0.174 ms</strong>。trim 臂另增加约 <strong>+359 minflt/循环</strong>。p99 方向是 <code>REPORT_ONLY</code>，只校验 nearest-rank 与离散带计算，不能写“零代价”。</p>
+  <div class="callout">如果你的板上 p99 判为“可见”，保留原始三重复与规则复算，标记 <code>REPORT_ONLY: visible</code>，量化 delta、none 离散带和 margin，并上报为批次差异；不要把它改成 workflow 硬失败，也不要据此修改冻结参数。</div>
   <figure>
 <svg class="chart" viewBox="0 0 820 300" role="img" aria-label="gst 两臂三重复业务 p99（为显示差异减去共同基线）">
   <title>gst 两臂三重复业务 p99（为显示差异减去共同基线）</title>
   <line x1="80" y1="246" x2="780" y2="246" class="axis"/>
   <rect x="106.2" y="234.8" width="64.2" height="11.2" class="bar none"/><text x="138.3" y="225.8" text-anchor="middle" class="value">1.000</text><text x="138.3" y="269.0" text-anchor="middle">none r1</text><rect x="222.9" y="202.9" width="64.2" height="43.1" class="bar none"/><text x="255.0" y="193.9" text-anchor="middle" class="value">3.842</text><text x="255.0" y="269.0" text-anchor="middle">none r2</text><rect x="339.6" y="158.6" width="64.2" height="87.4" class="bar none"/><text x="371.7" y="149.6" text-anchor="middle" class="value">7.784</text><text x="371.7" y="269.0" text-anchor="middle">none r3</text><rect x="456.2" y="68.0" width="64.2" height="178.0" class="bar trim"/><text x="488.3" y="59.0" text-anchor="middle" class="value">15.850</text><text x="488.3" y="269.0" text-anchor="middle">trim r1</text><rect x="572.9" y="216.2" width="64.2" height="29.8" class="bar trim"/><text x="605.0" y="207.2" text-anchor="middle" class="value">2.657</text><text x="605.0" y="269.0" text-anchor="middle">trim r2</text><rect x="689.6" y="132.9" width="64.2" height="113.1" class="bar trim"/><text x="721.7" y="123.9" text-anchor="middle" class="value">10.071</text><text x="721.7" y="269.0" text-anchor="middle">trim r3</text>
-  <text x="20" y="141.0" transform="rotate(-90 20 141.0)" text-anchor="middle">p99 − 20012.566 ms</text>
+  <text x="20" y="141.0" transform="rotate(-90 20 141.0)" text-anchor="middle">p99 − 20012.565747 ms</text>
 </svg><figcaption>图 4 · 柱高减去共同显示基线，不改变臂间差；原始毫秒值见 <a href="../data/raw/gst_trim_cost_20260901/repetitions.tsv">repetitions.tsv</a>，判定见 <a href="../data/raw/gst_trim_cost_20260901/comparison.json">comparison.json</a>，复算见 <a href="demo_reproduction_guide_20260901.md#l1-gst-trim-cost">L1 gst</a>。</figcaption></figure>
   <figure>
 <svg class="chart" viewBox="0 0 820 190" role="img" aria-label="153 次 GStreamer release-point trim 耗时分布">
@@ -132,7 +134,7 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
     <div class="card"><strong>② Host verify · 分钟级</strong><small><code>bash tools/reproduce/reproduce.sh</code> 执行全部 L1 与 cmp。</small></div>
     <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --ip &lt;addr&gt;</code> 编排既有 S4/gst harness。</small></div>
   </div>
-  <p><a href="../tools/reproduce/README.md">Workflow 上手</a> · <a href="demo_reproduction_guide_20260901.md#workflow-fast-path">快速通道</a> · <a href="demo_reproduction_guide_20260901.md#l2-run">手工 L2</a>。确定性项和容差带都来自 <a href="../tools/reproduce/acceptance_bands.json">acceptance_bands.json</a>。</p>
+  <p><a href="../tools/reproduce/README.md">Workflow 上手</a> · <a href="demo_reproduction_guide_20260901.md#workflow-fast-path">快速通道</a> · <a href="demo_reproduction_guide_20260901.md#l2-run">手工 L2</a>。确定性项、validity gates 和容差带都来自 <a href="../tools/reproduce/acceptance_bands.json">acceptance_bands.json</a>。“同样的数据”指 payload 确定性字节逐值一致、容差项落带且 validity gates 通过。</p>
 </section>
 
 <section id="boundaries">
@@ -141,12 +143,12 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
     <li>合成代理仍缺产品候选的 M7 live/bin 分解、产品业务时延，以及真实并发分配线程的直接全-arena 锁停顿。</li>
     <li>gst trim 在 PLAYING→NULL release 后触发；它测到下一循环业务墙钟，但没有把 trim 放进并发分配热区。</li>
     <li><strong>“p99 未检出”不等于“零代价”</strong>：结论严格受三重复、50 个主样本与预登记离散门约束。<a href="../data/raw/gst_trim_cost_20260901/comparison.json">判定证据</a></li>
-    <li><strong>同 seed 不钉 arena 指派</strong>：单重复可出现约 1 MB 页台阶；回收字节值不属于确定性项，S4 B 按每档三重复中位 ±5 pp 验收。<a href="demo_rehearsal_20260902.md#82-s4-验收带对照">rep2 实例</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></li>
-    <li><strong>预期告警不是静默忽略</strong>：S4 A 最多 2 个匹配 <code>alloc_bench cpu.relative</code> 的 livedump，只有完成记录、归档、精确清理和复核才记 <code>EXPECTED</code>；其他可归因告警仍失败。<a href="../tools/reproduce/health_gate_template.md">健康门模板</a></li>
+    <li><strong>同 seed 不钉 arena 指派</strong>：单重复实测出现 <a href="../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv">68.169197%</a>（约 1 MiB 页台阶）；回收字节值不属于确定性项，S4 B 分别锚定发布值 81.661264% / 84.446566% 并按每档三重复中位 ±5 pp 验收。n=3 的中位至多容忍一个离群。<a href="../tools/reproduce/acceptance_bands.json">机器规则</a></li>
+    <li><strong>known-alert waiver 不是无害性证明</strong>：S4 A 最多 2 个匹配 <code>alloc_bench cpu.relative</code> 的 livedump；触发理由与窗口可复现，但未做根因证明。观测到且完成记录、归档、精确清理和复核才记 <code>EXPECTED</code>，未观测只记 <code>REGISTERED/NOT-EVALUATED</code>；其他可归因告警仍失败。<a href="../tools/reproduce/health_gate_template.md">健康门模板</a></li>
   </ul>
   <p>产品侧启用仍须通过反信号排除、M7 驻留确认和代价预算三道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
 </section>
 </main>
-<footer>构建来源 commit：<code>6f45b051d422f5270ef38c980fd4e7a381e69ace</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>
+<footer>构建来源 commit：<code>243343114a8c6c1b1ea9bb255238cc33cffb17b1</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>
 </body>
 </html>
