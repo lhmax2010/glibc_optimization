@@ -44,10 +44,11 @@ check()
     shift
     log="$tmp/$(printf '%s' "$label" | tr -c 'A-Za-z0-9._-' '_').log"
     if "$@" >"$log" 2>&1; then
-        if grep -Eq '^(SKIPPED|REPORT_ONLY)[[:space:]]' "$log"; then
-            grep -E '^(SKIPPED|REPORT_ONLY)[[:space:]]' "$log"
+        if grep -Eq '^SKIPPED[[:space:]]' "$log"; then
+            grep -E '^SKIPPED[[:space:]]' "$log"
         else
             printf 'PASS\t%s\n' "$label"
+            grep -E '^REPORT_ONLY[[:space:]]' "$log" || true
         fi
     else
         rc=$?

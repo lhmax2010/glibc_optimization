@@ -1,6 +1,6 @@
 {
   "schema": "glibc-memopt-gbs-build.v1",
-  "source_commit": "PENDING_SOURCE_COMMIT",
+  "source_commit": "20ab8c80d7b357254542dd841212ed8d7e7085c8",
   "command": "gbs -c config/gbs_llvm.conf build -A armv7l --overwrite",
   "config": "config/gbs_llvm.conf",
   "repositories": {
@@ -19,8 +19,11 @@
   "rpm": {
     "nvr": "glibc-memopt-tools-1.0.0-1",
     "arch": "armv7l",
-    "size_bytes": 0,
-    "sha256": "PENDING_GBS_BUILD"
+    "size_bytes": 32956,
+    "sha256": "efad4a0d202785f8c201977fd8aef35752af1bddde163f1063151621e0ac4e0e",
+    "sha256_scope": "observed host build record; archive metadata is not a reproducibility gate",
+    "sourcepkgid": "2a9189261858c2f8b6fa557c3177a197",
+    "payload_digest": "b42eb35e8a68b5be915bc74c47d67d726e5323981da9e1f6f68c5cb7899c79a5"
   },
   "elf_sha256": {
     "alloc_bench": "88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa",

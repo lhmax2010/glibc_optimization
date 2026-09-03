@@ -28,3 +28,11 @@ The immutable machine record is [`build_summary.json`](build_summary.json). It
 contains the exact source commit built, package NVR/arch/size/SHA, buildroot
 compiler/glibc versions, and extracted ELF hashes. The checked-in RPM and ELF
 binaries are intentionally omitted; the manifest is the hash contract.
+The exact recorded RPM and full GBS log remain in the private local
+`board_results/gbs_package_20260903/` archive and are available on request.
+
+The RPM SHA is the identity of the archived host-build instance. Repeating GBS can
+change source/payload archive metadata even when the three extracted ELF hashes are
+identical. Therefore verification records any wrapper-SHA difference as
+`REPORT_ONLY` and gates on source commit, NVR/arch, `%files`, and the three ELF
+hashes; this does not weaken the recorded RPM's SHA-256 identity.
