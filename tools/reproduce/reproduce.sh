@@ -212,14 +212,6 @@ cd "$repo" || exit 2
 printf 'MODE\thost verify\n'
 printf 'SOURCE\t%s\n' "$(git rev-parse HEAD 2>/dev/null || printf unknown)"
 check clean-environment clean_environment
-if [ "${_REPRODUCE_IDENTITY_TEST_ONLY:-0}" = 1 ]; then
-    if [ "$failures" -ne 0 ]; then
-        printf 'OVERALL\tFAIL\titems=%s\n' "$failures"
-        exit 1
-    fi
-    printf 'OVERALL\tPASS\n'
-    exit 0
-fi
 check servicea-cyclic-cmp cyclic_replay
 check f2-f3-attribution-cmp attribution_replay
 check phenotype-cmp phenotype_replay

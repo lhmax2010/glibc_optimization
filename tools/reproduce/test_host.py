@@ -26,32 +26,23 @@ class ReproduceTests(unittest.TestCase):
     def _run_delivery_identity_clone(self, branch: str, include_delivery_tag: bool) -> subprocess.CompletedProcess[str]:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            seed = root / "seed"
             clone = root / "clone"
-            (seed / "tools/reproduce").mkdir(parents=True)
-            (seed / "data/raw/product_cyclic_target_probe_20260814/raw").mkdir(parents=True)
-            shutil.copy2(HERE / "reproduce.sh", seed / "tools/reproduce/reproduce.sh")
-            shutil.copy2(HERE / "delivery_refs.json", seed / "tools/reproduce/delivery_refs.json")
-            (seed / "tools/reproduce/acceptance_bands.json").write_text("{}\n", encoding="utf-8")
-            (seed / "data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv").write_text(
-                "fixture\n", encoding="utf-8"
+            subprocess.run(
+                ["git", "clone", "--no-tags", "--single-branch", "--branch", "main", str(REPO), str(clone)],
+                check=True, capture_output=True,
             )
-            subprocess.run(["git", "init", "-b", "main"], cwd=seed, check=True, capture_output=True)
-            subprocess.run(["git", "config", "user.name", "Delivery Test"], cwd=seed, check=True)
-            subprocess.run(["git", "config", "user.email", "delivery@example.invalid"], cwd=seed, check=True)
-            subprocess.run(["git", "add", "tools", "data"], cwd=seed, check=True)
-            subprocess.run(["git", "commit", "-m", "fixture"], cwd=seed, check=True, capture_output=True)
             if branch == "demo":
-                subprocess.run(["git", "branch", "demo"], cwd=seed, check=True)
+                subprocess.run(["git", "branch", "-m", "demo"], cwd=clone, check=True)
             if include_delivery_tag:
-                subprocess.run(["git", "tag", "demo-v2"], cwd=seed, check=True)
+                subprocess.run(["git", "tag", "demo-v2"], cwd=clone, check=True)
 
-            clone_command = ["git", "clone", "--branch", branch]
-            if not include_delivery_tag:
-                clone_command.append("--no-tags")
-            clone_command.extend([str(seed), str(clone)])
-            subprocess.run(clone_command, check=True, capture_output=True)
-            env = {**os.environ, "_REPRODUCE_IDENTITY_TEST_ONLY": "1"}
+            command_dir = root / "bin"
+            command_dir.mkdir()
+            for command in ("bash", "cmp", "cp", "dirname", "find", "git", "grep", "mktemp", "python3", "sed", "tr"):
+                executable = shutil.which(command)
+                self.assertIsNotNone(executable, command)
+                (command_dir / command).symlink_to(executable)
+            env = {**os.environ, "PATH": str(command_dir), "REPRODUCE_SKIP_TESTS": "1"}
             env.pop("REPRODUCE_EXPECTED_SHA", None)
             return subprocess.run(
                 ["bash", "tools/reproduce/reproduce.sh", "verify"],
