@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # 周期型目标 ServiceA 定向峰谷测量
 
@@ -135,7 +135,7 @@ glibc 与 other-anon 两类下降量之和内计算，不含 file-backed。`othe
 | R7 | 4332 | 7516 | 36.6% / 63.4% | 7916 |
 | R8 | 5792 | 2576 | 69.2% / 30.8% | 2576 |
 
-glibc 峰到谷中位数为 **6212 kB**，范围 4032-9796 kB；other-anon
+glibc 峰到谷中位数为 **6212 KiB**，范围 4032-9796 kB；other-anon
 轮内自身极差中位数为 **4980 kB**，范围 2420-7916 kB。高密度数据表明
 两类都存在周期峰谷；上一轮由各 stage 粗粒度峰值形成的
 `4032 -> 10888 kB` other-anon“单调上涨”没有在本轮谷底序列中复现。

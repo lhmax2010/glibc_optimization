@@ -10,7 +10,7 @@
 
 PM 的主数值链中，以下三项复算一致：
 
-1. `ServiceA` 八轮 glibc-heap Private_Dirty 峰减谷为 `4032–9796 kB`，中位数 `6212 kB`；
+1. `ServiceA` 八轮 glibc-heap Private_Dirty 峰减谷为 `4032–9796 kB`，中位数 `6212 KiB`；
 2. 全窗口 zram `orig` 只发生一次 `-262144 B` 变化，`used` 同步 `-256 kB`，没有任何正向增长；
 3. `ServiceA` 的 `majflt` 全窗口严格为 `167 -> 167`，八轮峰到谷及整轮增量均为 0。
 

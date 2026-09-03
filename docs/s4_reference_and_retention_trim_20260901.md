@@ -1,4 +1,4 @@
-> Public archive note: board identifiers and local paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # S4 新镜像参考格与滞留表型 trim 效果/代价
 
@@ -192,7 +192,7 @@ DONE_MEMTOTAL
 1. 反信号排除：16/16 周期均没有 free 后 PD 自动下降；
 2. M7 驻留确认：trim 前 rest/unsorted 均为 MB 级；
 3. 主动回收：mixed/medium-only 分别回收释放 payload 的中位 `81.661264% / 84.446566%`；
-4. 已知代价：单次 trim 中位 `1.233269 / 1.218361 ms`，下一周期相对 none 增加 `1351 / 1465` 次 minflt，majflt 为 0；
+4. 已知代价：两档全部释放点 trim 的合并中位为 `1.233269 ms`，下一周期相对 none 增加 `1351 / 1465` 次 minflt，majflt 为 0；
 5. 健康门：zram 不变、dmesg 无增量、零 OOM/LMK、所有退出和清理门通过。
 
 **尚缺、因此不能直接升级为产品投放结论的数字：**

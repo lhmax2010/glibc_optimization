@@ -1,5 +1,6 @@
-> Public archive note: application/process names are aliases. Board identifiers,
-> image delivery paths, and local filesystem paths are sanitized.
+> Public archive note: application/process names are aliases. Host-side paths are
+> sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is
+> intentionally public for reproducibility.
 
 # HQ Demo 复现指南
 
@@ -29,12 +30,18 @@ bash tools/reproduce/reproduce.sh verify
 bash tools/reproduce/reproduce.sh board --ip <addr>
 ```
 
+入口必须在真实 `git clone` 内运行，GitHub ZIP/source export 不受支持；workflow 会把
+`HEAD` 与 [`delivery_refs.json`](../tools/reproduce/delivery_refs.json) 记录的交付引用比较。
+仅开发调试可显式设置 `REPRODUCE_ALLOW_DIRTY=1`、`REPRODUCE_SKIP_TESTS=1` 或
+`REPRODUCE_EXPECTED_SHA=<commit-or-ref>`；交付验收不得隐式跳过这些门。
+
 `verify` 依次执行全部 L1 复算与 `cmp`、重建离线 HTML、检查本地链接、运行 host
 测试，并输出逐项 `PASS/FAIL`；任一失败返回非零。`board` 执行身份/环境/能力门、资产
-哈希、S4 与 gst 冻结矩阵、拉回解析、v2 健康门、精确清理和 governor 复核。两种模式
+哈希、S4 与 gst 冻结矩阵、拉回解析、v2 known-alert waiver、精确清理和 governor 复核。两种模式
 共同读取机器可读的
-[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)：`EXPECTED` 只表示命中
-预登记告警，板上仍必须完成归档/清理/复核；`REPORT_ONLY` 表示非我方或归属不明状态，
+[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)：未观测预登记告警时输出
+`REGISTERED/NOT-EVALUATED`；`EXPECTED` 只表示实际命中登记且板上已完成归档/清理/复核；
+`REPORT_ONLY` 表示方向性结果或非我方/归属不明状态，
 不做处置；`FAIL` 使总流程失败。手工步骤仍是流程权威参考，可与 workflow 输出互验。
 
 ## L1 · 派生数字复算
@@ -68,8 +75,8 @@ python3 data/raw/cyclic_fall_mechanism_attribution_20260831/recompute_cyclic.py 
 ```
 
 预期输出原文如下。这里同时复核逐轮 PD 实跌、zram 没有正增量、majflt
-下降窗为零、无缺行和无 PID 变化；中位峰谷为 `6212 kB`，即 Demo 中的
-`6.2 MB`。这些值也已固化在
+下降窗为零、无缺行和无 PID 变化；中位峰谷为 `6212 KiB`，即 Demo 中的
+`6.2 MiB`。这些值也已固化在
 [`cyclic_rounds.tsv`](../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv)
 与
 [`cyclic_quality.json`](../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json)。
@@ -177,6 +184,8 @@ ServiceB class=u-cross-probe-unstable
 [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv)
 逐行转录自单进程报告和八进程扩展报告；来源说明见同目录
 [`README.md`](../data/raw/demo_reproduction_20260901/README.md)。
+这些数字来自 `<TEST_IMAGE_B>` / `glibc-2.40-2.8` 的相容性对照，不属于冻结矩阵。
+转录一致性可单独运行 `python3 tools/reproduce/check_batch_transcription.py` 验证。
 
 ```sh
 python3 -c 'import csv,statistics; r=list(csv.DictReader(open("data/raw/demo_reproduction_20260901/batch_release_phase.tsv"),delimiter="\t")); s=[x for x in r if x["series"]=="single"]; m=[x for x in r if x["series"]=="scale"]; print("single median=%.4f%%/%.6fMiB; demo=48.9%%/1.36MiB"%(statistics.median(float(x["reclaim_pct"]) for x in s),statistics.median(float(x["reclaimed_mib"]) for x in s))); print("scale process_count=%d pct_range=%.4f-%.4f%%"%(len(m),min(float(x["reclaim_pct"]) for x in m),max(float(x["reclaim_pct"]) for x in m)))'
@@ -211,11 +220,12 @@ print("A anchors: " + " ".join("{}={:.6f}%".format(r["profile"], float(r["reclai
 v = [r for r in c if r["trim_at"] == "valley"]
 print("B reclaim/released range=%.6f-%.6f%%" % (min(float(r["trim_reclaim_pct_of_released"]) for r in v), max(float(r["trim_reclaim_pct_of_released"]) for r in v)))
 for profile in ("mixed", "medium-only"):
-    times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == profile]
     cells = {r["trim_at"]: r for r in b if r["profile"] == profile and r["rep"] == "1"}
     extra = int(cells["valley"]["cycle1_next_minflt"]) - int(cells["none"]["cycle1_next_minflt"])
-    med = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
-    print("%s trim_ms_median=%s next_minflt_extra=%+d" % (profile, med, extra))
+    print("%s next_minflt_extra=%+d" % (profile, extra))
+times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == "mixed"]
+med = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+print("trim_ms_merged_median=%s" % med)
 payloads = {}
 for r in c:
     payloads.setdefault((r["profile"], int(r["cycle"])), set()).add(int(r["released_payload_bytes"]))
@@ -235,8 +245,9 @@ PY
 ```text
 A anchors: mixed=51.074077% medium-only=50.387886%
 B reclaim/released range=80.175875-85.453954%
-mixed trim_ms_median=1.233269 next_minflt_extra=+1351
-medium-only trim_ms_median=1.218361 next_minflt_extra=+1465
+mixed next_minflt_extra=+1351
+medium-only next_minflt_extra=+1465
+trim_ms_merged_median=1.233269
 released_payload_bytes: mixed=5742256,6566672 medium-only=6288384,6293504
 reclaimed_4k_aligned=12/12
 majflt_all_zero=true
@@ -305,16 +316,16 @@ gst first-release=51.014041-51.406250% / 1.277344-1.285156 MiB
 
 | Demo 展示值 | 公开输入 | 复算入口 |
 |---|---|---|
-| ServiceA `6.2 MB`（精确中位 `6212 kB`） | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](#l1-servicea) |
+| ServiceA `6.2 MiB`（精确中位 `6212 KiB`） | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](#l1-servicea) |
 | 旧 `19.683240 s` 为伪影 | [`summary.json`](../data/raw/cyclic_fall_attribution_20260901/summary.json) | [ServiceA](#l1-servicea) |
-| `enlightenment +1736 kB` | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](#l1-phenotypes) |
-| `ServiceH 2360/+868/+580 kB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](#l1-phenotypes) |
-| `ServiceA +788 kB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv) | [表型](#l1-phenotypes) |
-| 批量相位 `48.9% / 1.36 MiB × 8` | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](#l1-batch-release) |
-| S4 `51.074077% / 50.387886%` | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](#l1-s4) |
-| S4 `80.175875%–85.453954%`、`1.233269/1.218361 ms`、`+1351/+1465 minflt` | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](#l1-s4) |
+| `enlightenment +1736 KiB` | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](#l1-phenotypes) |
+| `ServiceH 2360/+868/+580 KiB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](#l1-phenotypes) |
+| `ServiceA +788 KiB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv) | [表型](#l1-phenotypes) |
+| 批量相位 `48.9% / 1.36 MiB × 8`（`<TEST_IMAGE_B>` / `glibc-2.40-2.8` 相容性对照，非冻结矩阵） | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](#l1-batch-release) |
+| S4 `51.07% / 50.39%`（各 n=1，of pre-trim heap） | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](#l1-s4) |
+| S4 `80.175875%–85.453954%`、统一中位 `1.233269 ms`、`+1351/+1465 minflt` | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](#l1-s4) |
 | S4 `majflt=0`、zram 三项 `Δ=0`、OOM/LMK `0` | [`health.json`](../data/raw/s4_retention_20260901/health.json) | [S4](#l1-s4) |
-| gst p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`，判定 `false` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
+| gst p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`，margin `0.555556 ms`（91.8%）；同规则 p50 `+1.870462` 对 `0.173927 ms`；`+359 minflt/循环` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv) | [gst L1](#l1-gst-trim-cost) |
 | gst trim `0.671556/0.818315/0.842185/0.856944 ms`（p50/p95/p99/max） | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
 | gst 首次 release `51.014041%–51.406250% / 1.277344–1.285156 MiB` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
 
@@ -358,14 +369,25 @@ file tools/alloc_bench/alloc_bench.armv7l
 sha256sum tools/alloc_bench/alloc_bench.armv7l
 ```
 
-`file` 应报告动态链接的 ARM EABI5 ELF；SHA 应与上面的已验产物一致。若 SHA 不同，
-先核对源文件、GCC、scratch root 和 flags；仍不一致时只能登记为新构建批次，不能把
-它称为本 S4 的字节级复跑。
+`file` 应报告动态链接的 ARM EABI5 ELF。旧冻结制品 SHA 与当前固定路径、
+`-fdebug-prefix-map=<dir>=.` 构建链的可复现 SHA 分开登记，不能混为一个预期值；完整
+SHA、体积、内部交付渠道和责任人占位以
+[`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) 为唯一 manifest。
+可在两条不同 checkout 路径运行以下 host 测试，核验三个可构建 ELF 的路径独立 SHA：
+
+```sh
+python3 tools/reproduce/test_reproducible_build_paths.py
+```
+
+若当前工具链构建值与 manifest 的 `reproducible_build_sha256` 不同，先核对源码、GCC、
+scratch/sysroot 和 flags；仍不一致时登记为新构建批次，不能称为字节级复跑。
 
 因此“全新 clone + 单独使用本仓库”不足以启动 L2。交付方必须在开始前另行提供
 带 SHA-256 manifest 的内部产物包（S4 bench，gst bench/probe/media），或提供可用的
-scratch root/sysroot 路径。仓库不记录内部制品库坐标；未获得上述交付时应标成
-外部前置阻断，不得在板上即兴找文件替代。
+scratch root/sysroot 路径。媒体资产的自产/可再分发 provenance 尚未建立，因此不入
+公开仓库，按 manifest 的 `external-package` 渠道随包外交付；渠道坐标和责任人保留 PM
+交付占位。**没有内部 bundle 时 board 模式不可启动**，必须登记为外部前置阻断，
+不得在板上即兴找文件替代。
 
 <a id="l2-run"></a>
 ### 完整执行命令
@@ -425,7 +447,8 @@ grep -Fx DONE_S4_CONTROLLER "$S4_HOST/remote_invoke.txt"
 stability-monitor/livedump 的精确文件清单和计数。v1 规则保留为历史判定；v2 新增
 “预登记预期告警”类。新增件必须从归档内部 `dump_reason` 与 `info.json` 核对 PID、
 进程名、executable path、发生窗口与数量：与预登记的触发理由、窗口、owner 和数量
-上界全部匹配时，记录、归档、按精确路径清理并复核后记为 `EXPECTED` 通过；可归因
+上界全部匹配时，记录、归档、按精确路径清理并复核后记为 `EXPECTED` 通过；未观测时
+只记 `REGISTERED/NOT-EVALUATED`，不能把“已登记”写成“已发生且通过”。可归因
 本轮但未登记或超界的告警仍为 `FAIL`；非本轮或归属不明告警只记 `REPORT_ONLY`，
 原样报告且不处置。本项与 dmesg OOM/LMK、zram 和 governor 门并列，不得因数值分析
 成功而忽略。机器可读规则见
@@ -433,8 +456,9 @@ stability-monitor/livedump 的精确文件清单和计数。v1 规则保留为�
 命令见 [`health_gate_template.md`](../tools/reproduce/health_gate_template.md)。
 
 首条预登记为 S4 A 组：`alloc_bench.armv7l` 在 `A/mixed/rep1` 与
-`A/medium-only/rep1` 窗口因 `cpu.relative` 产生的 livedump 合计至多 `2` 个，归类为
-良性预期告警。触发理由、二进制、窗口或数量任一不符都不在该登记覆盖范围内。
+`A/medium-only/rep1` 窗口因 `cpu.relative` 产生的 livedump 合计至多 `2` 个，适用
+known-alert waiver。这里只证明触发理由与窗口可复现，**未做根因证明**；触发理由、
+二进制、窗口或数量任一不符都不在该登记覆盖范围内。
 
 运行完成后在固定目录内生成 hash/size 清单，拉回并用发布的分析器验证；任何一项
 失败都先保留 host 证据，不把该格记为完成：
@@ -467,42 +491,47 @@ grep -Fx DONE_GOVERNOR_FINAL "$S4_HOST/governor_final.txt"
 ```
 
 <a id="l2-acceptance"></a>
-### 验收带：确定性项与容差项
+### 验收带：确定性项、validity gates 与容差项
 
 验收配置只维护在
 [`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)；本节是它的人工可读
-解释。确定性项来自冻结 payload、页粒度及健康门
+解释。唯一确定性数字来自冻结 payload
 ([逐周期 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)、
 [健康 JSON](../data/raw/s4_retention_20260901/health.json))：
 
 - released payload 字节数必须与相同 profile/cycle 的冻结值逐值一致；公开基准为
   mixed `5742256/6566672 B`、medium-only `6288384/6293504 B`。
-- trim 回收量必须是 `4 kB` 页粒度的整数倍，但**回收量字节值本身不是确定性项**。
-- 下一周期 `majflt=0`；zram `orig/compressed/mem_used_total` 三项 `Δ=0`。
-- dmesg 增量中 OOM/LMK 必须零命中。
+- validity gates：trim 回收量必须是 `4 KiB` 页粒度整数倍；下一周期 `majflt=0`；
+  zram `orig/compressed/mem_used_total` 三项 `Δ=0`；dmesg OOM/LMK 零命中。
 
-上述五类（payload 字节、4 kB 对齐、majflt、zram、OOM/LMK）是固定的数值确定性
-清单。bench/sampler/controller 的远端 `RC=0/DONE_*`、JSON/XML 可解析、manifest 和
-现场恢复属于流程完整性前置；任一失败同样终止该格，但不另行扩充“确定性数字”清单。
+因此“同条件复现同样的数据”的正式含义是：payload 字节逐值一致，容差项落带，且
+validity gates 全部通过。回收量字节值本身不是确定性项。bench/sampler/controller 的
+远端 `RC=0/DONE_*`、JSON/XML 可解析、manifest 和现场恢复属于流程完整性前置；任一
+失败同样终止该格。
 
 容差项是本指南的跨板/跨批次建议判据，不是新增测量值；中心值依据
 [`S4 结果`](s4_reference_and_retention_trim_20260901.md#3-a-组结果新镜像锚点)：
 
-- A 组瞬时释放回收率：`49% ±4 pp`。
+- A 组瞬时释放回收率：`49% ±4 pp`；A 格各 `n=1`，分母为 pre-trim heap。
 - B 组 trim 回收/已释放：验收单位固定为每个 profile 的三重复中位，即先取每个重复
-  两周期的中位、再取三重复中位，以 `80% ±5 pp` 验收；不以单重复或单周期的回收
-  字节值作硬门。
+  两周期的中位、再取三重复中位；mixed 锚定发布值 `81.661264% ±5 pp`，medium-only
+  锚定发布值 `84.446566% ±5 pp`。`n=3` 中位能容忍一个离群重复，但不能覆盖两个偏移
+  重复；不以单重复或单周期的回收字节值作硬门。
+- 每周期 `trim_reclaimed_kb` 是 banded 参考项，相对同 profile/rep/cycle 发布值允许
+  `±1024 KiB`；它用于暴露约 1 MiB arena 台阶，不提升为确定性项。
 - 释放点 trim（B 组 valley 与 gst loop-release）：每次调用 `<5 ms`。
 - A 组瞬时锚点 trim：每次调用 `<20 ms`；它是大释放锚点的完成时延，不是运行时
   钩子代价数字。
 - 下一周期 minflt 增量应与回收页数处于同一数量级；仍要求 majflt 为零。
 
 固定 `seed` 决定负载随机序列，但不钉死 glibc arena 指派。因调度与 arena 归属变化，
-单重复可出现约 `1 MB` 的页粒度台阶；HQ 彩排的 medium-only `rep2` 两个周期就是该
-实例，分别比发布批少 `1024000 B`。这不改写发布数字，也不把差异“放宽”为任意波动：
+单重复可出现约 `1 MiB` 的页粒度台阶；HQ 彩排的 medium-only `rep2` 两个周期就是该
+实例，其中逐重复中位实测为 `68.169197%`，两周期分别比发布批少 `1024000 B`。这不
+改写发布数字，也不把差异“放宽”为任意波动：
 预登记协议用每档三重复中位和 `±5 pp` 带吸收该离散，payload 字节、4 kB 对齐、
-majflt、zram 与 OOM/LMK 五类确定性门仍须精确成立。实例证据见
-[`彩排报告 §8.2`](demo_rehearsal_20260902.md#82-s4-验收带对照)。
+majflt、zram 与 OOM/LMK validity gates 仍须成立。实例紧凑证据见
+[`s4_medium_only_rep2_reclaim.tsv`](../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv)，
+解释见 [`彩排报告 §8.2`](demo_rehearsal_20260902.md#82-s4-验收带对照)。
 
 MemTotal 或 kernel 小版本变化不自动否决以上机制判据，但必须记录为批次协变量。
 glibc 主版本必须属于 `2.40` 系；若为 `2.41+`，停止沿用本基线，并按
@@ -535,8 +564,10 @@ sha256sum tools/gst_loop_decode/gst_loop_decode.c /tmp/gst_loop_decode.armv7l
 
 已验源码 SHA-256 为
 `4b00e4ad7fb38c5e51c772e1ba0d8a7d7eb44045d45ec34978317ecaae5d9552`。同一 toolchain、
-sysroot 和源码应重建出上述二进制 SHA；不一致时登记为新构建批次并保留 ELF、编译器、
-sysroot 与 SHA 记录，不能声称字节级复跑。
+sysroot 和源码通过固定 `.build/armv7l/gst_loop_decode/` 与
+`-fdebug-prefix-map=<dir>=.` 重建；预期 canonical SHA 取 manifest 的
+`reproducible_build_sha256`，不是旧冻结制品 SHA。不一致时登记为新构建批次并保留 ELF、
+编译器、sysroot 与 SHA 记录，不能声称字节级复跑。
 
 先只读执行身份/环境和能力门。能力脚本会列出 GStreamer 核心、六个 element 的 RPM
 归属/安装大小，以及 `/`、`/opt/usr` 空间；若缺包，不得跳过本轮报告中的 `1.2 GiB`
@@ -615,7 +646,7 @@ delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
 [`health.json`](../data/raw/gst_trim_cost_20260901/health.json)。完整解释见
 [`实验报告`](gst_trim_cost_20260901.md)。
 
-确定性验收项：资产 SHA 与冻结批次一致；6 格顺序、每格 51 轮、主统计每重复 50 个
+流程完整性项：资产 SHA 与冻结批次一致；6 格顺序、每格 51 轮、主统计每重复 50 个
 样本逐项齐全；none 臂全部是未调用哨兵、trim 臂每格恰有 51 次调用；306 组 pre/post
 JSON 均可解析且 PID 恒定；bench/sampler/controller 全部退出 0；dmesg 零 OOM/LMK；四核
 最终均为 `schedutil`；板端目录已删除。zram 三列必须取得同批前后值并报告 delta，不把
@@ -630,16 +661,20 @@ JSON 均可解析且 PID 恒定；bench/sampler/controller 全部退出 0；dmes
 数值，当前批明确标作不可用；目标内逐循环 `getrusage` 与外部 1 s `/proc/stat` majflt
 仍是两条强制数值源。复跑发布版 harness 时该字段应为数值，不应再出现 `S0`。
 
-容差/判定项不使用看结果后新增的固定比例：业务 p99 仍严格按预登记门——trim 三重复
-p99 的中位数减 none 三重复 p99 的中位数，只有严格超过 none 三重复 p99 的 `max−min`
-离散带才判“代价可见”。回收量只与既有 `48.9451% / 1.359375 MiB` 做相容性对照；
-并发 trim 的 p50/p95/p99/max 必须完整报告，并与 S4 单线程约 `1.2 ms` 描述比较，不能
+业务 p99 方向是 `REPORT_ONLY`：workflow 只硬校验 nearest-rank、三重复中位、none
+`max−min` 离散带和严格 `>` 比较是否正确执行；`visible=true/false` 本身都不触发验收
+FAIL。若复跑板上得到“可见”，应保留三重复原值，报告超出 none 离散带的 margin，并
+作为该批业务代价发现上报，不改写为 workflow 故障。回收量只与既有
+`48.9451% / 1.359375 MiB` 做相容性对照；该值来自 `<TEST_IMAGE_B>` /
+`glibc-2.40-2.8`，是相容性参考、非冻结矩阵。
+并发 trim 的 p50/p95/p99/max 必须完整报告，并与 S4 合成释放点统一对客中位
+`1.233269 ms` 比较，不能
 用单个中位数代替尾部。
 
 当前批次的 153 次 trim p50/p95/p99/max 为
 `0.671556/0.818315/0.842185/0.856944 ms`；首次 release 为
 `51.014041–51.406250% / 1.277344–1.285156 MiB`。这些是复跑的参考结果而非新的硬阈值；
-正式业务裁决仍只用上面的预登记 p99 离散门。
+正式输出仍按上面的预登记 p99 规则计算，方向记 `REPORT_ONLY`。
 
 ## L3 · 产品板测量复现（可选）
 
@@ -698,9 +733,10 @@ sdb -s "$PRODUCT_SERIAL" shell 'test /tmp/product_cyclic_target_probe_20260814 =
 
 - 给出该轮 `tools/runners/<轮次目录>/` harness 路径；
 - 链接先于结果冻结的参数规格，禁止依据结果回改；
-- 分开列确定性验收项与跨板/跨批次容差带；
+- 分开列确定性验收项、validity gates 与跨板/跨批次容差带；
 - 给出身份门、完整性、退出标志、现场恢复与清理的判定方法。
 - 给出 stability-monitor 运行前后告警计数与新增归因；按 v2 区分预登记
-  `EXPECTED`、未登记我方 `FAIL` 与非我方/不明 `REPORT_ONLY`。预期告警必须满足理由、
+  实际命中后的 `EXPECTED`、未观测的 `REGISTERED/NOT-EVALUATED`、未登记我方 `FAIL`
+  与非我方/不明 `REPORT_ONLY`。预期告警必须满足理由、
   窗口、owner 和数量上界，并完成归档、精确清理与二次复核；登记表与报告字段见
   [`health_gate_template.md`](../tools/reproduce/health_gate_template.md)。

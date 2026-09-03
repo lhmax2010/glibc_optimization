@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # alloc_bench
 
@@ -24,6 +24,13 @@ make armv7l ARMV7L_ROOT=/path/to/scratch.armv7l.0
 make armv7l ARMV7L_CC=/path/to/armv7l-tizen-linux-gnueabi-gcc
 make armv7l ARMV7L_CC=/path/to/gcc ARMV7L_SYSROOT=/path/to/sysroot
 ```
+
+The ARM target always builds through `.build/armv7l/` and adds
+`-fdebug-prefix-map=$(CURDIR)=.` so checkout paths do not enter DWARF. The Demo
+delivery records the resulting canonical SHA separately from the older frozen
+artifact SHA in [`../reproduce/deliverables_manifest.json`](../reproduce/deliverables_manifest.json).
+Use `python3 tools/reproduce/test_reproducible_build_paths.py` from the repository
+root to require two different checkout paths to produce the same manifest SHA.
 
 ## CLI
 

@@ -24,7 +24,7 @@
 1. **前置门、执行健康和回收语义均通过。** kernel、架构、BUILD_ID、glibc RPM、MemTotal 均与 2026-08-31 基线一致；两档各只运行一次，bench/sampler 均 `RC=0`；两份 JSON 可解析且冻结字段逐项匹配，64/64 份 XML 可解析。运行期间 dmesg 前后逐字节相同，zram 未使用，major fault 为 0。
 2. **时序执行器复现了配置节奏。** `mixed` 的 rise/release 中位数为 `3.400143/19.702730 s`，`medium-only` 为 `3.400151/19.702684 s`，与 `3.4/19.7 s` 配置接近。代码没有独立记录 peak sleep 的实测 elapsed；其配置仍为 `4.7 s`，不能把配置值冒充独立实测值。
 3. **M7 通过。** 每周期约 6.4 MiB payload 确实释放到 ptmalloc 的 rest/unsorted：`mixed` 的 rest/unsorted 增量中位数为 `6,447,939/6,443,936.5 B`，`medium-only` 为 `6,538,240/6,541,228 B`。XML 中 valley 明确出现 unsorted 块。
-4. **S2 产品画像复现不成立。** 内部相位快照和外部 1 s 同口径序列都没有观察到 glibc-heap Private_Dirty 下降；两档峰减谷中位数均为 `-8 kB`，即 valley 反而高约 8 kB，属于边界采样量级。外部序列 16 个周期中可识别下降沿为 `0/16`。这与产品板 `ServiceA` 的 `6212 kB` 峰谷中位数和 `19.683 s` 实测下降沿不符。
+4. **S2 产品画像复现不成立。** 内部相位快照和外部 1 s 同口径序列都没有观察到 glibc-heap Private_Dirty 下降；两档峰减谷中位数均为 `-8 kB`，即 valley 反而高约 8 kB，属于边界采样量级。外部序列 16 个周期中可识别下降沿为 `0/16`。这与产品板 `ServiceA` 的 `6212 KiB` 峰谷中位数和 `19.683 s` 实测下降沿不符。
 5. **S3 不应按冻结方案直接开跑。** 当前负载可以验证“渐进 free 进入 bins”和执行时序，但没有复现 S3 要代理的产品 PD 峰谷。如果直接跑 S3，只能解释为此合成 bin 驻留面的 trim 扫描，不能解释为已验证的 `ServiceA` 画像。是否接受这一缩窄语义，或先修订 S2 代理方案，需要 PM 裁决；本轮没有据首轮结果调参或补跑。
 
 ## 2. 前置门与执行纪律
@@ -190,7 +190,7 @@ DONE_MEMTOTAL
 
 | 指标 | 产品板 ServiceA | mixed S2 | medium-only S2 | 偏差 |
 |---|---:|---:|---:|---|
-| glibc peak→valley 中位数 | 6212 kB | -8 kB | -8 kB | 两档均少 6220 kB；实际为零下降 |
+| glibc peak→valley 中位数 | 6212 KiB | -8 kB | -8 kB | 两档均少 6220 kB；实际为零下降 |
 | rise | 3.406 s | 3.400143 s | 3.400151 s | `-0.006 s`，pacing 接近 |
 | peak band | 4.682 s | 无下降、≥43–44 s 右删失 | 同左 | 形状不符 |
 | fall | 19.683 s | 无 PD 下降沿；free 为 19.702730 s | 无 PD 下降沿；free 为 19.702684 s | free 节奏接近但内存响应缺失 |
@@ -263,7 +263,7 @@ compressed data `74 B`、total memory `4096 B`、memory limit `0 B`、peak memor
 
 ### 10.1 S2 是否成立
 
-**不成立。** 冻结负载在板上准确执行了 rise/free 节奏，且 M7 证明约 6.4 MiB 每周期进入 rest/unsorted；但核心合同——复现 `ServiceA` 的约 6.2 MB glibc PD 峰谷和约 19.7 s PD 下降沿——在内部与外部两种口径均失败。因此不能把当前 S2 标记为产品板周期画像的有效代理。
+**不成立。** 冻结负载在板上准确执行了 rise/free 节奏，且 M7 证明约 6.4 MiB 每周期进入 rest/unsorted；但核心合同——复现 `ServiceA` 的约 6.2 MiB glibc PD 峰谷和约 19.7 s PD 下降沿——在内部与外部两种口径均失败。因此不能把当前 S2 标记为产品板周期画像的有效代理。
 
 ### 10.2 S3 能否直接开跑
 

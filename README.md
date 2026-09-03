@@ -2,9 +2,9 @@
 
 This repository is the long-term, sanitized workspace for source audits, controlled benchmarks, board measurements, and implementation evidence related to reducing glibc runtime memory and image footprint on 32-bit ARM Tizen systems.
 
-Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v1` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v1).
+Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v2` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v2).
 
-文中应用/进程名为代号，板标识与路径已脱敏。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）保留在本地；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
+文中应用/进程名为代号；host 侧路径已脱敏，板端运行路径保留。冻结测试镜像 BUILD_ID 为复现需要有意公开。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）在 host 本地留存，可按请求提供；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
 
 **Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented. The RPI4 SDB channel and new-image baseline are restored. The product cyclic PD fall is now classified as an automatic-reclaim anti-signal, the original S3 semantic is retired, S4 has closed the gated-trim effect/cost baseline on the synthetic retention proxy, and the week-two GStreamer matrix has measured release-point trim and next-cycle cost on a real multithreaded target while retaining direct concurrent-lock stall as an open gap. See the [consolidated status](docs/glibc_memopt_program_status_report_zh.md), [Demo narrative](docs/demo_narrative_20260901.md), and [GStreamer trim-cost report](docs/gst_trim_cost_20260901.md).
 

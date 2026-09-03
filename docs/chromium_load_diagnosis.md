@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # Chromium 页面加载诊断
 
@@ -7,7 +7,8 @@
 - 通道：`<USER_HOME>/tizen-studio/tools/sdb -s <TEST_BOARD_IP>:26101`
 - 范围：只诊断；未安装包、未改持久配置、未重启 service、未做 L6/trim 测量
 - Chromium 包：`chromium-efl-1.1.144-1.armv7l`，运行日志报告 Chromium `144.0.7559.132`
-- 原始证据：[`board_results/chromium_load_diagnosis_20260813/`](../board_results/chromium_load_diagnosis_20260813/)
+- 原始证据：`board_results/chromium_load_diagnosis_20260813/`
+- 公开归档说明：完整原始件仅在 host 本地留存，可按请求提供；下文文件名均为非链接引用。
 
 ## 1. 身份门与环境
 
@@ -22,7 +23,7 @@ glibc-2.40-2.8.armv7l
 uid=0(root) ... context="User::Shell"
 ```
 
-证据：[`identity_environment.txt`](../board_results/chromium_load_diagnosis_20260813/stage0/identity_environment.txt)。
+证据：`identity_environment.txt`。
 
 | 环境项 | 实测 |
 |---|---|
@@ -32,7 +33,7 @@ uid=0(root) ... context="User::Shell"
 | EGL/GLES | `libEGL.so.1.5`、`libGLESv2.so.2.0` 已安装，`ldd` 无 `not found` |
 | Chromium 入口 | `AppUIC`、`efl_webview_app`、`mini_browser` 均在 `/usr/apps/AppK/bin/` |
 
-环境与动态链接证据：[`stage0/`](../board_results/chromium_load_diagnosis_20260813/stage0/)、[`binaries_ldd.txt`](../board_results/chromium_load_diagnosis_20260813/prescreen/binaries_ldd.txt)。
+环境与动态链接证据：`stage0/`、`binaries_ldd.txt`。
 
 ## 2. Q2 分层结果
 
@@ -48,7 +49,7 @@ uid=0(root) ... context="User::Shell"
 
 **第一个失败层是 L1 `about:blank`。** 原始 shell 启动在内容、文件 I/O 和网络之前，便已因缺少 Wayland runtime 环境而无法建立有效 EWK view。因此 L3-L5 的失败不能归因于页面复杂度。
 
-逐层原始日志：[`L1/`](../board_results/chromium_load_diagnosis_20260813/layers/L1/)、[`L2/`](../board_results/chromium_load_diagnosis_20260813/layers/L2/)、[`L3/`](../board_results/chromium_load_diagnosis_20260813/layers/L3/)、[`L4/`](../board_results/chromium_load_diagnosis_20260813/layers/L4/)、[`L5/`](../board_results/chromium_load_diagnosis_20260813/layers/L5/)。
+逐层原始日志：`L1/`、`L2/`、`L3/`、`L4/`、`L5/`。
 
 ### 2.1 XDG 对照揭示第二个卡点
 
@@ -68,7 +69,7 @@ Unable to access(W_OK|X_OK) /dev/shm: Permission denied (13)
 FATAL ... Try 'sudo chmod 1777 /dev/shm' to fix.
 ```
 
-证据：[`L1_xdg/dlog_full.txt`](../board_results/chromium_load_diagnosis_20260813/layers/L1_xdg/dlog_full.txt)、[`L3_xdg/dlog_full.txt`](../board_results/chromium_load_diagnosis_20260813/layers/L3_xdg/dlog_full.txt)。该对照精确复现了历史的“卡在 0.1”。
+证据：`L1_xdg/dlog_full.txt`、`L3_xdg/dlog_full.txt`。该对照精确复现了历史的“卡在 0.1”。
 
 ## 3. Q1 关键时间线
 
@@ -86,7 +87,7 @@ FATAL ... Try 'sudo chmod 1777 /dev/shm' to fix.
 | 22:07:01.145 | renderer PID 9216 创建 `/dev/shm` 对象被拒绝 |
 | 22:07:01.183 | renderer FATAL；捕获窗口内无 `DidFinishLoad` 或进度增长 |
 
-同一个 renderer PID 9216 在 T02/T07/T12/T17/T22/T27 始终处于 `R` 状态，没有反复重建；它并非健康渲染，只是 FATAL 后未及时退出，最终随父进程关闭。证据：[`process_timeline.txt`](../board_results/chromium_load_diagnosis_20260813/layers/L1_xdg/process_timeline.txt)。
+同一个 renderer PID 9216 在 T02/T07/T12/T17/T22/T27 始终处于 `R` 状态，没有反复重建；它并非健康渲染，只是 FATAL 后未及时退出，最终随父进程关闭。证据：`process_timeline.txt`。
 
 ## 4. Q3 权限与沙箱
 
@@ -95,9 +96,9 @@ FATAL ... Try 'sudo chmod 1777 /dev/shm' to fix.
 | 文件 | Unix 权限 | Smack label | XDG 对照结果 |
 |---|---|---|---|
 | `/tmp/chromium_diag_l3.html` | `0777 root:root` | `System` | 0.1 后 `/dev/shm` FATAL |
-| `/opt/usr<USER_HOME>/chromium_diag_l3.html` | `0777 root:root` | `User::Shell` | 0.1 后同一 `/dev/shm` FATAL |
+| `/opt/usr/<USER_HOME>/chromium_diag_l3.html` | `0777 root:root` | `User::Shell` | 0.1 后同一 `/dev/shm` FATAL |
 
-更换文件目录和 label 没有改变错误。证据：[`file_permissions.txt`](../board_results/chromium_load_diagnosis_20260813/prescreen/file_permissions.txt)、[`L3home_xdg/`](../board_results/chromium_load_diagnosis_20260813/layers/L3home_xdg/)。板上无 `getfattr`，Smack label 由 `ls -Z` 取得。
+更换文件目录和 label 没有改变错误。证据：`file_permissions.txt`、`L3home_xdg/`。板上无 `getfattr`，Smack label 由 `ls -Z` 取得。
 
 ### 4.2 `/dev/shm` 的 Unix 权限正确，Smack 写权限不足
 
@@ -113,7 +114,7 @@ User::Pkg::AppK System::Run rwxat
 
 renderer 命令行含 `--no-sandbox`，`Seccomp=0`；日志中没有 Chromium sandbox 拒绝。这里的实测拒绝是 Smack/MAC 访问 `/dev/shm`，不是 Chromium seccomp sandbox。
 
-证据：[`shm_smack.txt`](../board_results/chromium_load_diagnosis_20260813/security/shm_smack.txt)、[`smack_rules_probe.txt`](../board_results/chromium_load_diagnosis_20260813/security/smack_rules_probe.txt)、[`smack_and_l5.txt`](../board_results/chromium_load_diagnosis_20260813/permissions/smack_and_l5.txt)、[`process_security.txt`](../board_results/chromium_load_diagnosis_20260813/layers/L1_xdg/process_security.txt)。
+证据：`shm_smack.txt`、`smack_rules_probe.txt`、`smack_and_l5.txt`、`process_security.txt`。
 
 ## 5. Q4 渲染与合成侧
 
@@ -129,7 +130,7 @@ renderer 命令行含 `--no-sandbox`，`Seccomp=0`；日志中没有 Chromium sa
 
 `libchromium-impl.so` 内确有 `disable-gpu`、`headless`、`use-gl`、SwiftShader 字符串，但 AppUIC wrapper 不转发本轮试验的参数，不能据内部字符串认定入口支持这些开关。
 
-证据：[`L1_xdg/maps_gpu_9166_T07.txt`](../board_results/chromium_load_diagnosis_20260813/layers/L1_xdg/maps_gpu_9166_T07.txt)、[`switches/`](../board_results/chromium_load_diagnosis_20260813/switches/)、[`impl_switches.txt`](../board_results/chromium_load_diagnosis_20260813/rendering/binaries/impl_switches.txt)。
+证据：`L1_xdg/maps_gpu_9166_T07.txt`、`switches/`、`impl_switches.txt`。
 
 ## 6. Q5 替代入口
 
@@ -144,7 +145,7 @@ app framework 对照的进程为 UID 5001，Smack label 为 `User::Pkg::AppK`，
 
 但 `efl_webview_app` 将 launchpad 注入的第一个位置参数 `<LAUNCH_TOKEN>` 当成 URL，没有消费 `__APP_SVC_URI__` bundle。因此现有 appid 入口不能直接作为指定页面驱动器。`app_launcher -t` 对这个 demo app 返回 `Failed to terminate ... (-6)`，本轮随后只对该测试 PID 发送 `SIGTERM`，进程及子进程均退出。
 
-证据：[`direct_efl/`](../board_results/chromium_load_diagnosis_20260813/entries/direct_efl/)、[`direct_mini/`](../board_results/chromium_load_diagnosis_20260813/entries/direct_mini/)、[`app_efl/`](../board_results/chromium_load_diagnosis_20260813/entries/app_efl/)、[`app_efl_heavy/`](../board_results/chromium_load_diagnosis_20260813/entries/app_efl_heavy/)。
+证据：`direct_efl/`、`direct_mini/`、`app_efl/`、`app_efl_heavy/`。
 
 ## 7. 结论与解决方向
 
@@ -180,19 +181,19 @@ display-manager: active, MainPID=2600, NRestarts=3050
 AppUIB/AppUIA: running
 ```
 
-证据：[`cleanup_and_health.txt`](../board_results/chromium_load_diagnosis_20260813/cleanup/cleanup_and_health.txt)、[`final_verify.txt`](../board_results/chromium_load_diagnosis_20260813/cleanup/final_verify.txt)。
+证据：`cleanup_and_health.txt`、`final_verify.txt`。
 
 ## 9. 原始文件清单
 
 原始目录共 526 个文件、约 120 MiB：
 
-- 身份/环境：[`stage0/`](../board_results/chromium_load_diagnosis_20260813/stage0/)
-- 包、入口、权限预检：[`prescreen/`](../board_results/chromium_load_diagnosis_20260813/prescreen/)
-- L1-L5 与 XDG/目录对照：[`layers/`](../board_results/chromium_load_diagnosis_20260813/layers/)
+- 身份/环境：`stage0/`
+- 包、入口、权限预检：`prescreen/`
+- L1-L5 与 XDG/目录对照：`layers/`
 - 每层完整 `dlog`、进程时间线、renderer security/maps：上述各 layer 子目录
-- Smack 与 `/dev/shm`：[`security/`](../board_results/chromium_load_diagnosis_20260813/security/)、[`permissions/`](../board_results/chromium_load_diagnosis_20260813/permissions/)
-- GPU/headless/software 开关：[`switches/`](../board_results/chromium_load_diagnosis_20260813/switches/)
-- host 侧 ELF 字符串与映射证据：[`rendering/`](../board_results/chromium_load_diagnosis_20260813/rendering/)
-- 替代入口：[`entries/`](../board_results/chromium_load_diagnosis_20260813/entries/)
-- 采集脚本与测试 HTML：[`scripts/`](../board_results/chromium_load_diagnosis_20260813/scripts/)
-- 清理和最终健康检查：[`cleanup/`](../board_results/chromium_load_diagnosis_20260813/cleanup/)
+- Smack 与 `/dev/shm`：`security/`、`permissions/`
+- GPU/headless/software 开关：`switches/`
+- host 侧 ELF 字符串与映射证据：`rendering/`
+- 替代入口：`entries/`
+- 采集脚本与测试 HTML：`scripts/`
+- 清理和最终健康检查：`cleanup/`

@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # TV Board Recon Report
 
@@ -56,7 +56,8 @@ Linux localhost 5.4.261 #1 SMP PREEMPT Fri May 29 07:36:31 UTC 2026 armv7l GNU/L
 `cat /proc/version`:
 
 ```text
-Linux version 5.4.261 (abuild@ci2532) (gcc version 14.2.0 (Tizen GCC 14.2.0 20240801 1.1)) #1 SMP PREEMPT Fri May 29 07:36:31 UTC 2026
+Linux version 5.4.261 (abuild@<CI_HOST>) (gcc version 14.2.0 (Tizen GCC 14.2.0 20240801 1.1)) #1 SMP PREEMPT Fri May 29 07:36:31 UTC 2026
+[编辑说明：原构建 host 已脱敏为 `<CI_HOST>`，其余版本文本保持原意。]
 ```
 
 glibc version probes:

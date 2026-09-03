@@ -1,4 +1,4 @@
-> Public archive note: application/process names are aliases and board identifiers and paths are sanitized. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains in the private local archive.
+> Public archive note: application/process names are aliases. Host-side paths are sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is intentionally public for reproducibility. Selected compact evidence is published under `data/raw/`; complete raw board evidence remains local and is available on request.
 
 # 周期型分配画像的受控复现与 trim 时机扫描
 
@@ -98,7 +98,7 @@ rise 3.4 s、peak 4.7 s、fall 19.7 s 跑 1 个无 trim 周期：
 
 | 指标 | 产品板 `ServiceA` 画像 | host 校准 | 状态 |
 |---|---:|---:|---|
-| 峰谷/释放规模 | glibc heap PD 中位 6212 kB | payload 6,390,240 B（6.094 MiB） | 数量接近，口径不同 |
+| 峰谷/释放规模 | glibc heap PD 中位 6212 KiB | payload 6,390,240 B（6.094 MiB） | 数量接近，口径不同 |
 | 上升沿 | 3.406 s | 3.400188 s | 接近 |
 | 峰值带 | 4.682 s | 4.7 s 配置值 | 接近 |
 | 下降沿 | 19.683 s | 19.701299 s | 接近 |
@@ -125,7 +125,7 @@ M7 在 host 校准中可见：peak -> valley 的 rest 增量 6,398,826 B，unsor
 
 `mixed` 与 `medium-only` 各运行一次，没有依据首轮结果改变参数。rise/release
 执行节奏和 M7 bin 释放成立，但内部与外部 glibc-heap PD 均没有下降；两档
-peak-valley 中位数均为 `-8 kB`，不复现产品板的 `6212 kB` 中位数。因此 S2
+peak-valley 中位数均为 `-8 kB`，不复现产品板的 `6212 KiB` 中位数。因此 S2
 总体判定不成立，完整结果见 [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md)。
 
 ## 3. S3 trim 时机扫描
@@ -149,7 +149,7 @@ peak-valley 中位数均为 `-8 kB`，不复现产品板的 `6212 kB` 中位数�
 由于 S3 没有板上输入，本轮不能计算以下派生量：
 
 - 回收比例 vs trim 时机曲线；
-- 最佳时机回收比例乘以产品板 6.2 MB 峰谷差；
+- 最佳时机回收比例乘以产品板 6.2 MiB 峰谷差；
 - 渐进释放与既有瞬时释放曲线的差异。
 
 既有瞬时释放参考值为 `mixed / 50% / high = 53.55%`、

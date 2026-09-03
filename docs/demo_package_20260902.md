@@ -1,5 +1,6 @@
-> Public archive note: application/process names are aliases. Board identifiers,
-> image delivery paths, and local filesystem paths are sanitized.
+> Public archive note: application/process names are aliases. Host-side paths are
+> sanitized; board runtime paths are retained. The frozen test-image BUILD_ID is
+> intentionally public for reproducibility.
 
 # glibc 内存优化 Demo 演示包
 
@@ -18,7 +19,7 @@
 | 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 从身份门、资产哈希到板端清理给出可照抄命令 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南快速通道`](demo_reproduction_guide_20260901.md#workflow-fast-path)、[`workflow verify`](../tools/reproduce/README.md) |
 | 同板同镜像多组对照 | S4 在同一 RPI4/Tizen 镜像上含两个锚点格与 `trim/none` 对照；gst 含两臂各三重复 | [`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
 | 结果说明价值 | 反信号先排除无需重复回收的对象，M7 阳性后才在释放相位 trim；效果、faults、业务 p99 与边界同时报告 | [`HTML 自动归还`](demo_report.html#finding-one)、[`HTML 门控效果`](demo_report.html#s4)、[`HTML 边界`](demo_report.html#boundaries) |
-| 同条件复现同数据 | payload、页对齐、majflt、zram 和 OOM/LMK 按确定性项验收；回收字节不作硬门，S4 B 按每档三重复中位 `±5 pp`，时延与 p99 按预登记带。彩排的 rep2 约 `1 MB` 台阶说明同 seed 不钉 arena 指派 | [`HTML 边界`](demo_report.html#boundaries)、[`L2 验收带`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`机器配置`](../tools/reproduce/acceptance_bands.json) |
+| 同条件复现同数据 | released payload 是唯一确定性数字并逐字节核对；容差项落带且 page alignment、majflt、zram、OOM/LMK validity gates 通过。S4 B 按分别锚定发布值的每档三重复中位 `±5 pp`；p99 方向只报告。彩排 rep2 的 `68.169197%` 说明同 seed 不钉 arena 指派 | [`HTML 边界`](demo_report.html#boundaries)、[`rep2 紧凑证据`](../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv)、[`L2 验收带`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`机器配置`](../tools/reproduce/acceptance_bands.json) |
 
 离线 HTML、手工指南与 workflow 是同一合同的三个入口：HTML 用于演示，指南是流程
 权威参考，workflow 将其机械化并给出可机读判定；三者不各自维护第二套统计口径。
@@ -40,8 +41,8 @@
    [`S4 门控链`](demo_narrative_20260901.md#4-门控链与测试板实证)说明“反信号排除 → M7
    确认 → valley trim → faults/健康门”。
 5. **补上第 2 周真实多线程目标。** 展示
-   [`GStreamer 业务代价报告 §6`](gst_trim_cost_20260901.md#6-判断)：按预登记 p99 门，本批
-   代价未越过基线重复离散；同时明确 trim 位于 NULL release 后，没有测到并发分配线程
+   [`GStreamer 业务代价报告 §6`](gst_trim_cost_20260901.md#6-判断)：按预登记 p99 规则，本批
+   方向未越过基线重复离散并记 `REPORT_ONLY`；同时明确 trim 位于 NULL release 后，没有测到并发分配线程
    被全 arena 锁直接阻塞的时长。
 6. **以产品决策门收尾。** 用
    [`何时 trim`](demo_narrative_20260901.md#5-决策门何时-trim何时不-trim)和
@@ -108,12 +109,13 @@ h = json.loads((p / "health.json").read_text())
 print("A anchors: " + " ".join("{}={:.6f}%".format(r["profile"], float(r["reclaim_pct_of_pretrim"])) for r in a))
 v = [r for r in c if r["trim_at"] == "valley"]
 print("B reclaim/released range=%.6f-%.6f%%" % (min(float(r["trim_reclaim_pct_of_released"]) for r in v), max(float(r["trim_reclaim_pct_of_released"]) for r in v)))
+times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == "mixed"]
 for profile in ("mixed", "medium-only"):
-    times = [Decimal(r["trim_elapsed_ms"]) for r in v if r["profile"] == profile]
     cells = {r["trim_at"]: r for r in b if r["profile"] == profile and r["rep"] == "1"}
     extra = int(cells["valley"]["cycle1_next_minflt"]) - int(cells["none"]["cycle1_next_minflt"])
-    med = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
-    print("%s trim_ms_median=%s next_minflt_extra=%+d" % (profile, med, extra))
+    print("%s next_minflt_extra=%+d" % (profile, extra))
+med = statistics.median(times).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+print("trim_ms_merged_median=%s" % med)
 payloads = {}
 for r in c:
     payloads.setdefault((r["profile"], int(r["cycle"])), set()).add(int(r["released_payload_bytes"]))
@@ -159,14 +161,14 @@ delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
 
 | 演示数字 | 结论用途 | 证据 | L1 复算 |
 |---|---|---|---|
-| ServiceA 峰谷中位 `6212 kB`（`6.2 MB`） | 自动归还反信号案例的下降体量 | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](demo_reproduction_guide_20260901.md#l1-servicea) |
+| ServiceA 峰谷中位 `6212 KiB`（`6.2 MiB`） | 自动归还反信号案例的下降体量 | [`serviceA_fall_recheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv) | [ServiceA](demo_reproduction_guide_20260901.md#l1-servicea) |
 | ServiceA 首次观测释放完成上界 `5.223693–8.910626 s`；旧 `19.683240 s` 撤销时长解释 | 不上 20 s 延迟钩子的依据 | [`summary.json`](../data/raw/cyclic_fall_attribution_20260901/summary.json) | [ServiceA](demo_reproduction_guide_20260901.md#l1-servicea) |
-| `enlightenment +1736 kB` a+b floor | 最大 retained-floor 候选之一，另带自动归还能力告警 | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
-| `ServiceH 2360/+868/+580 kB`、`ServiceA +788 kB` | 平台上界、跨探针 floor 与谷底残渣候选 | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
-| 批量释放 `48.9451% / 1.359375 MiB`，同表型扩到 8 进程 | 已有 M7 的真实释放相位类别 | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](demo_reproduction_guide_20260901.md#l1-batch-release) |
-| S4 锚点 `51.074077% / 50.387886%` | 新镜像机制锚点 | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
-| S4 回收/released `80.175875%–85.453954%`；调用 `1.233269/1.218361 ms`；下一周期 `+1351/+1465 minflt`、`majflt=0` | 合成驻留表型的效果与再激活代价 | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
-| gst p99 差 `+6.228611 ms`，none 重复离散 `6.784167 ms`，裁决 `false` | 真实多线程 pipeline 的预登记业务代价门 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
+| `enlightenment +1736 KiB` a+b floor | 最大 retained-floor 候选之一，另带自动归还能力告警 | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
+| `ServiceH 2360/+868/+580 KiB`、`ServiceA +788 KiB` | 平台上界、跨探针 floor 与谷底残渣候选 | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
+| 批量释放 `48.9451% / 1.359375 MiB`，同表型扩到 8 进程 | 来自 `<TEST_IMAGE_B>` / `glibc-2.40-2.8` 的相容性对照，非冻结矩阵 | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](demo_reproduction_guide_20260901.md#l1-batch-release) |
+| S4 锚点 `51.07% / 50.39%`（各 n=1，of pre-trim heap） | 新镜像机制锚点 | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
+| S4 回收/released `80.175875%–85.453954%`；统一调用中位 `1.233269 ms`；下一周期 `+1351/+1465 minflt`、`majflt=0` | 合成驻留表型的效果与再激活代价 | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
+| gst p99 差 `+6.228611 ms`，none 重复离散 `6.784167 ms`，margin `0.555556 ms`（门槛 `91.8%`）；同规则 p50 `+1.870462` vs `0.173927 ms`，另 `+359 minflt/循环` | 真实多线程 pipeline 的预登记规则；p99 方向为 `REPORT_ONLY` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv)、[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 | gst trim p50/p95/p99/max `0.671556/0.818315/0.842185/0.856944 ms` | release-point 调用分布；不等于并发分配锁停顿 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 | gst 首次 release `51.014041%–51.406250% / 1.277344–1.285156 MiB` | 与既有批量释放机制量级相容 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 
@@ -193,8 +195,10 @@ trim。`ServiceA` 的下降分量有 PD 实跌、zram 无正增量、majflt 恒�
 不能。GStreamer 的 `+6.228611 ms` 没有严格超过 `6.784167 ms` 基线重复离散，只表示
 按预登记门“本批未检出”；每重复只有 50 个主样本，nearest-rank p99 就是最大值
 ([正式裁决](gst_trim_cost_20260901.md#a-每循环-release-trim-的业务代价是否可见))。trim 又在
-pipeline NULL release 后执行，不能量化其他线程仍在分配时的直接锁停顿。S4 的约
-`1.2 ms` 也只是合成代理调用时间，不是产品 SLA。
+pipeline NULL release 后执行，不能量化其他线程仍在分配时的直接锁停顿。S4 的统一
+`1.233269 ms` 中位也只是合成代理调用时间，不是产品 SLA。若其他板按同一规则判 p99
+“可见”，应保留三重复原始值，报告 delta、none 离散与 margin，并作为批次差异上报；
+方向仍是 `REPORT_ONLY`，不改冻结参数，也不把 workflow 判成失败。
 
 ### Q4：下一步产品侧怎么走？
 
