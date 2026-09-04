@@ -24,18 +24,78 @@ STABILITY = HERE / "stability_monitor.py"
 
 
 class ReproduceTests(unittest.TestCase):
-    def _run_delivery_identity_clone(self, branch: str, include_delivery_tag: bool) -> subprocess.CompletedProcess[str]:
+    def _clone_current_head(self, source: Path, destination: Path) -> str:
+        source_head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=source, check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(
+            ["git", "clone", "--no-tags", "--no-checkout", str(source), str(destination)],
+            check=True, capture_output=True,
+        )
+        # Fetch the exact source commit so this fixture also works when source
+        # HEAD is detached and is not named by any local branch.
+        subprocess.run(
+            ["git", "fetch", "--quiet", "--no-tags", str(source), source_head],
+            cwd=destination, check=True, capture_output=True,
+        )
+        return source_head
+
+    def _materialize_repository_shape(self, root: Path, shape: str) -> Path:
+        if shape == "tag":
+            seed = root / "tag-seed"
+            source_head = self._clone_current_head(REPO, seed)
+            subprocess.run(
+                ["git", "checkout", "--quiet", "-B", "main", source_head],
+                cwd=seed, check=True,
+            )
+            subprocess.run(
+                ["git", "tag", "fixture-delivery-tag", source_head], cwd=seed, check=True,
+            )
+            checkout = root / "tag"
+            subprocess.run(
+                ["git", "clone", "--quiet", "--branch", "fixture-delivery-tag", str(seed), str(checkout)],
+                check=True, capture_output=True,
+            )
+            self.assertEqual(
+                subprocess.run(
+                    ["git", "branch", "--show-current"], cwd=checkout, check=True,
+                    text=True, capture_output=True,
+                ).stdout.strip(),
+                "",
+            )
+            return checkout
+
+        checkout = root / shape
+        source_head = self._clone_current_head(REPO, checkout)
+        subprocess.run(
+            ["git", "checkout", "--quiet", "-B", shape, source_head],
+            cwd=checkout, check=True,
+        )
+        return checkout
+
+    def _run_delivery_identity_clone(
+        self,
+        branch: str,
+        include_delivery_tag: bool,
+        source_repo: Path = REPO,
+    ) -> subprocess.CompletedProcess[str]:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             clone = root / "clone"
+            source_head = self._clone_current_head(source_repo, clone)
             subprocess.run(
-                ["git", "clone", "--no-tags", "--single-branch", "--branch", "main", str(REPO), str(clone)],
-                check=True, capture_output=True,
+                ["git", "checkout", "--quiet", "-B", branch, source_head],
+                cwd=clone, check=True,
             )
-            if branch == "demo":
-                subprocess.run(["git", "branch", "-m", "demo"], cwd=clone, check=True)
             if include_delivery_tag:
-                subprocess.run(["git", "tag", "demo-v3"], cwd=clone, check=True)
+                refs = json.loads(
+                    (clone / "tools/reproduce/delivery_refs.json").read_text(encoding="utf-8")
+                )
+                delivery_ref = refs["branch_refs"][branch]["ref"]
+                subprocess.run(
+                    ["git", "tag", delivery_ref, source_head], cwd=clone, check=True,
+                )
 
             command_dir = root / "bin"
             command_dir.mkdir()
@@ -62,6 +122,16 @@ class ReproduceTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("OVERALL\tPASS", result.stdout)
         self.assertIn("REGISTERED/NOT-EVALUATED\tstability-monitor", result.stdout)
+
+    def test_predelivery_check_help_lists_all_hq_clone_shapes(self) -> None:
+        result = subprocess.run(
+            ["bash", str(HERE / "predelivery_check.sh"), "--help"],
+            cwd=REPO, text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("git clone --branch demo <url>", result.stdout)
+        self.assertIn("git clone --branch <delivery-tag> <url>", result.stdout)
+        self.assertIn("git clone <url>  (must check out main)", result.stdout)
 
     def test_board_entrypoint_help_is_host_only(self) -> None:
         result = subprocess.run(
@@ -327,16 +397,16 @@ class ReproduceTests(unittest.TestCase):
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v3"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v3"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v4"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v4"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
-        self.assertIn(
-            "REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; "
-            "checkout demo-v3 (reference unavailable in this clone)",
+        self.assertRegex(
             result.stdout,
+            r"REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; "
+            r"checkout demo-v[0-9]+ \(reference unavailable in this clone\)",
         )
         self.assertIn("OVERALL\tPASS", result.stdout)
 
@@ -346,6 +416,29 @@ class ReproduceTests(unittest.TestCase):
         self.assertNotIn("REPORT_ONLY\tdelivery-identity", result.stdout)
         self.assertIn("PASS\tclean-environment", result.stdout)
         self.assertIn("OVERALL\tPASS", result.stdout)
+
+    def test_delivery_identity_fixture_accepts_all_source_head_shapes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for shape in ("main", "demo", "tag"):
+                source_repo = self._materialize_repository_shape(root, shape)
+                with self.subTest(source_shape=shape, identity="main"):
+                    report_only = self._run_delivery_identity_clone(
+                        "main", include_delivery_tag=False, source_repo=source_repo,
+                    )
+                    self.assertEqual(
+                        report_only.returncode, 0, report_only.stderr + report_only.stdout,
+                    )
+                    self.assertIn("REPORT_ONLY\tdelivery-identity", report_only.stdout)
+                    self.assertIn("OVERALL\tPASS", report_only.stdout)
+                with self.subTest(source_shape=shape, identity="demo"):
+                    required = self._run_delivery_identity_clone(
+                        "demo", include_delivery_tag=True, source_repo=source_repo,
+                    )
+                    self.assertEqual(required.returncode, 0, required.stderr + required.stdout)
+                    self.assertNotIn("REPORT_ONLY\tdelivery-identity", required.stdout)
+                    self.assertIn("PASS\tclean-environment", required.stdout)
+                    self.assertIn("OVERALL\tPASS", required.stdout)
 
     def test_acceptance_v4_separates_determinism_validity_and_direction(self) -> None:
         bands = json.loads(BANDS.read_text(encoding="utf-8"))

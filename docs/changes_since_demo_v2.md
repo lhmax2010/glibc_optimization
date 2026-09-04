@@ -8,6 +8,7 @@
   `959b4fb1f18327eaeb07f6b34d9055e993b6a2cd`
 - 收口源提交：`09075df049c700e9d577c265403e25beabd5023e`
 - 交付账务截至：`20f576005b42cbe71ad13a8c8804d31b0cd9da60`
+- `demo-v3 → demo-v4`：仅修复交付身份测试 fixture 的分支假设并新增三形态远端交付前自检；无测量、验收带或技术结论变化
 - 范围：三方第三轮复审使用的分类索引；不产生新测量数字，不替代各正式报告
 - 复核命令：`git log --reverse --oneline 959b4fb..09075df`
 
@@ -68,7 +69,17 @@ main 提交序列列出变化，并把每个提交映射到下述发现项。编
 | CLOSE-META | `accd86b38516939fe9b50111dca898fd1fadc69c` | 新增本变更索引并把 demo-v3 收口写入时间线 | [`INDEX`](INDEX.md) |
 | CLOSE-HTML | `20f576005b42cbe71ad13a8c8804d31b0cd9da60` | 以包含全部 HTML 输入的 `09075df` 为父源提交，单独冻结 source marker 与逐字节派生 HTML | [`source marker`](../tools/report/source_commit.txt)、[`HTML`](demo_report.html) |
 
-## 8. 提交覆盖核对
+## 8. demo-v3 → demo-v4 交付阻断修复
+
+| 发现项编号 | 提交 | 变化 | 复核入口 |
+|---|---|---|---|
+| DELIVERY-FIXTURE-1 | `demo-v4^{}` | 从当前 HEAD 的精确 SHA 构造身份测试 fixture，不再要求源 clone 存在本地 `main`；显式回归 main、demo、detached-tag 三种源形态 | [`host 测试`](../tools/reproduce/test_host.py) |
+| DELIVERY-PREFLIGHT-1 | `demo-v4^{}` | 新增远端三形态强制自检脚本；每形态均须执行完整 host verify 并得到 `PASS host-tests`、`OVERALL PASS` | [`predelivery_check.sh`](../tools/reproduce/predelivery_check.sh)、[`执行合同`](../tools/reproduce/README.md#mandatory-pre-delivery-clone-matrix) |
+
+`demo-v3` 保留用于审计；`demo-v4` 只承载上述 fixture 与交付前自检修复，以及随标签递增
+所需的交付引用/入口指针更新，不改变任何既有实验数据或结论。
+
+## 9. 提交覆盖核对
 
 下列 13 个 main 提交构成 `demo-v2..20f5760` 的完整非合并提交清单，均已在上表出现：
 
@@ -89,9 +100,11 @@ accd86b docs(demo): index changes since demo-v2
 ```
 
 本文件的最终发布提交不自写自身 SHA；它只完善上述已知提交的索引，不承载新的技术或
-测量变更。最终边界以 `demo-v3^{}` 和 `git log --reverse --no-merges
-959b4fb..demo-v3^{}` 复核，避免循环自引用。
+测量变更。第三轮证据边界仍可用 `demo-v3^{}` 与 `git log --reverse --no-merges
+959b4fb..demo-v3^{}` 复核；交付阻断修复边界改用 `demo-v4^{}` 与
+`git log --reverse --no-merges demo-v3^{}..demo-v4^{}`，避免循环自引用。
 
-第三轮复审应以 `demo-v3^{}` 的 peel 后提交为最终快照身份，并分别核验：host verify
-required 模式、双语 README/INDEX 链接、HTML source-marker byte-cmp 和脱敏扫描。各实验
-数字仍以链接的正式报告与公开 TSV/JSON 为唯一事实源。
+第四轮交付应以 `demo-v4^{}` 的 peel 后提交为最终快照身份，并通过远端 demo 分支、
+detached `demo-v4` 标签、默认 main 三种克隆形态的完整 verify，再核验双语 README/INDEX
+链接、HTML source-marker byte-cmp 和脱敏扫描。各实验数字仍以链接的正式报告与公开
+TSV/JSON 为唯一事实源。

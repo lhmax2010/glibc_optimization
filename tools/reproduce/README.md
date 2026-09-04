@@ -18,6 +18,34 @@ tree, `REPRODUCE_SKIP_TESTS=1` skips the nested host-test row, and
 Without an override, `verify` requires `HEAD` to resolve to the delivery ref in
 [`delivery_refs.json`](delivery_refs.json).
 
+## Mandatory pre-delivery clone matrix
+
+After cutting a frozen snapshot and before declaring it ready, run the remote-only
+pre-delivery gate:
+
+```sh
+bash tools/reproduce/predelivery_check.sh \
+  --repo-url "$(git remote get-url origin)" \
+  --branch demo \
+  --tag demo-v4
+```
+
+The script performs three fresh HQ-shaped clones from the supplied remote and runs
+the complete `reproduce.sh verify` in each, with nested host tests enabled:
+
+```sh
+git clone --branch demo <url>
+git clone --branch demo-v4 <url>
+git clone <url>                 # remote default must be main
+```
+
+The demo branch and detached tag must pass required delivery identity; main keeps
+its recorded `REPORT_ONLY` identity semantics, but its complete verify is still a
+mandatory gate. All three must print `PASS host-tests` and `OVERALL PASS` or the
+snapshot is not delivery-ready. Future snapshots pass their new annotated tag with
+`--tag demo-vN`; the script also defaults that value from
+[`delivery_refs.json`](delivery_refs.json).
+
 `board` is an hours-scale workflow. It requires an RPI4 running the frozen Tizen
 Unified image, SDB, and the internal SHA-256-pinned ARM/media bundle described in
 the [deliverables manifest](deliverables_manifest.json) and
