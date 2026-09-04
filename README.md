@@ -1,76 +1,165 @@
-# glibc Memory Optimization for Tizen
+[中文](README.zh-CN.md) | English
 
-This repository is the long-term, sanitized workspace for source audits, controlled benchmarks, board measurements, and implementation evidence related to reducing glibc runtime memory and image footprint on 32-bit ARM Tizen systems.
+# Tizen glibc gated-trim Demo
 
-Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v6` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v6).
+> This English entry is derived from the Chinese technical documentation. If
+> wording is ambiguous, the Chinese technical documents are authoritative.
 
-The HQ packaging path is [`packaging/glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec):
-`bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>` uses
-[`config/gbs_llvm.conf`](config/gbs_llvm.conf) to build the three ARM
-experiment tools against the pinned Unified Toolchain snapshot. Build identity and
-hashes are recorded in the
-[`deliverables manifest`](tools/reproduce/deliverables_manifest.json); these GBS
-artifacts participated in the A-anchor H-V calibration sample, so that sample alone
-is not independent evidence. A separate four-cell contract was committed and tagged
-before board execution; its held-out run passed 4/4 without changing the v4 bands.
-GBS is the default HQ L2 path after that held-out validation, and the frozen bundle
-is the auditable fallback. See the
-[held-out report](docs/gbs_heldout_validation_20260904.md).
+## What this is
 
-文中应用/进程名为代号；host 侧路径已脱敏，板端运行路径保留。冻结测试镜像 BUILD_ID 为复现需要有意公开。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）在 host 本地留存，可按请求提供；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
+This frozen Demo delivers a gated Tizen glibc (ptmalloc) trim method: exclude
+visible automatic reclaim as an anti-signal, confirm allocator-retained free space
+with M7, require a same-target, same-phase trim probe to meet a precommitted reclaim
+threshold, then call `malloc_trim(0)` only at a known release phase while accepting
+refault, latency, and health evidence together. On the frozen RPI4/Tizen
+glibc-2.40-1.6.armv7l matrix, the calibration centers are 51%–53%, and gated trim reclaimed about
+80%–85% of released payload; per-profile median calls were mixed 1.233269 ms and
+medium-only 1.218361 ms, and the gst p99
+direction was not visible by the fixed comparison rule. These are mechanism and scale
+results, not a product-memory-benefit promise.
 
-**Current stage:** source and mechanism audit is complete, Batch 1/2/2.5 and the L6 applicability curve are measured, product-process allocation shapes are profiled read-only, and the cyclic trim-timing benchmark is implemented. The RPI4 SDB channel and new-image baseline are restored. The product cyclic PD fall is now classified as an automatic-reclaim anti-signal, the original S3 semantic is retired, S4 has closed the gated-trim effect/cost baseline on the synthetic retention proxy, and the week-two GStreamer matrix has measured release-point trim and next-cycle cost on a real multithreaded target while retaining direct concurrent-lock stall as an open gap. See the [consolidated status](docs/glibc_memopt_program_status_report_zh.md), [Demo narrative](docs/demo_narrative_20260901.md), and [GStreamer trim-cost report](docs/gst_trim_cost_20260901.md).
+## Headline results
 
-## Current Findings
+| Comparison | Accepted result | Report | Compact evidence |
+|---|---|---|---|
+| Instant-release anchors | calibration: mixed `52.794499% ±4.304705 pp`, medium-only `50.669791% ±4.918088 pp` (`n=8` each, pre-trim heap); excluded GBS held-out passed 4/4 | [HTML summary](docs/demo_report.html#summary) | [`calibration`](data/raw/a_anchor_replication_20260904/decision.json), [`held-out`](data/raw/gbs_heldout_validation_20260904/decision.json) |
+| Gated valley trim vs none | `80.18%–85.45%` of released payload; median call mixed `1.233269 ms` / medium-only `1.218361 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
+| gst trim vs none | p99 `+6.228611 ms` vs none dispersion `6.784167 ms`: margin `0.555556 ms`, 91.8% of threshold, `REPORT_ONLY` not visible; the same p50 rule is visible (`+1.870462` vs `0.173927 ms`); `+359 minflt/cycle` | [Real concurrency](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json), [`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
+| Tizen native cross-witness | Historical enlightenment cells: about `5.84 MiB` rest and `272/4/4 KiB` reclaim. B2: official gst `5/5`, reclaim `8/16/16/20/16 KiB`; five verified UI cycles then E4′ rest `6019572 B`, reclaim `36 KiB`. Project heap PD and Tizen `memps` match exactly | [Native process evidence](docs/demo_report.html#native) | [`B2 cells`](data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv), [`B2 summary`](data/raw/tizen_native_evidence_b2_20260904/summary.json), [`historical summary`](data/raw/tizen_native_evidence_20260904/summary.json) |
 
-- **Surviving runtime levers:** L1 reduces the pthread stack cache; L3 pins malloc mmap/trim thresholds; L2 caps arenas only when the measured thread-to-arena ratio leaves sufficient headroom. The validated L1+L3 combination measured `+0.1%` throughput and `-2.43 MB` memory in its tested workload.
-- **Phase-triggered reclaim (L6):** `malloc_trim(0)` is useful when the process's own glibc heap experiences bulk allocation followed by concentrated frees. Controlled media release phases reclaimed `48.52-49.37%`, totaling `10.902 MiB` across eight processes.
-- **Applicability curve:** at the measured 50% release point, reclaim was `27.91%` for 16-256 B objects, `53.55%` for mixed 16 B-64 KiB objects, and `50.60%` for medium 1-16 KiB objects. Interleaved release reduced the mixed case from `53.55%` to `40.58%`.
-- **Product allocation shapes:** the cyclic target's visible PD fall is an automatic-reclaim anti-signal rather than a trim opportunity; retained floors and residuals remain candidates only until M7 separates live data from allocator-held free space. See the [mechanism attribution](docs/cyclic_fall_mechanism_attribution_v2_20260901.md).
-- **S2 replication gate:** frozen mixed and medium-only runs paced rise/release at about `3.400/19.703 s` and placed about `6.4 MiB` per cycle into rest/unsorted, but neither internal nor external board sampling showed a PD fall. The proxy therefore does not yet reproduce the product cyclic shape.
-- **Real multithreaded release cost:** on the frozen GStreamer matrix, trim shifted the repeat-median loop p99 by `+6.229 ms`, below the none repeat-dispersion band of `6.784 ms`; 153 trim calls had `0.672/0.818/0.842/0.857 ms` p50/p95/p99/max. This fills the next-cycle cost and reclaim fields but not a direct per-thread all-arena lock-stall measurement. See the [full report](docs/gst_trim_cost_20260901.md).
-- **A-anchor calibration and GBS delivery:** the fixed-contract 12-cell replay selected H-V and established calibration bands centered at mixed `52.794499% ±4.304705 pp` and medium-only `50.669791% ±4.918088 pp`. A later GBS-only held-out contract excluded from the calibration sample passed 4/4 (`49.492012%`, `51.806724%`, `54.266910%`, `49.656064%`), independently closing GBS rebaseline. See the [held-out report](docs/gbs_heldout_validation_20260904.md).
-- **Rejected or deferred directions:** mechanisms with no RSS surface include rseq disablement, guard-page removal, repeated `__libc_freeres`, and disabling dlconf for steady-state RSS. Disabling tcache, disabling fastbins, and limiting unsorted-to-tcache transfers remain experimentally rejected unless real workloads show materially larger retained structures. A whole-libc `-Os` build remains deferred pending a dedicated performance and build-compatibility program.
-- **Flash levers:** locale/gconv/NSS packaging, debug-symbol policy, cold-DSO optimization, and command-line subpackaging remain source-verified candidates whose product savings depend on the final image manifest.
+The batch release reference `48.9% / 1.36 MiB × 8 processes` comes from
+`<TEST_IMAGE_B>` / `glibc-2.40-2.8`; it is a compatibility comparison, not part of
+the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_phase.tsv)).
 
-The figures above are measurements for the documented builds and workloads, not universal glibc guarantees. See the individual reports for version gates, workload definitions, and limitations.
+## Three ways to start
 
-## Recommended Reading Order
+1. **Read offline — minutes.** Open [`docs/demo_report.html`](docs/demo_report.html).
+2. **Verify on a host — minutes.** Use a real `git clone` (ZIP/source exports are
+   unsupported), then run `bash tools/reproduce/reproduce.sh`. Its separately
+   installed prerequisites are only Git and Python 3; GBS/RPM/ARM toolchains are
+   optional and never default-verify hard gates. Development-only overrides and
+   the dependency audit are documented in
+   [`tools/reproduce/README.md`](tools/reproduce/README.md).
+3. **Repeat on a board — hours.** Run
+   `bash tools/reproduce/reproduce.sh board --ip <addr>` only after the prerequisites
+   below and the [L2 guide](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)
+   are satisfied.
 
-1. [Program status and consolidated evidence](docs/glibc_memopt_program_status_report_zh.md)
-2. [Source feasibility audit](docs/glibc_memopt_feasibility_report.md)
-3. [Design v2.4](docs/tizen_glibc_memopt_design_v2.md) and [Chinese edition](docs/tizen_glibc_memopt_design_v2_zh.md)
-4. [L6 applicability curve](docs/l6_applicability_curve.md)
-5. [Product plateau profile](docs/product_plateau_probe.md) and [cyclic-target profile](docs/product_cyclic_target_probe.md)
-6. [Controlled cyclic replication status](docs/cyclic_profile_replication.md)
-7. [GStreamer multithreaded trim-cost report](docs/gst_trim_cost_20260901.md)
-8. [Complete chronological document index](docs/INDEX.md)
+### L2 prerequisites
 
-The design and audit establish version-gated mechanisms. The curve report quantifies controlled behavior. Product reports show which allocation shapes occur in real processes. Individual Batch and probe reports retain commands, quality gates, failure records, and measurement limitations.
+- RPI4 with intentionally public
+  `BUILD_ID=tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l`;
+- exact `glibc-2.40-1.6.armv7l`, SDB 4.2.25 reference, and the three-part identity gate;
+- remote `id -u=0`, writable four-core governor controls, and writable `/opt/usr`;
+- the SHA-pinned ARM/media bundle described by
+  [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json); the
+  deliverer supplies the media acquisition location with the delivery email, and
+  the recipient verifies it against the manifest SHA-256.
 
-## Directory Guide
+Without that internal bundle, board mode cannot start. The media asset has no
+established redistributable provenance and is delivered outside this repository.
 
-- [`docs/`](docs/) contains designs, specifications, reviews, arbitration, board reconnaissance, experiment reports, and the chronological index.
-- [`tools/`](tools/) contains measurement source, self-tests, collectors, and sanitized experiment runners.
-- [`patches/`](patches/) contains local build-only patches retained as reproducibility evidence; none are implied to be product changes.
-- [`data/derived/`](data/derived/) contains matrix definitions, histograms, and compact derived result tables.
-- [`data/raw/`](data/raw/) contains selected command records, key timelines, and small directly cited time series. Complete raw evidence remains in the private local archive.
-- `temp/` is the ignored local work area for build roots, migration audits, and large evidence.
+### Default HQ L2 path: GBS build (held-out 4/4 validated)
 
-## Tools
+For the three ELF files, GBS can be evaluated from a real `git clone` with
+`bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`. This explicit path requires repository
+network access, a root-capable GBS environment, buildroot disk space, and more than
+the minutes-scale host verify. The pinned [`gbs_llvm.conf`](config/gbs_llvm.conf) and
+[`glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec) build one RPM containing
+`alloc_bench`, `gst_loop_decode`, and `reclaim_probe`; verify its NVR and all hashes
+against [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json).
+The exact extraction commands are in the
+[L2 GBS section](docs/demo_reproduction_guide_20260901.md#l2-gbs-build). The
+[tool provenance audit](docs/tool_provenance_20260903.md) records the zero result
+from package-name, Provides, and file-list searches across all four configured
+official repositories and independently resolves every spec BuildRequires.
 
-- [`tools/alloc_bench/`](tools/alloc_bench/) contains the deterministic allocation microbenchmark and self-tests.
-- [`tools/reclaim_probe/`](tools/reclaim_probe/) profiles mapping classes and probes page-level reclaim where supported.
-- [`tools/gst_loop_decode/`](tools/gst_loop_decode/) constructs a persistent media decode/release phase.
-- [`tools/inventory/`](tools/inventory/) contains the read-only process inventory collector.
-- [`tools/runners/`](tools/runners/) contains sanitized collection and analysis runners used by the reports.
+The GBS artifacts participated in the fixed-contract H-V calibration sample, so
+that sample alone does not independently validate GBS. A separately tagged
+GBS-only held-out contract, excluded from band construction, then passed 4/4.
+GBS is the default L2 path after held-out validation; frozen/fixed-directory builds
+are fallbacks.
+GBS does not provide the media file, which remains an out-of-repository delivery
+prerequisite. See the
+[held-out report](docs/gbs_heldout_validation_20260904.md) and
+[`decision.json`](data/raw/gbs_heldout_validation_20260904/decision.json).
 
-Only source and scripts are published. ARM and host binaries are intentionally excluded because they are reproducible and may retain local build paths in string tables.
+## Repository map
 
-## Data
+- [`docs/`](docs/) contains reports and guides. The technical body is Chinese; the
+  [HQ reproduction guide](docs/demo_reproduction_guide_20260901.md) is authoritative.
+- [`tools/`](tools/) contains harnesses, analyzers, the workflow, and report builder.
+- [`data/raw/`](data/raw/) contains public compact evidence.
+- `board_results/` is not published. Full raw artifacts remain local and are
+  available on request through the project owner.
 
-[`data/derived/`](data/derived/) contains matrix definitions, histograms, and compact derived TSV summaries. [`data/raw/`](data/raw/) is deliberately limited to small evidence required to reproduce report calculations; bulk captures are excluded for size and privacy reasons.
+## Environment and acceptance
 
-## Archive Notes
+[`acceptance_bands.json`](tools/reproduce/acceptance_bands.json) is the single
+machine-readable contract. The only deterministic numeric item is released-payload
+bytes. Validity gates require 4 KiB reclaim alignment, `majflt=0`, zero deltas for
+three zram counters, and zero dmesg OOM/LMK matches. Tolerance items include S4 B
+three-repeat medians anchored at mixed `81.661264% ±5 pp` and medium-only
+`84.446566% ±5 pp`; `n=3` tolerates one outlier, not two. Release-point trim in S4 B
+and gst is a single call `<5 ms`; the S4 A anchor has a separate `<20 ms` bound and
+is not a hook-cost number.
 
-The reports retain source `file:line` anchors, measured values, workload parameters, and failure records. Identity-bearing board addresses, image identifiers, application/process names, local paths, users, and repository endpoints have been replaced consistently with aliases. The private replacement map is ignored by Git and is not published.
+The current A-anchor calibration bands are shared by frozen and GBS: mixed
+`52.794499% ±4.304705 pp` and medium-only `50.669791% ±4.918088 pp`, each from
+eight combined observations. They remain calibration limits because GBS observations
+helped construct them. Independent evidence comes from the later, excluded four-cell
+held-out run, which passed 4/4 without changing the bands. The fixed-contract H-V replay
+replaces the former `n=1` limitation while retaining the original single observations
+as historical evidence.
+
+Thus “the same data” means exact deterministic payload bytes, tolerance items in
+band, and all validity gates passing. A fixed seed does not pin arena assignment;
+one repeat may move by about 1 MiB, so reclaim bytes are banded, not deterministic.
+
+The stability v2 known-alert waiver covers at most two registered S4 A
+`alloc_bench cpu.relative` livedumps. A matching observation is `EXPECTED` only
+after record/archive/exact cleanup/recheck; no observation is
+`REGISTERED/NOT-EVALUATED`. The trigger and window are reproducible, but root cause
+is not proven.
+
+## Four product enablement gates
+
+Product enablement must pass four hard gates in order: **exclude the automatic-reclaim
+anti-signal → confirm M7 retention → show that a same-target, same-phase trim probe
+meets its precommitted reclaim threshold → pass the cost budget**. Register the
+target/phase threshold before seeing results; no measurement, a below-threshold result,
+or unstable repeats keeps the feature off. M7, `rest`/`unsorted`, and histogram estimates
+cannot replace gate three. See the dated finalization and preserved older wording in the
+[landing recommendation](docs/product_landing_recommendation_20260901.md#1-启用门清单).
+
+## Boundaries and glossary
+
+- Synthetic evidence lacks product-candidate M7 live/bin separation, product
+  latency, and direct all-arena lock-stall measurement while peers allocate.
+- gst trim runs after NULL; it is not injected into a hot allocation phase.
+- B2 completed a fixed-contract official-gst `5/5` replay and a five-cycle
+  native-UI activity E4′ cell; its four injection intervals are
+  `120.122271759–120.142672892 s`. Historical T1 `1/5`, UI `0/1`, and the old
+  `119.806876910/119.856460299 s` E1–E3 deviations remain on record and are not
+  retroactively passed.
+- M7 retention is not reclaim capacity. The `<size>` estimator missed all `15/15`
+  paired validation cells and estimated `2200–7976 KiB` for the `36 KiB` E4′
+  reclaim. It is diagnostic only, not a quantitative enablement threshold; see
+  the [estimator report](docs/trimmable_estimator_20260905.md).
+- The enlightenment daemon had about `5.84 MiB rest`, but its historical cells reclaimed
+  only `272/4/4 KiB`, and E4′ after real UI activity reclaimed only `36 KiB`. Fragmented
+  retention had little measured benefit in these cells; this does not extrapolate to
+  other daemons or phases.
+- “p99 cost not detected” does not mean zero cost. If another board reports visible,
+  preserve all repeats and report its margin; direction remains `REPORT_ONLY`.
+- Product enablement remains closed pending anti-signal exclusion, M7 retention
+  confirmation, a same-target measured benefit above its precommitted threshold, and
+  a cost budget: four hard gates. See the
+  [landing recommendation](docs/product_landing_recommendation_20260901.md#1-启用门清单).
+- **Retained floor:** Private_Dirty that stays elevated after a release observation;
+  smaps alone cannot prove whether it is live or allocator-held.
+- **Nearest-rank:** sort `n` samples and select rank `ceil(p×n)`; with 50 gst primary
+  samples, p99 is the observed maximum.
+
+Host-side paths are sanitized; board runtime paths are retained. This `demo` branch
+is frozen: corrections land on `main`, then a new snapshot/tag is cut.
