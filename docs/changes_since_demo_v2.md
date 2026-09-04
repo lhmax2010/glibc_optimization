@@ -111,3 +111,9 @@ accd86b docs(demo): index changes since demo-v2
 detached `demo-v4` 标签、默认 main 三种克隆形态的完整 verify，再核验双语 README/INDEX
 链接、HTML source-marker byte-cmp 和脱敏扫描。各实验数字仍以链接的正式报告与公开
 TSV/JSON 为唯一事实源。
+
+## 10. 第三轮终审 A 段
+
+| 发现项编号 | 提交 | 变化 | 复核入口 |
+|---|---|---|---|
+| N4-01 / V4-1–V4-4 | `8e117142211f8a66bef0de56337fb51017dec126` | 默认 verify 去真实 GBS 构建；v4 降为校准带并恢复冻结件默认；B2 日期/证据等级订正；新增 PM 裁决台账与板上轮次事前 tag 规则；闭环终审 minor 项 | [`第 3 轮闭环`](review_fix_20260903.md#第-3-轮终审-a-段闭环2026-09-04)、[`PM 裁决`](pm_decisions.md) |

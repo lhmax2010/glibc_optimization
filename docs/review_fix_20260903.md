@@ -4,6 +4,9 @@
 
 # Demo 三方评审修复闭环（2026-09-03）
 
+涉及证据等级和交付判读的 PM 裁决集中记录在
+[`pm_decisions.md`](pm_decisions.md)；本文件继续保留逐项“发现 → 修复提交 → 验证”映射。
+
 - 执行基线：`9183bccd41608c3981b3147cb86e4a81f158a8f9`
 - 范围：host-only；没有连接测试板，没有产生新测量数字
 - 机器合同：[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)
@@ -34,7 +37,7 @@
 | P1-8 | `dc0aafc`, `2433431` | schema v3 仅把 released payload 列为 deterministic；页对齐/majflt/zram/dmesg 移为 validity gates；逐周期回收量列为 banded；S4 public replay 新增 acceptance JSON byte-cmp；“同样的数据”三段语义统一。 | `test_acceptance_v3_separates_determinism_validity_and_direction`、`s4-public-replay` cmp。 |
 | P1-9 | `dc0aafc`, `2433431` | B 组分档锚定 mixed `81.661264% ±5 pp`、medium-only `84.446566% ±5 pp`；写明 n=3 中位只能吸收一个离群。 | evaluator 对公开证据 PASS；out-of-band fixture FAIL。 |
 | P1-10 | `dc0aafc`, `2433431` | v2 使用 known-alert waiver；v1 历史 HARD FAIL 保留；“无害”收窄为触发/窗口可复现且根因未证明；未观测输出 `REGISTERED/NOT-EVALUATED`。 | stability fixture 实际匹配后 EXPECTED；host verify 无观测时 REGISTERED/NOT-EVALUATED。 |
-| P1-11 | `2433431` | BUILD_ID 标明为复现而有意公开；构建 host 编辑为 `abuild@<CI_HOST>`；统一说明“host 路径已脱敏、板端运行路径保留”；修正 `/opt/usr/<USER_HOME>`；link-check 纳入双语 README 与 INDEX；基线上 74 个 `board_results` Markdown 链接全部改非链接，连同双语入口的 2 处本地原始件说明合计闭合评审所列 76 处，并注明可按请求提供。 | 敏感字面量扫描零命中；`git grep` 对 `board_results` Markdown 链接零命中；local-link-check PASS。 |
+| P1-11 | `2433431` | BUILD_ID 标明为复现而有意公开；构建 host 编辑为 `abuild@<CI_HOST>`；统一说明“host 路径已脱敏、板端运行路径保留”；修正 `/opt/usr/home/owner`；link-check 纳入双语 README 与 INDEX；基线上 74 个 `board_results` Markdown 链接全部改非链接，连同双语入口的 2 处本地原始件说明合计闭合评审所列 76 处，并注明可按请求提供。 | 敏感字面量扫描零命中；`git grep` 对 `board_results` Markdown 链接零命中；local-link-check PASS。 |
 | P1-12 | `2433431` | 英文入口补 `not a product-memory-benefit promise`、`single call <5 ms`、精确 glibc RPM、retained floor 与 nearest-rank 词条及完整 L2 prerequisites。 | 双语模板链接检查、跨载体测试、关键词审计。 |
 | P2 | `2433431`, `05bc5cf` | ServiceA 单位标作 KiB/MiB；第 2 轮进一步订正精确换算为 `6212 KiB（6.07 MiB）`；gst p99 图显示基线保留 6 位小数；builder 注明断言是正控漂移设计。 | builder 正控与 HTML byte-cmp；旧单位/换算扫描零命中。 |
 
@@ -82,3 +85,18 @@ REPORT_ONLY、未观测告警为 REGISTERED/NOT-EVALUATED）；报告可按 sour
 GBS RPM 哈希依赖被打包源码提交。为避免 manifest 自引用，先以 `20ab8c8` 固定
 spec、源码、配置和文档，再对该精确提交构建；`a6cf8fc` 只登记产物哈希、构建
 摘要和由同一输入重建的 HTML。该语义与现有 HTML parent-source marker 一致。
+
+## 第 3 轮终审 A 段闭环（2026-09-04）
+
+- 同步基线：`344e14461d070c709c505eba11748cf6846a0fe1`
+- host 修复提交：`8e117142211f8a66bef0de56337fb51017dec126`
+- 范围：host-only；没有连接测试板、没有新增测量数字
+- PM 裁决：[`pm_decisions.md`](pm_decisions.md)
+
+| 发现编号 | 修复提交 | 闭环内容 | 验证方式 |
+|---|---|---|---|
+| N4-01 / V4-3 | `8e117142211f8a66bef0de56337fb51017dec126` | 默认 verify 只保留 spec/`%files`/manifest 静态硬门；真实构建移到 `reproduce.sh gbs`。GBS 命令/环境失败为 `SKIPPED/REPORT_ONLY`，成功产物的 NVR、文件表和 ELF SHA 漂移仍硬失败；buildroot 每次唯一并由跨进程锁保护。 | fake GBS RC=42 仍 `OVERALL PASS`；默认 verify 在 PATH 有/无 GBS 时均不调用 GBS；唯一 config/buildroot 与锁占用提示测试；完整 host verify。 |
+| V4-1 | `8e117142211f8a66bef0de56337fb51017dec126` | acceptance v4 保持原数值但降级为“校准带”；manifest/board workflow/全部对客载体撤回 GBS 独立通过与首选路径，冻结件恢复默认，等待 held-out。 | acceptance/manifest schema 测试；跨载体 `held-out`/校准/冻结默认断言；HTML builder 正控。 |
+| V4-2 | `8e117142211f8a66bef0de56337fb51017dec126` | B2 host 归档与报告日期按原始纳秒时间戳订正为 2026-09-04；无独立事前 tag 的证据称固定合同重放。执行 contract/runner 内保留原 remote 字面量以维持已发布 SHA；新增“先合同+analyzer 提交/tag，后板上运行，再单独结果提交”长期规则。 | contract/runner SHA 与 `run_record.txt` 逐值一致；B/B2 host 测试；旧日期路径与锚点扫描。 |
+| V4-4 | `8e117142211f8a66bef0de56337fb51017dec126` | 新增 PM 裁决台账，覆盖身份/tag waiver、p50/追加重复驳回、S4 n=3 中位、gst 方向、v4 校准降级和 B2 证据等级。 | 本文件与 changes 索引均链接台账；local-link-check。 |
+| A-minor | `8e117142211f8a66bef0de56337fb51017dec126` | 修正 changes 无效 SHA 并增加全 40 位提交可解析测试；v3 异常文案、51%–53% 概述、6 个板端 home 路径、模板入口链接检查和 B2 公开重放缺口全部闭环。 | `git rev-parse` 参数化测试；`INFO template-entry-links`；敏感/旧路径扫描；完整 host verify。 |
