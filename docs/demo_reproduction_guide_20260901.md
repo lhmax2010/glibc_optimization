@@ -340,6 +340,51 @@ gst trim calls=153 p50=0.671556 p95=0.818315 p99=0.842185 max=0.856944 ms
 gst first-release=51.014041-51.406250% / 1.277344-1.285156 MiB
 ```
 
+<a id="l1-tizen-native-b2"></a>
+### Tizen 原生 B2 与整页估算器
+
+以下命令只抽取公开紧凑件，并从公开 XML 重建整页估算验证表；不连接测试板：
+
+```sh
+python3 - <<'PY'
+import csv, json
+from pathlib import Path
+p = Path("data/raw/tizen_native_evidence_20260905")
+s = json.loads((p / "summary.json").read_text())
+v = list(csv.DictReader(open("data/raw/trimmable_estimator_20260905/validation.tsv"), delimiter="\t"))
+paired = [r for r in v if r["validation_status"] == "paired"]
+print("B2 completion gst=%d/%d app=%d/%d e4=%d/%d" % (
+    s["completion"]["t1_prime_completed"], s["completion"]["t1_prime_preregistered"],
+    s["completion"]["e4_app_cycles_completed"], s["completion"]["e4_app_cycles_preregistered"],
+    s["completion"]["e4_prime_completed"], s["completion"]["e4_prime_preregistered"]))
+print("B2 gst_reclaim=%sKiB interval=%.9f-%.9fs" % (
+    "/".join(map(str, s["t1_prime"]["reclaimed_kb"])),
+    s["t1_prime"]["interval_min_s"], s["t1_prime"]["interval_max_s"]))
+e = s["e4_prime"]
+print("B2 E4 rest=%dB heap=%d->%dKiB reclaim=%dKiB" % (
+    e["m7"]["rest_bytes"], e["project_pre_kb"], e["project_post_kb"], e["reclaimed_kb"]))
+print("estimator outside=%d/%d E4=%d-%dKiB measured=%dKiB" % (
+    sum(r["measured_within_bounds"] == "false" for r in paired), len(paired),
+    e["estimator_lower_bytes"] // 1024, e["estimator_upper_bytes"] // 1024,
+    e["reclaimed_kb"]))
+PY
+
+python3 tools/analysis/validate_trimmable_estimator.py \
+  data/raw/trimmable_estimator_20260905/cases.tsv \
+  --output "$OUT/trimmable-validation.tsv"
+cmp "$OUT/trimmable-validation.tsv" \
+  data/raw/trimmable_estimator_20260905/validation.tsv
+```
+
+预期输出原文如下，`cmp` 应静默成功：
+
+```text
+B2 completion gst=5/5 app=5/5 e4=1/1
+B2 gst_reclaim=8/16/16/20/16KiB interval=120.122271759-120.142672892s
+B2 E4 rest=6019572B heap=3324->3288KiB reclaim=36KiB
+estimator outside=15/15 E4=2200-7976KiB measured=36KiB
+```
+
 ### Demo 数字到公开输入的总表
 
 | Demo 展示值 | 公开输入 | 复算入口 |
@@ -356,6 +401,9 @@ gst first-release=51.014041-51.406250% / 1.277344-1.285156 MiB
 | gst p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`，margin `0.555556 ms`（91.8%）；同规则 p50 `+1.870462` 对 `0.173927 ms`；`+359 minflt/循环` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv) | [gst L1](#l1-gst-trim-cost) |
 | gst trim `0.671556/0.818315/0.842185/0.856944 ms`（p50/p95/p99/max） | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
 | gst 首次 release `51.014041%–51.406250% / 1.277344–1.285156 MiB` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
+| Tizen GST `5/5`、回收 `8/16/16/20/16 KiB`、间隔 `120.122271759–120.142672892 s` | [`cells_derived.tsv`](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv)、[`summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
+| E4′ rest `6019572 B`、heap `3324→3288 KiB`、回收 `36 KiB` | [`malloc_info_E4_PRIME.xml`](../data/raw/tizen_native_evidence_20260905/malloc_info_E4_PRIME.xml)、[`summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
+| 整页估算 E4′ `2200–7976 KiB`；严格配对 `15/15` 区间外 | [`validation.tsv`](../data/raw/trimmable_estimator_20260905/validation.tsv) | [原生 B2 L1](#l1-tizen-native-b2) |
 
 ## L2 · 测试板实验复跑
 
@@ -858,6 +906,120 @@ sdb -s "$NATIVE_SERIAL" shell \
 目录、进程、governor 恢复。原生进程的回收量和含 ptrace 的 gdb 耗时没有预登记容差带；
 它们只按观测值报告，不能套 S4 带，也不能作为钩子代价。当前完成数与间隔偏差的正确
 复现判读是 `INCOMPLETE/PROTOCOL-DEVIATION`，不是整轮 PASS。
+
+<a id="l2-tizen-native-evidence-b2"></a>
+#### 2026-09-05 B2：缺口补跑与整页估算器
+
+B2 不改写上述旧格；它以新合同补跑官方 GST 5 格与 UI 活动后 E4′，E1–E3 不重跑。
+权威规格与结果是
+[`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260905/preregistered_contract.json)
+和 [`报告 §6–§8`](tizen_native_evidence_20260904.md#6-b2-补跑规格冻结2026-09-05执行前登记)。
+已发布 B2 预期输出为：T1′ `5/5`，回收 `8/16/16/20/16 KiB`；四个间隔落在
+`120.122271759–120.142672892 s`；E4′ rest `6019572 B`、回收 `36 KiB`，项目 heap
+与 `memps` 前后逐值一致。估算器给 E4′ `2200–7976 KiB`，连同历史配对验证为
+`15/15` 区间外；原始字段见
+[`B2 summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json) 与
+[`cells_derived.tsv`](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv)。
+先重走身份/环境门，再准备仓库外媒体与 GBS `alloc_bench`：
+
+```sh
+export B2_ADDR='<TEST_BOARD_IP>'
+export B2_SERIAL="$B2_ADDR:26101"
+export B2_REMOTE='/opt/usr/glibc_memopt/tizen_native_evidence_20260905'
+export B2_HOST='board_results/tizen_native_evidence_20260905_reproduction'
+export B2_MEDIA='/path/to/small_320x240.mp4'
+export B2_ALLOC='/path/to/gbs/alloc_bench.armv7l'
+mkdir -p "$B2_HOST"
+
+sha256sum "$B2_MEDIA" "$B2_ALLOC"
+# media = 3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d
+# alloc = 88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa
+sdb -s "$B2_SERIAL" shell '
+  k=$(uname -r) && a=$(uname -m) &&
+  b=$(awk -F= "/^BUILD_ID=/{print \$2; exit}" /etc/os-release) &&
+  g=$(rpm -q glibc) && m=$(awk "/^MemTotal:/{print \$2}" /proc/meminfo) && u=$(id -u)
+  rc=$?; printf "kernel=%s\narch=%s\nBUILD_ID=%s\nglibc=%s\nMemTotal_kB=%s\nuid=%s\nRC=%s\n" "$k" "$a" "$b" "$g" "$m" "$u" "$rc"
+  test "$rc" -eq 0 && test "${k#*rpi4}" != "$k" && test "$a" = armv7l &&
+  test "$b" = tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l &&
+  test "$g" = glibc-2.40-1.6.armv7l && test "$m" = 8117408 && test "$u" = 0
+  rc=$?; echo RC=$rc; test "$rc" -eq 0 && echo DONE_B2_PREFLIGHT || echo FAIL_B2_PREFLIGHT
+' | tee "$B2_HOST/preflight.txt"
+sdb -s "$B2_SERIAL" shell \
+  < tools/runners/tizen_native_evidence_20260905/recon_idle_remote.sh \
+  | tee "$B2_HOST/enlightenment_idle_raw.txt"
+sh tools/runners/tizen_native_evidence_20260905/manage_gdb_official_snapshot.sh \
+  install --ip "$B2_ADDR" --cache "$B2_HOST/rpm-cache"
+```
+
+helper 仍只允许前述六个官方快照 RPM、逐包 SHA 和清理后根分区 `≥1.2 GiB` 预算。安装
+后必须先在本轮自研进程做 attach 自测，再做两个冻结前侦察；每条板端命令只接受远端
+`RC=0` 与对应 `DONE_*`：
+
+```sh
+sdb -s "$B2_SERIAL" shell \
+  "mkdir -p '$B2_REMOTE/selftest'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_SELFTEST_DIR || echo FAIL_SELFTEST_DIR"
+sdb -s "$B2_SERIAL" push "$B2_ALLOC" "$B2_REMOTE/selftest/alloc_bench.armv7l"
+sdb -s "$B2_SERIAL" push tools/reclaim_probe/trim_via_gdb.sh "$B2_REMOTE/selftest/trim_via_gdb.sh"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/recon_gdb_selftest_remote.sh "$B2_REMOTE/selftest/recon_gdb_selftest_remote.sh"
+sdb -s "$B2_SERIAL" shell \
+  "chmod 0755 '$B2_REMOTE/selftest/'*.sh '$B2_REMOTE/selftest/alloc_bench.armv7l' && '$B2_REMOTE/selftest/recon_gdb_selftest_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_SELFTEST_INVOKE || echo FAIL_SELFTEST_INVOKE"
+
+sdb -s "$B2_SERIAL" push "$B2_MEDIA" "$B2_REMOTE/small_320x240.mp4"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/recon_gst_sequence_remote.sh "$B2_REMOTE/recon_gst_sequence_remote.sh"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/recon_app_remote.sh "$B2_REMOTE/recon_app_remote.sh"
+sdb -s "$B2_SERIAL" shell \
+  "chmod 0755 '$B2_REMOTE/recon_gst_sequence_remote.sh' '$B2_REMOTE/recon_app_remote.sh' && '$B2_REMOTE/recon_gst_sequence_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GST_RECON_INVOKE || echo FAIL_GST_RECON_INVOKE"
+sdb -s "$B2_SERIAL" shell \
+  "'$B2_REMOTE/recon_app_remote.sh' setting-myaccount-efl; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_APP_RECON_INVOKE || echo FAIL_APP_RECON_INVOKE"
+```
+
+GST 侦察必须 5/5 单次软解正常退出、每格 30 秒仍存活、有 buffer、ERROR=0，总跨度
+`≥300 s`；应用必须在 30 秒时同 starttime 存活且 `-t` 正常终止。全部通过后才推送已
+版本化的合同与正式 runner，禁止在板端编辑：
+
+```sh
+sdb -s "$B2_SERIAL" push tools/reclaim_probe/trim_via_gdb.sh "$B2_REMOTE/trim_via_gdb.sh"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/preregistered_contract.json "$B2_REMOTE/preregistered_contract.json"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/run_b2_remote.sh "$B2_REMOTE/run_b2_remote.sh"
+sdb -s "$B2_SERIAL" shell \
+  "chmod 0755 '$B2_REMOTE/trim_via_gdb.sh' '$B2_REMOTE/run_b2_remote.sh' && sha256sum '$B2_REMOTE/preregistered_contract.json' '$B2_REMOTE/run_b2_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_FORMAL_STAGE || echo FAIL_FORMAL_STAGE"
+sdb -s "$B2_SERIAL" shell \
+  "'$B2_REMOTE/run_b2_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_B2_FORMAL_INVOKE || echo FAIL_B2_FORMAL_INVOKE" \
+  | tee "$B2_HOST/formal_invoke.txt"
+```
+
+runner 自带身份、环境、SHA、governor、zram、dmesg 与 stability-monitor 门；T1′按绝对
+纳秒截止时刻保证相邻注入开始间隔 `≥120000000000 ns`。E4′固定做 5 次应用 30 秒
+存活/终止验证后才取得 enlightenment M7 并 trim。退出后先确认四核 `schedutil`，再
+生成清单、拉回与核验，最后卸包、删除精确目录：
+
+```sh
+sdb -s "$B2_SERIAL" shell \
+  "cd '$B2_REMOTE' && find . -type f ! -name manifest.tsv | LC_ALL=C sort | while IFS= read -r f; do n=\$(wc -c < \"\$f\") || exit 1; h=\$(sha256sum \"\$f\"); h=\${h%% *}; printf '%s\\t%s\\t%s\\n' \"\$f\" \"\$n\" \"\$h\"; done > manifest.tsv; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_MANIFEST || echo FAIL_MANIFEST"
+sdb -s "$B2_SERIAL" pull "$B2_REMOTE/" "$B2_HOST/board_pull/"
+python3 tools/runners/tizen_native_evidence_20260905/analyze_b2.py \
+  --pull "$B2_HOST/board_pull" --idle-log "$B2_HOST/enlightenment_idle_raw.txt" \
+  --output "$B2_HOST/derived"
+
+sh tools/runners/tizen_native_evidence_20260905/manage_gdb_official_snapshot.sh \
+  remove --ip "$B2_ADDR"
+sdb -s "$B2_SERIAL" shell \
+  "test '$B2_REMOTE' = /opt/usr/glibc_memopt/tizen_native_evidence_20260905 && rm -rf -- '$B2_REMOTE' && test ! -e '$B2_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_B2_CLEANUP || echo FAIL_B2_CLEANUP"
+```
+
+B2 的确定性/有效性项与容差/观察项见报告 §8。host 另可逐字节复算估算器；`cmp`
+应静默，但算法一致不等于板端回收通过：
+
+```sh
+python3 tools/analysis/validate_trimmable_estimator.py \
+  data/raw/trimmable_estimator_20260905/cases.tsv \
+  --output "$B2_HOST/trimmable-validation.tsv"
+cmp "$B2_HOST/trimmable-validation.tsv" \
+  data/raw/trimmable_estimator_20260905/validation.tsv
+```
+
+`15/15` 配对失败的量化门裁决见
+[`trimmable_estimator_20260905.md`](trimmable_estimator_20260905.md)。
 
 ## L3 · 产品板测量复现（可选）
 

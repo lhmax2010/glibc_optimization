@@ -125,12 +125,33 @@ majflt、zram、OOM/LMK 和 stability 告警增量均为 0
 观察器和注入器分别包含 Tizen 守护进程、Tizen `memps` 与官方仓库 `gdb`，不只依赖
 自研工具。
 
-完成边界必须与数字一起保留：冻结的 `gst-launch-1.0` 管线于
-`60.100233983 s` EOS，只完成 **1/5**；Gallery 释放相位格完成 **0/1**；
-enlightenment 两个观测间隔为 `119.806876910 / 119.856460299 s`，严格略低于预登记
-120 s。因此这里只陈述完成格的实测量，不声称原生 GST 五次持续注入、真实 UI 释放相位
-或完全合规三重复成立。含 ptrace 的 gdb 注入耗时也不作为钩子代价数字。完整过程与边界见
-[`Tizen 原生实证报告`](tizen_native_evidence_20260904.md)。
+2026-09-05 的 B2 按新规格补齐了两个覆盖缺口：Tizen `gst-launch-1.0` 改为 5 个顺序
+软解进程，`5/5` 注入均完成，项目 heap 与 `memps` 同时看到
+**8 / 16 / 16 / 20 / 16 KiB** 回收，buffer 均持续增长；四个注入开始间隔为
+`120.122271759–120.142672892 s`，全部满足 `≥120.000 s`
+（[B2 格级证据](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv)、
+[间隔证据](../data/raw/tizen_native_evidence_20260905/intervals.tsv)、
+[L2 复现](demo_reproduction_guide_20260901.md#l2-tizen-native-evidence-b2)）。冻结原生应用
+完成 5 次“启动—30 秒同进程存活—正常终止”后，enlightenment E4′ 的 M7 rest 为
+`6019572 B`，项目 heap 与 `memps` 均为 `3324 → 3288 KiB`，即回收 **36 KiB**
+（[应用周期](../data/raw/tizen_native_evidence_20260905/app_cycles.tsv)、
+[E4′ XML](../data/raw/tizen_native_evidence_20260905/malloc_info_E4_PRIME.xml)、
+[派生摘要](../data/raw/tizen_native_evidence_20260905/summary.json)）。
+
+这组补跑还收紧了门 B 的解释：同一 E4′ XML 的 `<size>` 整页几何区间为
+`2200–7976 KiB`，仍不能覆盖 `36 KiB` 实测；连同历史验证集，严格配对的
+`15/15` 格全部区间外。因此 M7/直方图只能确认“有 allocator 空闲驻留”，不能量化
+“能收多少”，启用仍需同目标实际 A/B
+（[估算器报告](trimmable_estimator_20260905.md)、
+[验证表](../data/raw/trimmable_estimator_20260905/validation.tsv)、
+[L1 复算](demo_reproduction_guide_20260901.md#l1-tizen-native-b2)）。
+
+历史边界不抹除：旧构造于 `60.100233983 s` EOS、只完成 `1/5`，旧 Gallery 格为 `0/1`，
+E1–E3 两间隔 `119.806876910 / 119.856460299 s` 仍是不合规记录
+（[旧摘要](../data/raw/tizen_native_evidence_20260904/summary.json)）。B2 证明新构造、新 E4′
+与新计时器满足各自登记，不把旧格追认成合规。含 ptrace 的 gdb 注入耗时也不作为钩子
+代价数字。完整过程与边界见
+[`Tizen 原生实证报告`](tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05)。
 
 ## 6. 决策门：何时 trim，何时不 trim
 

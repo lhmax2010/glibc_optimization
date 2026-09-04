@@ -129,12 +129,18 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
 
 <section id="native">
   <span class="pill">真实平台进程实证</span><h2>Tizen 自带进程与工具的交叉见证</h2>
-  <p>在 Tizen 守护进程 <code>enlightenment</code> 上，glibc <code>malloc_info</code> 每格均显示 8 个 arena、约 5.84 MiB rest；随后三次 <code>malloc_trim(0)</code> 的项目主堆读数分别下降 <strong>272 / 4 / 4 KiB</strong>，Tizen 自带 <code>memps</code> 对同一 <code>[heap]</code> 逐格给出完全相同的前后值。PID 与启动时刻未变，majflt 增量、zram 三项增量、新增 OOM/LMK 和 stability 告警均为 0。</p>
+  <p>原始三个 enlightenment 观测中，glibc <code>malloc_info</code> 每格均显示 8 个 arena、约 5.84 MiB rest；随后三次 <code>malloc_trim(0)</code> 的项目主堆读数分别下降 <strong>272 / 4 / 4 KiB</strong>，Tizen 自带 <code>memps</code> 对同一 <code>[heap]</code> 逐格给出完全相同的前后值。</p>
   <table><thead><tr><th>格</th><th>M7 rest (B)</th><th>项目 heap PD (KiB)</th><th>memps [heap] (KiB)</th><th>回收</th><th>含 ptrace 的注入时延</th></tr></thead><tbody>
     <tr><td>T2_E1</td><td class="number">6118675</td><td>3472 → 3200</td><td>3472 → 3200</td><td class="number">272 KiB</td><td>1697.762304 ms</td></tr><tr><td>T2_E2</td><td class="number">6118694</td><td>3204 → 3200</td><td>3204 → 3200</td><td class="number">4 KiB</td><td>1771.618048 ms</td></tr><tr><td>T2_E3</td><td class="number">6118706</td><td>3204 → 3200</td><td>3204 → 3200</td><td class="number">4 KiB</td><td>1732.586752 ms</td></tr>
   </tbody></table>
-  <div class="callout"><strong>完成边界：</strong>Tizen <code>gst-launch-1.0</code> 冻结管线在 60.100233983 s EOS，只完成 1/5（该格回收 12 KiB，buffer 903→941）；Gallery 在首次 terminate 前自行退出，释放相位格完成 0/1。T2 的两个前置采样间隔为 119.806876910/119.856460299 s，严格低于预登记 120 s，故三个完整观测不标成完全合规重复。含 ptrace 的 1.15–1.77 s 不是钩子代价。</div>
-  <p class="source-links"><a href="tizen_native_evidence_20260904.md">完整报告</a> · <a href="../data/raw/tizen_native_evidence_20260904/cells_derived.tsv">格级证据</a> · <a href="../data/raw/tizen_native_evidence_20260904/summary.json">完成度与偏差</a> · <a href="demo_reproduction_guide_20260901.md#l2-tizen-native-evidence">L2 复现</a></p>
+  <h3>B2 补跑：官方 GST 5/5 与真实 UI 活动格</h3>
+  <p>重新冻结为 5 个顺序 Tizen <code>gst-launch-1.0</code> 进程后，五格均持续解码并自然退出，buffer 从约 902/903 增至 997；项目 heap 与 <code>memps</code> 同时看到 <strong>8 / 16 / 16 / 20 / 16 KiB</strong> 回收。四个注入开始间隔为 <strong>120.122271759–120.142672892 s</strong>，全部满足 ≥120.000 s。</p>
+  <table><thead><tr><th>格</th><th>项目/memps heap PD (KiB)</th><th>回收</th><th>buffer</th><th>含 ptrace 的注入时延</th></tr></thead><tbody>
+    <tr><td>T1_1</td><td>1360 → 1352</td><td class="number">8 KiB</td><td>902 → 997</td><td>1047.252480 ms</td></tr><tr><td>T1_2</td><td>1368 → 1352</td><td class="number">16 KiB</td><td>902 → 997</td><td>1062.385152 ms</td></tr><tr><td>T1_3</td><td>1368 → 1352</td><td class="number">16 KiB</td><td>902 → 997</td><td>1041.132032 ms</td></tr><tr><td>T1_4</td><td>1368 → 1348</td><td class="number">20 KiB</td><td>903 → 997</td><td>1025.379072 ms</td></tr><tr><td>T1_5</td><td>1364 → 1348</td><td class="number">16 KiB</td><td>902 → 997</td><td>1016.830208 ms</td></tr>
+  </tbody></table>
+  <p>冻结原生应用完成 5/5 次“启动—30 秒同进程存活—正常终止”。之后 E4′ 的 M7 为 8 arena、rest <strong>6019572 B</strong>，项目 heap 与 <code>memps</code> 均为 <strong>3324 → 3288 KiB</strong>，即回收 <strong>36 KiB</strong>；PID/starttime 未变。<code>&lt;size&gt;</code> 估算器却给出 <strong>2200–7976 KiB</strong>，连本格也不能覆盖实测，连同验证集 <strong>15/15</strong> 失败，故不能成为量化启用门。</p>
+  <div class="callout"><strong>历史与边界并存：</strong>旧 T1 1/5、UI 0/1 和 E1–E3 的 119.806876910/119.856460299 s 偏差不改写；B2 用新登记构造补齐数量与 E4 覆盖，并验证新计时器。全部 gdb 时间包含 ptrace，不是钩子代价；回收量不外推产品收益。</div>
+  <p class="source-links"><a href="tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05">B2 完整报告</a> · <a href="../data/raw/tizen_native_evidence_20260905/cells_derived.tsv">B2 格级证据</a> · <a href="../data/raw/tizen_native_evidence_20260905/summary.json">B2 完成与健康</a> · <a href="trimmable_estimator_20260905.md">估算器裁决</a> · <a href="demo_reproduction_guide_20260901.md#l1-tizen-native-b2">L1 复算</a> · <a href="demo_reproduction_guide_20260901.md#l2-tizen-native-evidence-b2">L2 B2 复现</a></p>
 </section>
 
 <section id="reproduce">
@@ -155,11 +161,11 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
     <li><strong>“p99 未检出”不等于“零代价”</strong>：结论严格受三重复、50 个主样本与预登记离散门约束。<a href="../data/raw/gst_trim_cost_20260901/comparison.json">判定证据</a></li>
     <li><strong>同 seed 不钉 arena 指派</strong>：单重复实测出现 <a href="../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv">68.169197%</a>（约 1 MiB 页台阶）；回收字节值不属于确定性项，S4 B 分别锚定发布值 81.661264% / 84.446566% 并按每档三重复中位 ±5 pp 验收。n=3 的中位至多容忍一个离群。<a href="../tools/reproduce/acceptance_bands.json">机器规则</a></li>
     <li><strong>known-alert waiver 不是无害性证明</strong>：S4 A 最多 2 个匹配 <code>alloc_bench cpu.relative</code> 的 livedump；触发理由与窗口可复现，但未做根因证明。观测到且完成记录、归档、精确清理和复核才记 <code>EXPECTED</code>，未观测只记 <code>REGISTERED/NOT-EVALUATED</code>；其他可归因告警仍失败。<a href="../tools/reproduce/health_gate_template.md">健康门模板</a></li>
-    <li>Tizen 原生交叉见证不是完整成功矩阵：T1 为 1/5、UI 释放相位格为 0/1，且 T2 间隔约短 0.2 s；只能引用完成格的测量值，不能外推产品收益。</li>
+    <li>Tizen 原生 B2 已补齐官方 GST 5/5 与 UI 活动后 E4′ 观测，但旧 E1–E3 两个间隔仍短约 0.2 s；新格只证明本次量，不外推产品收益。M7/直方图驻留量也不能直接换算可回收量。</li>
   </ul>
   <p>产品侧启用仍须通过反信号排除、M7 驻留确认和代价预算三道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
 </section>
 </main>
-<footer>构建来源 commit：<code>840b9572ac8ce75b9615141fbdf46b098cd035d4</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>
+<footer>构建来源 commit：<code>dff8ae677d38f51180fbb43c513319d464f74079</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>
 </body>
 </html>

@@ -170,6 +170,14 @@ gst_replay()
     done
 }
 
+trimmable_estimator_replay()
+{
+    out="$tmp/trimmable-validation.tsv"
+    python3 "$repo/tools/analysis/validate_trimmable_estimator.py" \
+      "$repo/data/raw/trimmable_estimator_20260905/cases.tsv" --output "$out" || return 1
+    cmp "$out" "$repo/data/raw/trimmable_estimator_20260905/validation.tsv"
+}
+
 acceptance_replay()
 {
     [ -f "$tmp/s4/acceptance_input.json" ] || return 1
@@ -198,7 +206,9 @@ link_check()
       "$repo/docs/demo_reproduction_guide_20260901.md" \
       "$repo/docs/a_anchor_replication_20260904.md" \
       "$repo/docs/product_landing_recommendation_20260901.md" \
-      "$repo/docs/tool_provenance_20260903.md"
+      "$repo/docs/tool_provenance_20260903.md" \
+      "$repo/docs/tizen_native_evidence_20260904.md" \
+      "$repo/docs/trimmable_estimator_20260905.md"
     if [ -f "$repo/README.zh-CN.md" ]; then
         set -- "$@" "$repo/README.zh-CN.md"
     fi
@@ -215,6 +225,8 @@ host_tests()
       tools/runners/gst_trim_cost_20260901/test_host.py \
       tools/runners/a_anchor_replication_20260904/test_host.py \
       tools/runners/tizen_native_evidence_20260904/test_host.py \
+      tools/runners/tizen_native_evidence_20260905/test_host.py \
+      tools/analysis/test_trimmable_estimator.py \
       tools/report/test_build_demo_report.py \
       tools/reproduce/test_host.py \
       tools/reproduce/test_board_workflow_mocked_sdb.py \
@@ -232,6 +244,7 @@ check batch-release-output batch_replay
 check s4-public-replay s4_replay
 check a-anchor-public-replay-cmp a_anchor_replay
 check gst-public-replay-cmp gst_replay
+check trimmable-estimator-cmp trimmable_estimator_replay
 check acceptance-v4 acceptance_replay
 if [ -f "$repo/docs/demo_report.html" ] && [ -f "$repo/tools/report/source_commit.txt" ]; then
     check offline-report-byte-cmp report_rebuild

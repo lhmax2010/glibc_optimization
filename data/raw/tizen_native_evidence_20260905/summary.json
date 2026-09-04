@@ -1,0 +1,83 @@
+{
+  "completion": {
+    "e4_app_cycles_completed": 5,
+    "e4_app_cycles_preregistered": 5,
+    "e4_prime_completed": 1,
+    "e4_prime_preregistered": 1,
+    "t1_prime_completed": 5,
+    "t1_prime_preregistered": 5
+  },
+  "e4_prime": {
+    "app_cycles": 5,
+    "estimator_lower_bytes": 2252800,
+    "estimator_upper_bytes": 8167424,
+    "injection_ms": 1707.005696,
+    "m7": {
+      "arena_count": 8,
+      "fast_bytes": 1864,
+      "rest_bytes": 6019572,
+      "unsorted_bytes": 11002
+    },
+    "majflt_delta": 0,
+    "memps_exact_match": true,
+    "minflt_delta": 0,
+    "project_post_kb": 3288,
+    "project_pre_kb": 3324,
+    "reclaimed_kb": 36,
+    "trim_return": 1
+  },
+  "health": {
+    "controller_exit_code": 0,
+    "dmesg_before_after_sha256": "931473d463c408a4381a3974bb3897c489138048759ce6ac6f5538c1e33666a1",
+    "dmesg_exactly_equal": true,
+    "governor_final_schedutil_cores": 4,
+    "stability_monitor_new_livedumps": 0,
+    "zram_original_compressed_used_delta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "reconnaissance": {
+    "app_id": "setting-myaccount-efl",
+    "enlightenment_idle_glibc_heap_pd_max_kb": 3220,
+    "enlightenment_idle_glibc_heap_pd_min_kb": 3220,
+    "enlightenment_idle_samples": 61,
+    "gst_sequence_cells": 5,
+    "gst_sequence_span_s": 301.16599608
+  },
+  "schema": "glibc-memopt.tizen-native-evidence-b2.summary.v1",
+  "t1_prime": {
+    "injection_ms": [
+      1047.25248,
+      1062.385152,
+      1041.132032,
+      1025.379072,
+      1016.830208
+    ],
+    "injection_ms_median": 1041.132032,
+    "interval_max_s": 120.142672892,
+    "interval_min_s": 120.122271759,
+    "interval_s": [
+      120.137978836,
+      120.136903576,
+      120.142672892,
+      120.122271759
+    ],
+    "majflt_delta": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "memps_exact_match_count": 5,
+    "reclaimed_kb": [
+      8,
+      16,
+      16,
+      20,
+      16
+    ]
+  }
+}

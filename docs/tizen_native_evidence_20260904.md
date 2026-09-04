@@ -276,3 +276,169 @@ python3 tools/runners/tizen_native_evidence_20260904/analyze_native_evidence.py 
   依赖运行时状态，只按原值报告，不作为 PASS 条件。重跑不得用 S4 的合成负载验收带
   套用 enlightenment。冻结 T1/T2 完成数和 ≥120 s 间隔未满足，应复现为公开的
   `INCOMPLETE/PROTOCOL-DEVIATION`，不能判整轮 PASS。
+
+## 6. B2 补跑：规格冻结（2026-09-05，执行前登记）
+
+本节只追加、不改写 §1–§5 的原始观测和结论。机器合同为
+[`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260905/preregistered_contract.json)。
+以下规格在冻结前能力侦察通过后、任何正式格执行前写定；结果异常只报告，不改参数。
+
+### 6.1 冻结前侦察与选择
+
+- 身份/环境门重走并通过：内核 `6.12.80-arm-rpi4-v7l`、`armv7l`、精确
+  BUILD_ID、`glibc-2.40-1.6.armv7l`、`MemTotal 8117408 kB`、`uid=0`。
+- enlightenment 为 PID `505`、`starttime_ticks=1468`，已运行超过 6 天；60 秒、61 个
+  1 秒序列中 PID/starttime 恒定，项目 glibc heap PD 逐样本为 `3220 KiB`。
+- gdb 初始未安装；根分区可用 `1832058880 B`，扣除官方冻结六包安装体积
+  `53010679 B` 后仍高于 `1.2 GiB`。安装后版本为 `gdb-16.3-1.1.armv7l`，先对
+  SHA 为 `88667139…4efcffa` 的自研 `alloc_bench` 做一次 attach/trim 自测，返回成功且
+  detach 后进程仍存活。该自测不进入 T1′/E4′数据。
+- GST 冻结为 5 个顺序 `gst-launch-1.0` 进程各实时软解同一资产一次。侦察 controller
+  总耗时 `301.209678592 s`（首进程启动至末进程结束 `301.165996080 s`）；5/5 进程均在
+  30 秒存活、各有 `1802` 条 buffer 消息、退出码 0、
+  ERROR 行 0。
+- E4′ 冻结应用为 `setting-myaccount-efl`：侦察启动 PID `30598`，
+  `30.249268736 s` 后同 starttime 仍存活，`app_launcher -t` 返回 0，2 秒后 PID 消失。
+
+上述侦察数字只证明构造可执行，不并入正式回收结论。
+
+### 6.2 T1′：官方 GST 工具五格
+
+每格启动一个全新进程，命令逐字冻结为：
+
+```sh
+gst-launch-1.0 -m -v filesrc location=<small_320x240.mp4> \
+  ! decodebin ! identity name=counter silent=false ! fakesink sync=true
+```
+
+共 5 格，每进程启动 30 秒进入稳态后注入一次 `malloc_trim(0)`，随后等待该次解码自然
+结束。每格必须记录：注入前后项目 glibc heap PD、`memps [heap]`、PID/starttime、
+进程前后存活、buffer 计数严格增长、自然退出码与 ERROR 行数，以及包含 gdb/ptrace 的
+注入墙钟。第 2–5 次注入的“开始时刻减上次开始时刻”必须由纳秒时钟记录且
+`≥120.000000000 s`；高精度等待按绝对纳秒截止时刻循环复核，不能再用整数秒边界。
+
+### 6.3 E4′：真实 UI 活动后单格
+
+对冻结应用 `setting-myaccount-efl` 顺序做 5 次：`app_launcher -s` 成功 → 记录 PID/
+starttime → 30 秒后确认仍存活且 starttime 不变 → `app_launcher -t` 返回 0 → 2 秒后确认
+该 PID 已消失。五次全部成功后，对原 enlightenment PID 先注入 `malloc_info` 取得 M7，
+再注入 `malloc_trim(0)`；前后同时记录项目 glibc heap PD 与 `memps [heap]`。E1–E3 不重跑，
+§3.1 的两个约 0.2 秒间隔偏差原样保留。
+
+### 6.4 健康、清理与主张边界
+
+正式 runner 再次校验身份/环境/资产 SHA；记录并把 4 核 governor 设为 `performance`，
+所有退出路径恢复并复核 `schedutil`。记录 zram `mm_stat`、dmesg、stability-monitor
+前后快照；新增注入类告警逐项归因且没有预期告警豁免。结束后逐件 SHA 拉回，卸载本轮
+六个 gdb 相关包，删除精确工作目录并复核无进程/目录/包残留。
+
+允许的主张仍限于：实测回收 KiB、M7、观测窗口内无崩溃/无重启、`memps` 与项目口径
+是否一致。gdb 时延包含 ptrace，不作钩子代价；不声称产品收益、不换算业务指标。
+
+## 7. B2 补跑结果（2026-09-05）
+
+派生事实总表见 [`summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json)，
+逐格与计时分别见
+[`cells_derived.tsv`](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv) 和
+[`intervals.tsv`](../data/raw/tizen_native_evidence_20260905/intervals.tsv)。以下只按 §6
+冻结口径报告；不修改 §3 的旧值。
+
+### 7.1 T1′：5/5 官方 GST 格完成
+
+| 格 | 项目 heap PD (KiB) | `memps [heap]` (KiB) | 回收 (KiB) | gdb/ptrace 注入 (ms) | buffer | min/majflt Δ | 进程结果 |
+|---|---:|---:|---:|---:|---:|---:|---|
+| T1′-1 | 1360 → 1352 | 1360 → 1352 | 8 | 1047.252480 | 902 → 997 | +2 / 0 | exit 0，ERROR 0 |
+| T1′-2 | 1368 → 1352 | 1368 → 1352 | 16 | 1062.385152 | 902 → 997 | +3 / 0 | exit 0，ERROR 0 |
+| T1′-3 | 1368 → 1352 | 1368 → 1352 | 16 | 1041.132032 | 902 → 997 | +2 / 0 | exit 0，ERROR 0 |
+| T1′-4 | 1368 → 1348 | 1368 → 1348 | 20 | 1025.379072 | 903 → 997 | +3 / 0 | exit 0，ERROR 0 |
+| T1′-5 | 1364 → 1348 | 1364 → 1348 | 16 | 1016.830208 | 902 → 997 | +1 / 0 | exit 0，ERROR 0 |
+
+五格均为新 PID，注入前后 starttime 不变、进程存活，随后各自完成一次自然 EOS；项目
+口径与 `memps` 前后值 `5/5` 逐值相同。回收范围为 `8–20 KiB`、中位 `16 KiB`；含
+ptrace 的注入范围为 `1016.830208–1062.385152 ms`、中位 `1041.132032 ms`。这些是
+原生工具进程本次状态的观测值，不是进程内 hook 延迟。
+
+高精度计时器的四个间隔依次为 `120.137978836 / 120.136903576 /
+120.142672892 / 120.122271759 s`，全部严格大于 `120.000000000 s`。这证明新 controller
+实现满足登记纪律；E1–E3 的旧 `119.806876910 / 119.856460299 s` 仍保留为历史协议偏差，
+没有被新数据改写。
+
+### 7.2 E4′：真实 UI 活动后格完成
+
+冻结应用的五次活动均满足：启动返回 0、30 秒后同 PID/starttime 存活、终止返回 0、
+2 秒后原 PID 消失；逐次记录见
+[`app_cycles.tsv`](../data/raw/tizen_native_evidence_20260905/app_cycles.tsv)。之后
+enlightenment 仍为 PID `505`、`starttime_ticks=1468`，M7 与回收结果为：
+
+| 格 | M7 arena / fast / rest / unsorted (B) | 项目 heap PD (KiB) | `memps [heap]` (KiB) | 回收 (KiB) | gdb/ptrace 注入 (ms) | min/majflt Δ |
+|---|---:|---:|---:|---:|---:|---:|
+| E4′ | 8 / 1864 / 6019572 / 11002 | 3324 → 3288 | 3324 → 3288 | **36** | 1707.005696 | 0 / 0 |
+
+M7 原文与派生值见
+[`malloc_info_E4_PRIME.xml`](../data/raw/tizen_native_evidence_20260905/malloc_info_E4_PRIME.xml)
+和 [`m7.tsv`](../data/raw/tizen_native_evidence_20260905/m7.tsv)。`malloc_trim(0)` 返回 1；
+`memps` 与项目口径的 `36 KiB` 下降一致。观测窗口内 enlightenment 的 PID/starttime
+没有变化，未见崩溃或重启。这里只证明“真实 UI 活动之后，本次注入看到这些量”。
+
+### 7.3 估算器对 E4′的交叉检查
+
+同一个 E4′ XML 的 `<size>` 整页几何区间为 `2252800–8167424 B`，即
+`2200–7976 KiB`，而实测仅 `36 KiB`；区间两端误差为 `+2164 / +7940 KiB`。复算见
+[`estimator_E4_PRIME.json`](../data/raw/tizen_native_evidence_20260905/estimator_E4_PRIME.json)。
+它与 host 验证集 `15/15` 个严格配对观测均落在区间外的裁决一致：直方图区间可作诊断，
+不能当量化启用门，M7 rest 也不能直接换算为回收量。
+
+### 7.4 健康、完整性与清理
+
+| 项 | 结果 | 判定 |
+|---|---:|---|
+| 正式 controller | RC=0；T1′ 5/5，应用 5/5，E4′ 1/1 | PASS |
+| 拉回完整性 | manifest 68 件；missing/bad/extra = 0/0/0 | PASS |
+| stability-monitor livedump | 0 → 0 | PASS，无新增告警需归因 |
+| dmesg | 前后逐字节一致 | PASS，零新增 OOM/LMK/segfault |
+| zram original/compressed/used Δ | 0 / 0 / 0 | PASS |
+| 正式格 majflt Δ | T1′ 5 格及 E4′ 均为 0 | PASS |
+| 最终 governor | 4/4 `schedutil` | PASS |
+| gdb 六包/目录/进程 | 6/6 absent；轮次目录与父目录 absent；进程 0 | PASS |
+
+详细收尾记录见
+[`run_record.txt`](../data/raw/tizen_native_evidence_20260905/run_record.txt)。gdb 卸载事务本身
+返回 0，随后逐包复核为 6/6 absent；原卸载辅助脚本因“全部不存在”循环最后一个预期非零退出码
+误报 `FAIL_GDB_REMOVE_VERIFY`，独立复核后确认是 host 判定缺陷，并已在本轮 harness
+中补显式成功返回。安装前预算读取另有一处 `$4` 转义缺陷，失败发生在任何推送/安装前，
+同样已修复并纳入 host 测试；两条原始失败记录保留在本地完整原始件。
+
+## 8. B2 结论、边界与复现（2026-09-05）
+
+1. **T1 数量缺口闭合。** 重新冻结的官方工具构造完成 `5/5` 注入，持续解码、自然退出、
+   buffer 增长与双口径回收均有证据；不再用上一轮 `1/5` 外推稳定性。
+2. **E4 覆盖缺口闭合。** 可验证存活的原生应用完成 `5/5` 启停，随后 E4′ 得到可解析 M7
+   与 `36 KiB` 双口径回收；这不把 UI 活动与回收量建立因果或产品收益关系。
+3. **新计时器合规，旧偏差保留。** T1′ 四个跨格间隔均为 `≥120.000 s`，证明高精度等待
+   生效；未重跑的 E1–E3 仍按旧报告的 protocol deviation 解释。
+4. **“驻留量不等于可回收量”进一步成立。** E4′ rest 为 `6019572 B`，实测回收仅
+   `36 KiB`；直方图估算也没有量化预测能力。产品门仍需实际 A/B 与代价预算。
+5. **主张边界不变。** 不声称产品收益、不换算业务指标；原生进程的 gdb/ptrace 时间不是
+   hook 代价；“本次未崩溃/未重启”不外推长期可靠性。
+
+本次 harness 位于
+[`tools/runners/tizen_native_evidence_20260905/`](../tools/runners/tizen_native_evidence_20260905/)，
+冻结参数以 [`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260905/preregistered_contract.json)
+为唯一事实源。host 复算：
+
+```sh
+python3 tools/runners/tizen_native_evidence_20260905/test_host.py
+python3 tools/analysis/test_trimmable_estimator.py
+python3 tools/runners/tizen_native_evidence_20260905/analyze_b2.py \
+  --pull <local-complete-board-pull> \
+  --idle-log <local-idle-60s-raw-log> \
+  --output /tmp/tizen-native-b2
+```
+
+- **确定性/有效性项：** 精确身份/环境/资产与 contract SHA；T1′/应用/E4′ 完成数；
+  JSON/TSV/XML 可解析；PID/starttime 稳定；`memps` 与项目 heap 前后逐值一致；buffer
+  严格增长；注入间隔 `≥120000000000 ns`；majflt、zram 三项、dmesg 新增 OOM/LMK、
+  stability livedump 均为 0；退出、governor、包、目录、进程清理通过。
+- **容差/观察项：** 原生进程回收 KiB、M7 值与含 ptrace 注入时延不设跨运行容差，原样
+  报告；不套用 S4 合成负载验收带。估算器在同一 XML/页大小下应逐字节复算，但不得用
+  它判定板端回收 PASS/FAIL。

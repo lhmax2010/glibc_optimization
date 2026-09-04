@@ -67,8 +67,13 @@ class DemoReportTests(unittest.TestCase):
                 "&lt;TEST_IMAGE_B&gt;/glibc-2.40-2.8",
                 "272 / 4 / 4 KiB",
                 "5.84 MiB rest",
-                "60.100233983 s",
                 "119.806876910/119.856460299 s",
+                "8 / 16 / 16 / 20 / 16 KiB",
+                "120.122271759–120.142672892 s",
+                "6019572 B",
+                "3324 → 3288 KiB",
+                "2200–7976 KiB",
+                "15/15",
             ):
                 self.assertIn(expected, document)
 
@@ -133,6 +138,8 @@ class DemoReportTests(unittest.TestCase):
         for path in surfaces:
             document = path.read_text(encoding="utf-8")
             for expected in ("5.84 MiB", "272", "4", "1/5", "0/1", "119.806876910", "119.856460299"):
+                self.assertIn(expected, document, path.name)
+            for expected in ("5/5", "6019572", "36 KiB", "120.122271759", "15/15"):
                 self.assertIn(expected, document, path.name)
 
     def test_gbs_delivery_surfaces_share_status_and_manifest(self) -> None:

@@ -34,6 +34,14 @@
 - `malloc_info` 不导出 tcache 驻留；M7 阴性不等于 allocator 内绝对没有空闲字节，但在
   当前保守合同下仍按“不启用”处理。
 
+> **2026-09-05 量化追注：** `<size from/to>` 整页容量估算在 15 个可配对观测上
+> `15/15` 未覆盖实测，且 enlightenment E1 为高估、S4 全部格为低估，不能建立稳定的
+> 阈值或修正系数。详见 [`trimmable_estimator_20260905.md`](trimmable_estimator_20260905.md)
+> 与 [`validation.tsv`](../data/raw/trimmable_estimator_20260905/validation.tsv)。因此门 B
+> 改写为：M7 只确认“存在与相位一致的 allocator 空闲驻留”；量化启用必须另有同目标、
+> 同相位的实际 trim A/B 校准并通过门 C。估算器只作离线诊断，不得把 rest、unsorted
+> 或几何整页区间直接当可回收量，也不设置产品阈值。
+
 ### 门 C：代价预算
 
 - 调用耗时：S4 合成代理两档中位约为 `1.2 ms`

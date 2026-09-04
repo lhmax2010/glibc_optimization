@@ -24,7 +24,7 @@ results, not a product-memory-benefit promise.
 | Instant-release anchors | mixed `52.794499% ±4.304705 pp`, medium-only `50.669791% ±4.918088 pp`; each combines `n=8`, denominator is pre-trim heap | [HTML summary](docs/demo_report.html#summary) | [`decision.json`](data/raw/a_anchor_replication_20260904/decision.json), [`a_cells.tsv`](data/raw/a_anchor_replication_20260904/a_cells.tsv) |
 | Gated valley trim vs none | `80.18%–85.45%` of released payload; median call mixed `1.233269 ms` / medium-only `1.218361 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` vs none dispersion `6.784167 ms`: margin `0.555556 ms`, 91.8% of threshold, `REPORT_ONLY` not visible; the same p50 rule is visible (`+1.870462` vs `0.173927 ms`); `+359 minflt/cycle` | [Real concurrency](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json), [`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
-| Tizen native cross-witness | enlightenment M7 showed about `5.84 MiB` rest; project heap PD and Tizen `memps` both observed `272/4/4 KiB` reclaim. Completion limits: gst `1/5`, UI release-phase `0/1`, and two intervals just below 120 s | [Native process evidence](docs/demo_report.html#native) | [`cells_derived.tsv`](data/raw/tizen_native_evidence_20260904/cells_derived.tsv), [`summary.json`](data/raw/tizen_native_evidence_20260904/summary.json) |
+| Tizen native cross-witness | Historical enlightenment cells: about `5.84 MiB` rest and `272/4/4 KiB` reclaim. B2: official gst `5/5`, reclaim `8/16/16/20/16 KiB`; five verified UI cycles then E4′ rest `6019572 B`, reclaim `36 KiB`. Project heap PD and Tizen `memps` match exactly | [Native process evidence](docs/demo_report.html#native) | [`B2 cells`](data/raw/tizen_native_evidence_20260905/cells_derived.tsv), [`B2 summary`](data/raw/tizen_native_evidence_20260905/summary.json), [`historical summary`](data/raw/tizen_native_evidence_20260904/summary.json) |
 
 The batch release reference `48.9% / 1.36 MiB × 8 processes` comes from
 `<TEST_IMAGE_B>` / `glibc-2.40-2.8`; it is a compatibility comparison, not part of
@@ -115,10 +115,15 @@ is not proven.
 - Synthetic evidence lacks product-candidate M7 live/bin separation, product
   latency, and direct all-arena lock-stall measurement while peers allocate.
 - gst trim runs after NULL; it is not injected into a hot allocation phase.
-- The Tizen-native matrix is not a full success: only one of five gst cells and
-  none of the UI release-phase cell completed, while the three enlightenment
-  observations have two `119.806876910/119.856460299 s` intervals below the
-  preregistered 120 seconds. Cite only the completed measurements.
+- B2 completed a newly preregistered official-gst `5/5` sequence and a five-cycle
+  native-UI activity E4′ cell; its four injection intervals are
+  `120.122271759–120.142672892 s`. Historical T1 `1/5`, UI `0/1`, and the old
+  `119.806876910/119.856460299 s` E1–E3 deviations remain on record and are not
+  retroactively passed.
+- M7 retention is not reclaim capacity. The `<size>` estimator missed all `15/15`
+  paired validation cells and estimated `2200–7976 KiB` for the `36 KiB` E4′
+  reclaim. It is diagnostic only, not a quantitative enablement threshold; see
+  the [estimator report](docs/trimmable_estimator_20260905.md).
 - “p99 cost not detected” does not mean zero cost. If another board reports visible,
   preserve all repeats and report its margin; direction remains `REPORT_ONLY`.
 - Product enablement remains closed pending anti-signal exclusion, M7 retention
