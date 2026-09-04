@@ -1,0 +1,60 @@
+{
+  "schema": "glibc-memopt.a-anchor-replication.v1",
+  "effective_date": "2026-09-04",
+  "range_threshold_pp": 1.5,
+  "existing_half_width_pp": 4.0,
+  "order": [
+    {"order": 1, "elf": "frozen", "profile": "mixed", "rep": 1},
+    {"order": 2, "elf": "gbs", "profile": "mixed", "rep": 1},
+    {"order": 3, "elf": "frozen", "profile": "medium-only", "rep": 1},
+    {"order": 4, "elf": "gbs", "profile": "medium-only", "rep": 1},
+    {"order": 5, "elf": "frozen", "profile": "mixed", "rep": 2},
+    {"order": 6, "elf": "gbs", "profile": "mixed", "rep": 2},
+    {"order": 7, "elf": "frozen", "profile": "medium-only", "rep": 2},
+    {"order": 8, "elf": "gbs", "profile": "medium-only", "rep": 2},
+    {"order": 9, "elf": "frozen", "profile": "mixed", "rep": 3},
+    {"order": 10, "elf": "gbs", "profile": "mixed", "rep": 3},
+    {"order": 11, "elf": "frozen", "profile": "medium-only", "rep": 3},
+    {"order": 12, "elf": "gbs", "profile": "medium-only", "rep": 3}
+  ],
+  "prior_observations_pct": {
+    "frozen": {"mixed": 51.074077, "medium-only": 50.387886},
+    "gbs": {"mixed": 55.243785, "medium-only": 50.535918}
+  },
+  "stability_monitor": {
+    "version": 2,
+    "policy_name": "known-alert waiver",
+    "unregistered_attributable_alert": "FAIL",
+    "unattributed_or_foreign_alert": "REPORT_ONLY",
+    "expected_alerts": [
+      {
+        "id": "a2-alloc-bench-cpu-relative",
+        "workload": "A anchor 12-cell replication",
+        "binary_basename": "alloc_bench.armv7l",
+        "executable_prefix": "/opt/usr/glibc_memopt/a_anchor_replication_20260904/",
+        "trigger_reason_contains": "cpu.relative",
+        "registered_windows": [
+          "01_frozen_mixed_rep1",
+          "02_gbs_mixed_rep1",
+          "03_frozen_medium-only_rep1",
+          "04_gbs_medium-only_rep1",
+          "05_frozen_mixed_rep2",
+          "06_gbs_mixed_rep2",
+          "07_frozen_medium-only_rep2",
+          "08_gbs_medium-only_rep2",
+          "09_frozen_mixed_rep3",
+          "10_gbs_mixed_rep3",
+          "11_frozen_medium-only_rep3",
+          "12_gbs_medium-only_rep3"
+        ],
+        "max_count_per_window": 1,
+        "max_count_total": 12,
+        "classification": "known-alert waiver",
+        "root_cause_status": "trigger reason and window are reproducible; root cause is not proven",
+        "required_disposition": ["record", "archive", "clean", "post-cleanup-recheck"],
+        "verdict_when_matched": "EXPECTED",
+        "verdict_when_not_observed": "REGISTERED/NOT-EVALUATED"
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "glibc-memopt-gbs-build.v1",
+  "source_commit": "20ab8c80d7b357254542dd841212ed8d7e7085c8",
+  "command": "gbs -c config/gbs_llvm.conf build -A armv7l --overwrite",
+  "config": "config/gbs_llvm.conf",
+  "repositories": {
+    "base": "tizen-base-toolchain_20260813.050338",
+    "unified": "tizen-unified-toolchain_20260814.092727"
+  },
+  "buildroot_packages": {
+    "clang": "22.1.8-1.6.armv7l",
+    "llvm": "22.1.8-1.6.armv7l",
+    "gcc": "14.2.0-1.6.armv7l",
+    "glibc": "2.40-1.6.armv7l",
+    "glibc-devel": "2.40-1.6.armv7l",
+    "glib2-devel": "2.80.5-0.armv7l",
+    "gstreamer-devel": "1.24.11-38.armv7l"
+  },
+  "rpm": {
+    "nvr": "glibc-memopt-tools-1.0.0-1",
+    "arch": "armv7l",
+    "size_bytes": 32956,
+    "sha256": "efad4a0d202785f8c201977fd8aef35752af1bddde163f1063151621e0ac4e0e",
+    "sha256_scope": "observed host build record; archive metadata is not a reproducibility gate",
+    "sourcepkgid": "2a9189261858c2f8b6fa557c3177a197",
+    "payload_digest": "b42eb35e8a68b5be915bc74c47d67d726e5323981da9e1f6f68c5cb7899c79a5"
+  },
+  "elf_sha256": {
+    "alloc_bench": "88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa",
+    "gst_loop_decode": "7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034",
+    "reclaim_probe": "e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31"
+  },
+  "board_rebaseline": "pending"
+}

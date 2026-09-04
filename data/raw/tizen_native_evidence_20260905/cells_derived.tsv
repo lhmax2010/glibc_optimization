@@ -1,0 +1,7 @@
+group	cell	pid	starttime_ticks	project_pre_kb	project_post_kb	memps_pre_heap_kb	memps_post_heap_kb	memps_exact_match	reclaimed_kb	trim_return	injection_ms	minflt_delta	majflt_delta	buffers_pre	buffers_post	process_exit_code	error_lines
+T1	T1_1	32472	60436550	1360	1352	1360	1352	true	8	1	1047.252480	2	0	902	997	0	0
+T1	T1_2	829	60448565	1368	1352	1368	1352	true	16	1	1062.385152	3	0	902	997	0	0
+T1	T1_3	1588	60460579	1368	1352	1368	1352	true	16	1	1041.132032	2	0	902	997	0	0
+T1	T1_4	2251	60472593	1368	1348	1368	1348	true	20	1	1025.379072	3	0	903	997	0	0
+T1	T1_5	2899	60484608	1364	1348	1364	1348	true	16	1	1016.830208	1	0	902	997	0	0
+E4	E4_PRIME	505	1468	3324	3288	3324	3288	true	36	1	1707.005696	0	0	NA	NA	NA	NA

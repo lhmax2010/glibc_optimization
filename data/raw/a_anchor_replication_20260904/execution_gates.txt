@@ -1,0 +1,33 @@
+board=<TEST_BOARD_IP>
+run_start=2026-09-04T12:01:16,416487971+0900
+run_end=2026-09-04T12:09:29,368703418+0900
+uname_r=6.12.80-arm-rpi4-v7l RC=0 DONE_UNAME_R
+uname_m=armv7l RC=0 DONE_UNAME_M
+BUILD_ID=tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l RC=0 DONE_OS_RELEASE
+glibc=glibc-2.40-1.6.armv7l RC=0 DONE_GLIBC_RPM
+MemTotal_kB=8117408 RC=0 DONE_MEMTOTAL
+uid=0 RC=0 DONE_ROOT_UID
+frozen_sha256=dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd
+gbs_sha256=88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa
+cells_done=12/12
+bench_exit_zero=12/12
+sampler_exit_zero=12/12
+external_samples_per_cell=41
+stability_before=0
+stability_after=12
+stability_expected=12
+stability_per_window=1/1
+stability_archived=12/12
+stability_cleanup_present=0
+dmesg_increment_lines=0
+oom_lmk_matches=0
+zram_original_data_size_delta=0
+zram_compressed_data_size_delta=0
+zram_mem_used_total_delta=0
+trim_majflt_max=0
+refault_majflt_max=0
+reclaimed_4k_aligned=12/12
+governor_final=schedutil 4/4 RC=0 DONE_GOVERNOR_FINAL
+workdir_final=ABSENT RC=0 DONE_FINAL_FIELD_AUDIT
+processes_final=0 RC=0 DONE_FINAL_FIELD_AUDIT
+livedumps_final=0 RC=0 DONE_FINAL_FIELD_AUDIT

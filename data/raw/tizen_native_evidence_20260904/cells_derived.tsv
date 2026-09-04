@@ -1,0 +1,5 @@
+group	cell	pid	project_pre_kb	project_post_kb	project_reclaimed_kb	memps_pre_heap_kb	memps_post_heap_kb	memps_reclaimed_kb	trim_ret	injection_ms	minflt_delta	majflt_delta	m7_arenas	m7_fast_bytes	m7_rest_bytes	m7_unsorted_bytes	buffers_pre	buffers_post
+T1	T1_1	11291	1372	1360	12	1372	1360	12	1	1154.652672	4	0					903	941
+T2	T2_E1	505	3472	3200	272	3472	3200	272	1	1697.762304	0	0	8	1448	6118675	0	NA	NA
+T2	T2_E2	505	3204	3200	4	3204	3200	4	1	1771.618048	0	0	8	1312	6118694	0	NA	NA
+T2	T2_E3	505	3204	3200	4	3204	3200	4	1	1732.586752	0	0	8	1048	6118706	0	NA	NA

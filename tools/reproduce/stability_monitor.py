@@ -38,7 +38,12 @@ def new_paths(before: Path, after: Path) -> list[str]:
 
 
 def zip_member(archive: zipfile.ZipFile, basename: str) -> str:
-    matches = [name for name in archive.namelist() if PurePosixPath(name).name == basename]
+    matches = [
+        name
+        for name in archive.namelist()
+        if PurePosixPath(name).name == basename
+        or PurePosixPath(name).name.endswith(f".{basename}")
+    ]
     if len(matches) != 1:
         raise ValueError(f"expected one {basename} in {archive.filename}, got {matches}")
     return matches[0]
@@ -74,6 +79,11 @@ def pid_windows(pull: Path | None, workload: str) -> dict[int, str]:
         if cells.is_dir():
             for path in cells.glob("*/pid.txt"):
                 mapping[int(path.read_text().strip())] = f"gst/{path.parent.name}"
+    elif workload == "a-anchor":
+        cells = pull / "cells"
+        if cells.is_dir():
+            for path in cells.glob("*/pid.txt"):
+                mapping[int(path.read_text().strip())] = path.parent.name
     return mapping
 
 
@@ -96,13 +106,14 @@ def classify(args: argparse.Namespace) -> int:
         window = windows.get(pid, "unmapped")
         binary = PurePosixPath(executable).name if executable else ""
         expected_shape = (
-            args.workload == "s4"
+            args.workload in ("s4", "a-anchor")
             and archived
             and binary == registration["binary_basename"]
             and registration["trigger_reason_contains"] in reason
             and window in registration["registered_windows"]
         )
-        attributable = bool(pid in windows or executable.startswith(f"/opt/usr/glibc_memopt/{args.workload}"))
+        executable_prefix = registration.get("executable_prefix", f"/opt/usr/glibc_memopt/{args.workload}")
+        attributable = bool(pid in windows or executable.startswith(executable_prefix))
         item = {
             "remote_path": remote,
             "size": int(after_rows[remote]["size"]),
@@ -119,7 +130,15 @@ def classify(args: argparse.Namespace) -> int:
         if expected_shape:
             expected_candidates.append(item)
 
-    over_limit = len(expected_candidates) > int(registration["max_count_total"])
+    per_window_limit = int(registration.get("max_count_per_window", registration["max_count_total"]))
+    expected_by_window = {
+        window: sum(item["window"] == window for item in expected_candidates)
+        for window in {item["window"] for item in expected_candidates}
+    }
+    over_limit = (
+        len(expected_candidates) > int(registration["max_count_total"])
+        or any(count > per_window_limit for count in expected_by_window.values())
+    )
     clean_paths = []
     for item in alerts:
         if item["expected_shape"] and not over_limit:
@@ -135,7 +154,12 @@ def classify(args: argparse.Namespace) -> int:
             clean_paths.append(item["remote_path"])
         elif item["expected_shape"] and over_limit:
             item["verdict"] = "FAIL"
-            item["explanation"] = f"expected-alert count {len(expected_candidates)} exceeds registered maximum {registration['max_count_total']}"
+            item["explanation"] = (
+                f"expected-alert count exceeds registered maximum: total={len(expected_candidates)}/"
+                f"{registration['max_count_total']} per_window={expected_by_window.get(item['window'], 0)}/"
+                f"{per_window_limit}"
+            )
+            clean_paths.append(item["remote_path"])
         elif item["attributable"]:
             item["verdict"] = "FAIL"
             item["explanation"] = "attributable alert is not covered by preregistration"
@@ -181,7 +205,7 @@ def main() -> int:
     classify_parser.add_argument("--post-clean", type=Path)
     classify_parser.add_argument("--archive-dir", required=True, type=Path)
     classify_parser.add_argument("--pull", type=Path)
-    classify_parser.add_argument("--workload", required=True, choices=("s4", "gst"))
+    classify_parser.add_argument("--workload", required=True, choices=("s4", "gst", "a-anchor"))
     classify_parser.add_argument("--bands", required=True, type=Path)
     classify_parser.add_argument("--output", required=True, type=Path)
     classify_parser.add_argument("--clean-list", type=Path)

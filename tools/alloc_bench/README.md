@@ -29,7 +29,7 @@ The ARM target always builds through `.build/armv7l/` and adds
 `-fdebug-prefix-map=$(CURDIR)=.` so checkout paths do not enter DWARF. The Demo
 delivery records the resulting canonical SHA separately from the older frozen
 artifact SHA in [`../reproduce/deliverables_manifest.json`](../reproduce/deliverables_manifest.json).
-Use `python3 tools/reproduce/test_reproducible_build_paths.py` from the repository
+Use `python3 tools/reproduce/check_reproducible_build_paths.py` from the repository
 root to require two different checkout paths to produce the same manifest SHA.
 
 ## CLI

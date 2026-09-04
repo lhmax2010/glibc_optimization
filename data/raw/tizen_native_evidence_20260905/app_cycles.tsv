@@ -1,0 +1,6 @@
+cycle	app_id	pid	starttime_ticks	launch_rc	alive_check_ns	alive_after_30s	terminate_rc	absent_after_2s
+1	setting-myaccount-efl	3280	60490632	0	1788504778789836898	true	0	true
+2	setting-myaccount-efl	3469	60493862	0	1788504811089837304	true	0	true
+3	setting-myaccount-efl	3665	60497091	0	1788504843385037544	true	0	true
+4	setting-myaccount-efl	3862	60500321	0	1788504875679030118	true	0	true
+5	setting-myaccount-efl	4047	60503552	0	1788504908053493487	true	0	true

@@ -1,6 +1,7 @@
 {
-  "schema": "glibc-memopt-demo.acceptance.v3",
-  "effective_date": "2026-09-03",
+  "schema": "glibc-memopt-demo.acceptance.v4",
+  "effective_date": "2026-09-04",
+  "change_reason": "Preregistered A-anchor H-V selected after four within-path ranges exceeded 1.5 pp and both frozen/GBS profile distributions overlapped; only the A-anchor reclaim bands changed.",
   "deterministic_items": {
     "released_payload_bytes": {
       "comparison": "byte-exact",
@@ -57,9 +58,20 @@
   },
   "tolerance_bands": {
     "s4_a_anchor_reclaim_pct": {
-      "center_pct": 49.0,
-      "plus_minus_pp": 4.0,
-      "unit": "one frozen anchor cell per profile"
+      "center_pct_by_profile": {
+        "medium-only": 50.669791,
+        "mixed": 52.794499
+      },
+      "plus_minus_pp_by_profile": {
+        "medium-only": 4.918088,
+        "mixed": 4.304705
+      },
+      "artifacts": ["frozen", "gbs"],
+      "observations_per_profile": 8,
+      "aggregation": "median of the combined frozen and GBS observations, separately per profile",
+      "anchoring": "preregistered H-V decision: max(4 pp, combined observed range)",
+      "source": "data/raw/a_anchor_replication_20260904/decision.json",
+      "unit": "profile"
     },
     "s4_b_reclaim_pct_repeat_median": {
       "center_pct_by_profile": {

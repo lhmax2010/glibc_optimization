@@ -1,0 +1,43 @@
+{
+  "schema": "glibc-memopt.tizen-native-evidence.health.v1",
+  "identity": {
+    "kernel": "6.12.80-arm-rpi4-v7l",
+    "arch": "armv7l",
+    "build_id": "tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l",
+    "glibc_nvr": "glibc-2.40-1.6.armv7l",
+    "mem_total_kb": 8117408
+  },
+  "enlightenment": {
+    "pid": 505,
+    "starttime_ticks": 1468,
+    "stable_across_completed_cells": true,
+    "idle_baseline_samples": 60,
+    "idle_glibc_heap_pd_min_kb": 3472,
+    "idle_glibc_heap_pd_max_kb": 3472
+  },
+  "formal_window": {
+    "stability_monitor_new_alerts": 0,
+    "dmesg_normalized_before_after_equal": true,
+    "dmesg_oom_lmk_new_matches": 0,
+    "zram_original_data_size_delta": 0,
+    "zram_compressed_data_size_delta": 0,
+    "zram_mem_used_total_delta": 0,
+    "governor_final_schedutil_cores": 4,
+    "workdir_absent_after_cleanup": true,
+    "round_processes_after_cleanup": 0
+  },
+  "installed_then_removed_packages": [
+    {"nvr": "gdb-16.3-1.1.armv7l", "installed_size_bytes": 6686215},
+    {"nvr": "python3-3.14.2-1.5.armv7l", "installed_size_bytes": 3480703},
+    {"nvr": "python3-base-3.14.2-1.6.armv7l", "installed_size_bytes": 39102845},
+    {"nvr": "libpython3_141_0-3.14.2-1.6.armv7l", "installed_size_bytes": 3512680},
+    {"nvr": "libgmp-4.2.1-1.6.armv7l", "installed_size_bytes": 188360},
+    {"nvr": "gdbm-1.8.3-1.7.armv7l", "installed_size_bytes": 39876}
+  ],
+  "root_available_bytes": {
+    "before_install": 1832374272,
+    "after_install": 1774624768,
+    "after_remove_and_cleanup": 1832058880,
+    "minimum_budget_bytes": 1288490189
+  }
+}

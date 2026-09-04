@@ -1,0 +1,124 @@
+{
+  "arenas": [
+    {
+      "arena": 0,
+      "chunk_count": 269,
+      "excluded_unsorted": {
+        "chunk_count": 0,
+        "histogram_total_bytes": 0,
+        "lower_bytes": 0,
+        "upper_bytes": 0
+      },
+      "histogram_total_bytes": 5287133,
+      "lower_bytes": 2240512,
+      "upper_bytes": 8151040
+    },
+    {
+      "arena": 1,
+      "chunk_count": 17,
+      "excluded_unsorted": {
+        "chunk_count": 1,
+        "histogram_total_bytes": 505,
+        "lower_bytes": 0,
+        "upper_bytes": 0
+      },
+      "histogram_total_bytes": 1158,
+      "lower_bytes": 0,
+      "upper_bytes": 0
+    },
+    {
+      "arena": 2,
+      "chunk_count": 0,
+      "excluded_unsorted": {
+        "chunk_count": 1,
+        "histogram_total_bytes": 57,
+        "lower_bytes": 0,
+        "upper_bytes": 0
+      },
+      "histogram_total_bytes": 0,
+      "lower_bytes": 0,
+      "upper_bytes": 0
+    },
+    {
+      "arena": 3,
+      "chunk_count": 29,
+      "excluded_unsorted": {
+        "chunk_count": 4,
+        "histogram_total_bytes": 324,
+        "lower_bytes": 0,
+        "upper_bytes": 0
+      },
+      "histogram_total_bytes": 794,
+      "lower_bytes": 0,
+      "upper_bytes": 0
+    },
+    {
+      "arena": 4,
+      "chunk_count": 0,
+      "excluded_unsorted": {
+        "chunk_count": 0,
+        "histogram_total_bytes": 0,
+        "lower_bytes": 0,
+        "upper_bytes": 0
+      },
+      "histogram_total_bytes": 0,
+      "lower_bytes": 0,
+      "upper_bytes": 0
+    },
+    {
+      "arena": 5,
+      "chunk_count": 0,
+      "excluded_unsorted": {
+        "chunk_count": 2,
+        "histogram_total_bytes": 9914,
+        "lower_bytes": 0,
+        "upper_bytes": 16384
+      },
+      "histogram_total_bytes": 0,
+      "lower_bytes": 0,
+      "upper_bytes": 0
+    },
+    {
+      "arena": 6,
+      "chunk_count": 0,
+      "excluded_unsorted": {
+        "chunk_count": 0,
+        "histogram_total_bytes": 0,
+        "lower_bytes": 0,
+        "upper_bytes": 0
+      },
+      "histogram_total_bytes": 0,
+      "lower_bytes": 0,
+      "upper_bytes": 0
+    },
+    {
+      "arena": 7,
+      "chunk_count": 24,
+      "excluded_unsorted": {
+        "chunk_count": 2,
+        "histogram_total_bytes": 202,
+        "lower_bytes": 0,
+        "upper_bytes": 0
+      },
+      "histogram_total_bytes": 17757,
+      "lower_bytes": 12288,
+      "upper_bytes": 16384
+    }
+  ],
+  "excluded_unsorted": {
+    "chunk_count": 10,
+    "histogram_total_bytes": 11002,
+    "lower_bytes": 0,
+    "upper_bytes": 16384
+  },
+  "method": "size-buckets/from-to/worst-best-alignment",
+  "page_size": 4096,
+  "schema": "glibc-memopt.trimmable-estimate.v1",
+  "source": "malloc_info_E4_PRIME.xml",
+  "total": {
+    "chunk_count": 339,
+    "histogram_total_bytes": 5306842,
+    "lower_bytes": 2252800,
+    "upper_bytes": 8167424
+  }
+}

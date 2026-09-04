@@ -7,9 +7,9 @@ probe="$work/reclaim_probe.armv7l"
 media="$work/small_320x240.mp4"
 sampler="$work/sample_smaps_1s.sh"
 control="$work/controller.log"
-expected_bench_sha=204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6
-expected_probe_sha=3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7
-expected_media_sha=3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d
+expected_bench_sha=${EXPECTED_GST_SHA:-}
+expected_probe_sha=${EXPECTED_RECLAIM_SHA:-}
+expected_media_sha=${EXPECTED_MEDIA_SHA:-}
 cycles=51
 play_seconds=20
 null_seconds=1
@@ -18,6 +18,18 @@ governor_changed=0
 after_captured=0
 bench_pid=
 sampler_pid=
+
+for contract in "$expected_bench_sha" "$expected_probe_sha" "$expected_media_sha"; do
+    case "$contract" in
+        ''|*[!0-9a-f]*) echo "expected asset SHA must be lowercase SHA-256" >&2; exit 2;;
+    esac
+    [ "${#contract}" -eq 64 ] || { echo "expected asset SHA must contain 64 hex digits" >&2; exit 2; }
+done
+if [ "${1:-}" = --sha-contract-only ]; then
+    printf 'SHA_CONTRACT gst_loop_decode.armv7l=%s reclaim_probe.armv7l=%s small_320x240.mp4=%s\n' \
+      "$expected_bench_sha" "$expected_probe_sha" "$expected_media_sha"
+    exit 0
+fi
 
 : >"$control" || exit 2
 

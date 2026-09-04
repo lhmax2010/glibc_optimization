@@ -1,0 +1,51 @@
+{
+  "schema": "glibc-memopt.tizen-native-evidence.v1",
+  "preregistered_before_formal_cells": true,
+  "source_main": "840b9572ac8ce75b9615141fbdf46b098cd035d4",
+  "board": {
+    "kernel_contains": "rpi4",
+    "arch": "armv7l",
+    "build_id": "tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l",
+    "glibc_nvr": "glibc-2.40-1.6.armv7l",
+    "mem_total_kb": 8117408,
+    "remote_workdir": "/opt/usr/glibc_memopt/tizen_native_evidence_20260904"
+  },
+  "t1": {
+    "asset": "small_320x240.mp4",
+    "asset_sha256": "3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d",
+    "pipeline": [
+      "gst-launch-1.0", "-v", "multifilesrc",
+      "location=/opt/usr/glibc_memopt/tizen_native_evidence_20260904/small_320x240.mp4",
+      "start-index=0", "stop-index=0", "loop=true", "!", "decodebin", "!",
+      "identity", "name=counter", "silent=false", "!", "fakesink", "sync=true"
+    ],
+    "steady_seconds": 30,
+    "trim_repetitions": 5,
+    "minimum_trim_start_interval_seconds": 60,
+    "trim_elapsed_scope": "gdb attach/ptrace/symbol/call/detach; not hook cost"
+  },
+  "t2": {
+    "process_exe": "/usr/bin/enlightenment",
+    "baseline_repetitions": 3,
+    "minimum_trim_start_interval_seconds": 120,
+    "malloc_info_before_each_trim": true,
+    "release_phase_app_id": "attach-panel-gallery",
+    "release_phase_cycles": 5,
+    "app_hold_seconds": 5,
+    "post_terminate_seconds": 5,
+    "release_phase_repetitions": 1
+  },
+  "health": {
+    "governor_during_run": "performance",
+    "governor_after_run": "schedutil",
+    "stability_alert_waiver": false,
+    "oom_lmk_max_matches": 0,
+    "require_target_pid_and_starttime_stable": true
+  },
+  "claim_boundary": [
+    "reclaimed_kib",
+    "m7_residency",
+    "no_crash_or_restart_observation",
+    "memps_directional_cross_witness"
+  ]
+}

@@ -10,9 +10,11 @@ usage()
 usage:
   bash tools/reproduce/reproduce.sh [verify]
   bash tools/reproduce/reproduce.sh board --ip <address> [--output <host-dir>] [--artifact-dir <dir>]
+       [--artifact-source frozen|reproducible|gbs]
 
 verify is host-only and is the default. board performs the complete S4 + gst L2
-workflow and requires the frozen ARM/media artifact bundle or documented build roots.
+workflow and requires the GBS (preferred) or frozen ARM/media bundle, or documented
+build roots.
 EOF
 }
 
@@ -43,7 +45,12 @@ check()
     shift
     log="$tmp/$(printf '%s' "$label" | tr -c 'A-Za-z0-9._-' '_').log"
     if "$@" >"$log" 2>&1; then
-        printf 'PASS\t%s\n' "$label"
+        if grep -Eq '^SKIPPED[[:space:]]' "$log"; then
+            grep -E '^SKIPPED[[:space:]]' "$log"
+        else
+            printf 'PASS\t%s\n' "$label"
+            grep -E '^REPORT_ONLY[[:space:]]' "$log" || true
+        fi
     else
         rc=$?
         printf 'FAIL\t%s\tRC=%s\n' "$label" "$rc"
@@ -66,9 +73,27 @@ clean_environment()
     head=$(git -C "$repo" rev-parse HEAD 2>/dev/null) || { printf 'cannot resolve HEAD\n' >&2; return 1; }
     if [ -n "${REPRODUCE_EXPECTED_SHA:-}" ]; then
         expected=$(git -C "$repo" rev-parse "${REPRODUCE_EXPECTED_SHA}^{commit}" 2>/dev/null) || { printf 'cannot resolve REPRODUCE_EXPECTED_SHA=%s\n' "$REPRODUCE_EXPECTED_SHA" >&2; return 1; }
+        identity_mode=required
+        reference=$REPRODUCE_EXPECTED_SHA
     else
         branch=$(git -C "$repo" branch --show-current 2>/dev/null)
-        reference=$(python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); print(p["branch_refs"].get(sys.argv[2],p["default_ref"]))' "$repo/tools/reproduce/delivery_refs.json" "$branch") || { printf 'cannot read delivery reference\n' >&2; return 1; }
+        identity=$(python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); r=p["branch_refs"].get(sys.argv[2],p["default"]); print(r["mode"]+"\t"+r["ref"])' "$repo/tools/reproduce/delivery_refs.json" "$branch") || { printf 'cannot read delivery reference\n' >&2; return 1; }
+        identity_mode=${identity%%	*}
+        reference=${identity#*	}
+    fi
+    if [ "$identity_mode" = report_only ]; then
+        if expected=$(git -C "$repo" rev-parse "${reference}^{commit}" 2>/dev/null); then
+            if [ "$head" = "$expected" ]; then
+                printf 'REPORT_ONLY\tdelivery-identity\tthis branch is not the delivery snapshot; checkout %s for required verification\n' "$reference"
+            else
+                printf 'REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; checkout %s (HEAD=%s, delivery=%s)\n' "$reference" "$head" "$expected"
+            fi
+        else
+            printf 'REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; checkout %s (reference unavailable in this clone)\n' "$reference"
+        fi
+        return 0
+    fi
+    if [ -z "${REPRODUCE_EXPECTED_SHA:-}" ]; then
         expected=$(git -C "$repo" rev-parse "${reference}^{commit}" 2>/dev/null) || { printf 'cannot resolve recorded delivery ref %s\n' "$reference" >&2; return 1; }
     fi
     [ "$head" = "$expected" ] || { printf 'HEAD %s does not equal delivery SHA %s\n' "$head" "$expected" >&2; return 1; }
@@ -124,14 +149,33 @@ s4_replay()
     cmp "$tmp/s4/acceptance_input.json" "$repo/data/raw/s4_retention_20260901/acceptance_input.json"
 }
 
+a_anchor_replay()
+{
+    out="$tmp/a-anchor"
+    python3 "$repo/tools/runners/a_anchor_replication_20260904/analyze_a_anchor.py" \
+      --replay "$repo/data/raw/a_anchor_replication_20260904/a_cells.tsv" --output "$out" || return 1
+    cmp "$out/group_summary.tsv" "$repo/data/raw/a_anchor_replication_20260904/group_summary.tsv" || return 1
+    cmp "$out/decision.json" "$repo/data/raw/a_anchor_replication_20260904/decision.json"
+}
+
 gst_replay()
 {
     out="$tmp/gst"
     python3 "$repo/tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py" \
       --replay-cycles "$repo/data/raw/gst_trim_cost_20260901/cycles.tsv" --output "$out" || return 1
+    cp "$repo/data/raw/gst_trim_cost_20260901/cycles.tsv" "$out/cycles.tsv" || return 1
+    cp "$repo/data/raw/gst_trim_cost_20260901/health.json" "$out/health.json" || return 1
     for name in repetitions.tsv arm_summary.tsv comparison.json; do
         cmp "$out/$name" "$repo/data/raw/gst_trim_cost_20260901/$name" || return 1
     done
+}
+
+trimmable_estimator_replay()
+{
+    out="$tmp/trimmable-validation.tsv"
+    python3 "$repo/tools/analysis/validate_trimmable_estimator.py" \
+      "$repo/data/raw/trimmable_estimator_20260905/cases.tsv" --output "$out" || return 1
+    cmp "$out" "$repo/data/raw/trimmable_estimator_20260905/validation.tsv"
 }
 
 acceptance_replay()
@@ -140,7 +184,7 @@ acceptance_replay()
     python3 "$repo/tools/reproduce/evaluate_acceptance.py" \
       --bands "$repo/tools/reproduce/acceptance_bands.json" \
       --s4-summary "$tmp/s4/acceptance_input.json" \
-      --gst-derived "$repo/data/raw/gst_trim_cost_20260901" \
+      --gst-derived "$tmp/gst" \
       --output "$tmp/acceptance.json"
 }
 
@@ -160,7 +204,11 @@ link_check()
       "$repo/docs/demo_package_20260902.md" \
       "$repo/docs/demo_narrative_20260901.md" \
       "$repo/docs/demo_reproduction_guide_20260901.md" \
-      "$repo/docs/product_landing_recommendation_20260901.md"
+      "$repo/docs/a_anchor_replication_20260904.md" \
+      "$repo/docs/product_landing_recommendation_20260901.md" \
+      "$repo/docs/tool_provenance_20260903.md" \
+      "$repo/docs/tizen_native_evidence_20260904.md" \
+      "$repo/docs/trimmable_estimator_20260905.md"
     if [ -f "$repo/README.zh-CN.md" ]; then
         set -- "$@" "$repo/README.zh-CN.md"
     fi
@@ -175,8 +223,14 @@ host_tests()
     PYTHONDONTWRITEBYTECODE=1 python3 -m unittest \
       tools/runners/s4_retention_20260901/test_host.py \
       tools/runners/gst_trim_cost_20260901/test_host.py \
+      tools/runners/a_anchor_replication_20260904/test_host.py \
+      tools/runners/tizen_native_evidence_20260904/test_host.py \
+      tools/runners/tizen_native_evidence_20260905/test_host.py \
+      tools/analysis/test_trimmable_estimator.py \
       tools/report/test_build_demo_report.py \
-      tools/reproduce/test_host.py
+      tools/reproduce/test_host.py \
+      tools/reproduce/test_board_workflow_mocked_sdb.py \
+      tools/runners/tool_provenance_20260903/test_host.py
 }
 
 cd "$repo" || exit 2
@@ -188,14 +242,18 @@ check f2-f3-attribution-cmp attribution_replay
 check phenotype-cmp phenotype_replay
 check batch-release-output batch_replay
 check s4-public-replay s4_replay
+check a-anchor-public-replay-cmp a_anchor_replay
 check gst-public-replay-cmp gst_replay
-check acceptance-v3 acceptance_replay
+check trimmable-estimator-cmp trimmable_estimator_replay
+check acceptance-v4 acceptance_replay
 if [ -f "$repo/docs/demo_report.html" ] && [ -f "$repo/tools/report/source_commit.txt" ]; then
     check offline-report-byte-cmp report_rebuild
 else
     printf 'SKIP\toffline-report-byte-cmp\tnot checked in yet\n'
 fi
 check local-link-check link_check
+check reproducible-build-paths python3 "$repo/tools/reproduce/check_reproducible_build_paths.py"
+check gbs-package python3 "$repo/tools/reproduce/check_gbs_package.py" --repo-root "$repo"
 if [ "${REPRODUCE_SKIP_TESTS:-0}" != 1 ]; then
     check host-tests host_tests
 fi

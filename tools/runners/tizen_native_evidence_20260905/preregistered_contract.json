@@ -1,0 +1,73 @@
+{
+  "schema": "glibc-memopt.tizen-native-evidence-b2.contract.v1",
+  "round": "tizen_native_evidence_20260905",
+  "workdir": "/opt/usr/glibc_memopt/tizen_native_evidence_20260905",
+  "identity": {
+    "kernel_contains": "rpi4",
+    "arch_exact": "armv7l",
+    "build_id_exact": "tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l",
+    "glibc_nvr_exact": "glibc-2.40-1.6.armv7l",
+    "memtotal_kb_exact": 8117408,
+    "uid_exact": 0
+  },
+  "asset": {
+    "name": "small_320x240.mp4",
+    "sha256": "3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d",
+    "size_bytes": 1679164
+  },
+  "reconnaissance_frozen_choices": {
+    "t1_construct": "five sequential gst-launch-1.0 processes, one real-time decode each",
+    "t1_recon_processes": 5,
+    "t1_recon_min_total_seconds": 300,
+    "e4_app_id": "setting-myaccount-efl",
+    "e4_recon_alive_check_seconds": 30,
+    "e4_recon_requires_terminate_rc": 0
+  },
+  "t1_prime": {
+    "cells": 5,
+    "pipeline_argv": [
+      "gst-launch-1.0", "-m", "-v", "filesrc", "location=<asset>", "!",
+      "decodebin", "!", "identity", "name=counter", "silent=false", "!",
+      "fakesink", "sync=true"
+    ],
+    "steady_seconds_before_injection": 30,
+    "injections_per_process": 1,
+    "minimum_injection_start_interval_seconds": 120.000,
+    "required_evidence": [
+      "stable pid and starttime across injection",
+      "process alive before and after injection",
+      "buffer count strictly increases across injection",
+      "natural pipeline exit code 0 and zero ERROR lines",
+      "pre/post project glibc heap PD",
+      "pre/post memps heap",
+      "ptrace-inclusive injection duration"
+    ]
+  },
+  "e4_prime": {
+    "app_id": "setting-myaccount-efl",
+    "cycles": 5,
+    "alive_check_seconds": 30,
+    "post_terminate_check_seconds": 2,
+    "then": [
+      "inject malloc_info into enlightenment",
+      "sample project and memps heap before trim",
+      "inject malloc_trim(0)",
+      "sample project and memps heap after trim"
+    ]
+  },
+  "health": {
+    "governor_during": "performance",
+    "governor_after": "schedutil",
+    "zram_original_compressed_used_delta": [0, 0, 0],
+    "dmesg_new_oom_lmk": 0,
+    "stability_monitor": "record and attribute every new warning; no waiver for injection warnings",
+    "cleanup": "pull and hash all files, remove exact workdir, remove gdb package set, verify"
+  },
+  "claim_boundary": [
+    "report measured reclaim KiB and M7 only",
+    "report no crash or restart only for observed windows",
+    "memps cross-witness is observational",
+    "gdb duration includes ptrace and is not hook cost",
+    "do not claim product benefit or translate into business metrics"
+  ]
+}

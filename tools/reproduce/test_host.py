@@ -4,8 +4,11 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
+import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 import zipfile
@@ -21,6 +24,32 @@ STABILITY = HERE / "stability_monitor.py"
 
 
 class ReproduceTests(unittest.TestCase):
+    def _run_delivery_identity_clone(self, branch: str, include_delivery_tag: bool) -> subprocess.CompletedProcess[str]:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            clone = root / "clone"
+            subprocess.run(
+                ["git", "clone", "--no-tags", "--single-branch", "--branch", "main", str(REPO), str(clone)],
+                check=True, capture_output=True,
+            )
+            if branch == "demo":
+                subprocess.run(["git", "branch", "-m", "demo"], cwd=clone, check=True)
+            if include_delivery_tag:
+                subprocess.run(["git", "tag", "demo-v3"], cwd=clone, check=True)
+
+            command_dir = root / "bin"
+            command_dir.mkdir()
+            for command in ("bash", "cmp", "cp", "dirname", "find", "git", "grep", "mktemp", "python3", "sed", "tr"):
+                executable = shutil.which(command)
+                self.assertIsNotNone(executable, command)
+                (command_dir / command).symlink_to(executable)
+            env = {**os.environ, "PATH": str(command_dir), "REPRODUCE_SKIP_TESTS": "1"}
+            env.pop("REPRODUCE_EXPECTED_SHA", None)
+            return subprocess.run(
+                ["bash", "tools/reproduce/reproduce.sh", "verify"],
+                cwd=clone, env=env, text=True, capture_output=True, check=False,
+            )
+
     def test_verify_entrypoint_passes(self) -> None:
         env = os.environ.copy()
         env["REPRODUCE_ALLOW_DIRTY"] = "1"
@@ -41,6 +70,100 @@ class ReproduceTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("--ip <address>", result.stdout)
+        self.assertIn("default SHA source is GBS", result.stdout)
+
+    def test_stability_snapshot_remote_body_hashes_nonempty_directory(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        line = next(
+            row.strip()
+            for row in workflow.splitlines()
+            if row.strip().startswith("body='d=/opt/usr/share/crash/livedump;")
+        )
+        self.assertTrue(line.endswith("'"), line)
+        remote_body = line[len("body='") : -1]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive = root / "alloc_bench.armv7l_42_fixture.zip"
+            archive.write_bytes(b"fixture-livedump\n")
+            remote_body = remote_body.replace("/opt/usr/share/crash/livedump", str(root))
+            result = subprocess.run(
+                ["sh", "-c", remote_body], text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            fields = result.stdout.rstrip("\n").split("\t")
+            self.assertEqual(len(fields), 4, result.stdout)
+            self.assertEqual(fields[0], str(archive))
+            self.assertEqual(fields[1], str(archive.stat().st_size))
+            self.assertEqual(fields[3], hashlib.sha256(archive.read_bytes()).hexdigest())
+
+    def test_remote_commands_do_not_consume_cleanup_list_stdin(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        start = workflow.index("run_remote()\n")
+        end = workflow.index("\nsnapshot_stability()", start)
+        run_remote = workflow[start:end]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            mock_bin = root / "bin"
+            mock_bin.mkdir()
+            mock_sdb = mock_bin / "sdb"
+            mock_sdb.write_text(
+                "#!/bin/sh\n"
+                "IFS= read -r stolen || true\n"
+                "echo RC=0\n"
+                "echo DONE_CLEAN\n",
+                encoding="utf-8",
+            )
+            mock_sdb.chmod(0o755)
+            cleanup_list = root / "cleanup.txt"
+            cleanup_list.write_text("first\nsecond\n", encoding="utf-8")
+            script = root / "exercise.sh"
+            script.write_text(
+                "#!/bin/sh\nset -eu\n"
+                f"serial=mock\noutput={root}\n"
+                + run_remote
+                + f"\n: > {root}/seen\n"
+                + f"while IFS= read -r item; do run_remote CLEAN true {root}/$item.log; echo \"$item\" >> {root}/seen; done < {cleanup_list}\n",
+                encoding="utf-8",
+            )
+            result = subprocess.run(
+                ["sh", str(script)],
+                env={**os.environ, "PATH": f"{mock_bin}:{os.environ['PATH']}"},
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertEqual((root / "seen").read_text(encoding="utf-8"), "first\nsecond\n")
+
+    def test_logged_command_preserves_failure_status(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        start = workflow.index("run_logged()\n")
+        end = workflow.index("\nprepare_artifacts ||", start)
+        run_logged = workflow[start:end]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            log = root / "command.log"
+            script = root / "exercise.sh"
+            script.write_text(
+                "#!/bin/sh\nset -u\n"
+                + run_logged
+                + f"\nrun_logged {log} sh -c 'printf failed-output; exit 7'\n",
+                encoding="utf-8",
+            )
+            result = subprocess.run(
+                ["sh", str(script)], text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 7, result.stderr + result.stdout)
+            self.assertEqual(result.stdout, "failed-output")
+            self.assertEqual(log.read_text(encoding="utf-8"), "failed-output")
+
+    def test_s4_stability_failure_stops_before_gst(self) -> None:
+        workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
+        classification = workflow.index("classify_and_clean s4")
+        guard = workflow.index('[ "$s4_stability_rc" -eq 0 ] || die "S4 stability gate"')
+        gst_start = workflow.index('snapshot_stability "$output/gst/stability_before.tsv"')
+        self.assertLess(classification, guard)
+        self.assertLess(guard, gst_start)
 
     def test_expected_s4_alert_is_expected_after_archive_and_cleanup(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -53,8 +176,9 @@ class ReproduceTests(unittest.TestCase):
             post.write_text(header)
             archive_dir = root / "archives"; archive_dir.mkdir()
             with zipfile.ZipFile(archive_dir / Path(remote).name, "w") as archive:
-                archive.writestr("dump_reason", "Exceeded parameter: cpu.relative\n")
-                archive.writestr("info.json", json.dumps({"exe_file_path": "/opt/usr/glibc_memopt/s4_retention_20260901/alloc_bench.armv7l", "threads": {"pid": 42}}))
+                prefix = "alloc_bench.armv7l_42_fixture"
+                archive.writestr(f"{prefix}/{prefix}.dump_reason", "Exceeded parameter: cpu.relative\n")
+                archive.writestr(f"{prefix}/{prefix}.info.json", json.dumps({"exe_file_path": "/opt/usr/glibc_memopt/s4_retention_20260901/alloc_bench.armv7l", "threads": {"pid": 42}}))
             pull = root / "pull/A/mixed/rep1"; pull.mkdir(parents=True)
             (pull / "pid.txt").write_text("42\n")
             result = subprocess.run(
@@ -66,7 +190,7 @@ class ReproduceTests(unittest.TestCase):
             self.assertEqual(payload["alerts"][0]["verdict"], "EXPECTED")
             self.assertEqual((root / "clean.txt").read_text(), remote + "\n")
 
-    def test_public_evidence_passes_v3_and_reports_unobserved_registration(self) -> None:
+    def test_public_evidence_passes_v4_and_reports_unobserved_registration(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             replay = subprocess.run(
@@ -82,7 +206,29 @@ class ReproduceTests(unittest.TestCase):
             self.assertIn("REGISTERED/NOT-EVALUATED", result.stdout)
             self.assertIn("REPORT_ONLY", result.stdout)
             self.assertIn("OVERALL PASS", result.stdout)
-            self.assertEqual(json.loads((root / "acceptance.json").read_text())["outcome"], "PASS")
+            acceptance = json.loads((root / "acceptance.json").read_text())
+            self.assertEqual(acceptance["schema"], "glibc-memopt-demo.acceptance-result.v4")
+            self.assertEqual(acceptance["outcome"], "PASS")
+
+    def test_previous_gbs_a_observations_pass_v4_common_bands(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            replay = subprocess.run(
+                ["python3", str(REPO / "tools/runners/s4_retention_20260901/analyze_s4.py"), "--replay-public", str(REPO / "data/raw/s4_retention_20260901"), "--output", str(root / "s4")],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(replay.returncode, 0, replay.stderr)
+            path = root / "s4/acceptance_input.json"
+            payload = json.loads(path.read_text())
+            payload["a_anchor_reclaim_pct"] = {"mixed": 55.243785, "medium-only": 50.535918}
+            path.write_text(json.dumps(payload))
+            result = subprocess.run(
+                ["python3", str(EVALUATOR), "--bands", str(BANDS), "--s4-summary", str(path), "--gst-derived", str(REPO / "data/raw/gst_trim_cost_20260901")],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("S4 A mixed reclaim", result.stdout)
+            self.assertIn("OVERALL PASS", result.stdout)
 
     def test_out_of_band_s4_value_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -156,13 +302,54 @@ class ReproduceTests(unittest.TestCase):
         self.assertIn('"-fdebug-prefix-map=$repo=."', gst)
         manifest = json.loads((HERE / "deliverables_manifest.json").read_text())
         artifacts = {item["name"]: item for item in manifest["artifacts"]}
+        self.assertEqual(manifest["schema"], "glibc-memopt-demo.deliverables.v3")
+        self.assertEqual(manifest["gbs_build"]["status"], "board_rebaseline_passed_via_preregistered_h_v")
+        self.assertEqual(manifest["board_rebaseline"]["decision"], "H-V")
         self.assertEqual(len(artifacts), 4)
         for name in ("alloc_bench.armv7l", "gst_loop_decode.armv7l", "reclaim_probe.armv7l"):
             self.assertRegex(artifacts[name]["reproducible_build_sha256"], r"^[0-9a-f]{64}$")
-        self.assertEqual(artifacts["small_320x240.mp4"]["delivery"].split()[0], "external-package")
+            self.assertRegex(artifacts[name]["gbs_build_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(
+            artifacts["small_320x240.mp4"]["delivery"],
+            "由交付方随交付邮件提供获取位置,收到后按本清单 SHA-256 核对",
+        )
+        self.assertNotIn("channel", manifest)
+        self.assertNotIn("owner", manifest)
 
-    def test_acceptance_v3_separates_determinism_validity_and_direction(self) -> None:
+    def test_gbs_spec_static_contract_without_gbs(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(HERE / "check_gbs_package.py"), "--repo-root", str(REPO)],
+            env={**os.environ, "PATH": ""}, text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("PASS\tgbs-spec-static", result.stdout)
+        self.assertIn("SKIPPED\tgbs-build\tgbs is not installed", result.stdout)
+
+    def test_delivery_identity_marks_main_report_only(self) -> None:
+        refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v3"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v3"})
+
+    def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
+        result = self._run_delivery_identity_clone("main", include_delivery_tag=False)
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn(
+            "REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; "
+            "checkout demo-v3 (reference unavailable in this clone)",
+            result.stdout,
+        )
+        self.assertIn("OVERALL\tPASS", result.stdout)
+
+    def test_delivery_snapshot_required_identity_passes(self) -> None:
+        result = self._run_delivery_identity_clone("demo", include_delivery_tag=True)
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertNotIn("REPORT_ONLY\tdelivery-identity", result.stdout)
+        self.assertIn("PASS\tclean-environment", result.stdout)
+        self.assertIn("OVERALL\tPASS", result.stdout)
+
+    def test_acceptance_v4_separates_determinism_validity_and_direction(self) -> None:
         bands = json.loads(BANDS.read_text(encoding="utf-8"))
+        self.assertEqual(bands["schema"], "glibc-memopt-demo.acceptance.v4")
         self.assertEqual(set(bands["deterministic_items"]), {"released_payload_bytes"})
         self.assertEqual(
             set(bands["validity_gates"]),
@@ -173,6 +360,9 @@ class ReproduceTests(unittest.TestCase):
         self.assertNotIn("expected_direction", gst)
         b = bands["tolerance_bands"]["s4_b_reclaim_pct_repeat_median"]
         self.assertEqual(b["center_pct_by_profile"], {"medium-only": 84.446566, "mixed": 81.661264})
+        a = bands["tolerance_bands"]["s4_a_anchor_reclaim_pct"]
+        self.assertEqual(a["center_pct_by_profile"], {"medium-only": 50.669791, "mixed": 52.794499})
+        self.assertEqual(a["plus_minus_pp_by_profile"], {"medium-only": 4.918088, "mixed": 4.304705})
 
 
 if __name__ == "__main__":

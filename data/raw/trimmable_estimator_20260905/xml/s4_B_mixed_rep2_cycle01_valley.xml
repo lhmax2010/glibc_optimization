@@ -1,0 +1,72 @@
+<malloc version="1">
+<heap nr="0">
+<sizes>
+  <size from="465" to="465" total="465" count="1"/>
+</sizes>
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="2" size="90425"/>
+<system type="current" size="135168"/>
+<system type="max" size="135168"/>
+<aspace type="total" size="135168"/>
+<aspace type="mprotect" size="135168"/>
+</heap>
+<heap nr="1">
+<sizes>
+  <unsorted from="1033" to="859497" total="1346737" count="17"/>
+</sizes>
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="18" size="1353329"/>
+<system type="current" size="3088384"/>
+<system type="max" size="3088384"/>
+<aspace type="total" size="3088384"/>
+<aspace type="mprotect" size="3088384"/>
+<aspace type="subheaps" size="3"/>
+</heap>
+<heap nr="2">
+<sizes>
+  <size from="17" to="24" total="24" count="1"/>
+  <size from="17" to="17" total="17" count="1"/>
+  <unsorted from="1033" to="866593" total="1435741" count="13"/>
+</sizes>
+<total type="fast" count="1" size="24"/>
+<total type="rest" count="15" size="1441158"/>
+<system type="current" size="3117056"/>
+<system type="max" size="3117056"/>
+<aspace type="total" size="3117056"/>
+<aspace type="mprotect" size="3117056"/>
+<aspace type="subheaps" size="3"/>
+</heap>
+<heap nr="3">
+<sizes>
+  <size from="17" to="24" total="48" count="2"/>
+  <unsorted from="1033" to="756369" total="1301404" count="12"/>
+</sizes>
+<total type="fast" count="2" size="48"/>
+<total type="rest" count="13" size="1436548"/>
+<system type="current" size="3235840"/>
+<system type="max" size="3239936"/>
+<aspace type="total" size="3235840"/>
+<aspace type="mprotect" size="3239936"/>
+<aspace type="subheaps" size="4"/>
+</heap>
+<heap nr="4">
+<sizes>
+  <size from="17" to="24" total="96" count="4"/>
+  <unsorted from="1033" to="537561" total="1658266" count="18"/>
+</sizes>
+<total type="fast" count="4" size="96"/>
+<total type="rest" count="19" size="1664178"/>
+<system type="current" size="3440640"/>
+<system type="max" size="3440640"/>
+<aspace type="total" size="3440640"/>
+<aspace type="mprotect" size="3440640"/>
+<aspace type="subheaps" size="4"/>
+</heap>
+<total type="fast" count="7" size="168"/>
+<total type="rest" count="67" size="5985638"/>
+<total type="mmap" count="0" size="0"/>
+<system type="current" size="13017088"/>
+<system type="max" size="13021184"/>
+<aspace type="total" size="13017088"/>
+<aspace type="mprotect" size="13021184"/>
+</malloc>

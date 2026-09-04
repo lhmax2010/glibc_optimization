@@ -137,7 +137,8 @@ def build(repo: Path, source_commit: str) -> str:
     attribution = json.loads((raw / "cyclic_fall_attribution_20260901/summary.json").read_text())
     release = read_tsv(raw / "cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv")
     plateau = read_tsv(raw / "cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv")
-    a_cells = read_tsv(raw / "s4_retention_20260901/a_cells.tsv")
+    a2_cells = read_tsv(raw / "a_anchor_replication_20260904/a_cells.tsv")
+    a2_decision = json.loads((raw / "a_anchor_replication_20260904/decision.json").read_text())
     b_cells = read_tsv(raw / "s4_retention_20260901/b_cells.tsv")
     b_cycles = read_tsv(raw / "s4_retention_20260901/b_cycles.tsv")
     s4_health = json.loads((raw / "s4_retention_20260901/health.json").read_text())
@@ -145,6 +146,11 @@ def build(repo: Path, source_commit: str) -> str:
     gst_reps = read_tsv(raw / "gst_trim_cost_20260901/repetitions.tsv")
     gst_comparison = json.loads((raw / "gst_trim_cost_20260901/comparison.json").read_text())
     batch_rows = read_tsv(raw / "demo_reproduction_20260901/batch_release_phase.tsv")
+    native = json.loads((raw / "tizen_native_evidence_20260904/summary.json").read_text())
+    native_health = json.loads((raw / "tizen_native_evidence_20260904/health.json").read_text())
+    native_b2 = json.loads((raw / "tizen_native_evidence_20260905/summary.json").read_text())
+    native_b2_cells = read_tsv(raw / "tizen_native_evidence_20260905/cells_derived.tsv")
+    estimator_validation = read_tsv(raw / "trimmable_estimator_20260905/validation.tsv")
     acceptance = json.loads((repo / "tools/reproduce/acceptance_bands.json").read_text())
 
     expected_docs = (
@@ -152,6 +158,8 @@ def build(repo: Path, source_commit: str) -> str:
         "docs/product_landing_recommendation_20260901.md",
         "docs/demo_reproduction_guide_20260901.md",
         "docs/demo_package_20260902.md",
+        "docs/tizen_native_evidence_20260904.md",
+        "docs/trimmable_estimator_20260905.md",
     )
     for relative in expected_docs:
         if not (repo / relative).is_file():
@@ -192,8 +200,15 @@ def build(repo: Path, source_commit: str) -> str:
 
     release_by_target = {row["target"]: row for row in release}
     plateau_by_target = {row["target"]: row for row in plateau}
-    anchors = {row["profile"]: float(row["reclaim_pct_of_pretrim"]) for row in a_cells}
-    anchor_trim = {row["profile"]: float(row["trim_elapsed_ms"]) for row in a_cells}
+    anchors = {
+        profile: float(item["center_pct"])
+        for profile, item in a2_decision["candidate_bands"].items()
+    }
+    anchor_radius = {
+        profile: float(item["plus_minus_pp"])
+        for profile, item in a2_decision["candidate_bands"].items()
+    }
+    anchor_trim_max = max(float(row["trim_elapsed_ms"]) for row in a2_cells)
     b_by_profile: dict[str, list[dict[str, str]]] = {}
     for row in b_cells:
         if row["trim_at"] == "valley":
@@ -202,11 +217,14 @@ def build(repo: Path, source_commit: str) -> str:
         profile: statistics.median(float(row["trim_reclaim_pct_of_released_median"]) for row in rows)
         for profile, rows in b_by_profile.items()
     }
-    s4_trim_headline_ms = float(statistics.median(
-        Decimal(row["trim_elapsed_ms"])
-        for row in b_cycles
-        if row["trim_at"] == "valley" and row["profile"] == "mixed"
-    ).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
+    s4_trim_median_by_profile = {
+        profile: float(statistics.median(
+            Decimal(row["trim_elapsed_ms"])
+            for row in b_cycles
+            if row["trim_at"] == "valley" and row["profile"] == profile
+        ).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
+        for profile in ("mixed", "medium-only")
+    }
     batch_single = [row for row in batch_rows if row["series"] == "single"]
     batch_scale = [row for row in batch_rows if row["series"] == "scale"]
     batch_pct = statistics.median(float(row["reclaim_pct"]) for row in batch_single)
@@ -243,6 +261,8 @@ def build(repo: Path, source_commit: str) -> str:
     # Positive-control assertions deliberately fail the build when a public
     # evidence fixture drifts; they are not estimates or duplicated analysis.
     assert peak_valley_median == 6212
+    assert Decimal(str(peak_valley_median)) / Decimal(1024) == Decimal("6.06640625")
+    assert round(peak_valley_median / 1024, 2) == 6.07
     assert attribution["F3"]["valley_band_entry_delay_min_s"] == 5.223693
     assert attribution["F3"]["valley_band_entry_delay_max_s"] == 8.910626
     assert attribution["F2"]["large_step_count"] == 32
@@ -263,11 +283,15 @@ def build(repo: Path, source_commit: str) -> str:
     assert len(batch_scale) == 8
     assert round(min(float(row["reclaim_pct"]) for row in batch_scale), 4) == 48.5232
     assert round(max(float(row["reclaim_pct"]) for row in batch_scale), 4) == 49.3671
-    assert anchors == {"mixed": 51.074077, "medium-only": 50.387886}
+    assert a2_decision["verdict"] == "H-V"
+    assert anchors == {"mixed": 52.794499, "medium-only": 50.669791}
+    assert anchor_radius == {"mixed": 4.304705, "medium-only": 4.918088}
+    assert all(item["n"] == 8 for item in a2_decision["candidate_bands"].values())
+    assert round(anchor_trim_max, 6) == 15.885352
     assert b_ratio == {"mixed": 81.661264, "medium-only": 84.446566}
     assert min(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 80.175875
     assert max(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 85.453954
-    assert s4_trim_headline_ms == 1.233269
+    assert s4_trim_median_by_profile == {"mixed": 1.233269, "medium-only": 1.218361}
     assert next_fault == {"mixed": 1351, "medium-only": 1465}
     assert gst_comparison["delta_p99_ms"] == 6.228611
     assert gst_comparison["none_p99_repeat_dispersion_ms"] == 6.784167
@@ -282,12 +306,75 @@ def build(repo: Path, source_commit: str) -> str:
     assert max(float(row["reclaim_pct_of_pre"]) for row in first_releases) == 51.406250
     assert min(int(row["glibc_pd_reclaimed_kb"]) for row in first_releases) == 1308
     assert max(int(row["glibc_pd_reclaimed_kb"]) for row in first_releases) == 1316
-    assert acceptance["schema"] == "glibc-memopt-demo.acceptance.v3"
+    assert acceptance["schema"] == "glibc-memopt-demo.acceptance.v4"
+    assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["center_pct_by_profile"] == anchors
+    assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["plus_minus_pp_by_profile"] == anchor_radius
+    assert native["completion"] == {
+        "t1_completed": 1,
+        "t1_preregistered": 5,
+        "t1_stop": "pipeline EOS at 60.100233983 s before T1_2",
+        "t2_baseline_completed": 3,
+        "t2_baseline_preregistered": 3,
+        "t2_release_phase_completed": 0,
+        "t2_release_phase_preregistered": 1,
+        "t2_release_phase_stop": "attach-panel-gallery was no longer running at the first terminate command",
+    }
+    assert native["t1"]["reclaimed_kb"] == [12]
+    assert native["t2"]["reclaimed_kb"] == [272, 4, 4]
+    assert native["t2"]["pre_sample_intervals_s"] == [119.80687691, 119.856460299]
+    assert native["t2"]["interval_requirement_met"] is False
+    assert [row.get("m7_rest_bytes") for row in native["cells"] if row["group"] == "T2"] == [6118675, 6118694, 6118706]
+    assert all(row["project_reclaimed_kb"] == row["memps_reclaimed_kb"] for row in native["cells"])
+    assert native_health["enlightenment"]["idle_glibc_heap_pd_min_kb"] == native_health["enlightenment"]["idle_glibc_heap_pd_max_kb"] == 3472
+    assert native_health["formal_window"]["stability_monitor_new_alerts"] == 0
+    assert native_health["formal_window"]["dmesg_oom_lmk_new_matches"] == 0
+    assert [native_health["formal_window"][key] for key in (
+        "zram_original_data_size_delta", "zram_compressed_data_size_delta", "zram_mem_used_total_delta"
+    )] == [0, 0, 0]
+    assert native_b2["completion"] == {
+        "t1_prime_completed": 5,
+        "t1_prime_preregistered": 5,
+        "e4_app_cycles_completed": 5,
+        "e4_app_cycles_preregistered": 5,
+        "e4_prime_completed": 1,
+        "e4_prime_preregistered": 1,
+    }
+    assert native_b2["t1_prime"]["reclaimed_kb"] == [8, 16, 16, 20, 16]
+    assert native_b2["t1_prime"]["injection_ms_median"] == 1041.132032
+    assert native_b2["t1_prime"]["interval_s"] == [
+        120.137978836, 120.136903576, 120.142672892, 120.122271759,
+    ]
+    assert native_b2["t1_prime"]["memps_exact_match_count"] == 5
+    assert native_b2["t1_prime"]["majflt_delta"] == [0, 0, 0, 0, 0]
+    assert [int(row["buffers_post"]) > int(row["buffers_pre"]) for row in native_b2_cells[:5]] == [True] * 5
+    assert native_b2["e4_prime"]["m7"] == {
+        "arena_count": 8, "fast_bytes": 1864, "rest_bytes": 6019572, "unsorted_bytes": 11002,
+    }
+    assert native_b2["e4_prime"]["reclaimed_kb"] == 36
+    assert native_b2["e4_prime"]["project_pre_kb"] == 3324
+    assert native_b2["e4_prime"]["project_post_kb"] == 3288
+    assert native_b2["e4_prime"]["memps_exact_match"] is True
+    assert native_b2["e4_prime"]["injection_ms"] == 1707.005696
+    assert native_b2["e4_prime"]["estimator_lower_bytes"] == 2252800
+    assert native_b2["e4_prime"]["estimator_upper_bytes"] == 8167424
+    assert native_b2["health"] == {
+        "controller_exit_code": 0,
+        "dmesg_before_after_sha256": "931473d463c408a4381a3974bb3897c489138048759ce6ac6f5538c1e33666a1",
+        "dmesg_exactly_equal": True,
+        "governor_final_schedutil_cores": 4,
+        "stability_monitor_new_livedumps": 0,
+        "zram_original_compressed_used_delta": [0, 0, 0],
+    }
+    paired_estimates = [row for row in estimator_validation if row["validation_status"] == "paired"]
+    assert len(paired_estimates) == 15
+    assert all(row["measured_within_bounds"] == "false" for row in paired_estimates)
 
     evidence_service = "../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv"
-    evidence_s4_a = "../data/raw/s4_retention_20260901/a_cells.tsv"
+    evidence_s4_a = "../data/raw/a_anchor_replication_20260904/a_cells.tsv"
+    evidence_s4_a_decision = "../data/raw/a_anchor_replication_20260904/decision.json"
     evidence_s4_b = "../data/raw/s4_retention_20260901/b_cycles.tsv"
     evidence_gst = "../data/raw/gst_trim_cost_20260901/cycles.tsv"
+    evidence_native_b2 = "../data/raw/tizen_native_evidence_20260905/cells_derived.tsv"
 
     return f"""<!doctype html>
 <html lang="zh-CN">
@@ -312,31 +399,31 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
 <body>
 <header>
   <div class="eyebrow">Tizen · glibc 2.40 · ptmalloc</div>
-  <h1>只在“确有驻留”时 trim</h1>
-  <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再在明确释放相位执行 <code>malloc_trim(0)</code>，并把回收、再激活 faults、业务 p99 和健康门作为同一份合同验收。</p>
+  <h1>只在四门全过时 trim</h1>
+  <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针实测收益达到预登记阈值，最后把再激活 faults、业务 p99 和健康门作为同一份代价合同验收。</p>
 </header>
-<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
+<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#native">真实平台进程</a><a href="#decision-gate">决策门</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
 <main>
 <section id="summary">
   <span class="pill">一页摘要</span><h2>方案、交付合同与头条结果</h2>
-  <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到 retained-bin 表型。</p>
+  <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 同目标实测收益达到预登记阈值 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到经过实测的 retained-bin 表型。</p>
   <div class="grid">
-    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 身份门、哈希、矩阵、拉回、恢复现场。</small></div>
-    <div class="card contract"><strong>同板同镜像对照</strong><small>S4 锚点 + trim/none；gst 两臂各三重复。</small></div>
-    <div class="card contract"><strong>结果说明价值</strong><small>收益、faults、业务 p99、健康门和边界同批呈现。</small></div>
+    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 首选 GBS 构建，再执行身份门、哈希、矩阵、拉回与恢复。</small></div>
+    <div class="card contract"><strong>同板同镜像对照</strong><small>S4 A v4 + trim/none；gst 两臂各三重复；Tizen 原生 B/B2 交叉见证。</small></div>
+    <div class="card contract"><strong>结果说明价值</strong><small>四门分开驻留与收益；S4/gst 量化代价，B/B2 暴露驻留收益微小的边界。</small></div>
     <div class="card contract"><strong>同条件复现同数据</strong><small>payload 确定性字节逐值一致；容差项落带；validity gates 全部通过。</small></div>
   </div>
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="{guide}#l2-acceptance">复现指南验收带</a></p>
   <div class="grid">
-    <div class="card"><small>新镜像瞬时释放锚点（n=1/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>of pre-trim heap</span><br><a href="{evidence_s4_a}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
-    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>合并中位 {s4_trim_headline_ms:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
+    <div class="card"><small>瞬时释放共同锚点（frozen/GBS，n=8/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>mixed ±{anchor_radius['mixed']:.6f} pp；medium-only ±{anchor_radius['medium-only']:.6f} pp；of pre-trim heap</span><br><a href="{evidence_s4_a_decision}">裁决 JSON</a> · <a href="{guide}#l1-a-anchor-replication">L1 复算</a></div>
+    <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>调用中位 mixed {s4_trim_median_by_profile['mixed']:.6f} / medium-only {s4_trim_median_by_profile['medium-only']:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
     <div class="card"><small>gst 业务 p99 预登记判定（REPORT_ONLY）</small><strong class="metric">+{gst_comparison['delta_p99_ms']:.3f} ms &lt; {gst_comparison['none_p99_repeat_dispersion_ms']:.3f} ms</strong><span class="pill">未检出；margin {gst_p99_margin:.3f} ms（阈值 {gst_p99_threshold_pct:.1f}%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="{guide}#l1-gst-trim-cost">L1 复算</a></div>
   </div>
 </section>
 
 <section id="finding-one">
   <span class="pill">发现一</span><h2>ServiceA：自动归还是反信号</h2>
-  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="{evidence_service}">{peak_valley_median:.0f} KiB（6.2 MiB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">{zram_total} B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">{service_counter['majflt_first']}→{service_counter['majflt_last']}</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">{attribution['F2']['large_step_count']} 个大步中近等幅迁移为 {attribution['F2']['near_equal_within_50pct_count']}</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
+  <p>八轮 glibc-heap PD 峰谷中位为 <a class="number" href="{evidence_service}">{peak_valley_median:.0f} KiB（{peak_valley_median / 1024:.2f} MiB）</a>，但下降同时满足 total PD 实跌、全局 zram 总变化 <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_rounds.tsv">{zram_total} B</a>、majflt <a class="number" href="../data/raw/cyclic_fall_mechanism_attribution_20260831/cyclic_quality.json">{service_counter['majflt_first']}→{service_counter['majflt_last']}</a>，且 <a class="number" href="../data/raw/cyclic_fall_attribution_20260901/summary.json">{attribution['F2']['large_step_count']} 个大步中近等幅迁移为 {attribution['F2']['near_equal_within_50pct_count']}</a>。因此该周期分量已经离开 Private_Dirty，不是重复 trim 的收益。</p>
   <figure>{servicea_chart(service_rows, rounds)}<figcaption>图 1 · ServiceA 1 s 时序与八轮峰谷。<a href="../data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv">原始时序</a> · <a href="{evidence_service}">逐轮标注</a> · <a href="{guide}#l1-servicea">复算命令</a></figcaption></figure>
   <div class="flow">PD 实跌 → zram 无正增长 → majflt 恒零 → other-anon 无镜像迁移 → 自动归还反信号</div>
   <div class="callout">旧“下降沿 {attribution['F3']['published_fall_edge_median_s']:.6f} s”是尾窗最小值落点伪影。按 1 s 采样上界，释放在峰后 {attribution['F3']['valley_band_entry_delay_min_s']:.6f}–{attribution['F3']['valley_band_entry_delay_max_s']:.6f} s 内基本完成。<a href="../data/raw/cyclic_fall_attribution_20260901/summary.json">证据 JSON</a> · <a href="{guide}#l1-servicea">L1 复算</a></div>
@@ -359,17 +446,17 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
 
 <section id="s4">
   <span class="pill">效果</span><h2>S4：M7 阳性后，valley trim 回收驻留页</h2>
-  <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → valley trim → faults / 时延 / 健康门</div>
+  <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → 实测 trim 探针收益达到预登记阈值 → faults / 时延 / 健康门</div>
   <div class="grid">
-    <div class="card wide"><h3>瞬时释放锚点（n=1/profile）</h3>{bar_chart([('mixed', anchors['mixed'], 'trim'), ('medium-only', anchors['medium-only'], 'trim')], title='S4 A 组回收率锚点', unit='reclaim / pre-trim heap (%)', ceiling=60)}<p><a href="{evidence_s4_a}">A 组证据</a> · <a href="{guide}#l1-s4">复算</a></p></div>
+    <div class="card wide"><h3>瞬时释放共同锚点（n=8/profile）</h3>{bar_chart([('mixed', anchors['mixed'], 'trim'), ('medium-only', anchors['medium-only'], 'trim')], title='S4 A 组 frozen/GBS H-V 共同锚点', unit='reclaim / pre-trim heap (%)', ceiling=60)}<p>mixed {anchors['mixed']:.6f}% ±{anchor_radius['mixed']:.6f} pp；medium-only {anchors['medium-only']:.6f}% ±{anchor_radius['medium-only']:.6f} pp。<a href="{evidence_s4_a}">12 格证据</a> · <a href="{evidence_s4_a_decision}">H-V 裁决</a> · <a href="{guide}#l1-a-anchor-replication">复算</a></p></div>
     <div class="card wide"><h3>B 组三重复中位</h3>{bar_chart([('mixed trim', b_ratio['mixed'], 'trim'), ('mixed none', 0.0, 'none'), ('medium trim', b_ratio['medium-only'], 'trim'), ('medium none', 0.0, 'none')], title='S4 B 组 trim/none 回收已释放 payload', unit='reclaim / released (%)', ceiling=100)}<p><a href="../data/raw/s4_retention_20260901/b_cells.tsv">格级证据</a> · <a href="{guide}#l2-acceptance">中位验收规则</a></p></div>
   </div>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
-    <tr><td>mixed</td><td class="number">{b_ratio['mixed']:.2f}%</td><td class="number" rowspan="2">合并中位 {s4_trim_headline_ms:.6f} ms</td><td class="number">+{next_fault['mixed']}</td><td class="number">0</td></tr>
-    <tr><td>medium-only</td><td class="number">{b_ratio['medium-only']:.2f}%</td><td class="number">+{next_fault['medium-only']}</td><td class="number">0</td></tr>
+    <tr><td>mixed</td><td class="number">{b_ratio['mixed']:.2f}%</td><td class="number">{s4_trim_median_by_profile['mixed']:.6f} ms</td><td class="number">+{next_fault['mixed']}</td><td class="number">0</td></tr>
+    <tr><td>medium-only</td><td class="number">{b_ratio['medium-only']:.2f}%</td><td class="number">{s4_trim_median_by_profile['medium-only']:.6f} ms</td><td class="number">+{next_fault['medium-only']}</td><td class="number">0</td></tr>
   </tbody></table>
   <p class="source-links"><a href="../data/raw/s4_retention_20260901/b_cells.tsv">代价证据 TSV</a> · <a href="../data/raw/s4_retention_20260901/health.json">健康证据 JSON</a> · <a href="{guide}#l1-s4">L1 复算</a>。zram 三项 Δ={s4_health['zram_original_data_size_delta']}/{s4_health['zram_compressed_data_size_delta']}/{s4_health['zram_mem_used_total_delta']}，OOM/LMK={len(s4_health['oom_lmk_matches'])}。</p>
-  <p class="source-links">时延带分开解释：B 组释放点 trim 单次 &lt;{acceptance['tolerance_bands']['release_point_trim_single_call_ms']['max_exclusive_ms']:g} ms；A 组锚点实测最大 {max(anchor_trim.values()):.6f} ms，以 &lt;{acceptance['tolerance_bands']['s4_a_anchor_trim_single_call_ms']['max_exclusive_ms']:g} ms 验收，且不作为钩子代价。<a href="{evidence_s4_a}">A 组证据</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></p>
+  <p class="source-links">时延带分开解释：B 组释放点 trim 单次 &lt;{acceptance['tolerance_bands']['release_point_trim_single_call_ms']['max_exclusive_ms']:g} ms；A2 锚点实测最大 {anchor_trim_max:.6f} ms，以 &lt;{acceptance['tolerance_bands']['s4_a_anchor_trim_single_call_ms']['max_exclusive_ms']:g} ms 验收，且不作为钩子代价。<a href="{evidence_s4_a}">A2 证据</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></p>
 </section>
 
 <section id="gst">
@@ -382,12 +469,41 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <p class="source-links"><a href="{evidence_gst}">首次回收证据 TSV</a> · <a href="{guide}#l1-gst-trim-cost">公开 replay 与预期输出</a></p>
 </section>
 
+<section id="native">
+  <span class="pill">真实平台进程实证</span><h2>Tizen 自带进程与工具的交叉见证</h2>
+  <p>原始三个 enlightenment 观测中，glibc <code>malloc_info</code> 每格均显示 8 个 arena、约 5.84 MiB rest；随后三次 <code>malloc_trim(0)</code> 的项目主堆读数分别下降 <strong>272 / 4 / 4 KiB</strong>，Tizen 自带 <code>memps</code> 对同一 <code>[heap]</code> 逐格给出完全相同的前后值。</p>
+  <table><thead><tr><th>格</th><th>M7 rest (B)</th><th>项目 heap PD (KiB)</th><th>memps [heap] (KiB)</th><th>回收</th><th>含 ptrace 的注入时延</th></tr></thead><tbody>
+    {''.join(f'<tr><td>{row["cell"]}</td><td class="number">{row["m7_rest_bytes"]}</td><td>{row["project_pre_kb"]} → {row["project_post_kb"]}</td><td>{row["memps_pre_heap_kb"]} → {row["memps_post_heap_kb"]}</td><td class="number">{row["project_reclaimed_kb"]} KiB</td><td>{row["injection_ms"]:.6f} ms</td></tr>' for row in native["cells"] if row["group"] == "T2")}
+  </tbody></table>
+  <h3>B2 补跑：官方 GST 5/5 与真实 UI 活动格</h3>
+  <p>重新冻结为 5 个顺序 Tizen <code>gst-launch-1.0</code> 进程后，五格均持续解码并自然退出，buffer 从约 902/903 增至 997；项目 heap 与 <code>memps</code> 同时看到 <strong>8 / 16 / 16 / 20 / 16 KiB</strong> 回收。四个注入开始间隔为 <strong>120.122271759–120.142672892 s</strong>，全部满足 ≥120.000 s。</p>
+  <table><thead><tr><th>格</th><th>项目/memps heap PD (KiB)</th><th>回收</th><th>buffer</th><th>含 ptrace 的注入时延</th></tr></thead><tbody>
+    {''.join(f'<tr><td>{row["cell"]}</td><td>{row["project_pre_kb"]} → {row["project_post_kb"]}</td><td class="number">{row["reclaimed_kb"]} KiB</td><td>{row["buffers_pre"]} → {row["buffers_post"]}</td><td>{float(row["injection_ms"]):.6f} ms</td></tr>' for row in native_b2_cells if row["group"] == "T1")}
+  </tbody></table>
+  <p>冻结原生应用完成 5/5 次“启动—30 秒同进程存活—正常终止”。之后 E4′ 的 M7 为 8 arena、rest <strong>6019572 B</strong>，项目 heap 与 <code>memps</code> 均为 <strong>3324 → 3288 KiB</strong>，即回收 <strong>36 KiB</strong>；PID/starttime 未变。<code>&lt;size&gt;</code> 估算器却给出 <strong>2200–7976 KiB</strong>，连本格也不能覆盖实测，连同验证集 <strong>15/15</strong> 失败，故不能成为量化启用门。</p>
+  <div class="callout"><strong>历史与边界并存：</strong>旧 T1 1/5、UI 0/1 和 E1–E3 的 119.806876910/119.856460299 s 偏差不改写；B2 用新登记构造补齐数量与 E4 覆盖，并验证新计时器。全部 gdb 时间包含 ptrace，不是钩子代价；回收量不外推产品收益。</div>
+  <p class="source-links"><a href="tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05">B2 完整报告</a> · <a href="{evidence_native_b2}">B2 格级证据</a> · <a href="../data/raw/tizen_native_evidence_20260905/summary.json">B2 完成与健康</a> · <a href="trimmable_estimator_20260905.md">估算器裁决</a> · <a href="{guide}#l1-tizen-native-b2">L1 复算</a> · <a href="{guide}#l2-tizen-native-evidence-b2">L2 B2 复现</a></p>
+</section>
+
+<section id="decision-gate">
+  <span class="pill">决策门</span><h2>产品启用必须连续通过四道硬门</h2>
+  <div class="flow">反信号排除 → M7 驻留确认 → 同目标/同相位实测收益 ≥ 预登记阈值 → 代价预算</div>
+  <div class="grid">
+    <div class="card"><strong>① 反信号</strong><small>PD 已自动实跌的分量不重复 trim。</small></div>
+    <div class="card"><strong>② M7 驻留</strong><small>只定性确认 allocator 空闲驻留；smaps floor 不足以过门。</small></div>
+    <div class="card"><strong>③ 实测收益</strong><small>同目标、同相位探针/A-B 必须达到看结果前登记的阈值；估算不替代实测。</small></div>
+    <div class="card"><strong>④ 代价预算</strong><small>调用、refault、业务时延/能耗与并发锁停顿任一未测或超预算即关闭。</small></div>
+  </div>
+  <p>这道新增的实测门由反例直接约束：enlightenment 历史 E1 回收 <strong>272 KiB</strong>，真实 UI 活动后的 E4′回收 <strong>36 KiB</strong>，Tizen 官方 GST 五格为 <strong>8–20 KiB</strong>；M7/直方图不能预测这些量。</p>
+  <p class="source-links"><a href="product_landing_recommendation_20260901.md#1-启用门清单">四门定稿与旧口径追注</a> · <a href="tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05">B/B2 证据</a> · <a href="trimmable_estimator_20260905.md#3-失败模式与裁决">估算器裁决</a></p>
+</section>
+
 <section id="reproduce">
   <span class="pill">复现入口</span><h2>三条路，同一事实源</h2>
   <div class="grid">
     <div class="card"><strong>① 离线阅读</strong><small>本 HTML 是单文件派生产物；所有图表由公开证据生成。</small></div>
     <div class="card"><strong>② Host verify · 分钟级</strong><small><code>bash tools/reproduce/reproduce.sh</code> 执行全部 L1 与 cmp。</small></div>
-    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --ip &lt;addr&gt;</code> 编排既有 S4/gst harness。</small></div>
+    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --artifact-source gbs --ip &lt;addr&gt;</code> 编排既有 S4/gst harness；GBS 已通过 A2/H-V 重基线。</small></div>
   </div>
   <p><a href="../tools/reproduce/README.md">Workflow 上手</a> · <a href="{guide}#workflow-fast-path">快速通道</a> · <a href="{guide}#l2-run">手工 L2</a>。确定性项、validity gates 和容差带都来自 <a href="../tools/reproduce/acceptance_bands.json">acceptance_bands.json</a>。“同样的数据”指 payload 确定性字节逐值一致、容差项落带且 validity gates 通过。</p>
 </section>
@@ -400,8 +516,11 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     <li><strong>“p99 未检出”不等于“零代价”</strong>：结论严格受三重复、{gst_comparison['primary_samples_per_repeat']} 个主样本与预登记离散门约束。<a href="../data/raw/gst_trim_cost_20260901/comparison.json">判定证据</a></li>
     <li><strong>同 seed 不钉 arena 指派</strong>：单重复实测出现 <a href="../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv">68.169197%</a>（约 1 MiB 页台阶）；回收字节值不属于确定性项，S4 B 分别锚定发布值 {b_ratio['mixed']:.6f}% / {b_ratio['medium-only']:.6f}% 并按每档三重复中位 ±{acceptance['tolerance_bands']['s4_b_reclaim_pct_repeat_median']['plus_minus_pp']:g} pp 验收。n=3 的中位至多容忍一个离群。<a href="../tools/reproduce/acceptance_bands.json">机器规则</a></li>
     <li><strong>known-alert waiver 不是无害性证明</strong>：S4 A 最多 {acceptance['stability_monitor']['expected_alerts'][0]['max_count_total']} 个匹配 <code>alloc_bench cpu.relative</code> 的 livedump；触发理由与窗口可复现，但未做根因证明。观测到且完成记录、归档、精确清理和复核才记 <code>EXPECTED</code>，未观测只记 <code>REGISTERED/NOT-EVALUATED</code>；其他可归因告警仍失败。<a href="../tools/reproduce/health_gate_template.md">健康门模板</a></li>
+    <li>Tizen 原生 B2 已补齐官方 GST 5/5 与 UI 活动后 E4′ 观测，但旧 E1–E3 两个间隔仍短约 0.2 s；新格只证明本次量，不外推产品收益。M7/直方图驻留量也不能直接换算可回收量。</li>
+    <li><strong>守护进程碎片化驻留的实测收益很小</strong>：enlightenment 约 5.84 MiB rest 的历史三格只回收 272/4/4 KiB，真实 UI 活动后的 E4′只回收 36 KiB；只约束这些格，不外推其他守护进程。</li>
+    <li><strong>估算器不可用作启用门</strong>：<code>&lt;size&gt;</code> 整页区间在严格配对验证中 15/15 未覆盖实测；它只能诊断，不能替代同目标 trim 探针或设置产品阈值。<a href="trimmable_estimator_20260905.md">估算器报告</a></li>
   </ul>
-  <p>产品侧启用仍须通过反信号排除、M7 驻留确认和代价预算三道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
+  <p>产品侧启用仍须通过反信号排除、M7 驻留确认、同目标实测收益达到预登记阈值和代价预算四道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
 </section>
 </main>
 <footer>构建来源 commit：<code>{esc(source_commit)}</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>

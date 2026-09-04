@@ -18,11 +18,12 @@ RSS/PSS 与系统内存压力。glibc/ptmalloc 不是全部内存的 owner：托
 [`状态报告 §2`](glibc_memopt_program_status_report_zh.md#2-方案调研全景)。
 
 真正的决策问题不是“哪个进程内存大”，而是“哪个相位同时满足：页面尚未自动离开
-Private_Dirty、allocator 内确有已释放驻留、回收后的再激活与并发停顿在预算内”。
+Private_Dirty、allocator 内确有已释放驻留、同目标 trim 探针的实测回收达到预登记阈值，
+且回收后的再激活与并发停顿在预算内”。
 
 ## 2. 核心发现一：自动归还是反信号
 
-`ServiceA` 的周期 glibc-heap Private_Dirty 峰谷中位看起来有 **6.2 MiB**，精确复算为
+`ServiceA` 的周期 glibc-heap Private_Dirty 峰谷中位为 **6.07 MiB**，精确复算为
 `6212 KiB`（[证据 TSV](../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv)；
 [HQ 复算](demo_reproduction_guide_20260901.md#l1-servicea)）。但峰谷下降期间：
 
@@ -88,16 +89,19 @@ plateau/cyclic 表为 `N-subthreshold`。这是已披露的跨表分类冲突，
 
 ## 4. 门控链与测试板实证
 
-门控链是：**反信号排除 → M7 确认 rest/unsorted 驻留 → valley trim → 同批记录调用、
-faults 与健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留表型闭合：
+门控链是：**反信号排除 → M7 确认 rest/unsorted 驻留 → 同目标 trim 探针实测收益达到
+预登记阈值 → valley trim 的代价/健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留
+表型闭合：
 
-- 两个瞬时释放锚点为 **51.07% / 50.39%**（各 `n=1`，分母为 pre-trim heap）
-  （[证据 TSV](../data/raw/s4_retention_20260901/a_cells.tsv)；
-  [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
+- 预登记双 ELF 复测后，瞬时释放共同锚点带为 **mixed
+  52.794499% ±4.304705 pp / medium-only 50.669791% ±4.918088 pp**（每档合并
+  `n=8`，分母为 pre-trim heap）；旧 `51.07% / 50.39%` 保留为历史单次值
+  （[裁决 JSON](../data/raw/a_anchor_replication_20260904/decision.json)；
+  [HQ 复算](demo_reproduction_guide_20260901.md#l1-a-anchor-replication)）。
 - valley trim 回收已释放 payload 的逐周期范围为 **80.18%–85.45%**
   （[证据 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
-- 两档统一对客调用中位为 **1.233269 ms**
+- 调用耗时按档中位为 **mixed 1.233269 ms / medium-only 1.218361 ms**
   （[证据 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
 - 下一周期相对 none 增加 **+1351 / +1465 minflt**，`majflt=0`
@@ -110,20 +114,64 @@ faults 与健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留表�
 这组数字证明“驻留表型门控 trim”在测试板合成代理上成立；它没有证明任一产品候选
 的 floor 都是 allocator 空闲页，也没有给出产品业务延迟。
 
-## 5. 决策门：何时 trim，何时不 trim
+## 5. 真实平台进程实证
+
+Tizen 自带守护进程与工具提供了独立见证：在 enlightenment 的三个完成观测中，
+glibc `malloc_info` 每次都显示 8 个 arena、约 **5.84 MiB rest**；随后
+`malloc_trim(0)` 令项目主堆口径分别下降 **272 / 4 / 4 KiB**，Tizen 自带
+`memps` 的 `[heap]` P(DATA) 逐格给出完全相同的前后值。PID 与启动时刻未变，
+majflt、zram、OOM/LMK 和 stability 告警增量均为 0
+（[格级证据](../data/raw/tizen_native_evidence_20260904/cells_derived.tsv)、
+[健康证据](../data/raw/tizen_native_evidence_20260904/health.json)、
+[L2 复现](demo_reproduction_guide_20260901.md#l2-tizen-native-evidence)）。这条链的负载、
+观察器和注入器分别包含 Tizen 守护进程、Tizen `memps` 与官方仓库 `gdb`，不只依赖
+自研工具。
+
+2026-09-05 的 B2 按新规格补齐了两个覆盖缺口：Tizen `gst-launch-1.0` 改为 5 个顺序
+软解进程，`5/5` 注入均完成，项目 heap 与 `memps` 同时看到
+**8 / 16 / 16 / 20 / 16 KiB** 回收，buffer 均持续增长；四个注入开始间隔为
+`120.122271759–120.142672892 s`，全部满足 `≥120.000 s`
+（[B2 格级证据](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv)、
+[间隔证据](../data/raw/tizen_native_evidence_20260905/intervals.tsv)、
+[L2 复现](demo_reproduction_guide_20260901.md#l2-tizen-native-evidence-b2)）。冻结原生应用
+完成 5 次“启动—30 秒同进程存活—正常终止”后，enlightenment E4′ 的 M7 rest 为
+`6019572 B`，项目 heap 与 `memps` 均为 `3324 → 3288 KiB`，即回收 **36 KiB**
+（[应用周期](../data/raw/tizen_native_evidence_20260905/app_cycles.tsv)、
+[E4′ XML](../data/raw/tizen_native_evidence_20260905/malloc_info_E4_PRIME.xml)、
+[派生摘要](../data/raw/tizen_native_evidence_20260905/summary.json)）。
+
+这组补跑还收紧了门 B 的解释：同一 E4′ XML 的 `<size>` 整页几何区间为
+`2200–7976 KiB`，仍不能覆盖 `36 KiB` 实测；连同历史验证集，严格配对的
+`15/15` 格全部区间外。因此 M7/直方图只能确认“有 allocator 空闲驻留”，不能量化
+“能收多少”，启用仍需同目标实际 A/B
+（[估算器报告](trimmable_estimator_20260905.md)、
+[验证表](../data/raw/trimmable_estimator_20260905/validation.tsv)、
+[L1 复算](demo_reproduction_guide_20260901.md#l1-tizen-native-b2)）。
+
+历史边界不抹除：旧构造于 `60.100233983 s` EOS、只完成 `1/5`，旧 Gallery 格为 `0/1`，
+E1–E3 两间隔 `119.806876910 / 119.856460299 s` 仍是不合规记录
+（[旧摘要](../data/raw/tizen_native_evidence_20260904/summary.json)）。B2 证明新构造、新 E4′
+与新计时器满足各自登记，不把旧格追认成合规。含 ptrace 的 gdb 注入耗时也不作为钩子
+代价数字。完整过程与边界见
+[`Tizen 原生实证报告`](tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05)。
+
+## 6. 决策门：何时 trim，何时不 trim
 
 文字流程如下：
 
 `相位结束` → `观察 PD 是否已经自动下降` → 若是，则把该下降分量标成反信号并结束；
 若否 → `检查目标是否由 glibc/ptmalloc 管理` → 若为自带分配器或 ownership 不明，则结束；
 若是 → `在释放前后取得 M7` → 若 rest/unsorted 没有确认驻留，则不 trim；若确认驻留 →
-`检查调用耗时、再激活 faults、并发锁停顿预算` → 任一超预算则不启用；全部过门才允许
-在已冻结的相位钩子上执行 trim，并保留回滚开关。
+`执行同目标、同相位的受控 trim 探针或 trim/none A/B` → 若实测回收低于看结果前登记的
+阈值，则不 trim；达到阈值 → `检查调用耗时、再激活 faults、并发锁停顿预算` → 任一超
+预算则不启用；四道硬门全部通过才允许在已冻结的相位钩子上执行 trim，并保留回滚开关。
 
-简写为：**自动下降不 trim；无驻留不 trim；非 glibc ownership 不 trim；代价未过门不
-trim。只有“未自动下降 + M7 驻留 + 代价过门”同时成立才 trim。**
+简写为：**自动下降不 trim；无驻留不 trim；非 glibc ownership 不 trim；未实测或实测
+收益低于预登记阈值不 trim；代价未过门不 trim。只有“未自动下降 + M7 驻留 + 实测
+收益达阈值 + 代价过门”四条同时成立才 trim。** 完整的带日期定稿与旧三门历史文字见
+[`产品落点建议 §1`](product_landing_recommendation_20260901.md#1-启用门清单)。
 
-## 6. 边界与未决
+## 7. 边界与未决
 
 合成代理不等于产品结论，仍有三条硬缺口：
 
@@ -132,6 +180,11 @@ trim。只有“未自动下降 + M7 驻留 + 代价过门”同时成立才 tri
   p99/帧时延和能耗未测。
 - 测试板与产品板的镜像、内存环境和工作负载不同；测试板百分比只能说明机制与量级，
   产品收益必须在产品侧按同一门控合同重新建立。
+- enlightenment 的约 `5.84 MiB rest` 对应历史格 `272/4/4 KiB` 回收，真实 UI 活动后
+  E4′ 也仅回收 `36 KiB`；守护进程碎片化驻留在这些格上的实测收益很小，不能由 M7
+  驻留量外推。
+- `<size>` 整页估算器在严格配对验证中 `15/15` 未覆盖实测，不能替代同目标、同相位的
+  实际 trim 探针，也不能提供统一产品阈值。
 
 产品侧下一步和硬前置见
 [`product_landing_recommendation_20260901.md`](product_landing_recommendation_20260901.md)。

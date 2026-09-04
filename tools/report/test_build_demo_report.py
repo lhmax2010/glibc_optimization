@@ -46,9 +46,13 @@ class DemoReportTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             document = output.read_text(encoding="utf-8")
             for expected in (
-                "51.07% / 50.39%",
+                "52.79% / 50.67%",
+                "52.794499% ±4.304705 pp",
+                "50.669791% ±4.918088 pp",
                 "80.18%–85.45%",
                 "1.233269 ms",
+                "1.218361 ms",
+                "6212 KiB（6.07 MiB）",
                 "+6.229 ms &lt; 6.784 ms",
                 "margin 0.556 ms",
                 "阈值 91.8%",
@@ -61,6 +65,22 @@ class DemoReportTests(unittest.TestCase):
                 "plateau/cyclic 标签",
                 "ServiceD",
                 "&lt;TEST_IMAGE_B&gt;/glibc-2.40-2.8",
+                "272 / 4 / 4 KiB",
+                "5.84 MiB rest",
+                "119.806876910/119.856460299 s",
+                "8 / 16 / 16 / 20 / 16 KiB",
+                "120.122271759–120.142672892 s",
+                "6019572 B",
+                "3324 → 3288 KiB",
+                "2200–7976 KiB",
+                "15/15",
+                "产品启用必须连续通过四道硬门",
+                "同目标/同相位实测收益 ≥ 预登记阈值",
+                "守护进程碎片化驻留的实测收益很小",
+                "估算器不可用作启用门",
+                "L2 首选 GBS 构建",
+                "S4 A v4",
+                "Tizen 原生 B/B2",
             ):
                 self.assertIn(expected, document)
 
@@ -86,19 +106,69 @@ class DemoReportTests(unittest.TestCase):
             "narrative": REPO / "docs/demo_narrative_20260901.md",
             "package": REPO / "docs/demo_package_20260902.md",
             "guide": REPO / "docs/demo_reproduction_guide_20260901.md",
+            "s4-report": REPO / "docs/s4_reference_and_retention_trim_20260901.md",
+            "status": REPO / "docs/glibc_memopt_program_status_report_zh.md",
             "demo-en": REPO / "tools/report/demo_README.md",
             "demo-zh": REPO / "tools/report/demo_README.zh-CN.md",
         }
         documents = {name: path.read_text(encoding="utf-8") for name, path in surfaces.items()}
         for name, document in documents.items():
             self.assertIn("1.233269 ms", document, name)
+            self.assertIn("1.218361 ms", document, name)
+            self.assertNotIn("合并中位", document, name)
+            self.assertNotIn("merged median", document.lower(), name)
+        for name in ("narrative", "package", "guide", "demo-en", "demo-zh"):
+            document = documents[name]
             self.assertIn("<TEST_IMAGE_B>", document, name)
             self.assertIn("glibc-2.40-2.8", document, name)
+        for name in ("narrative", "package", "demo-en", "demo-zh"):
+            document = documents[name]
+            self.assertTrue("四道硬门" in document or "four hard gates" in document, name)
+            self.assertTrue("预登记阈值" in document or "preregistered threshold" in document, name)
         for name in ("package", "guide", "demo-en", "demo-zh"):
             document = documents[name]
             self.assertIn("0.555556 ms", document, name)
             self.assertIn("91.8%", document, name)
             self.assertIn("+359", document, name)
+        for name in ("narrative", "package", "guide", "status", "demo-en", "demo-zh"):
+            document = documents[name]
+            self.assertIn("52.794499", document, name)
+            self.assertIn("50.669791", document, name)
+        a2_report = (REPO / "docs/a_anchor_replication_20260904.md").read_text(encoding="utf-8")
+        self.assertIn("52.794499", a2_report)
+        self.assertIn("50.669791", a2_report)
+
+    def test_native_evidence_customer_surfaces_match(self) -> None:
+        surfaces = (
+            REPO / "docs/tizen_native_evidence_20260904.md",
+            REPO / "docs/demo_narrative_20260901.md",
+            REPO / "docs/demo_reproduction_guide_20260901.md",
+            REPO / "tools/report/demo_README.md",
+            REPO / "tools/report/demo_README.zh-CN.md",
+        )
+        for path in surfaces:
+            document = path.read_text(encoding="utf-8")
+            for expected in ("5.84 MiB", "272", "4", "1/5", "0/1", "119.806876910", "119.856460299"):
+                self.assertIn(expected, document, path.name)
+            for expected in ("5/5", "6019572", "36 KiB", "120.122271759", "15/15"):
+                self.assertIn(expected, document, path.name)
+
+    def test_gbs_delivery_surfaces_share_status_and_manifest(self) -> None:
+        for path in (
+            REPO / "README.md",
+            REPO / "docs/demo_reproduction_guide_20260901.md",
+            REPO / "tools/report/demo_README.md",
+            REPO / "tools/report/demo_README.zh-CN.md",
+        ):
+            document = path.read_text(encoding="utf-8")
+            self.assertIn("gbs_llvm.conf", document, path.name)
+            self.assertTrue(
+                "preferred HQ" in document or "HQ 首选" in document,
+                path.name,
+            )
+            self.assertNotIn("pending board rebaseline", document)
+            self.assertNotIn("await board rebaselining", document)
+            self.assertNotIn("待下一轮板上重基线", document)
 
     def test_checked_in_report_matches_rebuild(self) -> None:
         checked_in = REPO / "docs/demo_report.html"

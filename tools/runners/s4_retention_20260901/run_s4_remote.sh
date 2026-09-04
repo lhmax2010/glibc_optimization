@@ -6,11 +6,20 @@ bench="$work/alloc_bench.armv7l"
 sampler="$work/sample_smaps_1s.sh"
 hist="$work/medium_1k_16k.hist"
 control="$work/controller.log"
-expected_bench_sha=dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd
+expected_bench_sha=${EXPECTED_ALLOC_SHA:-}
 expected_hist_sha=2082e156db133f4e6e900aec7c202e44a453d2f23b60225c40251de08a27960b
 overall_rc=0
 governor_changed=0
 after_captured=0
+
+case "$expected_bench_sha" in
+    ''|*[!0-9a-f]*) echo "EXPECTED_ALLOC_SHA must be a lowercase SHA-256" >&2; exit 2;;
+esac
+[ "${#expected_bench_sha}" -eq 64 ] || { echo "EXPECTED_ALLOC_SHA must contain 64 hex digits" >&2; exit 2; }
+if [ "${1:-}" = --sha-contract-only ]; then
+    printf 'SHA_CONTRACT alloc_bench.armv7l=%s\n' "$expected_bench_sha"
+    exit 0
+fi
 
 : >"$control" || exit 2
 

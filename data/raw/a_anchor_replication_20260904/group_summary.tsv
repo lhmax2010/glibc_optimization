@@ -1,0 +1,5 @@
+elf	profile	n	min_pct	median_pct	max_pct	range_pp
+frozen	mixed	3	50.93908	52.93795	53.39122	2.45214
+frozen	medium-only	3	47.83716	49.02411	51.404142	3.566982
+gbs	mixed	3	52.107404	52.651048	53.812636	1.705232
+gbs	medium-only	3	50.803663	51.083217	52.755248	1.951585
