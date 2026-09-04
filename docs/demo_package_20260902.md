@@ -32,12 +32,12 @@
 
 ### 0.2 交付快照强制自检
 
-自 `demo-v4` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三次全新克隆，并在
-每个克隆中执行不跳过 host tests 的完整 `verify`：
+自 `demo-v6` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三次全新克隆，并把
+每个克隆放进四种受控 PATH 环境执行不跳过 host tests 的完整 `verify`：
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v5 <url>
+git clone --branch demo-v6 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -47,12 +47,16 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v5
+  --tag demo-v6
 ```
 
-三种形态都必须出现 `PASS host-tests` 与 `OVERALL PASS` 才能宣告交付就绪。`demo` 与
+四种 PATH 是 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}`；其中二者都不可
+发现的 `minimal-git-python` 是强制形态。可发现项由 fail-if-invoked 桩提供，确保默认
+verify 不会偷偷执行可选工具；需单独安装的系统依赖固定为 Git 与 Python 3（另假定基础
+Bash/POSIX userland）。`3 × 2 × 2 = 12` 次都必须出现 `host-tests=PASS
+OVERALL=PASS`，最终汇总必须为 `OVERALL PASS checks=12` 才能宣告交付就绪。`demo` 与
 detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REPORT_ONLY` 身份语义，
-但其完整 verify 同样是硬门。脚本、参数及后续标签递增规则见
+但其完整 verify 同样是硬门。脚本、逐模块依赖审计及后续标签递增规则见
 [`tools/reproduce/README`](../tools/reproduce/README.md#mandatory-pre-delivery-clone-matrix)。
 
 ## 1. 建议演示流程

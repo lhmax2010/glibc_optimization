@@ -32,6 +32,10 @@ bash tools/reproduce/reproduce.sh board --ip <addr>
 
 入口必须在真实 `git clone` 内运行，GitHub ZIP/source export 不受支持；workflow 会把
 `HEAD` 与 [`delivery_refs.json`](../tools/reproduce/delivery_refs.json) 记录的交付引用比较。
+默认 `verify` 需单独安装的系统依赖只有 Git 与 Python 3，并假定基础 Bash/POSIX
+userland 已随操作系统提供；GBS、RPM 工具链、ARM 工具链、SDB、root 与网络均不是
+默认硬门。缺少可选环境时必须输出带理由的 `SKIPPED`，不能由测试 fixture 反向失败；
+逐测试文件审计见 [`workflow README`](../tools/reproduce/README.md#default-host-test-dependency-audit)。
 仅开发调试可显式设置 `REPRODUCE_ALLOW_DIRTY=1`、`REPRODUCE_SKIP_TESTS=1` 或
 `REPRODUCE_EXPECTED_SHA=<commit-or-ref>`；交付验收不得隐式跳过这些门。
 

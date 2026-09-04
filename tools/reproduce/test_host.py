@@ -26,6 +26,23 @@ STABILITY = HERE / "stability_monitor.py"
 
 
 class ReproduceTests(unittest.TestCase):
+    def _install_unexpected_command_stubs(
+        self,
+        directory: Path,
+        commands: tuple[str, ...],
+        marker: Path,
+    ) -> None:
+        """Make optional tools discoverable without borrowing host packages."""
+        for command in commands:
+            stub = directory / command
+            stub.write_text(
+                "#!/bin/sh\n"
+                f"printf '%s\\n' {command!r} >> {str(marker)!r}\n"
+                "exit 97\n",
+                encoding="utf-8",
+            )
+            stub.chmod(0o755)
+
     def _clone_current_head(self, source: Path, destination: Path) -> str:
         source_head = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=source, check=True,
@@ -135,6 +152,20 @@ class ReproduceTests(unittest.TestCase):
         self.assertIn("git clone --branch demo <url>", result.stdout)
         self.assertIn("git clone --branch <delivery-tag> <url>", result.stdout)
         self.assertIn("git clone <url>  (must check out main)", result.stdout)
+        self.assertIn("3 clone shapes x 4 optional-tool PATH profiles = 12", result.stdout)
+        self.assertIn("present-gbs+absent-rpm", result.stdout)
+        self.assertIn("minimal-git-python", result.stdout)
+
+    def test_default_host_test_dependency_audit_covers_inventory(self) -> None:
+        entrypoint = (HERE / "reproduce.sh").read_text(encoding="utf-8")
+        start = entrypoint.index("host_tests()\n")
+        end = entrypoint.index("\n}\n", start)
+        modules = re.findall(r"^\s+(tools/\S+\.py)(?:\s+\\)?$", entrypoint[start:end], re.MULTILINE)
+        self.assertEqual(len(modules), 11, modules)
+        documentation = (HERE / "README.md").read_text(encoding="utf-8")
+        for module in modules:
+            with self.subTest(module=module):
+                self.assertIn(f"`{module}`", documentation)
 
     def test_board_entrypoint_help_is_host_only(self) -> None:
         result = subprocess.run(
@@ -181,15 +212,17 @@ class ReproduceTests(unittest.TestCase):
             fake_gbs.write_text(
                 "#!/bin/sh\n"
                 "printf '%s\\n' \"$2\" >> \"$FAKE_GBS_LOG\"\n"
-                "grep '^buildroot=' \"$2\" >> \"$FAKE_GBS_LOG\"\n"
+                "while IFS= read -r line; do\n"
+                "  case \"$line\" in buildroot=*) printf '%s\\n' \"$line\" >> \"$FAKE_GBS_LOG\";; esac\n"
+                "done < \"$2\"\n"
                 "echo fixture-gbs-failure\nexit 42\n",
                 encoding="utf-8",
             )
             fake_gbs.chmod(0o755)
-            for command in ("rpm", "rpm2cpio", "cpio"):
-                executable = shutil.which(command)
-                self.assertIsNotNone(executable, command)
-                (fake_bin / command).symlink_to(executable)
+            unexpected_tools = root / "unexpected-rpm-tool-invocation"
+            self._install_unexpected_command_stubs(
+                fake_bin, ("rpm", "rpm2cpio", "cpio"), unexpected_tools,
+            )
             env = {
                 **os.environ,
                 "PATH": f"{fake_bin}:{os.environ['PATH']}",
@@ -215,6 +248,7 @@ class ReproduceTests(unittest.TestCase):
             self.assertNotEqual(configs[0], configs[1])
             self.assertTrue(all("/tmp/glibc-memopt-gbs-" in item for item in configs))
             self.assertNotEqual(buildroots[0], buildroots[1])
+            self.assertFalse(unexpected_tools.exists())
 
     def test_explicit_gbs_reports_occupied_lock_without_failing_package(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -224,10 +258,10 @@ class ReproduceTests(unittest.TestCase):
             fake_gbs = fake_bin / "gbs"
             fake_gbs.write_text("#!/bin/sh\nexit 42\n", encoding="utf-8")
             fake_gbs.chmod(0o755)
-            for command in ("rpm", "rpm2cpio", "cpio"):
-                executable = shutil.which(command)
-                self.assertIsNotNone(executable, command)
-                (fake_bin / command).symlink_to(executable)
+            unexpected_tools = root / "unexpected-rpm-tool-invocation"
+            self._install_unexpected_command_stubs(
+                fake_bin, ("rpm", "rpm2cpio", "cpio"), unexpected_tools,
+            )
             lock_path = root / "gbs.lock"
             with lock_path.open("a+") as lock:
                 fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -245,6 +279,7 @@ class ReproduceTests(unittest.TestCase):
             self.assertIn("WAITING\tgbs-build-lock", result.stdout)
             self.assertIn("REPORT_ONLY\tgbs-build-environment", result.stdout)
             self.assertIn("remained occupied", result.stdout)
+            self.assertFalse(unexpected_tools.exists())
 
     def test_stability_snapshot_remote_body_hashes_nonempty_directory(self) -> None:
         workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
@@ -546,8 +581,8 @@ class ReproduceTests(unittest.TestCase):
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v5"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v5"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v6"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v6"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)

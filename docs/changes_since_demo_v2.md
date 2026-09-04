@@ -10,6 +10,7 @@
 - 交付账务截至：`e8be0e9652806eef1772dc8dd346770a38551b9d`
 - `demo-v3 → demo-v4`：仅修复交付身份测试 fixture 的分支假设并新增三形态远端交付前自检；无测量、验收带或技术结论变化
 - `demo-v4 → demo-v5`：闭合第三轮终审 A 段，并以事前 tag 固定、未参与建带的 GBS-only held-out 四格独立关闭 V4-1；随后只做交付措辞、日期路径与快照身份收口
+- `demo-v5 → demo-v6`：仅修复默认 host tests 对 RPM 工具链的隐藏依赖，并把交付前自检扩展为三种克隆形态乘四种可选工具 PATH；不改变任何测量、验收带或结论
 - 范围：三方第三轮复审使用的分类索引；不产生新测量数字，不替代各正式报告
 - 复核命令：`git log --reverse --oneline 959b4fb..e8be0e9`
 
@@ -133,3 +134,13 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 冻结之后、由事前提交与轻量 tag 固定且不参与建带的 GBS-only 四格，按原闭区间得到
 4/4 PASS。因而“GBS 重基线通过”只由 held-out 结果支持，不能倒推为 A2 建带样本的
 独立结论。`demo-v5` 不改任何测量数字或验收带，只冻结这条证据等级与路径优先级。
+
+## 12. demo-v5 → demo-v6：测试环境依赖修复
+
+| 发现项编号 | 提交 / tag | 变化 | 复核入口 |
+|---|---|---|---|
+| V5-RPM-DEPENDENCY | `demo-v6^{}` | 显式 GBS 环境失败与锁占用测试不再从 host 借用 `rpm` / `rpm2cpio` / `cpio`；改用 fail-if-invoked 自包含桩，使无 RPM 工具链环境仍实际执行断言逻辑 | [`host 测试`](../tools/reproduce/test_host.py)、[`依赖审计`](../tools/reproduce/README.md#default-host-test-dependency-audit) |
+| V5-PREDELIVERY-12 | `demo-v6^{}` | 交付前门从三种克隆形态扩展为三形态 × GBS 有/无 × RPM 工具链有/无共 12 次完整 verify；`minimal-git-python` 成为强制环境 | [`predelivery_check.sh`](../tools/reproduce/predelivery_check.sh)、[`交付合同`](demo_package_20260902.md#02-交付快照强制自检) |
+
+`demo-v5` 保留用于审计。`demo-v6` 相对 `demo-v5` 只改变测试 fixture、依赖声明、交付前
+自检维度与随标签递增所需的入口引用；没有新增或重算板上数据，也没有修改技术判断。

@@ -35,8 +35,11 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
 
 1. **Read offline — minutes.** Open [`docs/demo_report.html`](docs/demo_report.html).
 2. **Verify on a host — minutes.** Use a real `git clone` (ZIP/source exports are
-   unsupported), then run `bash tools/reproduce/reproduce.sh`. Development-only
-   overrides are documented in [`tools/reproduce/README.md`](tools/reproduce/README.md).
+   unsupported), then run `bash tools/reproduce/reproduce.sh`. Its separately
+   installed prerequisites are only Git and Python 3; GBS/RPM/ARM toolchains are
+   optional and never default-verify hard gates. Development-only overrides and
+   the dependency audit are documented in
+   [`tools/reproduce/README.md`](tools/reproduce/README.md).
 3. **Repeat on a board — hours.** Run
    `bash tools/reproduce/reproduce.sh board --ip <addr>` only after the prerequisites
    below and the [L2 guide](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)

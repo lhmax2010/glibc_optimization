@@ -18,6 +18,8 @@
 | V4-1 / HELDOUT-CRITERION | 2026-09-04 | 以事前提交并打轻量 tag 的 GBS ELF × mixed/medium-only × 2 重复作为独立 held-out；四格不并入建带样本，按既有 v4 闭区间逐格判定，4/4 落带才通过，任一带外即不通过且不得改带或补跑刷数 | 只有在校准带冻结后、与建带样本隔离的观测才能独立检验 GBS 路径 | PM |
 | V4-1 / GBS-PROMOTION | 2026-09-04 | held-out 四格 4/4 落带且身份、健康、清理门全过后，恢复“GBS 重基线通过”，GBS 转为默认 L2 路径；冻结件保留为可审计备选 | [`gbs-heldout-contract-20260904`](../tools/runners/gbs_heldout_validation_20260904/contract.json) 固定的四格均未参与建带并独立通过，关闭 V4-1 的循环论证缺口 | PM |
 | B2-EVIDENCE-LEVEL | 2026-09-04 | B2 实际执行日订正为 2026-09-04；没有独立事前 commit/tag 的“预登记”降级为“固定合同重放” | 原始纳秒时间戳确定实际日期；同一工作轮内先写规格不足以形成第三方可审计的事前凭证 | PM |
+| V5-RPM-DEPENDENCY | 2026-09-04 | 默认 verify 的测试 fixture 不得要求 RPM/GBS/ARM 工具链；两个 GBS 环境测试改用自包含桩实际执行，不以缺包静默通过 | N4-01 已把真实 GBS 构建移出默认路径；验证该行为的测试不能反向引入未声明的 RPM 系统依赖 | PM |
+| V5-PREDELIVERY-12 | 2026-09-04 | 交付就绪门固定为三种远端克隆形态 × GBS 可发现/不可发现 × RPM 工具链可发现/不可发现，共 12 次完整 verify；最小形态只要求 Git、Python 3 与基础系统 userland | 同时覆盖交付身份与可选工具存在性，才能防止干净 Ubuntu/Debian 环境再次被测试夹具阻断 | PM |
 
 对应修复闭环见 [`review_fix_20260903.md`](review_fix_20260903.md)，从 demo-v2 开始的提交与
 证据变化索引见 [`changes_since_demo_v2.md`](changes_since_demo_v2.md)。

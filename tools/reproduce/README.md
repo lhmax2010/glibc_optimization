@@ -14,6 +14,15 @@ v4 acceptance check, local-link check, report rebuild, static GBS package contra
 and host test. It never starts a real GBS build. Any failed row makes the process
 exit nonzero.
 
+The default mode has only two separately installed system prerequisites: **Git and
+Python 3**. The `bash` entrypoint and ordinary base-image shell utilities
+(`sh`, `cmp`, `cp`, `dirname`, `find`, `grep`, `ln`, `mkdir`, `mktemp`, `sed`,
+and `tr`) are treated as the operating-system userland, not project toolchains.
+`gbs`, `rpm`, `rpm2cpio`, `cpio`, `rpmspec`, an ARM compiler, SDB, network access,
+and root are not default-verify prerequisites. Optional syntax/build checks emit an
+explicit `SKIPPED` reason when their environment is absent; their real execution is
+reserved for the explicit `gbs` or `board` mode.
+
 Development-only overrides are explicit: `REPRODUCE_ALLOW_DIRTY=1` permits a dirty
 tree, `REPRODUCE_SKIP_TESTS=1` skips the nested host-test row, and
 `REPRODUCE_EXPECTED_SHA=<commit-or-ref>` overrides the recorded delivery reference.
@@ -29,24 +38,54 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v5
+  --tag demo-v6
 ```
 
-The script performs three fresh HQ-shaped clones from the supplied remote and runs
-the complete `reproduce.sh verify` in each, with nested host tests enabled:
+The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v5 <url>
+git clone --branch demo-v6 <url>
 git clone <url>                 # remote default must be main
 ```
 
-The demo branch and detached tag must pass required delivery identity; main keeps
-its recorded `REPORT_ONLY` identity semantics, but its complete verify is still a
-mandatory gate. All three must print `PASS host-tests` and `OVERALL PASS` or the
-snapshot is not delivery-ready. Future snapshots pass their new annotated tag with
-`--tag demo-vN`; the script also defaults that value from
-[`delivery_refs.json`](delivery_refs.json).
+Each clone is verified under four controlled PATH profiles: GBS/RPM both
+discoverable, only RPM discoverable, only GBS discoverable, and neither
+discoverable (`minimal-git-python`). Discoverable optional tools are deterministic
+fail-if-invoked stubs, so this gate proves that default verify does not execute them;
+`rpmspec -P` alone uses a local parser fixture because that optional syntax branch is
+intentionally exercised. This is `3 × 2 × 2 = 12` complete verifies with nested host
+tests enabled. The demo branch and detached tag must pass required delivery identity;
+main keeps its recorded `REPORT_ONLY` identity semantics. Every check must print
+`host-tests=PASS OVERALL=PASS`, and the final row must be
+`OVERALL PASS checks=12`, or the snapshot is not delivery-ready. Future snapshots
+pass their new annotated tag with `--tag demo-vN`; the script also defaults that
+value from [`delivery_refs.json`](delivery_refs.json).
+
+## Default host-test dependency audit
+
+The current entrypoint executes eleven test files (the ten analysis/report groups
+plus the mocked board-workflow group). Their external-command boundary is:
+
+| Test file | Commands beyond Python code | Default-verify treatment |
+|---|---|---|
+| `tools/runners/s4_retention_20260901/test_host.py` | `python3`, `sh` for a local sampler fixture | Base runtime only; no board command |
+| `tools/runners/gst_trim_cost_20260901/test_host.py` | `python3` | Required runtime |
+| `tools/runners/a_anchor_replication_20260904/test_host.py` | `python3` | Required runtime |
+| `tools/runners/gbs_heldout_validation_20260904/test_host.py` | `python3` | Required runtime |
+| `tools/runners/tizen_native_evidence_20260904/test_host.py` | `python3`, `sh -n` | Shell syntax check only; no SDB/gdb |
+| `tools/runners/tizen_native_evidence_b2_20260904/test_host.py` | `sh -n` | Shell syntax check only; no SDB/gdb |
+| `tools/analysis/test_trimmable_estimator.py` | current Python interpreter | Required runtime |
+| `tools/report/test_build_demo_report.py` | `python3`, `git` | Required delivery provenance check |
+| `tools/reproduce/test_host.py` | `git`, `python3`, base shell utilities | RPM/GBS paths use self-contained stubs; ARM build check is explicit `SKIPPED` without its environment |
+| `tools/reproduce/test_board_workflow_mocked_sdb.py` | `sh`; creates its own `sdb` stub | No real SDB or board connection |
+| `tools/runners/tool_provenance_20260903/test_host.py` | `python3`; local XML fixtures | No network or repository download |
+
+The top-level static GBS check parses the spec and manifest in Python. `rpmspec -P`
+is optional and reports `SKIPPED` when absent. The path-reproducibility check requires
+`DEMO_TOOLCHAIN_ROOT` and `DEMO_GST_SYSROOT`; without both it reports a reasoned
+`SKIPPED`. No test may use `assertIsNotNone(shutil.which(...))` to promote an
+optional RPM/GBS/ARM command into a default dependency.
 
 `board` is an hours-scale workflow. It requires an RPI4 running the frozen Tizen
 Unified image, SDB, and the internal SHA-256-pinned ARM/media bundle described in

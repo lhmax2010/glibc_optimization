@@ -32,7 +32,8 @@ M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针
 
 1. **离线阅读——分钟级。** 打开 [`docs/demo_report.html`](docs/demo_report.html)。
 2. **Host 核验——分钟级。** 必须使用真实 `git clone`（不支持 ZIP/source export），
-   运行 `bash tools/reproduce/reproduce.sh`；开发专用覆盖变量见
+   运行 `bash tools/reproduce/reproduce.sh`；需单独安装的依赖只有 Git 与 Python 3，
+   GBS/RPM/ARM 工具链均为可选项且不构成默认硬门。开发专用覆盖变量与依赖审计见
    [`tools/reproduce/README.md`](tools/reproduce/README.md)。
 3. **板上完整复现——小时级。** 满足下列前置与
    [L2 指南](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)后，运行
