@@ -112,7 +112,27 @@ faults 与健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留表�
 这组数字证明“驻留表型门控 trim”在测试板合成代理上成立；它没有证明任一产品候选
 的 floor 都是 allocator 空闲页，也没有给出产品业务延迟。
 
-## 5. 决策门：何时 trim，何时不 trim
+## 5. 真实平台进程实证
+
+Tizen 自带守护进程与工具提供了独立见证：在 enlightenment 的三个完成观测中，
+glibc `malloc_info` 每次都显示 8 个 arena、约 **5.84 MiB rest**；随后
+`malloc_trim(0)` 令项目主堆口径分别下降 **272 / 4 / 4 KiB**，Tizen 自带
+`memps` 的 `[heap]` P(DATA) 逐格给出完全相同的前后值。PID 与启动时刻未变，
+majflt、zram、OOM/LMK 和 stability 告警增量均为 0
+（[格级证据](../data/raw/tizen_native_evidence_20260904/cells_derived.tsv)、
+[健康证据](../data/raw/tizen_native_evidence_20260904/health.json)、
+[L2 复现](demo_reproduction_guide_20260901.md#l2-tizen-native-evidence)）。这条链的负载、
+观察器和注入器分别包含 Tizen 守护进程、Tizen `memps` 与官方仓库 `gdb`，不只依赖
+自研工具。
+
+完成边界必须与数字一起保留：冻结的 `gst-launch-1.0` 管线于
+`60.100233983 s` EOS，只完成 **1/5**；Gallery 释放相位格完成 **0/1**；
+enlightenment 两个观测间隔为 `119.806876910 / 119.856460299 s`，严格略低于预登记
+120 s。因此这里只陈述完成格的实测量，不声称原生 GST 五次持续注入、真实 UI 释放相位
+或完全合规三重复成立。含 ptrace 的 gdb 注入耗时也不作为钩子代价数字。完整过程与边界见
+[`Tizen 原生实证报告`](tizen_native_evidence_20260904.md)。
+
+## 6. 决策门：何时 trim，何时不 trim
 
 文字流程如下：
 
@@ -125,7 +145,7 @@ faults 与健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留表�
 简写为：**自动下降不 trim；无驻留不 trim；非 glibc ownership 不 trim；代价未过门不
 trim。只有“未自动下降 + M7 驻留 + 代价过门”同时成立才 trim。**
 
-## 6. 边界与未决
+## 7. 边界与未决
 
 合成代理不等于产品结论，仍有三条硬缺口：
 

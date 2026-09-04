@@ -21,6 +21,7 @@ M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_tri
 | 瞬时释放锚点 | mixed `52.794499% ±4.304705 pp`、medium-only `50.669791% ±4.918088 pp`；各合并 `n=8`，分母为 pre-trim heap | [HTML 摘要](docs/demo_report.html#summary) | [`decision.json`](data/raw/a_anchor_replication_20260904/decision.json)、[`a_cells.tsv`](data/raw/a_anchor_replication_20260904/a_cells.tsv) |
 | 门控 valley trim vs none | 已释放 payload 的 `80.18%–85.45%`；调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期 `+1351/+1465 minflt`，`majflt=0` | [S4 效果](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`：margin `0.555556 ms`、达门槛 91.8%，`REPORT_ONLY` 未检出；同规则 p50 判可见（`+1.870462` 对 `0.173927 ms`）；`+359 minflt/循环` | [真实并发](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json)、[`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
+| Tizen 原生交叉见证 | enlightenment M7 约 `5.84 MiB` rest；项目 heap PD 与 Tizen `memps` 同时看到 `272/4/4 KiB` 回收。完成边界：gst `1/5`、UI 释放相位 `0/1`，且两个间隔略低于 120 s | [真实平台进程](docs/demo_report.html#native) | [`cells_derived.tsv`](data/raw/tizen_native_evidence_20260904/cells_derived.tsv)、[`summary.json`](data/raw/tizen_native_evidence_20260904/summary.json) |
 
 批量释放相位的 `48.9% / 1.36 MiB × 8 进程` 来自 `<TEST_IMAGE_B>` /
 `glibc-2.40-2.8`，仅为相容性对照，不属于冻结矩阵
@@ -97,6 +98,9 @@ stability-monitor v2 known-alert waiver 覆盖 S4 A 至多两个
 - 合成代理缺产品候选 M7 live/bin 分解、产品业务时延及其他线程仍分配时的全 arena
   锁停顿直测。
 - gst trim 在 NULL 后触发，不是分配热区注入。
+- Tizen 原生矩阵不是完整成功：gst 只完成 1/5、UI 释放相位格 0/1，enlightenment
+  三个观测的两个间隔为 `119.806876910/119.856460299 s`，低于预登记 120 s；只能引用
+  完成格测量值。
 - “p99 未检出”不等于零代价；若另一块板判可见，保留三重复并报告越带 margin，方向
   仍是 `REPORT_ONLY`。
 - 产品启用仍须通过反信号排除、M7 驻留确认、代价预算三道硬门，见

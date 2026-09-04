@@ -45,7 +45,7 @@
    方向未越过基线重复离散并记 `REPORT_ONLY`；同时明确 trim 位于 NULL release 后，没有测到并发分配线程
    被全 arena 锁直接阻塞的时长。
 6. **以产品决策门收尾。** 用
-   [`何时 trim`](demo_narrative_20260901.md#5-决策门何时-trim何时不-trim)和
+   [`何时 trim`](demo_narrative_20260901.md#6-决策门何时-trim何时不-trim)和
    [`产品 M7 推荐顺序`](product_m7_feasibility_20260902.md#7-路径对照与推荐排序)说明：
    自动下降、M7 阴性、ownership 不明或代价未过门时都不启用。
 
@@ -230,7 +230,7 @@ floor 不换算收益，也不进入 trim A/B。
    ([gst 未关闭项](gst_trim_cost_20260901.md#d-是否填上并发线程代价未知))。
 3. **跨板外推缺口。** 测试板与产品板的镜像、内存环境和工作负载不同；测试板百分比只
    支持机制与量级，产品收益必须按同一三门合同重建
-   ([Demo 原边界](demo_narrative_20260901.md#6-边界与未决))。
+   ([Demo 原边界](demo_narrative_20260901.md#7-边界与未决))。
 4. **gst NULL 后触发限制。** PLAYING 阶段观察到多线程 pipeline，但 trim 在 NULL release
    完成后调用；当前证据说明 release-point 调用和下一轮后效，没有证明业务线程仍执行时
    的锁竞争安全性

@@ -146,6 +146,8 @@ def build(repo: Path, source_commit: str) -> str:
     gst_reps = read_tsv(raw / "gst_trim_cost_20260901/repetitions.tsv")
     gst_comparison = json.loads((raw / "gst_trim_cost_20260901/comparison.json").read_text())
     batch_rows = read_tsv(raw / "demo_reproduction_20260901/batch_release_phase.tsv")
+    native = json.loads((raw / "tizen_native_evidence_20260904/summary.json").read_text())
+    native_health = json.loads((raw / "tizen_native_evidence_20260904/health.json").read_text())
     acceptance = json.loads((repo / "tools/reproduce/acceptance_bands.json").read_text())
 
     expected_docs = (
@@ -153,6 +155,7 @@ def build(repo: Path, source_commit: str) -> str:
         "docs/product_landing_recommendation_20260901.md",
         "docs/demo_reproduction_guide_20260901.md",
         "docs/demo_package_20260902.md",
+        "docs/tizen_native_evidence_20260904.md",
     )
     for relative in expected_docs:
         if not (repo / relative).is_file():
@@ -302,6 +305,28 @@ def build(repo: Path, source_commit: str) -> str:
     assert acceptance["schema"] == "glibc-memopt-demo.acceptance.v4"
     assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["center_pct_by_profile"] == anchors
     assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["plus_minus_pp_by_profile"] == anchor_radius
+    assert native["completion"] == {
+        "t1_completed": 1,
+        "t1_preregistered": 5,
+        "t1_stop": "pipeline EOS at 60.100233983 s before T1_2",
+        "t2_baseline_completed": 3,
+        "t2_baseline_preregistered": 3,
+        "t2_release_phase_completed": 0,
+        "t2_release_phase_preregistered": 1,
+        "t2_release_phase_stop": "attach-panel-gallery was no longer running at the first terminate command",
+    }
+    assert native["t1"]["reclaimed_kb"] == [12]
+    assert native["t2"]["reclaimed_kb"] == [272, 4, 4]
+    assert native["t2"]["pre_sample_intervals_s"] == [119.80687691, 119.856460299]
+    assert native["t2"]["interval_requirement_met"] is False
+    assert [row.get("m7_rest_bytes") for row in native["cells"] if row["group"] == "T2"] == [6118675, 6118694, 6118706]
+    assert all(row["project_reclaimed_kb"] == row["memps_reclaimed_kb"] for row in native["cells"])
+    assert native_health["enlightenment"]["idle_glibc_heap_pd_min_kb"] == native_health["enlightenment"]["idle_glibc_heap_pd_max_kb"] == 3472
+    assert native_health["formal_window"]["stability_monitor_new_alerts"] == 0
+    assert native_health["formal_window"]["dmesg_oom_lmk_new_matches"] == 0
+    assert [native_health["formal_window"][key] for key in (
+        "zram_original_data_size_delta", "zram_compressed_data_size_delta", "zram_mem_used_total_delta"
+    )] == [0, 0, 0]
 
     evidence_service = "../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv"
     evidence_s4_a = "../data/raw/a_anchor_replication_20260904/a_cells.tsv"
@@ -335,7 +360,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <h1>只在“确有驻留”时 trim</h1>
   <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再在明确释放相位执行 <code>malloc_trim(0)</code>，并把回收、再激活 faults、业务 p99 和健康门作为同一份合同验收。</p>
 </header>
-<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
+<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#native">真实平台进程</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
 <main>
 <section id="summary">
   <span class="pill">一页摘要</span><h2>方案、交付合同与头条结果</h2>
@@ -402,6 +427,16 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <p class="source-links"><a href="{evidence_gst}">首次回收证据 TSV</a> · <a href="{guide}#l1-gst-trim-cost">公开 replay 与预期输出</a></p>
 </section>
 
+<section id="native">
+  <span class="pill">真实平台进程实证</span><h2>Tizen 自带进程与工具的交叉见证</h2>
+  <p>在 Tizen 守护进程 <code>enlightenment</code> 上，glibc <code>malloc_info</code> 每格均显示 8 个 arena、约 5.84 MiB rest；随后三次 <code>malloc_trim(0)</code> 的项目主堆读数分别下降 <strong>272 / 4 / 4 KiB</strong>，Tizen 自带 <code>memps</code> 对同一 <code>[heap]</code> 逐格给出完全相同的前后值。PID 与启动时刻未变，majflt 增量、zram 三项增量、新增 OOM/LMK 和 stability 告警均为 0。</p>
+  <table><thead><tr><th>格</th><th>M7 rest (B)</th><th>项目 heap PD (KiB)</th><th>memps [heap] (KiB)</th><th>回收</th><th>含 ptrace 的注入时延</th></tr></thead><tbody>
+    {''.join(f'<tr><td>{row["cell"]}</td><td class="number">{row["m7_rest_bytes"]}</td><td>{row["project_pre_kb"]} → {row["project_post_kb"]}</td><td>{row["memps_pre_heap_kb"]} → {row["memps_post_heap_kb"]}</td><td class="number">{row["project_reclaimed_kb"]} KiB</td><td>{row["injection_ms"]:.6f} ms</td></tr>' for row in native["cells"] if row["group"] == "T2")}
+  </tbody></table>
+  <div class="callout"><strong>完成边界：</strong>Tizen <code>gst-launch-1.0</code> 冻结管线在 60.100233983 s EOS，只完成 1/5（该格回收 12 KiB，buffer 903→941）；Gallery 在首次 terminate 前自行退出，释放相位格完成 0/1。T2 的两个前置采样间隔为 119.806876910/119.856460299 s，严格低于预登记 120 s，故三个完整观测不标成完全合规重复。含 ptrace 的 1.15–1.77 s 不是钩子代价。</div>
+  <p class="source-links"><a href="tizen_native_evidence_20260904.md">完整报告</a> · <a href="../data/raw/tizen_native_evidence_20260904/cells_derived.tsv">格级证据</a> · <a href="../data/raw/tizen_native_evidence_20260904/summary.json">完成度与偏差</a> · <a href="{guide}#l2-tizen-native-evidence">L2 复现</a></p>
+</section>
+
 <section id="reproduce">
   <span class="pill">复现入口</span><h2>三条路，同一事实源</h2>
   <div class="grid">
@@ -420,6 +455,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     <li><strong>“p99 未检出”不等于“零代价”</strong>：结论严格受三重复、{gst_comparison['primary_samples_per_repeat']} 个主样本与预登记离散门约束。<a href="../data/raw/gst_trim_cost_20260901/comparison.json">判定证据</a></li>
     <li><strong>同 seed 不钉 arena 指派</strong>：单重复实测出现 <a href="../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv">68.169197%</a>（约 1 MiB 页台阶）；回收字节值不属于确定性项，S4 B 分别锚定发布值 {b_ratio['mixed']:.6f}% / {b_ratio['medium-only']:.6f}% 并按每档三重复中位 ±{acceptance['tolerance_bands']['s4_b_reclaim_pct_repeat_median']['plus_minus_pp']:g} pp 验收。n=3 的中位至多容忍一个离群。<a href="../tools/reproduce/acceptance_bands.json">机器规则</a></li>
     <li><strong>known-alert waiver 不是无害性证明</strong>：S4 A 最多 {acceptance['stability_monitor']['expected_alerts'][0]['max_count_total']} 个匹配 <code>alloc_bench cpu.relative</code> 的 livedump；触发理由与窗口可复现，但未做根因证明。观测到且完成记录、归档、精确清理和复核才记 <code>EXPECTED</code>，未观测只记 <code>REGISTERED/NOT-EVALUATED</code>；其他可归因告警仍失败。<a href="../tools/reproduce/health_gate_template.md">健康门模板</a></li>
+    <li>Tizen 原生交叉见证不是完整成功矩阵：T1 为 1/5、UI 释放相位格为 0/1，且 T2 间隔约短 0.2 s；只能引用完成格的测量值，不能外推产品收益。</li>
   </ul>
   <p>产品侧启用仍须通过反信号排除、M7 驻留确认和代价预算三道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
 </section>

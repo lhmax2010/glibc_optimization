@@ -23,6 +23,7 @@
 - 产品 M7 路径评估与演示日入口：[`product_m7_feasibility_20260902.md`](product_m7_feasibility_20260902.md)、[`demo_package_20260902.md`](demo_package_20260902.md)。
 - HQ 最终交付入口：[`demo_report.html`](demo_report.html)（离线图文）与 [`reproduce.sh`](../tools/reproduce/reproduce.sh)（host verify / 完整板上 workflow）。
 - HQ GBS 构建入口：[`glibc-memopt-tools.spec`](../packaging/glibc-memopt-tools.spec) 与 [`host 构建记录`](../data/raw/gbs_package_20260903/README.md)；经 A2/H-V 重基线通过后，GBS 为当前 L2 首选，冻结件为备选。
+- Tizen 原生进程/工具交叉见证：[`tizen_native_evidence_20260904.md`](tizen_native_evidence_20260904.md)（enlightenment + `memps` + 官方 `gdb`；完成格与协议偏差分开登记，不作产品收益外推）。
 
 > **历史状态保留（2026-08-31，v2.6，现已被上条裁决取代）：** 当时 S2 因未复现产品 PD 峰谷而判定不成立，S3 等待 PM 在“降格为合成 bin 驻留 trim 扫描”与“修订 S2 代理方案”之间裁决。
 

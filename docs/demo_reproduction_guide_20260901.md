@@ -766,6 +766,99 @@ mixed `1.233269 ms` / medium-only `1.218361 ms` 比较，不能
 `51.014041–51.406250% / 1.277344–1.285156 MiB`。这些是复跑的参考结果而非新的硬阈值；
 正式输出仍按上面的预登记 p99 规则计算，方向记 `REPORT_ONLY`。
 
+<a id="l2-tizen-native-evidence"></a>
+### Tizen 原生进程与工具交叉见证
+
+本节复现 [`tizen_native_evidence_20260904.md`](tizen_native_evidence_20260904.md)，
+不属于 S4/gst acceptance matrix。它只验证 Tizen 守护进程、Tizen `memps`、官方仓库
+`gdb` 与 glibc `malloc_info` 能否对同一回收事件形成交叉见证。冻结项以
+[`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260904/preregistered_contract.json)
+为准，已知完成边界不得隐去：T1 `1/5`、UI 释放相位 `0/1`，T2 两个前置采样间隔
+`119.806876910/119.856460299 s`，均略低于预登记 120 s。
+
+当前公开紧凑件可复算的 T2 M7 `rest` 约为 `5.84 MiB`，三次主堆回收量依次为
+`272 / 4 / 4 KiB`；每次 Tizen `memps [heap]` 与项目分类口径逐值一致。以上只是当前
+完成格的观测值，不是验收阈值，输入见
+[`summary.json`](../data/raw/tizen_native_evidence_20260904/summary.json) 与
+[`cells_derived.tsv`](../data/raw/tizen_native_evidence_20260904/cells_derived.tsv)。
+
+先执行本指南既有三重身份/环境门，并保存 stability-monitor、dmesg、zram 与 governor
+前值。镜像初始没有 `gdb`；以下 helper 只从官方 Base Toolchain
+`20260813.050338` 快照下载并核对 6 个 ARM RPM，先做事务预检，并保证按安装体积预算后
+根分区仍至少剩 `1.2 GiB`：
+
+```sh
+export NATIVE_ADDR='<TEST_BOARD_IP>'
+export NATIVE_SERIAL="$NATIVE_ADDR:26101"
+export NATIVE_REMOTE='/opt/usr/glibc_memopt/tizen_native_evidence_20260904'
+export NATIVE_HOST='board_results/tizen_native_evidence_20260904_reproduction'
+export NATIVE_MEDIA='/path/to/small_320x240.mp4'
+mkdir -p "$NATIVE_HOST"
+
+SDB_SERIAL="$NATIVE_SERIAL" sh \
+  tools/runners/s4_retention_20260901/preflight_gate.sh "$NATIVE_HOST/preflight"
+grep -Fx IDENTITY_AND_ENV_GATE_PASS "$NATIVE_HOST/preflight/gate_verdict.txt"
+sha256sum "$NATIVE_MEDIA"
+# 必须等于 3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d
+
+sh tools/runners/tizen_native_evidence_20260904/manage_gdb_official_snapshot.sh \
+  install --ip "$NATIVE_ADDR" --cache "$NATIVE_HOST/rpm-cache"
+```
+
+helper 的完整安装集合为 `gdb-16.3-1.1.armv7l`、`python3-3.14.2-1.5.armv7l`、
+`python3-base-3.14.2-1.6.armv7l`、`libpython3_141_0-3.14.2-1.6.armv7l`、
+`libgmp-4.2.1-1.6.armv7l`、`gdbm-1.8.3-1.7.armv7l`，合计安装体积
+`53,010,679 B`。若任何 SHA、事务预检或空间门失败，停止，不使用移动仓或替代包。
+安装后按报告 §1.2 先在本轮启动的 `alloc_bench` PID 上运行
+[`trim_via_gdb.sh`](../tools/reclaim_probe/trim_via_gdb.sh)，要求 trim 返回值存在、detach
+后该 PID 仍存活；禁止把首次 attach 自测放到系统进程上。
+
+推送媒体和两个脚本，板端再次核对媒体 SHA。正式 T1 使用无 override 的 controller；
+当前冻结组合预期在 T1_1 后以非零状态停止，必须先拉回，不得改参数续跑。确认原因与
+已发布 EOS 一致后，T2 可作为独立相位执行：
+
+```sh
+sdb -s "$NATIVE_SERIAL" push "$NATIVE_MEDIA" "$NATIVE_REMOTE/small_320x240.mp4"
+sdb -s "$NATIVE_SERIAL" push tools/reclaim_probe/trim_via_gdb.sh \
+  "$NATIVE_REMOTE/trim_via_gdb.sh"
+sdb -s "$NATIVE_SERIAL" push \
+  tools/runners/tizen_native_evidence_20260904/run_native_evidence_remote.sh \
+  "$NATIVE_REMOTE/run_native_evidence_remote.sh"
+sdb -s "$NATIVE_SERIAL" shell \
+  "chmod 0755 '$NATIVE_REMOTE/trim_via_gdb.sh' '$NATIVE_REMOTE/run_native_evidence_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_NATIVE_ASSET_MODE || echo FAIL_NATIVE_ASSET_MODE"
+
+sdb -s "$NATIVE_SERIAL" shell \
+  "'$NATIVE_REMOTE/run_native_evidence_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_NATIVE_T1 || echo FAIL_NATIVE_T1" \
+  | tee "$NATIVE_HOST/t1_invoke.txt"
+sdb -s "$NATIVE_SERIAL" pull "$NATIVE_REMOTE" "$NATIVE_HOST/t1-board-pull"
+
+sdb -s "$NATIVE_SERIAL" shell \
+  "NATIVE_PHASE=t2 '$NATIVE_REMOTE/run_native_evidence_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_NATIVE_T2 || echo FAIL_NATIVE_T2" \
+  | tee "$NATIVE_HOST/t2_invoke.txt"
+sdb -s "$NATIVE_SERIAL" pull "$NATIVE_REMOTE" "$NATIVE_HOST/t2-board-pull"
+
+python3 tools/runners/tizen_native_evidence_20260904/analyze_native_evidence.py \
+  --t1-pull "$NATIVE_HOST/t1-board-pull" \
+  --pull "$NATIVE_HOST/t2-board-pull" \
+  --output "$NATIVE_HOST/derived"
+```
+
+完成后按通用健康门比较 stability/dmesg/zram，先归档并核验所有文件，再卸载本轮 6 包
+并只清理精确轮次目录：
+
+```sh
+sh tools/runners/tizen_native_evidence_20260904/manage_gdb_official_snapshot.sh \
+  remove --ip "$NATIVE_ADDR"
+sdb -s "$NATIVE_SERIAL" shell \
+  "test '$NATIVE_REMOTE' = /opt/usr/glibc_memopt/tizen_native_evidence_20260904 && find '$NATIVE_REMOTE' -depth -delete && test ! -e '$NATIVE_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_NATIVE_CLEANUP || echo FAIL_NATIVE_CLEANUP"
+```
+
+确定性/有效性检查为身份、媒体 SHA、TSV/XML 可解析、PID + starttime 不变、
+`memps [heap]` 与项目主堆逐值一致、majflt/zram/OOM-LMK/新增告警增量为 0，以及包、
+目录、进程、governor 恢复。原生进程的回收量和含 ptrace 的 gdb 耗时没有预登记容差带；
+它们只按观测值报告，不能套 S4 带，也不能作为钩子代价。当前完成数与间隔偏差的正确
+复现判读是 `INCOMPLETE/PROTOCOL-DEVIATION`，不是整轮 PASS。
+
 ## L3 · 产品板测量复现（可选）
 
 该层需要产品板访问、可用的遥控按键注入环境，以及继续执行“只读采集、不改配置、

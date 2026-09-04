@@ -214,6 +214,7 @@ host_tests()
       tools/runners/s4_retention_20260901/test_host.py \
       tools/runners/gst_trim_cost_20260901/test_host.py \
       tools/runners/a_anchor_replication_20260904/test_host.py \
+      tools/runners/tizen_native_evidence_20260904/test_host.py \
       tools/report/test_build_demo_report.py \
       tools/reproduce/test_host.py \
       tools/reproduce/test_board_workflow_mocked_sdb.py \

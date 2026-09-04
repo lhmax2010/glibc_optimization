@@ -65,6 +65,10 @@ class DemoReportTests(unittest.TestCase):
                 "plateau/cyclic 标签",
                 "ServiceD",
                 "&lt;TEST_IMAGE_B&gt;/glibc-2.40-2.8",
+                "272 / 4 / 4 KiB",
+                "5.84 MiB rest",
+                "60.100233983 s",
+                "119.806876910/119.856460299 s",
             ):
                 self.assertIn(expected, document)
 
@@ -117,6 +121,19 @@ class DemoReportTests(unittest.TestCase):
         a2_report = (REPO / "docs/a_anchor_replication_20260904.md").read_text(encoding="utf-8")
         self.assertIn("52.794499", a2_report)
         self.assertIn("50.669791", a2_report)
+
+    def test_native_evidence_customer_surfaces_match(self) -> None:
+        surfaces = (
+            REPO / "docs/tizen_native_evidence_20260904.md",
+            REPO / "docs/demo_narrative_20260901.md",
+            REPO / "docs/demo_reproduction_guide_20260901.md",
+            REPO / "tools/report/demo_README.md",
+            REPO / "tools/report/demo_README.zh-CN.md",
+        )
+        for path in surfaces:
+            document = path.read_text(encoding="utf-8")
+            for expected in ("5.84 MiB", "272", "4", "1/5", "0/1", "119.806876910", "119.856460299"):
+                self.assertIn(expected, document, path.name)
 
     def test_gbs_delivery_surfaces_share_status_and_manifest(self) -> None:
         for path in (
