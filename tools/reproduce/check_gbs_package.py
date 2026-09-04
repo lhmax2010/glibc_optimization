@@ -55,7 +55,7 @@ def static_check(repo: Path) -> tuple[Path, dict]:
         if source not in text or not (repo / source).is_file():
             raise ValueError(f"missing build source: {source}")
     manifest = json.loads((repo / "tools/reproduce/deliverables_manifest.json").read_text(encoding="utf-8"))
-    if manifest.get("schema") != "glibc-memopt-demo.deliverables.v2":
+    if manifest.get("schema") != "glibc-memopt-demo.deliverables.v3":
         raise ValueError("deliverables manifest is not v2")
     print("PASS\tgbs-spec-static\tname/version/BuildRequires/%files")
     rpmspec = shutil.which("rpmspec")

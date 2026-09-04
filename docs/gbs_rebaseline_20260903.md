@@ -226,3 +226,21 @@ workflow 清理原文均为 `RC=0 / DONE_WORKDIR_CLEANUP`、
 
 本轮结果展示了 workflow 在带外时应有的正确行为：保留结构化证据、返回失败并停止，
 而不是自动将 GBS 路径转正。
+
+## 9. 2026-09-04 A2 预登记复测追注
+
+本报告 §7 的“未通过/不转正”是 2026-09-03 在 v3 合同下的历史裁决，保留不改写。
+随后按独立预登记的 12 格双 ELF 复测执行
+[`A2 报告`](a_anchor_replication_20260904.md)：四个 `{ELF × profile}` 组的极差均
+`>1.5 pp`，且两个 profile 的 frozen/GBS 分布都交叠，故命中预登记 **H-V**，而不是
+二进制特定的 H-L。按 profile 合并此前两次与本轮六次观测后，v4 共同带为：
+
+- mixed：`52.794499% ±4.304705 pp`（`n=8`）；
+- medium-only：`50.669791% ±4.918088 pp`（`n=8`）。
+
+以 v4 复判本轮完整归档：A/mixed `55.243785%` 与 A/medium-only `50.535918%` 均
+PASS，§4–§6 已通过项保持不变，结构化结果为 `OVERALL PASS`。因此截至 2026-09-04，
+**GBS 重基线通过（经 A2/H-V 裁决）**，GBS 路径转正为 HQ 首选，冻结件改为备选。
+现行机器合同见
+[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)，紧凑 A2 证据见
+[`data/raw/a_anchor_replication_20260904/`](../data/raw/a_anchor_replication_20260904/)。

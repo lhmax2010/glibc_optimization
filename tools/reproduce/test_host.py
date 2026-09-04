@@ -70,6 +70,7 @@ class ReproduceTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("--ip <address>", result.stdout)
+        self.assertIn("default SHA source is GBS", result.stdout)
 
     def test_stability_snapshot_remote_body_hashes_nonempty_directory(self) -> None:
         workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
@@ -189,7 +190,7 @@ class ReproduceTests(unittest.TestCase):
             self.assertEqual(payload["alerts"][0]["verdict"], "EXPECTED")
             self.assertEqual((root / "clean.txt").read_text(), remote + "\n")
 
-    def test_public_evidence_passes_v3_and_reports_unobserved_registration(self) -> None:
+    def test_public_evidence_passes_v4_and_reports_unobserved_registration(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             replay = subprocess.run(
@@ -205,7 +206,29 @@ class ReproduceTests(unittest.TestCase):
             self.assertIn("REGISTERED/NOT-EVALUATED", result.stdout)
             self.assertIn("REPORT_ONLY", result.stdout)
             self.assertIn("OVERALL PASS", result.stdout)
-            self.assertEqual(json.loads((root / "acceptance.json").read_text())["outcome"], "PASS")
+            acceptance = json.loads((root / "acceptance.json").read_text())
+            self.assertEqual(acceptance["schema"], "glibc-memopt-demo.acceptance-result.v4")
+            self.assertEqual(acceptance["outcome"], "PASS")
+
+    def test_previous_gbs_a_observations_pass_v4_common_bands(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            replay = subprocess.run(
+                ["python3", str(REPO / "tools/runners/s4_retention_20260901/analyze_s4.py"), "--replay-public", str(REPO / "data/raw/s4_retention_20260901"), "--output", str(root / "s4")],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(replay.returncode, 0, replay.stderr)
+            path = root / "s4/acceptance_input.json"
+            payload = json.loads(path.read_text())
+            payload["a_anchor_reclaim_pct"] = {"mixed": 55.243785, "medium-only": 50.535918}
+            path.write_text(json.dumps(payload))
+            result = subprocess.run(
+                ["python3", str(EVALUATOR), "--bands", str(BANDS), "--s4-summary", str(path), "--gst-derived", str(REPO / "data/raw/gst_trim_cost_20260901")],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("S4 A mixed reclaim", result.stdout)
+            self.assertIn("OVERALL PASS", result.stdout)
 
     def test_out_of_band_s4_value_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -279,7 +302,9 @@ class ReproduceTests(unittest.TestCase):
         self.assertIn('"-fdebug-prefix-map=$repo=."', gst)
         manifest = json.loads((HERE / "deliverables_manifest.json").read_text())
         artifacts = {item["name"]: item for item in manifest["artifacts"]}
-        self.assertEqual(manifest["schema"], "glibc-memopt-demo.deliverables.v2")
+        self.assertEqual(manifest["schema"], "glibc-memopt-demo.deliverables.v3")
+        self.assertEqual(manifest["gbs_build"]["status"], "board_rebaseline_passed_via_preregistered_h_v")
+        self.assertEqual(manifest["board_rebaseline"]["decision"], "H-V")
         self.assertEqual(len(artifacts), 4)
         for name in ("alloc_bench.armv7l", "gst_loop_decode.armv7l", "reclaim_probe.armv7l"):
             self.assertRegex(artifacts[name]["reproducible_build_sha256"], r"^[0-9a-f]{64}$")
@@ -322,8 +347,9 @@ class ReproduceTests(unittest.TestCase):
         self.assertIn("PASS\tclean-environment", result.stdout)
         self.assertIn("OVERALL\tPASS", result.stdout)
 
-    def test_acceptance_v3_separates_determinism_validity_and_direction(self) -> None:
+    def test_acceptance_v4_separates_determinism_validity_and_direction(self) -> None:
         bands = json.loads(BANDS.read_text(encoding="utf-8"))
+        self.assertEqual(bands["schema"], "glibc-memopt-demo.acceptance.v4")
         self.assertEqual(set(bands["deterministic_items"]), {"released_payload_bytes"})
         self.assertEqual(
             set(bands["validity_gates"]),
@@ -334,6 +360,9 @@ class ReproduceTests(unittest.TestCase):
         self.assertNotIn("expected_direction", gst)
         b = bands["tolerance_bands"]["s4_b_reclaim_pct_repeat_median"]
         self.assertEqual(b["center_pct_by_profile"], {"medium-only": 84.446566, "mixed": 81.661264})
+        a = bands["tolerance_bands"]["s4_a_anchor_reclaim_pct"]
+        self.assertEqual(a["center_pct_by_profile"], {"medium-only": 50.669791, "mixed": 52.794499})
+        self.assertEqual(a["plus_minus_pp_by_profile"], {"medium-only": 4.918088, "mixed": 4.304705})
 
 
 if __name__ == "__main__":

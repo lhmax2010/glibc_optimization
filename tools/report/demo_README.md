@@ -19,9 +19,9 @@ results, not a product-memory-benefit promise.
 
 ## Headline results
 
-| Comparison | Frozen result | Report | Compact evidence |
+| Comparison | Accepted result | Report | Compact evidence |
 |---|---|---|---|
-| Instant-release anchors | mixed `51.07%`, medium-only `50.39%`; each `n=1`, denominator is pre-trim heap | [HTML summary](docs/demo_report.html#summary) | [`a_cells.tsv`](data/raw/s4_retention_20260901/a_cells.tsv) |
+| Instant-release anchors | mixed `52.794499% ±4.304705 pp`, medium-only `50.669791% ±4.918088 pp`; each combines `n=8`, denominator is pre-trim heap | [HTML summary](docs/demo_report.html#summary) | [`decision.json`](data/raw/a_anchor_replication_20260904/decision.json), [`a_cells.tsv`](data/raw/a_anchor_replication_20260904/a_cells.tsv) |
 | Gated valley trim vs none | `80.18%–85.45%` of released payload; median call mixed `1.233269 ms` / medium-only `1.218361 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` vs none dispersion `6.784167 ms`: margin `0.555556 ms`, 91.8% of threshold, `REPORT_ONLY` not visible; the same p50 rule is visible (`+1.870462` vs `0.173927 ms`); `+359 minflt/cycle` | [Real concurrency](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json), [`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
 
@@ -36,7 +36,7 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
    unsupported), then run `bash tools/reproduce/reproduce.sh`. Development-only
    overrides are documented in [`tools/reproduce/README.md`](tools/reproduce/README.md).
 3. **Repeat on a board — hours.** Run
-   `bash tools/reproduce/reproduce.sh board --ip <addr>` only after the prerequisites
+   `bash tools/reproduce/reproduce.sh board --artifact-source gbs --ip <addr>` only after the prerequisites
    below and the [L2 guide](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)
    are satisfied.
 
@@ -67,10 +67,11 @@ The exact extraction commands are in the
 from package-name, Provides, and file-list searches across all four configured
 official repositories and independently resolves every spec BuildRequires.
 
-The GBS artifacts are host-built but still await board rebaselining. Until that
-next round closes, L2 acceptance continues to use the frozen bundle; the frozen
-artifacts and fixed-directory cross-build are fallback paths. GBS does not provide
-the media file, which remains an out-of-repository delivery prerequisite.
+The GBS artifacts passed the preregistered A-anchor board rebaseline through the
+H-V decision. GBS is now the preferred HQ L2 path; the frozen artifacts and
+fixed-directory cross-build are fallbacks. GBS does not provide the media file,
+which remains an out-of-repository delivery prerequisite. See the
+[A-anchor replication](docs/a_anchor_replication_20260904.md).
 
 ## Repository map
 
@@ -91,6 +92,12 @@ three-repeat medians anchored at mixed `81.661264% ±5 pp` and medium-only
 `84.446566% ±5 pp`; `n=3` tolerates one outlier, not two. Release-point trim in S4 B
 and gst is a single call `<5 ms`; the S4 A anchor has a separate `<20 ms` bound and
 is not a hook-cost number.
+
+The current A-anchor bands are shared by frozen and GBS: mixed
+`52.794499% ±4.304705 pp` and medium-only `50.669791% ±4.918088 pp`, each from
+eight combined observations. The preregistered H-V result replaces the former
+current `n=1` limitation while retaining the original single observations as
+historical evidence.
 
 Thus “the same data” means exact deterministic payload bytes, tolerance items in
 band, and all validity gates passing. A fixed seed does not pin arena assignment;

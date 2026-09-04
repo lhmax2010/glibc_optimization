@@ -27,7 +27,7 @@ bash tools/reproduce/reproduce.sh
 bash tools/reproduce/reproduce.sh verify
 
 # 完整 L2；需本节规定的 RPI4、镜像、SDB 与内部产物包，小时级
-bash tools/reproduce/reproduce.sh board --ip <addr>
+bash tools/reproduce/reproduce.sh board --artifact-source gbs --ip <addr>
 ```
 
 入口必须在真实 `git clone` 内运行，GitHub ZIP/source export 不受支持；workflow 会把
@@ -256,6 +256,32 @@ majflt_all_zero=true
 zram_deltas=0,0,0 dmesg_increment=0 oom_lmk=0
 ```
 
+<a id="l1-a-anchor-replication"></a>
+### A 锚点 v4 复算
+
+S4 原始两格仍用于复算历史单次值；现行跨 frozen/GBS 验收带由预登记 A2 复测产生。
+只读公开 12 格即可重建四组摘要与 H-V 裁决：
+
+```sh
+python3 tools/runners/a_anchor_replication_20260904/analyze_a_anchor.py \
+  --replay data/raw/a_anchor_replication_20260904/a_cells.tsv \
+  --output "$OUT/a-anchor"
+cmp "$OUT/a-anchor/group_summary.tsv" \
+  data/raw/a_anchor_replication_20260904/group_summary.tsv
+cmp "$OUT/a-anchor/decision.json" \
+  data/raw/a_anchor_replication_20260904/decision.json
+```
+
+预期输出原文如下，两个 `cmp` 均静默成功：
+
+```text
+replayed cells=12 verdict=H-V
+```
+
+机器裁决得到 mixed `52.794499% ±4.304705 pp`、medium-only
+`50.669791% ±4.918088 pp`，各合并 `n=8/profile`，两条 ELF 路径共用。数据与裁决解释见
+[`A2 报告`](a_anchor_replication_20260904.md)。
+
 <a id="l1-gst-trim-cost"></a>
 ### GStreamer 真实多线程目标的业务 p99、trim 分布与首次回收
 
@@ -324,7 +350,7 @@ gst first-release=51.014041-51.406250% / 1.277344-1.285156 MiB
 | `ServiceH 2360/+868/+580 KiB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](#l1-phenotypes) |
 | `ServiceA +788 KiB` | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv) | [表型](#l1-phenotypes) |
 | 批量相位 `48.9% / 1.36 MiB × 8`（`<TEST_IMAGE_B>` / `glibc-2.40-2.8` 相容性对照，非冻结矩阵） | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](#l1-batch-release) |
-| S4 `51.07% / 50.39%`（各 n=1，of pre-trim heap） | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](#l1-s4) |
+| S4 历史单次值 `51.07% / 50.39%`；现行 A 带 mixed `52.794499% ±4.304705 pp`、medium-only `50.669791% ±4.918088 pp`（各合并 n=8） | [`S4 a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv)、[`A2 decision.json`](../data/raw/a_anchor_replication_20260904/decision.json) | [S4](#l1-s4)、[A2](#l1-a-anchor-replication) |
 | S4 `80.175875%–85.453954%`、调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`、`+1351/+1465 minflt` | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](#l1-s4) |
 | S4 `majflt=0`、zram 三项 `Δ=0`、OOM/LMK `0` | [`health.json`](../data/raw/s4_retention_20260901/health.json) | [S4](#l1-s4) |
 | gst p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`，margin `0.555556 ms`（91.8%）；同规则 p50 `+1.870462` 对 `0.173927 ms`；`+359 minflt/循环` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv) | [gst L1](#l1-gst-trim-cost) |
@@ -355,7 +381,7 @@ SDB 随 Tizen Studio 提供。基线使用
 ([证据](../data/raw/s4_retention_20260901/preflight_and_integrity.txt))；将 Tizen Studio
 的 `tools/` 加入 `PATH` 后运行 `sdb version` 核对。板只走 SDB，不配置 SSH。
 
-ARM 二进制不入公开仓库，有两条取得路径：
+ARM 二进制不入公开仓库。下一小节的 GBS 构建是首选；以下两条是备选路径：
 
 1. 从内部制品交付取得 S2/S4 使用过的 `alloc_bench.armv7l`，先核对 SHA-256 必须为
    `dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd`
@@ -423,10 +449,11 @@ filelists 的来源排查及五项 BuildRequires 版本复核见
 [`三工具来源声明`](tool_provenance_20260903.md)。`verify` 会静态检查 spec
 与 `%files`；有 `gbs` 时还会实跑并核对已登记产物，无 `gbs` 时明确输出 `SKIPPED`。
 
-GBS 三项 ELF 尚待下一轮板上重基线，因此本轮只闭合 host 构建链；在重基线完成前，
-L2 正式判定仍默认使用已冻结制品。旧冻结 bundle 与上节固定路径交叉构建均降为备选。
-即使三项 ELF 由 GBS 产生，媒体仍须按 manifest 的包外方式交付。要显式试用 GBS
-bundle，使用 `reproduce.sh board --artifact-source gbs ...`，不得把它误写成已验证基线。
+GBS 三项 ELF 已通过
+[`A2 预登记 H-V 重基线`](a_anchor_replication_20260904.md)，GBS 路径现为 HQ 首选；
+旧冻结 bundle 与上节固定路径交叉构建是备选。即使三项 ELF 由 GBS 产生，媒体仍须按
+manifest 的包外方式交付。正式 workflow 使用
+`reproduce.sh board --artifact-source gbs ...` 选择 manifest 中的 GBS SHA。
 
 <a id="l2-run"></a>
 ### 完整执行命令
@@ -441,8 +468,8 @@ bundle，使用 `reproduce.sh board --artifact-source gbs ...`，不得把它误
 export SDB_SERIAL='<TEST_BOARD_IP>:26101'
 export S4_REMOTE='/opt/usr/glibc_memopt/s4_retention_20260901'
 export S4_HOST='board_results/s4_retention_20260901_reproduction'
-export S4_BENCH='/path/to/alloc_bench.armv7l'
-export S4_EXPECTED_SHA='dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd'
+export S4_BENCH='/path/to/gbs-bundle/alloc_bench.armv7l'
+export S4_EXPECTED_SHA='88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa'
 mkdir -p "$S4_HOST"
 
 sdb version
@@ -471,7 +498,7 @@ sdb -s "$SDB_SERIAL" push tools/runners/s4_retention_20260901/sample_smaps_1s.sh
 sdb -s "$SDB_SERIAL" push tools/runners/s4_retention_20260901/medium_1k_16k.hist "$S4_REMOTE/medium_1k_16k.hist"
 
 sdb -s "$SDB_SERIAL" shell "chmod 0755 '$S4_REMOTE/alloc_bench.armv7l' '$S4_REMOTE/run_s4_remote.sh' '$S4_REMOTE/sample_smaps_1s.sh' && sha256sum '$S4_REMOTE/alloc_bench.armv7l' '$S4_REMOTE/medium_1k_16k.hist'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_ASSET_VERIFY || echo FAIL_ASSET_VERIFY" | tee "$S4_HOST/asset_verify.txt"
-grep -F 'dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd' "$S4_HOST/asset_verify.txt"
+grep -F '88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa' "$S4_HOST/asset_verify.txt"
 grep -F '2082e156db133f4e6e900aec7c202e44a453d2f23b60225c40251de08a27960b' "$S4_HOST/asset_verify.txt"
 grep -Fx RC=0 "$S4_HOST/asset_verify.txt"
 grep -Fx DONE_ASSET_VERIFY "$S4_HOST/asset_verify.txt"
@@ -557,10 +584,13 @@ validity gates 全部通过。回收量字节值本身不是确定性项。bench
 远端 `RC=0/DONE_*`、JSON/XML 可解析、manifest 和现场恢复属于流程完整性前置；任一
 失败同样终止该格。
 
-容差项是本指南的跨板/跨批次建议判据，不是新增测量值；中心值依据
+容差项是本指南的跨板/跨批次建议判据，不是新增测量值；A 带依据预登记
+[`A2 H-V 裁决`](a_anchor_replication_20260904.md#33-v4-共同锚点带)，B 带依据
 [`S4 结果`](s4_reference_and_retention_trim_20260901.md#3-a-组结果新镜像锚点)：
 
-- A 组瞬时释放回收率：`49% ±4 pp`；A 格各 `n=1`，分母为 pre-trim heap。
+- A 组瞬时释放回收率：mixed `52.794499% ±4.304705 pp`、medium-only
+  `50.669791% ±4.918088 pp`；每档合并 frozen/GBS 共 `n=8`，分母为 pre-trim heap。
+  旧“各 `n=1` 锚点”的现行局限已由 H-V 复测撤销；历史单次值仍保留为来源记录。
 - B 组 trim 回收/已释放：验收单位固定为每个 profile 的三重复中位，即先取每个重复
   两周期的中位、再取三重复中位；mixed 锚定发布值 `81.661264% ±5 pp`，medium-only
   锚定发布值 `84.446566% ±5 pp`。`n=3` 中位能容忍一个离群重复，但不能覆盖两个偏移
@@ -597,8 +627,9 @@ glibc 主版本必须属于 `2.40` 系；若为 `2.41+`，停止沿用本基线�
 `3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d`；公开仓库不分发媒体
 或 ARM ELF。
 
-instrumented bench 可从内部制品取得，已验 SHA-256 为
-`204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`；也可用
+首选 GBS bench 的 SHA-256 为
+`7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034`；冻结备选为
+`204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`，也可用
 GCC `14.2.0` 的 glibc-2.40 scratch root 与含 GStreamer 1.24 armv7l devel/runtime 链接
 输入的兼容 sysroot 重建：
 
@@ -625,11 +656,11 @@ sysroot 和源码通过固定 `.build/armv7l/gst_loop_decode/` 与
 export SDB_SERIAL='<TEST_BOARD_IP>:26101'
 export GST_REMOTE='/opt/usr/glibc_memopt/gst_trim_cost_20260901'
 export GST_HOST='board_results/gst_trim_cost_20260901_reproduction'
-export GST_BENCH='/tmp/gst_loop_decode.armv7l'
-export GST_PROBE='/path/to/reclaim_probe.armv7l'
+export GST_BENCH='/path/to/gbs-bundle/gst_loop_decode.armv7l'
+export GST_PROBE='/path/to/gbs-bundle/reclaim_probe.armv7l'
 export GST_MEDIA='/path/to/small_320x240.mp4'
-export GST_EXPECTED_SHA='204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6'
-export GST_PROBE_EXPECTED_SHA='3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7'
+export GST_EXPECTED_SHA='7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034'
+export GST_PROBE_EXPECTED_SHA='e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31'
 export GST_MEDIA_EXPECTED_SHA='3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d'
 mkdir -p "$GST_HOST"
 
@@ -648,8 +679,8 @@ printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$GST_HOST/stability_before.t
 tr -d '\r' <"$GST_HOST/stability_before.tsv.raw" | awk -F '\t' 'NF==4 && $1 ~ /^\/opt\/usr\/share\/crash\/livedump\// {print}' >>"$GST_HOST/stability_before.tsv"
 ```
 
-门通过后才创建固定 `/opt/usr` 目录并推送。下列三个资产 SHA 必须分别为
-`204d64…f62e6`、`3b0703…41e7`、`3df34a…f72d` 的完整冻结值；执行时必须检查完整
+门通过后才创建固定 `/opt/usr` 目录并推送。首选 GBS 路径的三个资产 SHA 必须分别为
+`7549f3…fc034`、`e71d4a…4d31`、`3df34a…f72d` 的完整 manifest 值；执行时必须检查完整
 输出而不是只比较此处缩写。
 
 ```sh

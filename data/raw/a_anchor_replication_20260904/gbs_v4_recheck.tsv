@@ -1,0 +1,17 @@
+category	item	observed	expected	status
+S4-A	mixed reclaim	55.243785%	52.794499% ±4.304705 pp	PASS
+S4-A	medium-only reclaim	50.535918%	50.669791% ±4.918088 pp	PASS
+S4-B	mixed three-repeat median	81.661264%	81.661264% ±5 pp	PASS
+S4-B	medium-only three-repeat median	84.446566%	84.446566% ±5 pp	PASS
+S4	released payload bytes	mixed 5742256/6566672; medium-only 6288384/6293504	exact registered values	PASS
+S4	page alignment	12/12	all 4096-byte aligned	PASS
+S4	A trim max	13.573371 ms	<20 ms; not hook cost	PASS
+S4	B trim max	1.587648 ms	<5 ms	PASS
+S4	majflt/zram/OOM-LMK	0 / 0,0,0 / 0	all zero	PASS
+gst	release-point trim max	1.278518 ms	<5 ms	PASS
+gst	p99 rule execution	nearest-rank; delta 2.736389 ms; dispersion 3.643907 ms	recompute rule	PASS
+gst	p99 direction	visible=false	report only	REPORT_ONLY
+gst	majflt/zram/OOM-LMK	0 / 0,0,0 / 0	all zero	PASS
+stability	S4 registered alerts	2 matched and cleanup present=0	known-alert waiver	EXPECTED
+stability	gst registered alerts	0 observed	registration not exercised	REGISTERED/NOT-EVALUATED
+overall	acceptance v4	all hard items pass	no FAIL	PASS

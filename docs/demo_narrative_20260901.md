@@ -91,9 +91,11 @@ plateau/cyclic 表为 `N-subthreshold`。这是已披露的跨表分类冲突，
 门控链是：**反信号排除 → M7 确认 rest/unsorted 驻留 → valley trim → 同批记录调用、
 faults 与健康门。** S4 在新 LLVM 镜像上把这条链对合成滞留表型闭合：
 
-- 两个瞬时释放锚点为 **51.07% / 50.39%**（各 `n=1`，分母为 pre-trim heap）
-  （[证据 TSV](../data/raw/s4_retention_20260901/a_cells.tsv)；
-  [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。
+- 预登记双 ELF 复测后，瞬时释放共同锚点带为 **mixed
+  52.794499% ±4.304705 pp / medium-only 50.669791% ±4.918088 pp**（每档合并
+  `n=8`，分母为 pre-trim heap）；旧 `51.07% / 50.39%` 保留为历史单次值
+  （[裁决 JSON](../data/raw/a_anchor_replication_20260904/decision.json)；
+  [HQ 复算](demo_reproduction_guide_20260901.md#l1-a-anchor-replication)）。
 - valley trim 回收已释放 payload 的逐周期范围为 **80.18%–85.45%**
   （[证据 TSV](../data/raw/s4_retention_20260901/b_cycles.tsv)；
   [HQ 复算](demo_reproduction_guide_20260901.md#l1-s4)）。

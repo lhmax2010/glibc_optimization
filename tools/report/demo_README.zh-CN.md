@@ -16,9 +16,9 @@ M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_tri
 
 ## 头条结果
 
-| 对照 | 冻结结果 | 报告 | 紧凑证据 |
+| 对照 | 验收结果 | 报告 | 紧凑证据 |
 |---|---|---|---|
-| 瞬时释放锚点 | mixed `51.07%`、medium-only `50.39%`；各 `n=1`，分母为 pre-trim heap | [HTML 摘要](docs/demo_report.html#summary) | [`a_cells.tsv`](data/raw/s4_retention_20260901/a_cells.tsv) |
+| 瞬时释放锚点 | mixed `52.794499% ±4.304705 pp`、medium-only `50.669791% ±4.918088 pp`；各合并 `n=8`，分母为 pre-trim heap | [HTML 摘要](docs/demo_report.html#summary) | [`decision.json`](data/raw/a_anchor_replication_20260904/decision.json)、[`a_cells.tsv`](data/raw/a_anchor_replication_20260904/a_cells.tsv) |
 | 门控 valley trim vs none | 已释放 payload 的 `80.18%–85.45%`；调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期 `+1351/+1465 minflt`，`majflt=0` | [S4 效果](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`：margin `0.555556 ms`、达门槛 91.8%，`REPORT_ONLY` 未检出；同规则 p50 判可见（`+1.870462` 对 `0.173927 ms`）；`+359 minflt/循环` | [真实并发](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json)、[`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
 
@@ -34,7 +34,7 @@ M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_tri
    [`tools/reproduce/README.md`](tools/reproduce/README.md)。
 3. **板上完整复现——小时级。** 满足下列前置与
    [L2 指南](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)后，运行
-   `bash tools/reproduce/reproduce.sh board --ip <addr>`。
+   `bash tools/reproduce/reproduce.sh board --artifact-source gbs --ip <addr>`。
 
 ### L2 硬前置
 
@@ -59,9 +59,9 @@ M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_tri
 Provides、filelists 零命中结果及 spec 全部 BuildRequires 的独立版本复核见
 [`三工具来源声明`](docs/tool_provenance_20260903.md)。
 
-GBS 产物已完成 host 构建，但仍待下一轮板上重基线；闭合前，L2 验收继续以冻结 bundle
-为准，冻结制品和固定目录交叉构建降为备选。GBS 不提供媒体文件，媒体仍是仓库外的交付
-前置。
+GBS 产物已通过预登记 A 锚点 H-V 板上重基线。GBS 现为 HQ 首选 L2 路径；冻结制品和
+固定目录交叉构建是备选。GBS 不提供媒体文件，媒体仍是仓库外的交付前置。见
+[`A 锚点复测`](docs/a_anchor_replication_20260904.md)。
 
 ## 仓库地图
 
@@ -79,6 +79,10 @@ GBS 产物已完成 host 构建，但仍待下一轮板上重基线；闭合前�
 mixed 锚定 `81.661264% ±5 pp`、medium-only 锚定 `84.446566% ±5 pp`；`n=3` 只容忍
 一个离群。S4 B 与 gst 的释放点 trim 单次 `<5 ms`；S4 A 锚点单列 `<20 ms`，不是
 钩子代价数字。
+
+现行 A 锚点带由 frozen/GBS 共用：mixed `52.794499% ±4.304705 pp`、medium-only
+`50.669791% ±4.918088 pp`，每档合并八次观测。预登记 H-V 结果取代旧的现行 `n=1`
+局限；原始单次观测仍作为历史证据保留。
 
 “同样的数据”正式指：确定性 payload 逐字节一致、容差项落带、validity gates 通过。
 固定 seed 不钉 arena 指派；单重复可出现约 1 MiB 台阶，因此回收字节只作带宽参考。

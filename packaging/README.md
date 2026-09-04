@@ -21,8 +21,9 @@ is required. The resulting RPM identity, RPM SHA-256, buildroot versions, and EL
 SHA-256 values are recorded in
 [`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) and
 the [`host build record`](../data/raw/gbs_package_20260903/README.md). These ELF
-files have not yet passed the board rebaseline; frozen artifacts remain the L2
-acceptance default until that follow-up closes.
+files passed the preregistered H-V board rebaseline; GBS is the preferred L2 path
+and frozen artifacts are the fallback. See the
+[`A-anchor replication`](../docs/a_anchor_replication_20260904.md).
 
 Run `python3 tools/reproduce/check_gbs_package.py` for the portable spec/`%files`
 check. It also performs and inspects a real GBS build when `gbs` is installed;

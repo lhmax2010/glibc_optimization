@@ -33,8 +33,16 @@ def evaluate_s4(summary: dict[str, object], bands: dict[str, object], results: l
     tolerance = bands["tolerance_bands"]
     anchor_band = tolerance["s4_a_anchor_reclaim_pct"]
     for profile, value in summary["a_anchor_reclaim_pct"].items():
-        passed = in_band(float(value), float(anchor_band["center_pct"]), float(anchor_band["plus_minus_pp"]))
-        add(results, "PASS" if passed else "FAIL", f"S4 A {profile} reclaim", f"{value}%", "49% ±4 pp")
+        center = float(anchor_band["center_pct_by_profile"][profile])
+        radius = float(anchor_band["plus_minus_pp_by_profile"][profile])
+        passed = in_band(float(value), center, radius)
+        add(
+            results,
+            "PASS" if passed else "FAIL",
+            f"S4 A {profile} reclaim",
+            f"{value}%",
+            f"{center:.6f}% ±{radius:.6f} pp",
+        )
     b_band = tolerance["s4_b_reclaim_pct_repeat_median"]
     for profile, value in summary["b_reclaim_pct_repeat_median"].items():
         center = float(b_band["center_pct_by_profile"][profile])
@@ -176,7 +184,7 @@ def main() -> int:
     evaluate_stability(args.stability, bands, results)
     print_table(results)
     outcome = "FAIL" if any(row["status"] == "FAIL" for row in results) else "PASS"
-    payload = {"schema": "glibc-memopt-demo.acceptance-result.v3", "outcome": outcome, "results": results}
+    payload = {"schema": "glibc-memopt-demo.acceptance-result.v4", "outcome": outcome, "results": results}
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

@@ -5,7 +5,7 @@ repo=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 ip=
 output=
 artifact_dir=${DEMO_ARTIFACT_DIR:-$repo/tools/reproduce/artifacts}
-artifact_source=auto
+artifact_source=gbs
 contract_check_only=0
 deliverables=${DEMO_DELIVERABLES_MANIFEST:-$repo/tools/reproduce/deliverables_manifest.json}
 
@@ -23,8 +23,9 @@ Required bundle names:
 
 If the three ELF files are absent, DEMO_TOOLCHAIN_ROOT and DEMO_GST_SYSROOT
 can be supplied for the documented builds. The media asset must be supplied.
-The default SHA source is frozen for a complete bundle and reproducible for a
-source rebuild. GBS artifacts require the explicit --artifact-source gbs flag.
+The default SHA source is GBS after its preregistered H-V board rebaseline.
+Use --artifact-source frozen for the fallback frozen bundle or reproducible for
+the fixed-directory source rebuild.
 EOF
 }
 

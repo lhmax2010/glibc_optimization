@@ -1,7 +1,9 @@
 # GBS host build record (2026-09-03)
 
 This compact record describes a host-only build. No board was contacted and the
-generated ELF files remain pending board rebaseline.
+generated ELF files subsequently passed the preregistered A-anchor board
+rebaseline through the H-V decision; see
+[`docs/a_anchor_replication_20260904.md`](../../../docs/a_anchor_replication_20260904.md).
 
 ## Source/repository mapping
 

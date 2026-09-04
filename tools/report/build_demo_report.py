@@ -137,7 +137,8 @@ def build(repo: Path, source_commit: str) -> str:
     attribution = json.loads((raw / "cyclic_fall_attribution_20260901/summary.json").read_text())
     release = read_tsv(raw / "cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv")
     plateau = read_tsv(raw / "cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv")
-    a_cells = read_tsv(raw / "s4_retention_20260901/a_cells.tsv")
+    a2_cells = read_tsv(raw / "a_anchor_replication_20260904/a_cells.tsv")
+    a2_decision = json.loads((raw / "a_anchor_replication_20260904/decision.json").read_text())
     b_cells = read_tsv(raw / "s4_retention_20260901/b_cells.tsv")
     b_cycles = read_tsv(raw / "s4_retention_20260901/b_cycles.tsv")
     s4_health = json.loads((raw / "s4_retention_20260901/health.json").read_text())
@@ -192,8 +193,15 @@ def build(repo: Path, source_commit: str) -> str:
 
     release_by_target = {row["target"]: row for row in release}
     plateau_by_target = {row["target"]: row for row in plateau}
-    anchors = {row["profile"]: float(row["reclaim_pct_of_pretrim"]) for row in a_cells}
-    anchor_trim = {row["profile"]: float(row["trim_elapsed_ms"]) for row in a_cells}
+    anchors = {
+        profile: float(item["center_pct"])
+        for profile, item in a2_decision["candidate_bands"].items()
+    }
+    anchor_radius = {
+        profile: float(item["plus_minus_pp"])
+        for profile, item in a2_decision["candidate_bands"].items()
+    }
+    anchor_trim_max = max(float(row["trim_elapsed_ms"]) for row in a2_cells)
     b_by_profile: dict[str, list[dict[str, str]]] = {}
     for row in b_cells:
         if row["trim_at"] == "valley":
@@ -268,7 +276,11 @@ def build(repo: Path, source_commit: str) -> str:
     assert len(batch_scale) == 8
     assert round(min(float(row["reclaim_pct"]) for row in batch_scale), 4) == 48.5232
     assert round(max(float(row["reclaim_pct"]) for row in batch_scale), 4) == 49.3671
-    assert anchors == {"mixed": 51.074077, "medium-only": 50.387886}
+    assert a2_decision["verdict"] == "H-V"
+    assert anchors == {"mixed": 52.794499, "medium-only": 50.669791}
+    assert anchor_radius == {"mixed": 4.304705, "medium-only": 4.918088}
+    assert all(item["n"] == 8 for item in a2_decision["candidate_bands"].values())
+    assert round(anchor_trim_max, 6) == 15.885352
     assert b_ratio == {"mixed": 81.661264, "medium-only": 84.446566}
     assert min(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 80.175875
     assert max(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 85.453954
@@ -287,10 +299,13 @@ def build(repo: Path, source_commit: str) -> str:
     assert max(float(row["reclaim_pct_of_pre"]) for row in first_releases) == 51.406250
     assert min(int(row["glibc_pd_reclaimed_kb"]) for row in first_releases) == 1308
     assert max(int(row["glibc_pd_reclaimed_kb"]) for row in first_releases) == 1316
-    assert acceptance["schema"] == "glibc-memopt-demo.acceptance.v3"
+    assert acceptance["schema"] == "glibc-memopt-demo.acceptance.v4"
+    assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["center_pct_by_profile"] == anchors
+    assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["plus_minus_pp_by_profile"] == anchor_radius
 
     evidence_service = "../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv"
-    evidence_s4_a = "../data/raw/s4_retention_20260901/a_cells.tsv"
+    evidence_s4_a = "../data/raw/a_anchor_replication_20260904/a_cells.tsv"
+    evidence_s4_a_decision = "../data/raw/a_anchor_replication_20260904/decision.json"
     evidence_s4_b = "../data/raw/s4_retention_20260901/b_cycles.tsv"
     evidence_gst = "../data/raw/gst_trim_cost_20260901/cycles.tsv"
 
@@ -333,7 +348,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   </div>
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="{guide}#l2-acceptance">复现指南验收带</a></p>
   <div class="grid">
-    <div class="card"><small>新镜像瞬时释放锚点（n=1/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>of pre-trim heap</span><br><a href="{evidence_s4_a}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
+    <div class="card"><small>瞬时释放共同锚点（frozen/GBS，n=8/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>mixed ±{anchor_radius['mixed']:.6f} pp；medium-only ±{anchor_radius['medium-only']:.6f} pp；of pre-trim heap</span><br><a href="{evidence_s4_a_decision}">裁决 JSON</a> · <a href="{guide}#l1-a-anchor-replication">L1 复算</a></div>
     <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>调用中位 mixed {s4_trim_median_by_profile['mixed']:.6f} / medium-only {s4_trim_median_by_profile['medium-only']:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
     <div class="card"><small>gst 业务 p99 预登记判定（REPORT_ONLY）</small><strong class="metric">+{gst_comparison['delta_p99_ms']:.3f} ms &lt; {gst_comparison['none_p99_repeat_dispersion_ms']:.3f} ms</strong><span class="pill">未检出；margin {gst_p99_margin:.3f} ms（阈值 {gst_p99_threshold_pct:.1f}%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="{guide}#l1-gst-trim-cost">L1 复算</a></div>
   </div>
@@ -366,7 +381,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <span class="pill">效果</span><h2>S4：M7 阳性后，valley trim 回收驻留页</h2>
   <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → valley trim → faults / 时延 / 健康门</div>
   <div class="grid">
-    <div class="card wide"><h3>瞬时释放锚点（n=1/profile）</h3>{bar_chart([('mixed', anchors['mixed'], 'trim'), ('medium-only', anchors['medium-only'], 'trim')], title='S4 A 组回收率锚点', unit='reclaim / pre-trim heap (%)', ceiling=60)}<p><a href="{evidence_s4_a}">A 组证据</a> · <a href="{guide}#l1-s4">复算</a></p></div>
+    <div class="card wide"><h3>瞬时释放共同锚点（n=8/profile）</h3>{bar_chart([('mixed', anchors['mixed'], 'trim'), ('medium-only', anchors['medium-only'], 'trim')], title='S4 A 组 frozen/GBS H-V 共同锚点', unit='reclaim / pre-trim heap (%)', ceiling=60)}<p>mixed {anchors['mixed']:.6f}% ±{anchor_radius['mixed']:.6f} pp；medium-only {anchors['medium-only']:.6f}% ±{anchor_radius['medium-only']:.6f} pp。<a href="{evidence_s4_a}">12 格证据</a> · <a href="{evidence_s4_a_decision}">H-V 裁决</a> · <a href="{guide}#l1-a-anchor-replication">复算</a></p></div>
     <div class="card wide"><h3>B 组三重复中位</h3>{bar_chart([('mixed trim', b_ratio['mixed'], 'trim'), ('mixed none', 0.0, 'none'), ('medium trim', b_ratio['medium-only'], 'trim'), ('medium none', 0.0, 'none')], title='S4 B 组 trim/none 回收已释放 payload', unit='reclaim / released (%)', ceiling=100)}<p><a href="../data/raw/s4_retention_20260901/b_cells.tsv">格级证据</a> · <a href="{guide}#l2-acceptance">中位验收规则</a></p></div>
   </div>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
@@ -374,7 +389,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     <tr><td>medium-only</td><td class="number">{b_ratio['medium-only']:.2f}%</td><td class="number">{s4_trim_median_by_profile['medium-only']:.6f} ms</td><td class="number">+{next_fault['medium-only']}</td><td class="number">0</td></tr>
   </tbody></table>
   <p class="source-links"><a href="../data/raw/s4_retention_20260901/b_cells.tsv">代价证据 TSV</a> · <a href="../data/raw/s4_retention_20260901/health.json">健康证据 JSON</a> · <a href="{guide}#l1-s4">L1 复算</a>。zram 三项 Δ={s4_health['zram_original_data_size_delta']}/{s4_health['zram_compressed_data_size_delta']}/{s4_health['zram_mem_used_total_delta']}，OOM/LMK={len(s4_health['oom_lmk_matches'])}。</p>
-  <p class="source-links">时延带分开解释：B 组释放点 trim 单次 &lt;{acceptance['tolerance_bands']['release_point_trim_single_call_ms']['max_exclusive_ms']:g} ms；A 组锚点实测最大 {max(anchor_trim.values()):.6f} ms，以 &lt;{acceptance['tolerance_bands']['s4_a_anchor_trim_single_call_ms']['max_exclusive_ms']:g} ms 验收，且不作为钩子代价。<a href="{evidence_s4_a}">A 组证据</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></p>
+  <p class="source-links">时延带分开解释：B 组释放点 trim 单次 &lt;{acceptance['tolerance_bands']['release_point_trim_single_call_ms']['max_exclusive_ms']:g} ms；A2 锚点实测最大 {anchor_trim_max:.6f} ms，以 &lt;{acceptance['tolerance_bands']['s4_a_anchor_trim_single_call_ms']['max_exclusive_ms']:g} ms 验收，且不作为钩子代价。<a href="{evidence_s4_a}">A2 证据</a> · <a href="../tools/reproduce/acceptance_bands.json">机器规则</a></p>
 </section>
 
 <section id="gst">
@@ -392,7 +407,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <div class="grid">
     <div class="card"><strong>① 离线阅读</strong><small>本 HTML 是单文件派生产物；所有图表由公开证据生成。</small></div>
     <div class="card"><strong>② Host verify · 分钟级</strong><small><code>bash tools/reproduce/reproduce.sh</code> 执行全部 L1 与 cmp。</small></div>
-    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --ip &lt;addr&gt;</code> 编排既有 S4/gst harness。</small></div>
+    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --artifact-source gbs --ip &lt;addr&gt;</code> 编排既有 S4/gst harness；GBS 已通过 A2/H-V 重基线。</small></div>
   </div>
   <p><a href="../tools/reproduce/README.md">Workflow 上手</a> · <a href="{guide}#workflow-fast-path">快速通道</a> · <a href="{guide}#l2-run">手工 L2</a>。确定性项、validity gates 和容差带都来自 <a href="../tools/reproduce/acceptance_bands.json">acceptance_bands.json</a>。“同样的数据”指 payload 确定性字节逐值一致、容差项落带且 validity gates 通过。</p>
 </section>

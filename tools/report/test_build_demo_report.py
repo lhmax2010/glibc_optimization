@@ -46,7 +46,9 @@ class DemoReportTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             document = output.read_text(encoding="utf-8")
             for expected in (
-                "51.07% / 50.39%",
+                "52.79% / 50.67%",
+                "52.794499% ±4.304705 pp",
+                "50.669791% ±4.918088 pp",
                 "80.18%–85.45%",
                 "1.233269 ms",
                 "1.218361 ms",
@@ -108,6 +110,13 @@ class DemoReportTests(unittest.TestCase):
             self.assertIn("0.555556 ms", document, name)
             self.assertIn("91.8%", document, name)
             self.assertIn("+359", document, name)
+        for name in ("narrative", "package", "guide", "status", "demo-en", "demo-zh"):
+            document = documents[name]
+            self.assertIn("52.794499", document, name)
+            self.assertIn("50.669791", document, name)
+        a2_report = (REPO / "docs/a_anchor_replication_20260904.md").read_text(encoding="utf-8")
+        self.assertIn("52.794499", a2_report)
+        self.assertIn("50.669791", a2_report)
 
     def test_gbs_delivery_surfaces_share_status_and_manifest(self) -> None:
         for path in (
@@ -119,11 +128,12 @@ class DemoReportTests(unittest.TestCase):
             document = path.read_text(encoding="utf-8")
             self.assertIn("gbs_llvm.conf", document, path.name)
             self.assertTrue(
-                "pending board rebaseline" in document or "await board rebaselining" in document
-                if path.name in {"README.md", "demo_README.md"}
-                else "待下一轮板上重基线" in document,
+                "preferred HQ" in document or "HQ 首选" in document,
                 path.name,
             )
+            self.assertNotIn("pending board rebaseline", document)
+            self.assertNotIn("await board rebaselining", document)
+            self.assertNotIn("待下一轮板上重基线", document)
 
     def test_checked_in_report_matches_rebuild(self) -> None:
         checked_in = REPO / "docs/demo_report.html"

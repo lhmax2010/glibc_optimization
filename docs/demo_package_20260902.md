@@ -17,7 +17,7 @@
 | 交付要求 | 可审计实现 | 验收入口 |
 |---|---|---|
 | 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 从身份门、资产哈希到板端清理给出可照抄命令 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南快速通道`](demo_reproduction_guide_20260901.md#workflow-fast-path)、[`workflow verify`](../tools/reproduce/README.md) |
-| 同板同镜像多组对照 | S4 在同一 RPI4/Tizen 镜像上含两个锚点格与 `trim/none` 对照；gst 含两臂各三重复 | [`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
+| 同板同镜像多组对照 | S4 A 在同一 RPI4/Tizen 镜像上含 frozen/GBS 两路径 × 两档 × 三重复，B 含 `trim/none` 对照；gst 含两臂各三重复 | [`A2 报告`](a_anchor_replication_20260904.md)、[`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
 | 结果说明价值 | 反信号先排除无需重复回收的对象，M7 阳性后才在释放相位 trim；效果、faults、业务 p99 与边界同时报告 | [`HTML 自动归还`](demo_report.html#finding-one)、[`HTML 门控效果`](demo_report.html#s4)、[`HTML 边界`](demo_report.html#boundaries) |
 | 同条件复现同数据 | released payload 是唯一确定性数字并逐字节核对；容差项落带且 page alignment、majflt、zram、OOM/LMK validity gates 通过。S4 B 按分别锚定发布值的每档三重复中位 `±5 pp`；p99 方向只报告。彩排 rep2 的 `68.169197%` 说明同 seed 不钉 arena 指派 | [`HTML 边界`](demo_report.html#boundaries)、[`rep2 紧凑证据`](../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv)、[`L2 验收带`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`机器配置`](../tools/reproduce/acceptance_bands.json) |
 
@@ -130,9 +130,18 @@ print("reclaimed_4k_aligned=%d/%d" % (sum((int(r["trim_reclaimed_kb"]) * 1024) %
 print("majflt_all_zero=%s" % str(all(int(r["next_cycle_majflt"]) == 0 for r in c)).lower())
 print("zram_deltas=%d,%d,%d dmesg_increment=%d oom_lmk=%d" % (h["zram_original_data_size_delta"], h["zram_compressed_data_size_delta"], h["zram_mem_used_total_delta"], h["dmesg_increment_lines"], len(h["oom_lmk_matches"])))
 PY
+
+python3 tools/runners/a_anchor_replication_20260904/analyze_a_anchor.py \
+  --replay data/raw/a_anchor_replication_20260904/a_cells.tsv \
+  --output "$OUT/a-anchor"
+cmp "$OUT/a-anchor/group_summary.tsv" \
+  data/raw/a_anchor_replication_20260904/group_summary.tsv
+cmp "$OUT/a-anchor/decision.json" \
+  data/raw/a_anchor_replication_20260904/decision.json
 ```
 
-预期逐行原文见 [`L1 S4`](demo_reproduction_guide_20260901.md#l1-s4)。现场只需强调回收、
+前段预期逐行原文见 [`L1 S4`](demo_reproduction_guide_20260901.md#l1-s4)；A2 分析器输出
+`replayed cells=12 verdict=H-V`，两个 `cmp` 静默。现场只需强调现行共同 A 带、回收、
 调用时间、下一周期 minflt、majflt 和健康门必须同批出现。
 
 ### 演示 D：GStreamer 公开 cycle 单文件复算（数秒）
@@ -168,7 +177,7 @@ delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
 | `enlightenment +1736 KiB` a+b floor | 最大 retained-floor 候选之一，另带自动归还能力告警 | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
 | `ServiceH 2360/+868/+580 KiB`、`ServiceA +788 KiB` | 平台上界、跨探针 floor 与谷底残渣候选 | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
 | 批量释放 `48.9451% / 1.359375 MiB`，同表型扩到 8 进程 | 来自 `<TEST_IMAGE_B>` / `glibc-2.40-2.8` 的相容性对照，非冻结矩阵 | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](demo_reproduction_guide_20260901.md#l1-batch-release) |
-| S4 锚点 `51.07% / 50.39%`（各 n=1，of pre-trim heap） | 新镜像机制锚点 | [`a_cells.tsv`](../data/raw/s4_retention_20260901/a_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
+| S4 A 共同锚点 mixed `52.794499% ±4.304705 pp` / medium-only `50.669791% ±4.918088 pp`（每档合并 n=8，of pre-trim heap） | 预登记 H-V 后的 frozen/GBS 共用机制锚点 | [`decision.json`](../data/raw/a_anchor_replication_20260904/decision.json)、[`a_cells.tsv`](../data/raw/a_anchor_replication_20260904/a_cells.tsv) | [A2](demo_reproduction_guide_20260901.md#l1-a-anchor-replication) |
 | S4 回收/released `80.175875%–85.453954%`；调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期 `+1351/+1465 minflt`、`majflt=0` | 合成驻留表型的效果与再激活代价 | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
 | gst p99 差 `+6.228611 ms`，none 重复离散 `6.784167 ms`，margin `0.555556 ms`（门槛 `91.8%`）；同规则 p50 `+1.870462` vs `0.173927 ms`，另 `+359 minflt/循环` | 真实多线程 pipeline 的预登记规则；p99 方向为 `REPORT_ONLY` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv)、[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 | gst trim p50/p95/p99/max `0.671556/0.818315/0.842185/0.856944 ms` | release-point 调用分布；不等于并发分配锁停顿 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |

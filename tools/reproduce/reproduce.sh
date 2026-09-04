@@ -13,7 +13,8 @@ usage:
        [--artifact-source frozen|reproducible|gbs]
 
 verify is host-only and is the default. board performs the complete S4 + gst L2
-workflow and requires the frozen ARM/media artifact bundle or documented build roots.
+workflow and requires the GBS (preferred) or frozen ARM/media bundle, or documented
+build roots.
 EOF
 }
 
@@ -148,6 +149,15 @@ s4_replay()
     cmp "$tmp/s4/acceptance_input.json" "$repo/data/raw/s4_retention_20260901/acceptance_input.json"
 }
 
+a_anchor_replay()
+{
+    out="$tmp/a-anchor"
+    python3 "$repo/tools/runners/a_anchor_replication_20260904/analyze_a_anchor.py" \
+      --replay "$repo/data/raw/a_anchor_replication_20260904/a_cells.tsv" --output "$out" || return 1
+    cmp "$out/group_summary.tsv" "$repo/data/raw/a_anchor_replication_20260904/group_summary.tsv" || return 1
+    cmp "$out/decision.json" "$repo/data/raw/a_anchor_replication_20260904/decision.json"
+}
+
 gst_replay()
 {
     out="$tmp/gst"
@@ -186,6 +196,7 @@ link_check()
       "$repo/docs/demo_package_20260902.md" \
       "$repo/docs/demo_narrative_20260901.md" \
       "$repo/docs/demo_reproduction_guide_20260901.md" \
+      "$repo/docs/a_anchor_replication_20260904.md" \
       "$repo/docs/product_landing_recommendation_20260901.md" \
       "$repo/docs/tool_provenance_20260903.md"
     if [ -f "$repo/README.zh-CN.md" ]; then
@@ -202,6 +213,7 @@ host_tests()
     PYTHONDONTWRITEBYTECODE=1 python3 -m unittest \
       tools/runners/s4_retention_20260901/test_host.py \
       tools/runners/gst_trim_cost_20260901/test_host.py \
+      tools/runners/a_anchor_replication_20260904/test_host.py \
       tools/report/test_build_demo_report.py \
       tools/reproduce/test_host.py \
       tools/reproduce/test_board_workflow_mocked_sdb.py \
@@ -217,8 +229,9 @@ check f2-f3-attribution-cmp attribution_replay
 check phenotype-cmp phenotype_replay
 check batch-release-output batch_replay
 check s4-public-replay s4_replay
+check a-anchor-public-replay-cmp a_anchor_replay
 check gst-public-replay-cmp gst_replay
-check acceptance-v3 acceptance_replay
+check acceptance-v4 acceptance_replay
 if [ -f "$repo/docs/demo_report.html" ] && [ -f "$repo/tools/report/source_commit.txt" ]; then
     check offline-report-byte-cmp report_rebuild
 else

@@ -1,6 +1,6 @@
 {
-  "schema": "glibc-memopt-demo.deliverables.v2",
-  "effective_date": "2026-09-03",
+  "schema": "glibc-memopt-demo.deliverables.v3",
+  "effective_date": "2026-09-04",
   "gbs_build": {
     "config": "config/gbs_llvm.conf",
     "base_snapshot": "tizen-base-toolchain_20260813.050338",
@@ -14,7 +14,23 @@
     "rpm_sha256_scope": "observed host build record; NVR, %files, and extracted ELF hashes are rebuild gates",
     "compiler": "clang-22.1.8-1.6.armv7l",
     "glibc": "glibc-2.40-1.6.armv7l",
-    "status": "built_host_only_pending_board_rebaseline"
+    "status": "board_rebaseline_passed_via_preregistered_h_v"
+  },
+  "board_rebaseline": {
+    "report": "docs/a_anchor_replication_20260904.md",
+    "decision": "H-V",
+    "acceptance_contract": "glibc-memopt-demo.acceptance.v4",
+    "paths": ["frozen", "gbs"],
+    "combined_observations_per_profile": 8,
+    "anchor_center_pct_by_profile": {
+      "medium-only": 50.669791,
+      "mixed": 52.794499
+    },
+    "anchor_plus_minus_pp_by_profile": {
+      "medium-only": 4.918088,
+      "mixed": 4.304705
+    },
+    "status": "passed"
   },
   "artifacts": [
     {

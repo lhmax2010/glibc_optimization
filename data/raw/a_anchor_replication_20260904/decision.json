@@ -1,0 +1,49 @@
+{
+  "all_group_ranges_le_threshold": false,
+  "all_profile_median_diffs_gt_threshold": false,
+  "any_group_range_gt_threshold": true,
+  "any_profile_distribution_overlap": true,
+  "candidate_bands": {
+    "medium-only": {
+      "applies_to": [
+        "frozen",
+        "gbs"
+      ],
+      "center_pct": 50.669791,
+      "n": 8,
+      "observed_max_pct": 52.755248,
+      "observed_min_pct": 47.83716,
+      "observed_range_pp": 4.918088,
+      "plus_minus_pp": 4.918088
+    },
+    "mixed": {
+      "applies_to": [
+        "frozen",
+        "gbs"
+      ],
+      "center_pct": 52.794499,
+      "n": 8,
+      "observed_max_pct": 55.243785,
+      "observed_min_pct": 50.93908,
+      "observed_range_pp": 4.304705,
+      "plus_minus_pp": 4.304705
+    }
+  },
+  "profiles": {
+    "medium-only": {
+      "closed_intervals_overlap": true,
+      "frozen_median_pct": 49.02411,
+      "gbs_median_pct": 51.083217,
+      "median_abs_diff_pp": 2.059107
+    },
+    "mixed": {
+      "closed_intervals_overlap": true,
+      "frozen_median_pct": 52.93795,
+      "gbs_median_pct": 52.651048,
+      "median_abs_diff_pp": 0.286902
+    }
+  },
+  "range_threshold_pp": 1.5,
+  "schema": "glibc-memopt.a-anchor-decision.v1",
+  "verdict": "H-V"
+}

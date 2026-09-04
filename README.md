@@ -9,8 +9,9 @@ The HQ packaging path is [`packaging/glibc-memopt-tools.spec`](packaging/glibc-m
 experiment tools against the pinned Unified Toolchain snapshot. Build identity and
 hashes are recorded in the
 [`deliverables manifest`](tools/reproduce/deliverables_manifest.json); these GBS
-artifacts remain pending board rebaseline, so the frozen bundle is still the L2
-acceptance baseline.
+artifacts passed the preregistered A-anchor board rebaseline through the H-V
+decision, so GBS is now the preferred HQ L2 build path and the frozen bundle is
+the fallback. See the [A-anchor replication](docs/a_anchor_replication_20260904.md).
 
 文中应用/进程名为代号；host 侧路径已脱敏，板端运行路径保留。冻结测试镜像 BUILD_ID 为复现需要有意公开。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）在 host 本地留存，可按请求提供；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
 
@@ -24,6 +25,7 @@ acceptance baseline.
 - **Product allocation shapes:** the cyclic target's visible PD fall is an automatic-reclaim anti-signal rather than a trim opportunity; retained floors and residuals remain candidates only until M7 separates live data from allocator-held free space. See the [mechanism attribution](docs/cyclic_fall_mechanism_attribution_v2_20260901.md).
 - **S2 replication gate:** frozen mixed and medium-only runs paced rise/release at about `3.400/19.703 s` and placed about `6.4 MiB` per cycle into rest/unsorted, but neither internal nor external board sampling showed a PD fall. The proxy therefore does not yet reproduce the product cyclic shape.
 - **Real multithreaded release cost:** on the frozen GStreamer matrix, trim shifted the repeat-median loop p99 by `+6.229 ms`, below the none repeat-dispersion band of `6.784 ms`; 153 trim calls had `0.672/0.818/0.842/0.857 ms` p50/p95/p99/max. This fills the next-cycle cost and reclaim fields but not a direct per-thread all-arena lock-stall measurement. See the [full report](docs/gst_trim_cost_20260901.md).
+- **A-anchor variance and GBS delivery:** the preregistered 12-cell replication selected H-V because all four within-path ranges exceeded `1.5 pp` and both frozen/GBS profile distributions overlapped. Acceptance v4 therefore shares mixed `52.794499% ±4.304705 pp` and medium-only `50.669791% ±4.918088 pp` bands across both paths; the archived GBS matrix passes under that frozen rule. See the [A-anchor report](docs/a_anchor_replication_20260904.md).
 - **Rejected or deferred directions:** mechanisms with no RSS surface include rseq disablement, guard-page removal, repeated `__libc_freeres`, and disabling dlconf for steady-state RSS. Disabling tcache, disabling fastbins, and limiting unsorted-to-tcache transfers remain experimentally rejected unless real workloads show materially larger retained structures. A whole-libc `-Os` build remains deferred pending a dedicated performance and build-compatibility program.
 - **Flash levers:** locale/gconv/NSS packaging, debug-symbol policy, cold-DSO optimization, and command-line subpackaging remain source-verified candidates whose product savings depend on the final image manifest.
 
