@@ -1,7 +1,7 @@
 {
   "schema": "glibc-memopt-demo.acceptance.v4",
   "effective_date": "2026-09-04",
-  "change_reason": "Preregistered A-anchor H-V selected after four within-path ranges exceeded 1.5 pp and both frozen/GBS profile distributions overlapped; only the A-anchor reclaim bands changed.",
+  "change_reason": "A-anchor H-V fixed-contract replay found four within-path ranges above 1.5 pp and overlapping frozen/GBS profile distributions. The resulting unchanged v4 values are calibration bands because GBS observations participated in their construction; they are not independent evidence that the GBS path passes.",
   "deterministic_items": {
     "released_payload_bytes": {
       "comparison": "byte-exact",
@@ -69,7 +69,9 @@
       "artifacts": ["frozen", "gbs"],
       "observations_per_profile": 8,
       "aggregation": "median of the combined frozen and GBS observations, separately per profile",
-      "anchoring": "preregistered H-V decision: max(4 pp, combined observed range)",
+      "classification": "calibration band",
+      "independent_gbs_validation": "pending held-out validation",
+      "anchoring": "fixed-contract H-V replay: max(4 pp, combined observed range)",
       "source": "data/raw/a_anchor_replication_20260904/decision.json",
       "unit": "profile"
     },

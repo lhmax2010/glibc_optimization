@@ -115,7 +115,7 @@ SYSTEMD_RUN_EXIT=0
 systemd-run --no-block --collect --unit=chromium-url-entry-AppUIC \
   --uid='<USER>' --gid=users -p SupplementaryGroups=display \
   -E XDG_RUNTIME_DIR=/run/user/5001 -E WAYLAND_DISPLAY=wayland-0 \
-  -E HOME=/opt/usr/<USER_HOME> \
+  -E HOME=/opt/usr/home/owner \
   /usr/apps/AppK/bin/AppUIC -v -n \
   file:///tmp/chromium_url_entry_simple.html
 ```

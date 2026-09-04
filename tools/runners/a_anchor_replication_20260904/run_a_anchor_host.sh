@@ -7,7 +7,7 @@ output=
 frozen=
 gbs=
 remote=/opt/usr/glibc_memopt/a_anchor_replication_20260904
-contract="$repo/tools/runners/a_anchor_replication_20260904/preregistered_contract.json"
+contract="$repo/tools/runners/a_anchor_replication_20260904/fixed_contract.json"
 
 usage()
 {

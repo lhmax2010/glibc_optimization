@@ -1,6 +1,6 @@
 # Tizen native evidence runner
 
-This directory preserves the preregistered contract, board controller, official
+This directory preserves the fixed-contract replay, board controller, official
 snapshot GDB package helper, host analyzer, and host tests for
 `docs/tizen_native_evidence_20260904.md`.
 
@@ -12,7 +12,7 @@ into passing cells.
 
 ## Inputs
 
-- RPI4 with the exact BUILD_ID and glibc NVR in `preregistered_contract.json`.
+- RPI4 with the exact BUILD_ID and glibc NVR in `fixed_contract.json`.
 - `small_320x240.mp4` supplied out of repository and verified as
   `3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d`.
 - SDB access as root. Every remote command must be accepted only through its

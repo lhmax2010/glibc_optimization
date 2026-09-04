@@ -76,7 +76,7 @@ gst_loop_decode small_320x240.mp4 51 20 1 <arm> control-stdin
   这一有限样本限制。
 - 每个 arm 先报告三个重复各自的 p50/p95/p99，再报告三个重复统计量的中位数与
   `max−min` 离散带。臂间差固定为 `median(trim) − median(none)`。
-- 业务代价可见性方向的预登记计算规则：
+- 业务代价可见性方向的固定合同计算规则：
   `Δp99 = median(trim 三重复 p99) − median(none 三重复 p99)`；仅当
   `Δp99 > max(none p99) − min(none p99)` 时判“可见”，否则判“未越过本批基线重复
   离散带”。依据是先要求臂间位移严格大于同批 none 的 run-to-run 抖动；不使用结果后
@@ -202,7 +202,7 @@ DONE_AUX_THREAD_SNAPSHOT`；它证明负载是多线程 pipeline，但不等价�
 
 精确派生见 [`repetitions.tsv`](../data/raw/gst_trim_cost_20260901/repetitions.tsv) 与
 [`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv)。下表每个分位仅用
-cycle 2–51 的 50 个预登记业务样本；nearest-rank p99 因而就是该重复的最大观测值。
+cycle 2–51 的 50 个固定合同业务样本；nearest-rank p99 因而就是该重复的最大观测值。
 
 | arm | rep | p50 (ms) | p95 (ms) | p99/max (ms) | min–max (ms) |
 |---|---:|---:|---:|---:|---:|
@@ -219,7 +219,7 @@ cycle 2–51 的 50 个预登记业务样本；nearest-rank p99 因而就是该�
 | p95 | 20011.546673 / 6.451573 ms | 20011.997933 / 3.728407 ms | +0.451260 ms |
 | p99 | 20016.408137 / **6.784167 ms** | 20022.636748 / 13.192204 ms | **+6.228611 ms** |
 
-预登记规则要求 `Δp99 > 6.784167 ms`；实测 `6.228611 ms`，margin 为
+固定合同规则要求 `Δp99 > 6.784167 ms`；实测 `6.228611 ms`，margin 为
 `0.555556 ms`，达到门槛的 `91.8%`，故
 [`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) 的正式裁决为
 `business_cost_visible=false`。方向按交付验收记 `REPORT_ONLY`；这只表示本批没有越过

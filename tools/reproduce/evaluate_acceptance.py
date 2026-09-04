@@ -114,14 +114,14 @@ def evaluate_gst(gst: Path, bands: dict[str, object], results: list[dict[str, ob
     add(
         results,
         "PASS" if rule_valid else "FAIL",
-        "gst preregistered p99 rule execution",
+        "gst fixed-contract p99 rule execution",
         f"method={comparison.get('percentile_method')} delta={delta:.6f} dispersion={dispersion:.6f}",
         "nearest-rank; repeat medians; none max-minus-min; strict > comparison",
     )
     add(
         results,
         "REPORT_ONLY",
-        "gst preregistered p99 direction",
+        "gst fixed-contract p99 direction",
         f"visible={str(visible).lower()} delta={comparison['delta_p99_ms']} dispersion={comparison['none_p99_repeat_dispersion_ms']}",
         "report outcome; never an acceptance failure",
     )

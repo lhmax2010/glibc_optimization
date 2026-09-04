@@ -1,8 +1,9 @@
 # GBS host build record (2026-09-03)
 
 This compact record describes a host-only build. No board was contacted and the
-generated ELF files subsequently passed the preregistered A-anchor board
-rebaseline through the H-V decision; see
+generated ELF files subsequently participated in the fixed-contract A-anchor H-V
+calibration sample. Because GBS observations helped construct acceptance v4, that
+sample is not an independent GBS-path pass; held-out validation remains pending. See
 [`docs/a_anchor_replication_20260904.md`](../../../docs/a_anchor_replication_20260904.md).
 
 ## Source/repository mapping

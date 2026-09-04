@@ -1,9 +1,16 @@
 # Tizen native evidence B2 runner
 
-This directory contains the frozen B2 contract, read-only reconnaissance
+This directory contains the 2026-09-04 B2 fixed-contract replay, read-only reconnaissance
 scripts, the official-snapshot GDB package helper, formal board controller,
 host analyzer, and host tests for the dated append in
 `docs/tizen_native_evidence_20260904.md`.
+
+The original run had no independent pre-run commit/tag. Its former 2026-09-05
+label and “preregistered” wording were corrected from the raw nanosecond timestamps;
+the machine evidence itself is unchanged. The archived contract and remote scripts
+retain their original `tizen_native_evidence_20260905` round/workdir literals so the
+published contract/runner hashes still identify exactly what executed; only the host
+archive directory and prose date are corrected.
 
 The workflow is intentionally split:
 
@@ -18,7 +25,7 @@ The workflow is intentionally split:
    `recon_gdb_selftest_remote.sh`.
 5. Prove the five-process decode construction and the selected 30-second UI app
    lifecycle with `recon_gst_sequence_remote.sh` and `recon_app_remote.sh`.
-6. Inspect `preregistered_contract.json`, then run `run_b2_remote.sh` without
+6. Inspect `fixed_contract.json`, then run `run_b2_remote.sh` without
    overrides.
 7. Build a board-side file manifest, pull and verify every entry, remove the GDB
    package set, delete only the exact round directory, and recheck governors,
@@ -36,8 +43,8 @@ and cleanup are in the
 Host checks and analysis are:
 
 ```sh
-python3 tools/runners/tizen_native_evidence_20260905/test_host.py
-python3 tools/runners/tizen_native_evidence_20260905/analyze_b2.py \
+python3 tools/runners/tizen_native_evidence_b2_20260904/test_host.py
+python3 tools/runners/tizen_native_evidence_b2_20260904/analyze_b2.py \
   --pull <complete-board-pull> --idle-log <idle-60s-raw-log> \
   --output <derived-output>
 ```

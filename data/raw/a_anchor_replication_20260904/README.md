@@ -1,6 +1,6 @@
 # A-anchor replication compact evidence (2026-09-04)
 
-This directory is the public, sanitized subset of the preregistered frozen/GBS
+This directory is the public, sanitized subset of the fixed-contract frozen/GBS
 A-anchor replication. Complete JSON, XML, 1 s sampling, dmesg, command, pulled
 manifest, and stability-monitor archives remain in the local `board_results`
 archive and are available on request.

@@ -9,18 +9,34 @@ usage()
     cat <<'EOF'
 usage:
   bash tools/reproduce/reproduce.sh [verify]
+  bash tools/reproduce/reproduce.sh gbs [--lock-timeout <seconds>] [--output-dir <new-dir>]
   bash tools/reproduce/reproduce.sh board --ip <address> [--output <host-dir>] [--artifact-dir <dir>]
        [--artifact-source frozen|reproducible|gbs]
 
-verify is host-only and is the default. board performs the complete S4 + gst L2
-workflow and requires the GBS (preferred) or frozen ARM/media bundle, or documented
-build roots.
+verify is host-only, normally completes in minutes, and is the default. It applies
+static GBS package gates but never starts a real GBS build. gbs explicitly starts
+the real build and needs the configured network repositories, root-capable GBS
+environment, buildroot disk space, and substantially more time. board performs the
+complete S4 + gst L2 workflow; frozen is the current default artifact source until
+the independent GBS held-out validation is complete.
 EOF
 }
 
 if [ "$mode" = board ]; then
     shift
     exec sh "$repo/tools/reproduce/board_workflow.sh" "$@"
+fi
+if [ "$mode" = gbs ]; then
+    shift
+    printf 'MODE\texplicit GBS build\n'
+    gbs_rc=0
+    python3 "$repo/tools/reproduce/check_gbs_package.py" --repo-root "$repo" --build "$@" || gbs_rc=$?
+    if [ "$gbs_rc" -eq 0 ]; then
+        printf 'OVERALL\tPASS\n'
+        exit 0
+    fi
+    printf 'OVERALL\tFAIL\tRC=%s\n' "$gbs_rc"
+    exit "$gbs_rc"
 fi
 if [ "$mode" != verify ]; then
     usage >&2
@@ -49,7 +65,7 @@ check()
             grep -E '^SKIPPED[[:space:]]' "$log"
         else
             printf 'PASS\t%s\n' "$label"
-            grep -E '^REPORT_ONLY[[:space:]]' "$log" || true
+            grep -E '^(REPORT_ONLY|INFO)[[:space:]]' "$log" || true
         fi
     else
         rc=$?
@@ -198,6 +214,13 @@ report_rebuild()
 
 link_check()
 {
+    template_root="$tmp/rendered-demo-entry"
+    mkdir -p "$template_root" || return 1
+    cp "$repo/tools/report/demo_README.md" "$template_root/README.md" || return 1
+    cp "$repo/tools/report/demo_README.zh-CN.md" "$template_root/README.zh-CN.md" || return 1
+    for directory in docs tools data packaging config; do
+        ln -s "$repo/$directory" "$template_root/$directory" || return 1
+    done
     set -- \
       "$repo/README.md" \
       "$repo/docs/INDEX.md" \
@@ -208,14 +231,17 @@ link_check()
       "$repo/docs/product_landing_recommendation_20260901.md" \
       "$repo/docs/tool_provenance_20260903.md" \
       "$repo/docs/tizen_native_evidence_20260904.md" \
-      "$repo/docs/trimmable_estimator_20260905.md"
+      "$repo/docs/trimmable_estimator_20260905.md" \
+      "$template_root/README.md" \
+      "$template_root/README.zh-CN.md"
     if [ -f "$repo/README.zh-CN.md" ]; then
         set -- "$@" "$repo/README.zh-CN.md"
     fi
     if [ -f "$repo/docs/demo_report.html" ]; then
         set -- "$@" "$repo/docs/demo_report.html"
     fi
-    python3 "$repo/tools/reproduce/check_links.py" "$@"
+    python3 "$repo/tools/reproduce/check_links.py" "$@" || return 1
+    printf 'INFO\ttemplate-entry-links\ttemplates rendered at repository root and all links checked\n'
 }
 
 host_tests()
@@ -225,7 +251,7 @@ host_tests()
       tools/runners/gst_trim_cost_20260901/test_host.py \
       tools/runners/a_anchor_replication_20260904/test_host.py \
       tools/runners/tizen_native_evidence_20260904/test_host.py \
-      tools/runners/tizen_native_evidence_20260905/test_host.py \
+      tools/runners/tizen_native_evidence_b2_20260904/test_host.py \
       tools/analysis/test_trimmable_estimator.py \
       tools/report/test_build_demo_report.py \
       tools/reproduce/test_host.py \

@@ -9,13 +9,13 @@
 
 This frozen Demo delivers a gated Tizen glibc (ptmalloc) trim method: exclude
 visible automatic reclaim as an anti-signal, confirm allocator-retained free space
-with M7, require a same-target, same-phase trim probe to meet a preregistered reclaim
+with M7, require a same-target, same-phase trim probe to meet a precommitted reclaim
 threshold, then call `malloc_trim(0)` only at a known release phase while accepting
 refault, latency, and health evidence together. On the frozen RPI4/Tizen
-glibc-2.40-1.6.armv7l matrix, anchors were about 50%, gated trim reclaimed about
+glibc-2.40-1.6.armv7l matrix, the calibration centers are 51%–53%, and gated trim reclaimed about
 80%–85% of released payload; per-profile median calls were mixed 1.233269 ms and
 medium-only 1.218361 ms, and the gst p99
-direction was not visible by the preregistered rule. These are mechanism and scale
+direction was not visible by the fixed comparison rule. These are mechanism and scale
 results, not a product-memory-benefit promise.
 
 ## Headline results
@@ -25,7 +25,7 @@ results, not a product-memory-benefit promise.
 | Instant-release anchors | mixed `52.794499% ±4.304705 pp`, medium-only `50.669791% ±4.918088 pp`; each combines `n=8`, denominator is pre-trim heap | [HTML summary](docs/demo_report.html#summary) | [`decision.json`](data/raw/a_anchor_replication_20260904/decision.json), [`a_cells.tsv`](data/raw/a_anchor_replication_20260904/a_cells.tsv) |
 | Gated valley trim vs none | `80.18%–85.45%` of released payload; median call mixed `1.233269 ms` / medium-only `1.218361 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` vs none dispersion `6.784167 ms`: margin `0.555556 ms`, 91.8% of threshold, `REPORT_ONLY` not visible; the same p50 rule is visible (`+1.870462` vs `0.173927 ms`); `+359 minflt/cycle` | [Real concurrency](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json), [`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
-| Tizen native cross-witness | Historical enlightenment cells: about `5.84 MiB` rest and `272/4/4 KiB` reclaim. B2: official gst `5/5`, reclaim `8/16/16/20/16 KiB`; five verified UI cycles then E4′ rest `6019572 B`, reclaim `36 KiB`. Project heap PD and Tizen `memps` match exactly | [Native process evidence](docs/demo_report.html#native) | [`B2 cells`](data/raw/tizen_native_evidence_20260905/cells_derived.tsv), [`B2 summary`](data/raw/tizen_native_evidence_20260905/summary.json), [`historical summary`](data/raw/tizen_native_evidence_20260904/summary.json) |
+| Tizen native cross-witness | Historical enlightenment cells: about `5.84 MiB` rest and `272/4/4 KiB` reclaim. B2: official gst `5/5`, reclaim `8/16/16/20/16 KiB`; five verified UI cycles then E4′ rest `6019572 B`, reclaim `36 KiB`. Project heap PD and Tizen `memps` match exactly | [Native process evidence](docs/demo_report.html#native) | [`B2 cells`](data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv), [`B2 summary`](data/raw/tizen_native_evidence_b2_20260904/summary.json), [`historical summary`](data/raw/tizen_native_evidence_20260904/summary.json) |
 
 The batch release reference `48.9% / 1.36 MiB × 8 processes` comes from
 `<TEST_IMAGE_B>` / `glibc-2.40-2.8`; it is a compatibility comparison, not part of
@@ -38,7 +38,7 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
    unsupported), then run `bash tools/reproduce/reproduce.sh`. Development-only
    overrides are documented in [`tools/reproduce/README.md`](tools/reproduce/README.md).
 3. **Repeat on a board — hours.** Run
-   `bash tools/reproduce/reproduce.sh board --artifact-source gbs --ip <addr>` only after the prerequisites
+   `bash tools/reproduce/reproduce.sh board --artifact-source frozen --ip <addr>` only after the prerequisites
    below and the [L2 guide](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)
    are satisfied.
 
@@ -56,10 +56,12 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
 Without that internal bundle, board mode cannot start. The media asset has no
 established redistributable provenance and is delivered outside this repository.
 
-### Preferred HQ GBS build
+### Candidate HQ GBS build (held-out validation pending)
 
-For the three ELF files, the preferred HQ path is a real `git clone` followed by
-`gbs -c config/gbs_llvm.conf build -A armv7l --overwrite`. The pinned config and
+For the three ELF files, GBS can be evaluated from a real `git clone` with
+`bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`. This explicit path requires repository
+network access, a root-capable GBS environment, buildroot disk space, and more than
+the minutes-scale host verify. The pinned [`gbs_llvm.conf`](config/gbs_llvm.conf) and
 [`glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec) build one RPM containing
 `alloc_bench`, `gst_loop_decode`, and `reclaim_probe`; verify its NVR and all hashes
 against [`deliverables_manifest.json`](tools/reproduce/deliverables_manifest.json).
@@ -69,9 +71,10 @@ The exact extraction commands are in the
 from package-name, Provides, and file-list searches across all four configured
 official repositories and independently resolves every spec BuildRequires.
 
-The GBS artifacts passed the preregistered A-anchor board rebaseline through the
-H-V decision. GBS is now the preferred HQ L2 path; the frozen artifacts and
-fixed-directory cross-build are fallbacks. GBS does not provide the media file,
+The GBS artifacts participated in the fixed-contract H-V calibration sample. The
+resulting v4 bands therefore do not independently validate GBS. Pending held-out
+validation, frozen artifacts remain the default L2 path; GBS and the fixed-directory
+cross-build are alternatives. GBS does not provide the media file,
 which remains an out-of-repository delivery prerequisite. See the
 [A-anchor replication](docs/a_anchor_replication_20260904.md).
 
@@ -95,11 +98,12 @@ three-repeat medians anchored at mixed `81.661264% ±5 pp` and medium-only
 and gst is a single call `<5 ms`; the S4 A anchor has a separate `<20 ms` bound and
 is not a hook-cost number.
 
-The current A-anchor bands are shared by frozen and GBS: mixed
+The current A-anchor calibration bands are shared by frozen and GBS: mixed
 `52.794499% ±4.304705 pp` and medium-only `50.669791% ±4.918088 pp`, each from
-eight combined observations. The preregistered H-V result replaces the former
-current `n=1` limitation while retaining the original single observations as
-historical evidence.
+eight combined observations. Because GBS observations helped construct these bands,
+they are calibration limits rather than an independent GBS pass. The fixed-contract
+H-V replay replaces the former `n=1` limitation while retaining the original single
+observations as historical evidence.
 
 Thus “the same data” means exact deterministic payload bytes, tolerance items in
 band, and all validity gates passing. A fixed seed does not pin arena assignment;
@@ -115,7 +119,7 @@ is not proven.
 
 Product enablement must pass four hard gates in order: **exclude the automatic-reclaim
 anti-signal → confirm M7 retention → show that a same-target, same-phase trim probe
-meets its preregistered reclaim threshold → pass the cost budget**. Register the
+meets its precommitted reclaim threshold → pass the cost budget**. Register the
 target/phase threshold before seeing results; no measurement, a below-threshold result,
 or unstable repeats keeps the feature off. M7, `rest`/`unsorted`, and histogram estimates
 cannot replace gate three. See the dated finalization and preserved older wording in the
@@ -126,7 +130,7 @@ cannot replace gate three. See the dated finalization and preserved older wordin
 - Synthetic evidence lacks product-candidate M7 live/bin separation, product
   latency, and direct all-arena lock-stall measurement while peers allocate.
 - gst trim runs after NULL; it is not injected into a hot allocation phase.
-- B2 completed a newly preregistered official-gst `5/5` sequence and a five-cycle
+- B2 completed a fixed-contract official-gst `5/5` replay and a five-cycle
   native-UI activity E4′ cell; its four injection intervals are
   `120.122271759–120.142672892 s`. Historical T1 `1/5`, UI `0/1`, and the old
   `119.806876910/119.856460299 s` E1–E3 deviations remain on record and are not
@@ -142,7 +146,7 @@ cannot replace gate three. See the dated finalization and preserved older wordin
 - “p99 cost not detected” does not mean zero cost. If another board reports visible,
   preserve all repeats and report its margin; direction remains `REPORT_ONLY`.
 - Product enablement remains closed pending anti-signal exclusion, M7 retention
-  confirmation, a same-target measured benefit above its preregistered threshold, and
+  confirmation, a same-target measured benefit above its precommitted threshold, and
   a cost budget: four hard gates. See the
   [landing recommendation](docs/product_landing_recommendation_20260901.md#1-启用门清单).
 - **Retained floor:** Private_Dirty that stays elevated after a release observation;

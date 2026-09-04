@@ -207,7 +207,7 @@ DONE_MEMTOTAL
 ## 7. 2026-09-04 A2 追注
 
 §3/§6.1 的 `51.074077% / 50.387886%` 是本轮两格历史单次值，原文保留。后续
-[`A2 双 ELF 12 格预登记复测`](a_anchor_replication_20260904.md) 命中 H-V：四个
+[`A2 双 ELF 12 格固定合同重放`](a_anchor_replication_20260904.md) 命中 H-V：四个
 `{ELF × profile}` 组极差均 `>1.5 pp` 且两个 profile 的 frozen/GBS 分布均交叠。
 现行 v4 共同带改为 mixed `52.794499% ±4.304705 pp`、medium-only
 `50.669791% ±4.918088 pp`（每档合并 `n=8`）；旧“各 n=1”的现行局限标注撤销。

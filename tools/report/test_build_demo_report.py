@@ -75,10 +75,10 @@ class DemoReportTests(unittest.TestCase):
                 "2200–7976 KiB",
                 "15/15",
                 "产品启用必须连续通过四道硬门",
-                "同目标/同相位实测收益 ≥ 预登记阈值",
+                "同目标/同相位实测收益 ≥ 事前固定阈值",
                 "守护进程碎片化驻留的实测收益很小",
                 "估算器不可用作启用门",
-                "L2 首选 GBS 构建",
+                "L2 当前默认冻结件",
                 "S4 A v4",
                 "Tizen 原生 B/B2",
             ):
@@ -112,6 +112,7 @@ class DemoReportTests(unittest.TestCase):
             "demo-zh": REPO / "tools/report/demo_README.zh-CN.md",
         }
         documents = {name: path.read_text(encoding="utf-8") for name, path in surfaces.items()}
+        documents["report"] = (REPO / "docs/demo_report.html").read_text(encoding="utf-8")
         for name, document in documents.items():
             self.assertIn("1.233269 ms", document, name)
             self.assertIn("1.218361 ms", document, name)
@@ -124,7 +125,7 @@ class DemoReportTests(unittest.TestCase):
         for name in ("narrative", "package", "demo-en", "demo-zh"):
             document = documents[name]
             self.assertTrue("四道硬门" in document or "four hard gates" in document, name)
-            self.assertTrue("预登记阈值" in document or "preregistered threshold" in document, name)
+            self.assertTrue("事前固定阈值" in document or "precommitted threshold" in document, name)
         for name in ("package", "guide", "demo-en", "demo-zh"):
             document = documents[name]
             self.assertIn("0.555556 ms", document, name)
@@ -137,6 +138,10 @@ class DemoReportTests(unittest.TestCase):
         a2_report = (REPO / "docs/a_anchor_replication_20260904.md").read_text(encoding="utf-8")
         self.assertIn("52.794499", a2_report)
         self.assertIn("50.669791", a2_report)
+        for name in ("report", "package", "guide", "status", "demo-en", "demo-zh"):
+            document = documents[name]
+            self.assertTrue("held-out" in document, name)
+            self.assertTrue("calibration" in document.lower() or "校准" in document, name)
 
     def test_native_evidence_customer_surfaces_match(self) -> None:
         surfaces = (
@@ -162,13 +167,14 @@ class DemoReportTests(unittest.TestCase):
         ):
             document = path.read_text(encoding="utf-8")
             self.assertIn("gbs_llvm.conf", document, path.name)
+            self.assertTrue("held-out" in document, path.name)
             self.assertTrue(
-                "preferred HQ" in document or "HQ 首选" in document,
+                "current default L2 path" in document
+                or "frozen artifacts remain the default" in document
+                or "冻结件是当前默认路径" in document
+                or "冻结制品仍为 L2 默认路径" in document,
                 path.name,
             )
-            self.assertNotIn("pending board rebaseline", document)
-            self.assertNotIn("await board rebaselining", document)
-            self.assertNotIn("待下一轮板上重基线", document)
 
     def test_checked_in_report_matches_rebuild(self) -> None:
         checked_in = REPO / "docs/demo_report.html"

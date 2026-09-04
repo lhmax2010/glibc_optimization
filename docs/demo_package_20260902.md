@@ -16,15 +16,21 @@
 
 | 交付要求 | 可审计实现 | 验收入口 |
 |---|---|---|
-| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 首选 GBS 构建三项 ELF，再由 workflow 从身份门、资产哈希走到板端清理 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南 GBS 首选路径`](demo_reproduction_guide_20260901.md#l2-gbs-build)、[`指南快速通道`](demo_reproduction_guide_20260901.md#workflow-fast-path)、[`workflow verify`](../tools/reproduce/README.md) |
-| 同板同镜像多组对照 | S4 A 在同一 RPI4/Tizen 镜像上含 frozen/GBS 两路径 × 两档 × 三重复并形成 v4 共同带，B 含 `trim/none` 对照；gst 含两臂各三重复；Tizen 原生 B/B2 以官方工具、守护进程和 `memps` 交叉见证实测回收 | [`A2/v4 报告`](a_anchor_replication_20260904.md)、[`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`HTML 原生进程`](demo_report.html#native)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
+| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 当前默认使用冻结件，再由 workflow 从身份门、资产哈希走到板端清理；GBS 候选等待 held-out 验证 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南 GBS 候选路径`](demo_reproduction_guide_20260901.md#l2-gbs-build)、[`指南快速通道`](demo_reproduction_guide_20260901.md#workflow-fast-path)、[`workflow verify`](../tools/reproduce/README.md) |
+| 同板同镜像多组对照 | S4 A 在同一 RPI4/Tizen 镜像上含 frozen/GBS 两路径 × 两档 × 三重复并形成 v4 校准带，B 含 `trim/none` 对照；gst 含两臂各三重复；Tizen 原生 B/B2 以官方工具、守护进程和 `memps` 交叉见证实测回收。v4 因含 GBS 建带样本，不是 GBS 独立通过证据 | [`A2/v4 报告`](a_anchor_replication_20260904.md)、[`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`HTML 原生进程`](demo_report.html#native)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
 | 结果说明价值 | 四道硬门把自动归还、驻留存在、实测收益和代价分开；S4/gst 给出机制与代价，原生 B/B2 证明 M7 驻留量不等于可回收收益 | [`HTML 自动归还`](demo_report.html#finding-one)、[`HTML 门控效果`](demo_report.html#s4)、[`HTML 原生进程`](demo_report.html#native)、[`HTML 四门`](demo_report.html#decision-gate)、[`HTML 边界`](demo_report.html#boundaries) |
 | 同条件复现同数据 | released payload 是唯一确定性数字并逐字节核对；容差项落带且 page alignment、majflt、zram、OOM/LMK validity gates 通过。S4 B 按分别锚定发布值的每档三重复中位 `±5 pp`；p99 方向只报告。彩排 rep2 的 `68.169197%` 说明同 seed 不钉 arena 指派 | [`HTML 边界`](demo_report.html#boundaries)、[`rep2 紧凑证据`](../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv)、[`L2 验收带`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`机器配置`](../tools/reproduce/acceptance_bands.json) |
 
 离线 HTML、手工指南与 workflow 是同一合同的三个入口：HTML 用于演示，指南是流程
 权威参考，workflow 将其机械化并给出可机读判定；三者不各自维护第二套统计口径。
 
-### 0.1 交付快照强制自检
+### 0.1 板上轮次证据顺序（长期规则）
+
+每个新板上轮次必须先把不可变 contract 与 analyzer 提交到 `main` 并打轻量事前标签，
+再开始板端执行；原始结果、紧凑证据和结论必须放在后续独立提交。缺少该事前提交/tag
+凭证的历史轮次只称“固定合同重放”，不得称“预登记”。
+
+### 0.2 交付快照强制自检
 
 自 `demo-v4` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三次全新克隆，并在
 每个克隆中执行不跳过 host tests 的完整 `verify`：
@@ -64,15 +70,15 @@ detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REP
    分类和候选登记，强调 floor 只是待 M7 验证的 surface。
 4. **展示门控链已有的测试板证据。** 用
    [`S4 门控链`](demo_narrative_20260901.md#4-门控链与测试板实证)说明“反信号排除 → M7
-   确认 → 实测收益达到预登记阈值 → 代价/健康门”。
+   确认 → 实测收益达到事前固定阈值 → 代价/健康门”。
 5. **补上第 2 周真实多线程目标。** 展示
-   [`GStreamer 业务代价报告 §6`](gst_trim_cost_20260901.md#6-判断)：按预登记 p99 规则，本批
+   [`GStreamer 业务代价报告 §6`](gst_trim_cost_20260901.md#6-判断)：按固定 p99 规则，本批
    方向未越过基线重复离散并记 `REPORT_ONLY`；同时明确 trim 位于 NULL release 后，没有测到并发分配线程
    被全 arena 锁直接阻塞的时长。
 6. **以产品决策门收尾。** 用
    [`何时 trim`](demo_narrative_20260901.md#6-决策门何时-trim何时不-trim)和
    [`产品 M7 推荐顺序`](product_m7_feasibility_20260902.md#7-路径对照与推荐排序)说明：
-   自动下降、M7 阴性、ownership 不明、实测收益未达预登记阈值或代价未过门时都不启用。
+   自动下降、M7 阴性、ownership 不明、实测收益未达事前固定阈值或代价未过门时都不启用。
 
 ## 2. 现场可跑的 L1 复算
 
@@ -202,9 +208,9 @@ delta_p99_ms=6.228611 none_dispersion_ms=6.784167 visible=false
 | `enlightenment +1736 KiB` a+b floor | 最大 retained-floor 候选之一，另带自动归还能力告警 | [`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
 | `ServiceH 2360/+868/+580 KiB`、`ServiceA +788 KiB` | 平台上界、跨探针 floor 与谷底残渣候选 | [`plateau_cyclic_crosscheck.tsv`](../data/raw/cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv)、[`release_ratio_phenotypes.tsv`](../data/raw/cyclic_fall_attribution_20260901/release_ratio_phenotypes.tsv) | [表型](demo_reproduction_guide_20260901.md#l1-phenotypes) |
 | 批量释放 `48.9451% / 1.359375 MiB`，同表型扩到 8 进程 | 来自 `<TEST_IMAGE_B>` / `glibc-2.40-2.8` 的相容性对照，非冻结矩阵 | [`batch_release_phase.tsv`](../data/raw/demo_reproduction_20260901/batch_release_phase.tsv) | [批量相位](demo_reproduction_guide_20260901.md#l1-batch-release) |
-| S4 A 共同锚点 mixed `52.794499% ±4.304705 pp` / medium-only `50.669791% ±4.918088 pp`（每档合并 n=8，of pre-trim heap） | 预登记 H-V 后的 frozen/GBS 共用机制锚点 | [`decision.json`](../data/raw/a_anchor_replication_20260904/decision.json)、[`a_cells.tsv`](../data/raw/a_anchor_replication_20260904/a_cells.tsv) | [A2](demo_reproduction_guide_20260901.md#l1-a-anchor-replication) |
+| S4 A 校准带 mixed `52.794499% ±4.304705 pp` / medium-only `50.669791% ±4.918088 pp`（每档合并 n=8，of pre-trim heap） | frozen/GBS 固定合同 H-V 建带；含 GBS 观测，非 GBS 独立通过证据 | [`decision.json`](../data/raw/a_anchor_replication_20260904/decision.json)、[`a_cells.tsv`](../data/raw/a_anchor_replication_20260904/a_cells.tsv) | [A2](demo_reproduction_guide_20260901.md#l1-a-anchor-replication) |
 | S4 回收/released `80.175875%–85.453954%`；调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期 `+1351/+1465 minflt`、`majflt=0` | 合成驻留表型的效果与再激活代价 | [`b_cycles.tsv`](../data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](../data/raw/s4_retention_20260901/b_cells.tsv) | [S4](demo_reproduction_guide_20260901.md#l1-s4) |
-| gst p99 差 `+6.228611 ms`，none 重复离散 `6.784167 ms`，margin `0.555556 ms`（门槛 `91.8%`）；同规则 p50 `+1.870462` vs `0.173927 ms`，另 `+359 minflt/循环` | 真实多线程 pipeline 的预登记规则；p99 方向为 `REPORT_ONLY` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv)、[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
+| gst p99 差 `+6.228611 ms`，none 重复离散 `6.784167 ms`，margin `0.555556 ms`（门槛 `91.8%`）；同规则 p50 `+1.870462` vs `0.173927 ms`，另 `+359 minflt/循环` | 真实多线程 pipeline 的固定规则；p99 方向为 `REPORT_ONLY` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv)、[`comparison.json`](../data/raw/gst_trim_cost_20260901/comparison.json) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 | gst trim p50/p95/p99/max `0.671556/0.818315/0.842185/0.856944 ms` | release-point 调用分布；不等于并发分配锁停顿 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 | gst 首次 release `51.014041%–51.406250% / 1.277344–1.285156 MiB` | 与既有批量释放机制量级相容 | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst](demo_reproduction_guide_20260901.md#l1-gst-trim-cost) |
 
@@ -229,7 +235,7 @@ trim。`ServiceA` 的下降分量有 PD 实跌、zram 无正增量、majflt 恒�
 ### Q3：当前“代价不可见”能否解释为零代价？
 
 不能。GStreamer 的 `+6.228611 ms` 没有严格超过 `6.784167 ms` 基线重复离散，只表示
-按预登记门“本批未检出”；每重复只有 50 个主样本，nearest-rank p99 就是最大值
+按固定门“本批未检出”；每重复只有 50 个主样本，nearest-rank p99 就是最大值
 ([正式裁决](gst_trim_cost_20260901.md#a-每循环-release-trim-的业务代价是否可见))。trim 又在
 pipeline NULL release 后执行，不能量化其他线程仍在分配时的直接锁停顿。S4 的分档
 中位 mixed `1.233269 ms` / medium-only `1.218361 ms` 也只是合成代理调用时间，不是产品 SLA。若其他板按同一规则判 p99
@@ -242,7 +248,7 @@ pipeline NULL release 后执行，不能量化其他线程仍在分配时的直�
 并行校准 harness；debugger attach 只在产品安全明确授权时做一次性筛选。三条路径的
 前置、成本、证据强度和当时三门覆盖见
 [`产品 M7 可行性评估`](product_m7_feasibility_20260902.md)；现行四门另要求同目标、同相位
-trim 探针实测收益达到预登记阈值。取得产品 M7 阳性之前，候选 floor 不换算收益，也不
+trim 探针实测收益达到事前固定阈值。取得产品 M7 阳性之前，候选 floor 不换算收益，也不
 进入 trim A/B。
 
 ## 5. 已知边界：一页说明
@@ -264,7 +270,7 @@ trim 探针实测收益达到预登记阈值。取得产品 M7 阳性之前，�
 5. **守护进程碎片化驻留收益微小。** enlightenment 虽有约 `5.84 MiB rest`，历史三格
    仅回收 `272/4/4 KiB`；真实 UI 活动后的 E4′ 也只回收 `36 KiB`。这些格证明必须实测，
    不证明其他守护进程或相位同样微小
-   ([原生 B/B2](tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05))。
+   ([原生 B/B2](tizen_native_evidence_20260904.md#7-b2-补跑结果实际板上执行日-2026-09-04))。
 6. **估算器不可作启用门。** `<size>` 几何整页估算严格配对 `15/15` 未覆盖实测，只能
    离线诊断，不能替代同目标 trim 探针或设置产品阈值
    ([估算器裁决](trimmable_estimator_20260905.md#3-失败模式与裁决))。

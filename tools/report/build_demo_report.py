@@ -148,8 +148,8 @@ def build(repo: Path, source_commit: str) -> str:
     batch_rows = read_tsv(raw / "demo_reproduction_20260901/batch_release_phase.tsv")
     native = json.loads((raw / "tizen_native_evidence_20260904/summary.json").read_text())
     native_health = json.loads((raw / "tizen_native_evidence_20260904/health.json").read_text())
-    native_b2 = json.loads((raw / "tizen_native_evidence_20260905/summary.json").read_text())
-    native_b2_cells = read_tsv(raw / "tizen_native_evidence_20260905/cells_derived.tsv")
+    native_b2 = json.loads((raw / "tizen_native_evidence_b2_20260904/summary.json").read_text())
+    native_b2_cells = read_tsv(raw / "tizen_native_evidence_b2_20260904/cells_derived.tsv")
     estimator_validation = read_tsv(raw / "trimmable_estimator_20260905/validation.tsv")
     acceptance = json.loads((repo / "tools/reproduce/acceptance_bands.json").read_text())
 
@@ -374,7 +374,7 @@ def build(repo: Path, source_commit: str) -> str:
     evidence_s4_a_decision = "../data/raw/a_anchor_replication_20260904/decision.json"
     evidence_s4_b = "../data/raw/s4_retention_20260901/b_cycles.tsv"
     evidence_gst = "../data/raw/gst_trim_cost_20260901/cycles.tsv"
-    evidence_native_b2 = "../data/raw/tizen_native_evidence_20260905/cells_derived.tsv"
+    evidence_native_b2 = "../data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv"
 
     return f"""<!doctype html>
 <html lang="zh-CN">
@@ -400,24 +400,24 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
 <header>
   <div class="eyebrow">Tizen · glibc 2.40 · ptmalloc</div>
   <h1>只在四门全过时 trim</h1>
-  <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针实测收益达到预登记阈值，最后把再激活 faults、业务 p99 和健康门作为同一份代价合同验收。</p>
+  <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针实测收益达到事前固定阈值，最后把再激活 faults、业务 p99 和健康门作为同一份代价合同验收。</p>
 </header>
 <nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#native">真实平台进程</a><a href="#decision-gate">决策门</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
 <main>
 <section id="summary">
   <span class="pill">一页摘要</span><h2>方案、交付合同与头条结果</h2>
-  <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 同目标实测收益达到预登记阈值 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到经过实测的 retained-bin 表型。</p>
+  <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 同目标实测收益达到事前固定阈值 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到经过实测的 retained-bin 表型。</p>
   <div class="grid">
-    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 首选 GBS 构建，再执行身份门、哈希、矩阵、拉回与恢复。</small></div>
+    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 当前默认冻结件，再执行身份门、哈希、矩阵、拉回与恢复；GBS 等待 held-out 验证。</small></div>
     <div class="card contract"><strong>同板同镜像对照</strong><small>S4 A v4 + trim/none；gst 两臂各三重复；Tizen 原生 B/B2 交叉见证。</small></div>
     <div class="card contract"><strong>结果说明价值</strong><small>四门分开驻留与收益；S4/gst 量化代价，B/B2 暴露驻留收益微小的边界。</small></div>
     <div class="card contract"><strong>同条件复现同数据</strong><small>payload 确定性字节逐值一致；容差项落带；validity gates 全部通过。</small></div>
   </div>
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="{guide}#l2-acceptance">复现指南验收带</a></p>
   <div class="grid">
-    <div class="card"><small>瞬时释放共同锚点（frozen/GBS，n=8/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>mixed ±{anchor_radius['mixed']:.6f} pp；medium-only ±{anchor_radius['medium-only']:.6f} pp；of pre-trim heap</span><br><a href="{evidence_s4_a_decision}">裁决 JSON</a> · <a href="{guide}#l1-a-anchor-replication">L1 复算</a></div>
+    <div class="card"><small>瞬时释放校准带（frozen/GBS 建带样本，n=8/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>mixed ±{anchor_radius['mixed']:.6f} pp；medium-only ±{anchor_radius['medium-only']:.6f} pp；of pre-trim heap；非 GBS 独立通过证据</span><br><a href="{evidence_s4_a_decision}">裁决 JSON</a> · <a href="{guide}#l1-a-anchor-replication">L1 复算</a></div>
     <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>调用中位 mixed {s4_trim_median_by_profile['mixed']:.6f} / medium-only {s4_trim_median_by_profile['medium-only']:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
-    <div class="card"><small>gst 业务 p99 预登记判定（REPORT_ONLY）</small><strong class="metric">+{gst_comparison['delta_p99_ms']:.3f} ms &lt; {gst_comparison['none_p99_repeat_dispersion_ms']:.3f} ms</strong><span class="pill">未检出；margin {gst_p99_margin:.3f} ms（阈值 {gst_p99_threshold_pct:.1f}%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="{guide}#l1-gst-trim-cost">L1 复算</a></div>
+    <div class="card"><small>gst 业务 p99 固定规则判定（REPORT_ONLY）</small><strong class="metric">+{gst_comparison['delta_p99_ms']:.3f} ms &lt; {gst_comparison['none_p99_repeat_dispersion_ms']:.3f} ms</strong><span class="pill">未检出；margin {gst_p99_margin:.3f} ms（阈值 {gst_p99_threshold_pct:.1f}%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="{guide}#l1-gst-trim-cost">L1 复算</a></div>
   </div>
 </section>
 
@@ -446,9 +446,9 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
 
 <section id="s4">
   <span class="pill">效果</span><h2>S4：M7 阳性后，valley trim 回收驻留页</h2>
-  <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → 实测 trim 探针收益达到预登记阈值 → faults / 时延 / 健康门</div>
+  <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → 实测 trim 探针收益达到事前固定阈值 → faults / 时延 / 健康门</div>
   <div class="grid">
-    <div class="card wide"><h3>瞬时释放共同锚点（n=8/profile）</h3>{bar_chart([('mixed', anchors['mixed'], 'trim'), ('medium-only', anchors['medium-only'], 'trim')], title='S4 A 组 frozen/GBS H-V 共同锚点', unit='reclaim / pre-trim heap (%)', ceiling=60)}<p>mixed {anchors['mixed']:.6f}% ±{anchor_radius['mixed']:.6f} pp；medium-only {anchors['medium-only']:.6f}% ±{anchor_radius['medium-only']:.6f} pp。<a href="{evidence_s4_a}">12 格证据</a> · <a href="{evidence_s4_a_decision}">H-V 裁决</a> · <a href="{guide}#l1-a-anchor-replication">复算</a></p></div>
+    <div class="card wide"><h3>瞬时释放校准带（n=8/profile）</h3>{bar_chart([('mixed', anchors['mixed'], 'trim'), ('medium-only', anchors['medium-only'], 'trim')], title='S4 A 组 frozen/GBS H-V 校准中心', unit='reclaim / pre-trim heap (%)', ceiling=60)}<p>mixed {anchors['mixed']:.6f}% ±{anchor_radius['mixed']:.6f} pp；medium-only {anchors['medium-only']:.6f}% ±{anchor_radius['medium-only']:.6f} pp。GBS 观测参与建带，因此这不是其独立通过证据。<a href="{evidence_s4_a}">12 格证据</a> · <a href="{evidence_s4_a_decision}">H-V 裁决</a> · <a href="{guide}#l1-a-anchor-replication">复算</a></p></div>
     <div class="card wide"><h3>B 组三重复中位</h3>{bar_chart([('mixed trim', b_ratio['mixed'], 'trim'), ('mixed none', 0.0, 'none'), ('medium trim', b_ratio['medium-only'], 'trim'), ('medium none', 0.0, 'none')], title='S4 B 组 trim/none 回收已释放 payload', unit='reclaim / released (%)', ceiling=100)}<p><a href="../data/raw/s4_retention_20260901/b_cells.tsv">格级证据</a> · <a href="{guide}#l2-acceptance">中位验收规则</a></p></div>
   </div>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
@@ -460,7 +460,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
 </section>
 
 <section id="gst">
-  <span class="pill">真实并发</span><h2>gst：方向只报告；本批按预登记业务 p99 门未检出</h2>
+  <span class="pill">真实并发</span><h2>gst：方向只报告；本批按固定业务 p99 规则未检出</h2>
   <p>trim 臂 repeat-median p99 相对 none 增加 <a class="number" href="../data/raw/gst_trim_cost_20260901/comparison.json">{gst_comparison['delta_p99_ms']:.6f} ms</a>，低于 none 重复离散带 <a class="number" href="../data/raw/gst_trim_cost_20260901/comparison.json">{gst_comparison['none_p99_repeat_dispersion_ms']:.6f} ms</a>，margin 为 <strong>{gst_p99_margin:.3f} ms</strong>，达到门槛的 <strong>{gst_p99_threshold_pct:.1f}%</strong>。同一规则用于 p50 时判可见：<strong>+{gst_p50_delta:.3f} ms</strong> 对 <strong>{gst_p50_dispersion:.3f} ms</strong>。trim 臂另增加约 <strong>+{gst_minflt_per_cycle} minflt/循环</strong>。p99 方向是 <code>REPORT_ONLY</code>，只校验 nearest-rank 与离散带计算，不能写“零代价”。</p>
   <div class="callout">如果你的板上 p99 判为“可见”，保留原始三重复与规则复算，标记 <code>REPORT_ONLY: visible</code>，量化 delta、none 离散带和 margin，并上报为批次差异；不要把它改成 workflow 硬失败，也不要据此修改冻结参数。</div>
   <figure>{bar_chart(p99_display, title='gst 两臂三重复业务 p99（为显示差异减去共同基线）', unit=f'p99 − {p99_origin:.6f} ms')}<figcaption>图 4 · 柱高减去共同显示基线，不改变臂间差；原始毫秒值见 <a href="../data/raw/gst_trim_cost_20260901/repetitions.tsv">repetitions.tsv</a>，判定见 <a href="../data/raw/gst_trim_cost_20260901/comparison.json">comparison.json</a>，复算见 <a href="{guide}#l1-gst-trim-cost">L1 gst</a>。</figcaption></figure>
@@ -482,12 +482,12 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   </tbody></table>
   <p>冻结原生应用完成 5/5 次“启动—30 秒同进程存活—正常终止”。之后 E4′ 的 M7 为 8 arena、rest <strong>6019572 B</strong>，项目 heap 与 <code>memps</code> 均为 <strong>3324 → 3288 KiB</strong>，即回收 <strong>36 KiB</strong>；PID/starttime 未变。<code>&lt;size&gt;</code> 估算器却给出 <strong>2200–7976 KiB</strong>，连本格也不能覆盖实测，连同验证集 <strong>15/15</strong> 失败，故不能成为量化启用门。</p>
   <div class="callout"><strong>历史与边界并存：</strong>旧 T1 1/5、UI 0/1 和 E1–E3 的 119.806876910/119.856460299 s 偏差不改写；B2 用新登记构造补齐数量与 E4 覆盖，并验证新计时器。全部 gdb 时间包含 ptrace，不是钩子代价；回收量不外推产品收益。</div>
-  <p class="source-links"><a href="tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05">B2 完整报告</a> · <a href="{evidence_native_b2}">B2 格级证据</a> · <a href="../data/raw/tizen_native_evidence_20260905/summary.json">B2 完成与健康</a> · <a href="trimmable_estimator_20260905.md">估算器裁决</a> · <a href="{guide}#l1-tizen-native-b2">L1 复算</a> · <a href="{guide}#l2-tizen-native-evidence-b2">L2 B2 复现</a></p>
+  <p class="source-links"><a href="tizen_native_evidence_20260904.md#7-b2-补跑结果实际板上执行日-2026-09-04">B2 完整报告</a> · <a href="{evidence_native_b2}">B2 格级证据</a> · <a href="../data/raw/tizen_native_evidence_b2_20260904/summary.json">B2 完成与健康</a> · <a href="trimmable_estimator_20260905.md">估算器裁决</a> · <a href="{guide}#l1-tizen-native-b2">L1 复算</a> · <a href="{guide}#l2-tizen-native-evidence-b2">L2 B2 复现</a></p>
 </section>
 
 <section id="decision-gate">
   <span class="pill">决策门</span><h2>产品启用必须连续通过四道硬门</h2>
-  <div class="flow">反信号排除 → M7 驻留确认 → 同目标/同相位实测收益 ≥ 预登记阈值 → 代价预算</div>
+  <div class="flow">反信号排除 → M7 驻留确认 → 同目标/同相位实测收益 ≥ 事前固定阈值 → 代价预算</div>
   <div class="grid">
     <div class="card"><strong>① 反信号</strong><small>PD 已自动实跌的分量不重复 trim。</small></div>
     <div class="card"><strong>② M7 驻留</strong><small>只定性确认 allocator 空闲驻留；smaps floor 不足以过门。</small></div>
@@ -495,7 +495,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     <div class="card"><strong>④ 代价预算</strong><small>调用、refault、业务时延/能耗与并发锁停顿任一未测或超预算即关闭。</small></div>
   </div>
   <p>这道新增的实测门由反例直接约束：enlightenment 历史 E1 回收 <strong>272 KiB</strong>，真实 UI 活动后的 E4′回收 <strong>36 KiB</strong>，Tizen 官方 GST 五格为 <strong>8–20 KiB</strong>；M7/直方图不能预测这些量。</p>
-  <p class="source-links"><a href="product_landing_recommendation_20260901.md#1-启用门清单">四门定稿与旧口径追注</a> · <a href="tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05">B/B2 证据</a> · <a href="trimmable_estimator_20260905.md#3-失败模式与裁决">估算器裁决</a></p>
+  <p class="source-links"><a href="product_landing_recommendation_20260901.md#1-启用门清单">四门定稿与旧口径追注</a> · <a href="tizen_native_evidence_20260904.md#7-b2-补跑结果实际板上执行日-2026-09-04">B/B2 证据</a> · <a href="trimmable_estimator_20260905.md#3-失败模式与裁决">估算器裁决</a></p>
 </section>
 
 <section id="reproduce">
@@ -503,7 +503,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <div class="grid">
     <div class="card"><strong>① 离线阅读</strong><small>本 HTML 是单文件派生产物；所有图表由公开证据生成。</small></div>
     <div class="card"><strong>② Host verify · 分钟级</strong><small><code>bash tools/reproduce/reproduce.sh</code> 执行全部 L1 与 cmp。</small></div>
-    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --artifact-source gbs --ip &lt;addr&gt;</code> 编排既有 S4/gst harness；GBS 已通过 A2/H-V 重基线。</small></div>
+    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --artifact-source frozen --ip &lt;addr&gt;</code> 编排既有 S4/gst harness。A2/v4 是包含 GBS 观测的校准带，不是 GBS 独立通过证据；GBS 等待 held-out 验证。</small></div>
   </div>
   <p><a href="../tools/reproduce/README.md">Workflow 上手</a> · <a href="{guide}#workflow-fast-path">快速通道</a> · <a href="{guide}#l2-run">手工 L2</a>。确定性项、validity gates 和容差带都来自 <a href="../tools/reproduce/acceptance_bands.json">acceptance_bands.json</a>。“同样的数据”指 payload 确定性字节逐值一致、容差项落带且 validity gates 通过。</p>
 </section>
@@ -513,14 +513,14 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <ul>
     <li>合成代理仍缺产品候选的 M7 live/bin 分解、产品业务时延，以及真实并发分配线程的直接全-arena 锁停顿。</li>
     <li>gst trim 在 PLAYING→NULL release 后触发；它测到下一循环业务墙钟，但没有把 trim 放进并发分配热区。</li>
-    <li><strong>“p99 未检出”不等于“零代价”</strong>：结论严格受三重复、{gst_comparison['primary_samples_per_repeat']} 个主样本与预登记离散门约束。<a href="../data/raw/gst_trim_cost_20260901/comparison.json">判定证据</a></li>
+    <li><strong>“p99 未检出”不等于“零代价”</strong>：结论严格受三重复、{gst_comparison['primary_samples_per_repeat']} 个主样本与固定离散门约束。<a href="../data/raw/gst_trim_cost_20260901/comparison.json">判定证据</a></li>
     <li><strong>同 seed 不钉 arena 指派</strong>：单重复实测出现 <a href="../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv">68.169197%</a>（约 1 MiB 页台阶）；回收字节值不属于确定性项，S4 B 分别锚定发布值 {b_ratio['mixed']:.6f}% / {b_ratio['medium-only']:.6f}% 并按每档三重复中位 ±{acceptance['tolerance_bands']['s4_b_reclaim_pct_repeat_median']['plus_minus_pp']:g} pp 验收。n=3 的中位至多容忍一个离群。<a href="../tools/reproduce/acceptance_bands.json">机器规则</a></li>
     <li><strong>known-alert waiver 不是无害性证明</strong>：S4 A 最多 {acceptance['stability_monitor']['expected_alerts'][0]['max_count_total']} 个匹配 <code>alloc_bench cpu.relative</code> 的 livedump；触发理由与窗口可复现，但未做根因证明。观测到且完成记录、归档、精确清理和复核才记 <code>EXPECTED</code>，未观测只记 <code>REGISTERED/NOT-EVALUATED</code>；其他可归因告警仍失败。<a href="../tools/reproduce/health_gate_template.md">健康门模板</a></li>
     <li>Tizen 原生 B2 已补齐官方 GST 5/5 与 UI 活动后 E4′ 观测，但旧 E1–E3 两个间隔仍短约 0.2 s；新格只证明本次量，不外推产品收益。M7/直方图驻留量也不能直接换算可回收量。</li>
     <li><strong>守护进程碎片化驻留的实测收益很小</strong>：enlightenment 约 5.84 MiB rest 的历史三格只回收 272/4/4 KiB，真实 UI 活动后的 E4′只回收 36 KiB；只约束这些格，不外推其他守护进程。</li>
     <li><strong>估算器不可用作启用门</strong>：<code>&lt;size&gt;</code> 整页区间在严格配对验证中 15/15 未覆盖实测；它只能诊断，不能替代同目标 trim 探针或设置产品阈值。<a href="trimmable_estimator_20260905.md">估算器报告</a></li>
   </ul>
-  <p>产品侧启用仍须通过反信号排除、M7 驻留确认、同目标实测收益达到预登记阈值和代价预算四道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
+  <p>产品侧启用仍须通过反信号排除、M7 驻留确认、同目标实测收益达到事前固定阈值和代价预算四道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
 </section>
 </main>
 <footer>构建来源 commit：<code>{esc(source_commit)}</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>

@@ -1,7 +1,7 @@
 # GBS 产物板上重基线（2026-09-03）
 
 > **停止门结论：未通过，不转正。** 在 `<TEST_BOARD_IP>` 上，以 GBS RPM 提取的三个
-> ELF 完整执行 S4 + gst workflow 后，S4 A/mixed 锚点为 `55.243785%`，超出预登记
+> ELF 完整执行 S4 + gst workflow 后，S4 A/mixed 锚点为 `55.243785%`，超出固定合同
 > `49% ±4 pp` 的上界 `53%`。验收器的结构化结论为 `FAIL`。本轮不重跑、不改验收带，
 > GBS 路径继续保持“host 构建已闭合、板上重基线待裁决”，冻结件仍是 L2 正式基线。
 
@@ -91,7 +91,7 @@ DONE_MEMTOTAL
 |---|---|---|---|
 | `workflow` | S4 全格完成；在 S4 stability snapshot 停止 | 自动恢复 `RC=0 / DONE_WORKFLOW_RECOVERY`；两个 S4 A livedump 先拉回验哈希再按精确路径清理 | **D1**：远端 `awk` 引号错误；改为 shell 参数展开截取 SHA。**D2**：解析器只接受 ZIP 根目录成员，而实件是带前缀的 `*.dump_reason` / `*.info.json`；增加后缀匹配且仍要求唯一成员。 |
 | `workflow_retry1` | S4 全格完成；已知告警分类时失败，gst 首格启动后人工中止 | 自动恢复成功；一个已归档但漏删的 livedump 按精确路径补清，复核不存在 | **D3**：循环内调用的 `sdb` 继承清理清单 stdin，吞掉下一路径；所有 `sdb` 调用统一重定向 `</dev/null`。**D5**：S4 stability 失败只在全部 workload 结束后汇总；现改为 S4 清理与 governor 恢复后立即硬停。中止避免在已知 S4 健康门失败后继续约两小时无效工作，不是数据挑选。 |
-| `workflow_retry2` | 首次完整完成 S4 10 格与 gst 6 格并生成 JSON 验收 | 两个 S4 A 预登记告警均归档、清理、复核；gst 无新告警；全部工作目录清理、governor 恢复 | 验收 JSON 正确给出 `FAIL`，但顶层脚本误打印 `OVERALL PASS` 并返回 0。**D4**：POSIX 管道返回 `tee` 状态，掩盖验收器非零状态；改为先捕获命令状态并落盘/回显，再原样返回。 |
+| `workflow_retry2` | 首次完整完成 S4 10 格与 gst 6 格并生成 JSON 验收 | 两个 S4 A 登记告警均归档、清理、复核；gst 无新告警；全部工作目录清理、governor 恢复 | 验收 JSON 正确给出 `FAIL`，但顶层脚本误打印 `OVERALL PASS` 并返回 0。**D4**：POSIX 管道返回 `tee` 状态，掩盖验收器非零状态；改为先捕获命令状态并落盘/回显，再原样返回。 |
 
 D1–D5 均有 host 回归覆盖：非空 livedump 目录快照、真实 Tizen 前缀 ZIP、清理循环
 stdin 隔离、S4 stability 失败先于 gst 开始的顺序门，以及“已输出内容但退出 7”的命令
@@ -106,7 +106,7 @@ stdin 隔离、S4 stability 失败先于 gst 开始的顺序门，以及“已�
 发布值来自 [S4 A 组结果](s4_reference_and_retention_trim_20260901.md#3-a-组结果新镜像锚点)，
 验收带来自 [`s4_a_anchor_reclaim_pct`](../tools/reproduce/acceptance_bands.json)。
 
-| profile | 发布锚点 | GBS 实测 pre → post / 回收 | GBS 回收率 | 预登记带 | trim | 判定 |
+| profile | 发布锚点 | GBS 实测 pre → post / 回收 | GBS 回收率 | 固定合同带 | trim | 判定 |
 |---|---:|---:|---:|---:|---:|---|
 | mixed | `51.074077%` | `112476 → 50340 / 62136 KiB` | **`55.243785%`** | `45%–53%` | `13.573371 ms` | **FAIL：超上界 2.243785 pp** |
 | medium-only | `50.387886%` | `105240 → 52056 / 53184 KiB` | `50.535918%` | `45%–53%` | `12.762907 ms` | PASS |
@@ -142,7 +142,7 @@ A 组两次 trim 均低于 `<20 ms` 的非钩子时延门。mixed 的失败不�
 ## 5. gst 逐格结果
 
 发布批逐重复值见公开 [`repetitions.tsv`](../data/raw/gst_trim_cost_20260901/repetitions.tsv)，
-预登记判别法见 [gst 冻结规则](gst_trim_cost_20260901.md#1-建连前冻结规格)。本轮每重复仍取
+固定合同判别法见 [gst 冻结规则](gst_trim_cost_20260901.md#1-建连前冻结规格)。本轮每重复仍取
 cycle 2–51 的 50 个主样本，p99 为 nearest-rank。
 
 为避免 20 秒固定循环时长遮蔽臂间差异，下表业务墙钟写成“绝对值减 `20 s`”的毫秒偏移；
@@ -192,7 +192,7 @@ workflow 清理原文均为 `RC=0 / DONE_WORKDIR_CLEANUP`、
    的状态继续是 `built_host_only_pending_board_rebaseline`；README/指南继续以冻结件作为
    板上正式判定基线。
 3. **不做事后动作。** 本轮没有改变 `49% ±4 pp`、没有重跑刷数，也没有把 n=1 A 锚点
-   改成别的聚合口径。PM 后续可裁决是否接受该单格偏移、另立预登记复测轮或修订协议；
+   改成别的聚合口径。PM 后续可裁决是否接受该单格偏移、另立事前合同复测轮或修订协议；
    本报告不替 PM 选择。
 4. **Workflow 可修缺陷已闭环。** D1–D5 是执行器正确性问题，修复不改变冻结参数、
    分析器或验收带；尤其 D4 确保今后任一验收器 FAIL 会使 board workflow 非零退出。
@@ -227,20 +227,24 @@ workflow 清理原文均为 `RC=0 / DONE_WORKDIR_CLEANUP`、
 本轮结果展示了 workflow 在带外时应有的正确行为：保留结构化证据、返回失败并停止，
 而不是自动将 GBS 路径转正。
 
-## 9. 2026-09-04 A2 预登记复测追注
+## 9. 2026-09-04 A2 固定合同重放追注
 
 本报告 §7 的“未通过/不转正”是 2026-09-03 在 v3 合同下的历史裁决，保留不改写。
-随后按独立预登记的 12 格双 ELF 复测执行
+随后按固定合同的 12 格双 ELF 重放执行（该轮没有独立事前提交/tag 凭证）
 [`A2 报告`](a_anchor_replication_20260904.md)：四个 `{ELF × profile}` 组的极差均
-`>1.5 pp`，且两个 profile 的 frozen/GBS 分布都交叠，故命中预登记 **H-V**，而不是
+`>1.5 pp`，且两个 profile 的 frozen/GBS 分布都交叠，故命中固定的 **H-V**，而不是
 二进制特定的 H-L。按 profile 合并此前两次与本轮六次观测后，v4 共同带为：
 
 - mixed：`52.794499% ±4.304705 pp`（`n=8`）；
 - medium-only：`50.669791% ±4.918088 pp`（`n=8`）。
 
 以 v4 复判本轮完整归档：A/mixed `55.243785%` 与 A/medium-only `50.535918%` 均
-PASS，§4–§6 已通过项保持不变，结构化结果为 `OVERALL PASS`。因此截至 2026-09-04，
-**GBS 重基线通过（经 A2/H-V 裁决）**，GBS 路径转正为 HQ 首选，冻结件改为备选。
+PASS，§4–§6 已通过项保持不变，结构化结果为 `OVERALL PASS`。
+
+**2026-09-04 终审订正：** GBS 观测参与了上述 v4 中心与半宽的构造，故这里的
+`OVERALL PASS` 是校准样本内重放，不能作为 GBS 独立通过证据。撤回“GBS 重基线通过”
+与“GBS 路径转正为 HQ 首选”；冻结件恢复为当前默认，GBS 等待 held-out 验证。数值带
+保持不变。
 现行机器合同见
 [`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)，紧凑 A2 证据见
 [`data/raw/a_anchor_replication_20260904/`](../data/raw/a_anchor_replication_20260904/)。

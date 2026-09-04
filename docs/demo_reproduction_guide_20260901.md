@@ -27,7 +27,7 @@ bash tools/reproduce/reproduce.sh
 bash tools/reproduce/reproduce.sh verify
 
 # 完整 L2；需本节规定的 RPI4、镜像、SDB 与内部产物包，小时级
-bash tools/reproduce/reproduce.sh board --artifact-source gbs --ip <addr>
+bash tools/reproduce/reproduce.sh board --artifact-source frozen --ip <addr>
 ```
 
 入口必须在真实 `git clone` 内运行，GitHub ZIP/source export 不受支持；workflow 会把
@@ -39,7 +39,7 @@ bash tools/reproduce/reproduce.sh board --artifact-source gbs --ip <addr>
 测试，并输出逐项 `PASS/FAIL`；任一失败返回非零。`board` 执行身份/环境/能力门、资产
 哈希、S4 与 gst 冻结矩阵、拉回解析、v2 known-alert waiver、精确清理和 governor 复核。两种模式
 共同读取机器可读的
-[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)：未观测预登记告警时输出
+[`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)：未观测已登记告警时输出
 `REGISTERED/NOT-EVALUATED`；`EXPECTED` 只表示实际命中登记且板上已完成归档/清理/复核；
 `REPORT_ONLY` 表示方向性结果或非我方/归属不明状态，
 不做处置；`FAIL` 使总流程失败。手工步骤仍是流程权威参考，可与 workflow 输出互验。
@@ -259,7 +259,8 @@ zram_deltas=0,0,0 dmesg_increment=0 oom_lmk=0
 <a id="l1-a-anchor-replication"></a>
 ### A 锚点 v4 复算
 
-S4 原始两格仍用于复算历史单次值；现行跨 frozen/GBS 验收带由预登记 A2 复测产生。
+S4 原始两格仍用于复算历史单次值；现行跨 frozen/GBS 校准带由 A2 固定合同重放产生。
+GBS 观测参与建带，因此该带不构成 GBS 路径的独立通过证据。
 只读公开 12 格即可重建四组摘要与 H-V 裁决：
 
 ```sh
@@ -349,7 +350,7 @@ gst first-release=51.014041-51.406250% / 1.277344-1.285156 MiB
 python3 - <<'PY'
 import csv, json
 from pathlib import Path
-p = Path("data/raw/tizen_native_evidence_20260905")
+p = Path("data/raw/tizen_native_evidence_b2_20260904")
 s = json.loads((p / "summary.json").read_text())
 v = list(csv.DictReader(open("data/raw/trimmable_estimator_20260905/validation.tsv"), delimiter="\t"))
 paired = [r for r in v if r["validation_status"] == "paired"]
@@ -401,8 +402,8 @@ estimator outside=15/15 E4=2200-7976KiB measured=36KiB
 | gst p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`，margin `0.555556 ms`（91.8%）；同规则 p50 `+1.870462` 对 `0.173927 ms`；`+359 minflt/循环` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[`arm_summary.tsv`](../data/raw/gst_trim_cost_20260901/arm_summary.tsv) | [gst L1](#l1-gst-trim-cost) |
 | gst trim `0.671556/0.818315/0.842185/0.856944 ms`（p50/p95/p99/max） | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
 | gst 首次 release `51.014041%–51.406250% / 1.277344–1.285156 MiB` | [`cycles.tsv`](../data/raw/gst_trim_cost_20260901/cycles.tsv) | [gst L1](#l1-gst-trim-cost) |
-| Tizen GST `5/5`、回收 `8/16/16/20/16 KiB`、间隔 `120.122271759–120.142672892 s` | [`cells_derived.tsv`](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv)、[`summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
-| E4′ rest `6019572 B`、heap `3324→3288 KiB`、回收 `36 KiB` | [`malloc_info_E4_PRIME.xml`](../data/raw/tizen_native_evidence_20260905/malloc_info_E4_PRIME.xml)、[`summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
+| Tizen GST `5/5`、回收 `8/16/16/20/16 KiB`、间隔 `120.122271759–120.142672892 s` | [`cells_derived.tsv`](../data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv)、[`summary.json`](../data/raw/tizen_native_evidence_b2_20260904/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
+| E4′ rest `6019572 B`、heap `3324→3288 KiB`、回收 `36 KiB` | [`malloc_info_E4_PRIME.xml`](../data/raw/tizen_native_evidence_b2_20260904/malloc_info_E4_PRIME.xml)、[`summary.json`](../data/raw/tizen_native_evidence_b2_20260904/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
 | 整页估算 E4′ `2200–7976 KiB`；严格配对 `15/15` 区间外 | [`validation.tsv`](../data/raw/trimmable_estimator_20260905/validation.tsv) | [原生 B2 L1](#l1-tizen-native-b2) |
 
 ## L2 · 测试板实验复跑
@@ -429,7 +430,8 @@ SDB 随 Tizen Studio 提供。基线使用
 ([证据](../data/raw/s4_retention_20260901/preflight_and_integrity.txt))；将 Tizen Studio
 的 `tools/` 加入 `PATH` 后运行 `sdb version` 核对。板只走 SDB，不配置 SSH。
 
-ARM 二进制不入公开仓库。下一小节的 GBS 构建是首选；以下两条是备选路径：
+ARM 二进制不入公开仓库。held-out 验证完成前，冻结件是当前默认路径；GBS 构建候选
+另见下一小节。以下两条给出冻结件与源码重建路径：
 
 1. 从内部制品交付取得 S2/S4 使用过的 `alloc_bench.armv7l`，先核对 SHA-256 必须为
    `dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd`
@@ -466,23 +468,18 @@ scratch root/sysroot 路径。媒体资产的自产/可再分发 provenance 尚�
 不得在板上即兴找文件替代。
 
 <a id="l2-gbs-build"></a>
-### HQ 首选：GBS 构建三项 ELF
+### HQ 候选：GBS 构建三项 ELF（待 held-out 验证）
 
-对三项 ELF，HQ 首选从真实 `git clone` 使用仓库内 spec 和固定快照配置构建：
+对三项 ELF，可从真实 `git clone` 使用仓库内 spec 和固定快照配置构建。真实 GBS
+构建不属于分钟级 host verify；推荐通过显式入口执行：
 
 ```sh
 git clone <repository-url> glibc_optimization
 cd glibc_optimization
-gbs -c config/gbs_llvm.conf build -A armv7l --overwrite
-RPM=/tmp/glibc-memopt-gbs-llvm/local/repos/tizen_unified_standard/armv7l/RPMS/glibc-memopt-tools-1.0.0-1.armv7l.rpm
-rpm -qpl "$RPM"
-mkdir -p /tmp/glibc-memopt-rpm && cd /tmp/glibc-memopt-rpm
-rpm2cpio "$RPM" | cpio -idm --quiet
-sha256sum usr/bin/alloc_bench usr/bin/gst_loop_decode usr/bin/reclaim_probe
-mkdir -p /path/to/gbs-bundle
-cp usr/bin/alloc_bench /path/to/gbs-bundle/alloc_bench.armv7l
-cp usr/bin/gst_loop_decode /path/to/gbs-bundle/gst_loop_decode.armv7l
-cp usr/bin/reclaim_probe /path/to/gbs-bundle/reclaim_probe.armv7l
+bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle
+# 等价底层命令：gbs -c <unique-temporary-config> build -A armv7l --overwrite
+rpm -qpl /path/to/new-gbs-bundle/glibc-memopt-tools-1.0.0-1.armv7l.rpm
+sha256sum /path/to/new-gbs-bundle/*.armv7l
 # Add the separately delivered, SHA-verified small_320x240.mp4 before board mode.
 ```
 
@@ -494,14 +491,17 @@ SHA、buildroot 编译器/glibc 版本及三 ELF 的 `gbs_build_sha256` 记录�
 [`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) 和
 [`GBS 构建记录`](../data/raw/gbs_package_20260903/README.md)。官方四仓按包名、Provides、
 filelists 的来源排查及五项 BuildRequires 版本复核见
-[`三工具来源声明`](tool_provenance_20260903.md)。`verify` 会静态检查 spec
-与 `%files`；有 `gbs` 时还会实跑并核对已登记产物，无 `gbs` 时明确输出 `SKIPPED`。
+[`三工具来源声明`](tool_provenance_20260903.md)。`verify` 只做 spec、`%files`、manifest
+一致性等静态硬门，绝不启动真实 GBS 构建。显式 `reproduce.sh gbs` 需要仓库网络、
+可执行 root 构建的 GBS 环境、buildroot 磁盘空间和显著长于分钟级 verify 的时间；它
+使用每次唯一 buildroot 与跨进程锁。环境不可用记 `SKIPPED/REPORT_ONLY`，成功产出的
+RPM/ELF 若身份或哈希漂移仍硬失败。
 
-GBS 三项 ELF 已通过
-[`A2 预登记 H-V 重基线`](a_anchor_replication_20260904.md)，GBS 路径现为 HQ 首选；
-旧冻结 bundle 与上节固定路径交叉构建是备选。即使三项 ELF 由 GBS 产生，媒体仍须按
-manifest 的包外方式交付。正式 workflow 使用
-`reproduce.sh board --artifact-source gbs ...` 选择 manifest 中的 GBS SHA。
+GBS 三项 ELF 参与了
+[`A2 固定合同 H-V 校准`](a_anchor_replication_20260904.md)。GBS 观测参与 v4 建带，
+因此该带不构成独立 GBS 通过证据。held-out 验证前，旧冻结 bundle 是 workflow 默认，
+GBS 与固定路径交叉构建是候选。即使三项 ELF 由 GBS 产生，媒体仍须按 manifest 的包外
+方式交付；显式测试 GBS 时用 `reproduce.sh board --artifact-source gbs ...`。
 
 <a id="l2-run"></a>
 ### 完整执行命令
@@ -516,8 +516,8 @@ manifest 的包外方式交付。正式 workflow 使用
 export SDB_SERIAL='<TEST_BOARD_IP>:26101'
 export S4_REMOTE='/opt/usr/glibc_memopt/s4_retention_20260901'
 export S4_HOST='board_results/s4_retention_20260901_reproduction'
-export S4_BENCH='/path/to/gbs-bundle/alloc_bench.armv7l'
-export S4_EXPECTED_SHA='88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa'
+export S4_BENCH='/path/to/frozen-bundle/alloc_bench.armv7l'
+export S4_EXPECTED_SHA='dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd'
 mkdir -p "$S4_HOST"
 
 sdb version
@@ -568,8 +568,8 @@ tr -d '\r' <"$S4_HOST/stability_after.tsv.raw" | awk -F '\t' 'NF==4 && $1 ~ /^\/
 
 自 2026-09-02 起，每个板上轮次还必须在负载前后分别保存
 stability-monitor/livedump 的精确文件清单和计数。v1 规则保留为历史判定；v2 新增
-“预登记预期告警”类。新增件必须从归档内部 `dump_reason` 与 `info.json` 核对 PID、
-进程名、executable path、发生窗口与数量：与预登记的触发理由、窗口、owner 和数量
+“固定合同预期告警”类。新增件必须从归档内部 `dump_reason` 与 `info.json` 核对 PID、
+进程名、executable path、发生窗口与数量：与已登记的触发理由、窗口、owner 和数量
 上界全部匹配时，记录、归档、按精确路径清理并复核后记为 `EXPECTED` 通过；未观测时
 只记 `REGISTERED/NOT-EVALUATED`，不能把“已登记”写成“已发生且通过”。可归因
 本轮但未登记或超界的告警仍为 `FAIL`；非本轮或归属不明告警只记 `REPORT_ONLY`，
@@ -578,7 +578,7 @@ stability-monitor/livedump 的精确文件清单和计数。v1 规则保留为�
 [`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)，报告模板与归档/清理
 命令见 [`health_gate_template.md`](../tools/reproduce/health_gate_template.md)。
 
-首条预登记为 S4 A 组：`alloc_bench.armv7l` 在 `A/mixed/rep1` 与
+首条登记为 S4 A 组：`alloc_bench.armv7l` 在 `A/mixed/rep1` 与
 `A/medium-only/rep1` 窗口因 `cpu.relative` 产生的 livedump 合计至多 `2` 个，适用
 known-alert waiver。这里只证明触发理由与窗口可复现，**未做根因证明**；触发理由、
 二进制、窗口或数量任一不符都不在该登记覆盖范围内。
@@ -632,7 +632,7 @@ validity gates 全部通过。回收量字节值本身不是确定性项。bench
 远端 `RC=0/DONE_*`、JSON/XML 可解析、manifest 和现场恢复属于流程完整性前置；任一
 失败同样终止该格。
 
-容差项是本指南的跨板/跨批次建议判据，不是新增测量值；A 带依据预登记
+容差项是本指南的跨板/跨批次建议判据，不是新增测量值；A 校准带依据固定合同
 [`A2 H-V 裁决`](a_anchor_replication_20260904.md#33-v4-共同锚点带)，B 带依据
 [`S4 结果`](s4_reference_and_retention_trim_20260901.md#3-a-组结果新镜像锚点)：
 
@@ -654,7 +654,7 @@ validity gates 全部通过。回收量字节值本身不是确定性项。bench
 单重复可出现约 `1 MiB` 的页粒度台阶；HQ 彩排的 medium-only `rep2` 两个周期就是该
 实例，其中逐重复中位实测为 `68.169197%`，两周期分别比发布批少 `1024000 B`。这不
 改写发布数字，也不把差异“放宽”为任意波动：
-预登记协议用每档三重复中位和 `±5 pp` 带吸收该离散，payload 字节、4 kB 对齐、
+固定合同用每档三重复中位和 `±5 pp` 带吸收该离散，payload 字节、4 kB 对齐、
 majflt、zram 与 OOM/LMK validity gates 仍须成立。实例紧凑证据见
 [`s4_medium_only_rep2_reclaim.tsv`](../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv)，
 解释见 [`彩排报告 §8.2`](demo_rehearsal_20260902.md#82-s4-验收带对照)。
@@ -675,9 +675,9 @@ glibc 主版本必须属于 `2.40` 系；若为 `2.41+`，停止沿用本基线�
 `3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d`；公开仓库不分发媒体
 或 ARM ELF。
 
-首选 GBS bench 的 SHA-256 为
-`7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034`；冻结备选为
-`204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`，也可用
+当前默认冻结 bench 的 SHA-256 为
+`204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`；GBS 候选为
+`7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034`，也可用
 GCC `14.2.0` 的 glibc-2.40 scratch root 与含 GStreamer 1.24 armv7l devel/runtime 链接
 输入的兼容 sysroot 重建：
 
@@ -704,11 +704,11 @@ sysroot 和源码通过固定 `.build/armv7l/gst_loop_decode/` 与
 export SDB_SERIAL='<TEST_BOARD_IP>:26101'
 export GST_REMOTE='/opt/usr/glibc_memopt/gst_trim_cost_20260901'
 export GST_HOST='board_results/gst_trim_cost_20260901_reproduction'
-export GST_BENCH='/path/to/gbs-bundle/gst_loop_decode.armv7l'
-export GST_PROBE='/path/to/gbs-bundle/reclaim_probe.armv7l'
+export GST_BENCH='/path/to/frozen-bundle/gst_loop_decode.armv7l'
+export GST_PROBE='/path/to/frozen-bundle/reclaim_probe.armv7l'
 export GST_MEDIA='/path/to/small_320x240.mp4'
-export GST_EXPECTED_SHA='7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034'
-export GST_PROBE_EXPECTED_SHA='e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31'
+export GST_EXPECTED_SHA='204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6'
+export GST_PROBE_EXPECTED_SHA='3b0703fd96dfde95a3287129208784f19f74b4929774fbde644b542e16e441e7'
 export GST_MEDIA_EXPECTED_SHA='3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d'
 mkdir -p "$GST_HOST"
 
@@ -727,8 +727,8 @@ printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$GST_HOST/stability_before.t
 tr -d '\r' <"$GST_HOST/stability_before.tsv.raw" | awk -F '\t' 'NF==4 && $1 ~ /^\/opt\/usr\/share\/crash\/livedump\// {print}' >>"$GST_HOST/stability_before.tsv"
 ```
 
-门通过后才创建固定 `/opt/usr` 目录并推送。首选 GBS 路径的三个资产 SHA 必须分别为
-`7549f3…fc034`、`e71d4a…4d31`、`3df34a…f72d` 的完整 manifest 值；执行时必须检查完整
+门通过后才创建固定 `/opt/usr` 目录并推送。当前默认冻结路径的三个资产 SHA 必须分别为
+`204d64…f62e6`、`3b0703…441e7`、`3df34a…f72d` 的完整 manifest 值；执行时必须检查完整
 输出而不是只比较此处缩写。
 
 ```sh
@@ -791,7 +791,7 @@ JSON 均可解析且 PID 恒定；bench/sampler/controller 全部退出 0；dmes
 跨批次绝对值当作常量。
 
 同一 stability-monitor v2 健康门也适用于 gst：运行前后记录告警清单与计数，
-对新增件逐一做 PID/进程/可执行路径归因。当前没有 gst 预登记项，因此可归因本轮的
+对新增件逐一做 PID/进程/可执行路径归因。当前没有 gst 登记项，因此可归因本轮的
 新增告警仍是 `FAIL`；非本轮或归属不明的新增告警记 `REPORT_ONLY`、只报告不动。
 
 当前已执行批次的附加 capture-meta `majflt` 因 POSIX sh `$10` 展开错误而统一为 `S0`；
@@ -812,7 +812,7 @@ mixed `1.233269 ms` / medium-only `1.218361 ms` 比较，不能
 当前批次的 153 次 trim p50/p95/p99/max 为
 `0.671556/0.818315/0.842185/0.856944 ms`；首次 release 为
 `51.014041–51.406250% / 1.277344–1.285156 MiB`。这些是复跑的参考结果而非新的硬阈值；
-正式输出仍按上面的预登记 p99 规则计算，方向记 `REPORT_ONLY`。
+正式输出仍按上面的固定合同 p99 规则计算，方向记 `REPORT_ONLY`。
 
 <a id="l2-tizen-native-evidence"></a>
 ### Tizen 原生进程与工具交叉见证
@@ -820,9 +820,9 @@ mixed `1.233269 ms` / medium-only `1.218361 ms` 比较，不能
 本节复现 [`tizen_native_evidence_20260904.md`](tizen_native_evidence_20260904.md)，
 不属于 S4/gst acceptance matrix。它只验证 Tizen 守护进程、Tizen `memps`、官方仓库
 `gdb` 与 glibc `malloc_info` 能否对同一回收事件形成交叉见证。冻结项以
-[`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260904/preregistered_contract.json)
+[`fixed_contract.json`](../tools/runners/tizen_native_evidence_20260904/fixed_contract.json)
 为准，已知完成边界不得隐去：T1 `1/5`、UI 释放相位 `0/1`，T2 两个前置采样间隔
-`119.806876910/119.856460299 s`，均略低于预登记 120 s。
+`119.806876910/119.856460299 s`，均略低于固定合同的 120 s。
 
 当前公开紧凑件可复算的 T2 M7 `rest` 约为 `5.84 MiB`，三次主堆回收量依次为
 `272 / 4 / 4 KiB`；每次 Tizen `memps [heap]` 与项目分类口径逐值一致。以上只是当前
@@ -903,30 +903,34 @@ sdb -s "$NATIVE_SERIAL" shell \
 
 确定性/有效性检查为身份、媒体 SHA、TSV/XML 可解析、PID + starttime 不变、
 `memps [heap]` 与项目主堆逐值一致、majflt/zram/OOM-LMK/新增告警增量为 0，以及包、
-目录、进程、governor 恢复。原生进程的回收量和含 ptrace 的 gdb 耗时没有预登记容差带；
+目录、进程、governor 恢复。原生进程的回收量和含 ptrace 的 gdb 耗时没有固定容差带；
 它们只按观测值报告，不能套 S4 带，也不能作为钩子代价。当前完成数与间隔偏差的正确
 复现判读是 `INCOMPLETE/PROTOCOL-DEVIATION`，不是整轮 PASS。
 
 <a id="l2-tizen-native-evidence-b2"></a>
-#### 2026-09-05 B2：缺口补跑与整页估算器
+#### 2026-09-04 B2：固定合同重放与整页估算器
 
 B2 不改写上述旧格；它以新合同补跑官方 GST 5 格与 UI 活动后 E4′，E1–E3 不重跑。
 权威规格与结果是
-[`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260905/preregistered_contract.json)
-和 [`报告 §6–§8`](tizen_native_evidence_20260904.md#6-b2-补跑规格冻结2026-09-05执行前登记)。
+[`fixed_contract.json`](../tools/runners/tizen_native_evidence_b2_20260904/fixed_contract.json)
+和 [`报告 §6–§8`](tizen_native_evidence_20260904.md#6-b2-补跑固定合同重放实际板上执行日-2026-09-04)。
+
+原始纳秒时间戳确认实际板上执行日为 2026-09-04。该轮没有独立事前 commit/tag，故以下
+内容是固定合同重放，不称预登记；完整原始 pull 本地留存、可按请求提供，公开紧凑件
+不足以单独重跑完整 `analyze_b2.py`。
 已发布 B2 预期输出为：T1′ `5/5`，回收 `8/16/16/20/16 KiB`；四个间隔落在
 `120.122271759–120.142672892 s`；E4′ rest `6019572 B`、回收 `36 KiB`，项目 heap
 与 `memps` 前后逐值一致。估算器给 E4′ `2200–7976 KiB`，连同历史配对验证为
 `15/15` 区间外；原始字段见
-[`B2 summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json) 与
-[`cells_derived.tsv`](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv)。
+[`B2 summary.json`](../data/raw/tizen_native_evidence_b2_20260904/summary.json) 与
+[`cells_derived.tsv`](../data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv)。
 先重走身份/环境门，再准备仓库外媒体与 GBS `alloc_bench`：
 
 ```sh
 export B2_ADDR='<TEST_BOARD_IP>'
 export B2_SERIAL="$B2_ADDR:26101"
-export B2_REMOTE='/opt/usr/glibc_memopt/tizen_native_evidence_20260905'
-export B2_HOST='board_results/tizen_native_evidence_20260905_reproduction'
+export B2_REMOTE='/opt/usr/glibc_memopt/tizen_native_evidence_20260905' # executed legacy literal; retained for hash fidelity
+export B2_HOST='board_results/tizen_native_evidence_b2_20260904_reproduction'
 export B2_MEDIA='/path/to/small_320x240.mp4'
 export B2_ALLOC='/path/to/gbs/alloc_bench.armv7l'
 mkdir -p "$B2_HOST"
@@ -945,9 +949,9 @@ sdb -s "$B2_SERIAL" shell '
   rc=$?; echo RC=$rc; test "$rc" -eq 0 && echo DONE_B2_PREFLIGHT || echo FAIL_B2_PREFLIGHT
 ' | tee "$B2_HOST/preflight.txt"
 sdb -s "$B2_SERIAL" shell \
-  < tools/runners/tizen_native_evidence_20260905/recon_idle_remote.sh \
+  < tools/runners/tizen_native_evidence_b2_20260904/recon_idle_remote.sh \
   | tee "$B2_HOST/enlightenment_idle_raw.txt"
-sh tools/runners/tizen_native_evidence_20260905/manage_gdb_official_snapshot.sh \
+sh tools/runners/tizen_native_evidence_b2_20260904/manage_gdb_official_snapshot.sh \
   install --ip "$B2_ADDR" --cache "$B2_HOST/rpm-cache"
 ```
 
@@ -960,13 +964,13 @@ sdb -s "$B2_SERIAL" shell \
   "mkdir -p '$B2_REMOTE/selftest'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_SELFTEST_DIR || echo FAIL_SELFTEST_DIR"
 sdb -s "$B2_SERIAL" push "$B2_ALLOC" "$B2_REMOTE/selftest/alloc_bench.armv7l"
 sdb -s "$B2_SERIAL" push tools/reclaim_probe/trim_via_gdb.sh "$B2_REMOTE/selftest/trim_via_gdb.sh"
-sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/recon_gdb_selftest_remote.sh "$B2_REMOTE/selftest/recon_gdb_selftest_remote.sh"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_b2_20260904/recon_gdb_selftest_remote.sh "$B2_REMOTE/selftest/recon_gdb_selftest_remote.sh"
 sdb -s "$B2_SERIAL" shell \
   "chmod 0755 '$B2_REMOTE/selftest/'*.sh '$B2_REMOTE/selftest/alloc_bench.armv7l' && '$B2_REMOTE/selftest/recon_gdb_selftest_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_SELFTEST_INVOKE || echo FAIL_SELFTEST_INVOKE"
 
 sdb -s "$B2_SERIAL" push "$B2_MEDIA" "$B2_REMOTE/small_320x240.mp4"
-sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/recon_gst_sequence_remote.sh "$B2_REMOTE/recon_gst_sequence_remote.sh"
-sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/recon_app_remote.sh "$B2_REMOTE/recon_app_remote.sh"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_b2_20260904/recon_gst_sequence_remote.sh "$B2_REMOTE/recon_gst_sequence_remote.sh"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_b2_20260904/recon_app_remote.sh "$B2_REMOTE/recon_app_remote.sh"
 sdb -s "$B2_SERIAL" shell \
   "chmod 0755 '$B2_REMOTE/recon_gst_sequence_remote.sh' '$B2_REMOTE/recon_app_remote.sh' && '$B2_REMOTE/recon_gst_sequence_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_GST_RECON_INVOKE || echo FAIL_GST_RECON_INVOKE"
 sdb -s "$B2_SERIAL" shell \
@@ -979,10 +983,10 @@ GST 侦察必须 5/5 单次软解正常退出、每格 30 秒仍存活、有 buf
 
 ```sh
 sdb -s "$B2_SERIAL" push tools/reclaim_probe/trim_via_gdb.sh "$B2_REMOTE/trim_via_gdb.sh"
-sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/preregistered_contract.json "$B2_REMOTE/preregistered_contract.json"
-sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_20260905/run_b2_remote.sh "$B2_REMOTE/run_b2_remote.sh"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_b2_20260904/fixed_contract.json "$B2_REMOTE/fixed_contract.json"
+sdb -s "$B2_SERIAL" push tools/runners/tizen_native_evidence_b2_20260904/run_b2_remote.sh "$B2_REMOTE/run_b2_remote.sh"
 sdb -s "$B2_SERIAL" shell \
-  "chmod 0755 '$B2_REMOTE/trim_via_gdb.sh' '$B2_REMOTE/run_b2_remote.sh' && sha256sum '$B2_REMOTE/preregistered_contract.json' '$B2_REMOTE/run_b2_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_FORMAL_STAGE || echo FAIL_FORMAL_STAGE"
+  "chmod 0755 '$B2_REMOTE/trim_via_gdb.sh' '$B2_REMOTE/run_b2_remote.sh' && sha256sum '$B2_REMOTE/fixed_contract.json' '$B2_REMOTE/run_b2_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_FORMAL_STAGE || echo FAIL_FORMAL_STAGE"
 sdb -s "$B2_SERIAL" shell \
   "'$B2_REMOTE/run_b2_remote.sh'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_B2_FORMAL_INVOKE || echo FAIL_B2_FORMAL_INVOKE" \
   | tee "$B2_HOST/formal_invoke.txt"
@@ -997,14 +1001,14 @@ runner 自带身份、环境、SHA、governor、zram、dmesg 与 stability-monit
 sdb -s "$B2_SERIAL" shell \
   "cd '$B2_REMOTE' && find . -type f ! -name manifest.tsv | LC_ALL=C sort | while IFS= read -r f; do n=\$(wc -c < \"\$f\") || exit 1; h=\$(sha256sum \"\$f\"); h=\${h%% *}; printf '%s\\t%s\\t%s\\n' \"\$f\" \"\$n\" \"\$h\"; done > manifest.tsv; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_MANIFEST || echo FAIL_MANIFEST"
 sdb -s "$B2_SERIAL" pull "$B2_REMOTE/" "$B2_HOST/board_pull/"
-python3 tools/runners/tizen_native_evidence_20260905/analyze_b2.py \
+python3 tools/runners/tizen_native_evidence_b2_20260904/analyze_b2.py \
   --pull "$B2_HOST/board_pull" --idle-log "$B2_HOST/enlightenment_idle_raw.txt" \
   --output "$B2_HOST/derived"
 
-sh tools/runners/tizen_native_evidence_20260905/manage_gdb_official_snapshot.sh \
+sh tools/runners/tizen_native_evidence_b2_20260904/manage_gdb_official_snapshot.sh \
   remove --ip "$B2_ADDR"
 sdb -s "$B2_SERIAL" shell \
-  "test '$B2_REMOTE' = /opt/usr/glibc_memopt/tizen_native_evidence_20260905 && rm -rf -- '$B2_REMOTE' && test ! -e '$B2_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_B2_CLEANUP || echo FAIL_B2_CLEANUP"
+  "test '$B2_REMOTE' = /opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904 && rm -rf -- '$B2_REMOTE' && test ! -e '$B2_REMOTE'; rc=\$?; echo RC=\$rc; test \$rc -eq 0 && echo DONE_B2_CLEANUP || echo FAIL_B2_CLEANUP"
 ```
 
 B2 的确定性/有效性项与容差/观察项见报告 §8。host 另可逐字节复算估算器；`cmp`
@@ -1080,7 +1084,7 @@ sdb -s "$PRODUCT_SERIAL" shell 'test /tmp/product_cyclic_target_probe_20260814 =
 - 链接先于结果冻结的参数规格，禁止依据结果回改；
 - 分开列确定性验收项、validity gates 与跨板/跨批次容差带；
 - 给出身份门、完整性、退出标志、现场恢复与清理的判定方法。
-- 给出 stability-monitor 运行前后告警计数与新增归因；按 v2 区分预登记
+- 给出 stability-monitor 运行前后告警计数与新增归因；按 v2 区分已登记
   实际命中后的 `EXPECTED`、未观测的 `REGISTERED/NOT-EVALUATED`、未登记我方 `FAIL`
   与非我方/不明 `REPORT_ONLY`。预期告警必须满足理由、
   窗口、owner 和数量上界，并完成归档、精确清理与二次复核；登记表与报告字段见

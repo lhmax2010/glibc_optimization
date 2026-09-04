@@ -145,11 +145,11 @@ def classify(args: argparse.Namespace) -> int:
             present_after = post_rows is not None and item["remote_path"] in post_rows
             item["verdict"] = "FAIL" if present_after else "EXPECTED"
             item["explanation"] = (
-                "matched preregistered reason/window/owner/count but remained after cleanup"
+                "matched registered reason/window/owner/count but remained after cleanup"
                 if present_after else
                 "known-alert waiver matched reason/window/owner/count; archived and absent after cleanup; root cause not proven"
                 if post_rows is not None else
-                "matched preregistered reason/window/owner/count; cleanup pending"
+                "matched registered reason/window/owner/count; cleanup pending"
             )
             clean_paths.append(item["remote_path"])
         elif item["expected_shape"] and over_limit:

@@ -15,14 +15,14 @@
 
 > **2026-09-01 S4 更新：** 新镜像瞬时释放锚点为 mixed `51.074077%`、medium-only `50.387886%`，与 `50% × 0.98` 机制基线相容。对 S2 合成滞留表型，valley trim 回收释放 payload 的中位 `81.661264% / 84.446566%`，调用耗时分档中位为 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期相对 none 增加 `1351 / 1465` 次 minflt，majflt 为 0。该证据补齐合成代理的效果/faults 数字，不等同于产品候选的 M7 或业务延迟结论。完整报告见 [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md)。
 
-> **2026-09-04 A2/GBS 更新：** 12 格 frozen/GBS 交替复测命中预登记 H-V（四组极差均 `>1.5 pp`，两个 profile 分布均交叠），现行共同 A 带为 mixed `52.794499% ±4.304705 pp`、medium-only `50.669791% ±4.918088 pp`（每档合并 `n=8`）。v4 复判使 GBS 全矩阵 `OVERALL PASS`，GBS 转正为 HQ 首选 L2 路径，冻结件为备选。见 [`a_anchor_replication_20260904.md`](a_anchor_replication_20260904.md)。
+> **2026-09-04 A2/GBS 终审订正：** 12 格 frozen/GBS 固定合同重放命中 H-V（四组极差均 `>1.5 pp`，两个 profile 分布均交叠），现行 A 校准带仍为 mixed `52.794499% ±4.304705 pp`、medium-only `50.669791% ±4.918088 pp`（每档合并 `n=8`）。由于 GBS 观测参与建带，v4 内重放不构成独立通过；撤回 GBS 转正结论，冻结件恢复为默认，GBS 等待 held-out 验证。见 [`a_anchor_replication_20260904.md`](a_anchor_replication_20260904.md)。
 
 - Demo 决策叙事入口：[`demo_narrative_20260901.md`](demo_narrative_20260901.md)（逐数字复现入口由文内链接到 HQ 指南）。
 - 2026-09-03 三方评审修复闭环：[`review_fix_20260903.md`](review_fix_20260903.md)（acceptance v3、交付资产、对客一致性与 demo-v2 冻结记录）。
 - 产品侧落点与三条件硬门：[`product_landing_recommendation_20260901.md`](product_landing_recommendation_20260901.md)。
 - 产品 M7 路径评估与演示日入口：[`product_m7_feasibility_20260902.md`](product_m7_feasibility_20260902.md)、[`demo_package_20260902.md`](demo_package_20260902.md)。
 - HQ 最终交付入口：[`demo_report.html`](demo_report.html)（离线图文）与 [`reproduce.sh`](../tools/reproduce/reproduce.sh)（host verify / 完整板上 workflow）。
-- HQ GBS 构建入口：[`glibc-memopt-tools.spec`](../packaging/glibc-memopt-tools.spec) 与 [`host 构建记录`](../data/raw/gbs_package_20260903/README.md)；经 A2/H-V 重基线通过后，GBS 为当前 L2 首选，冻结件为备选。
+- HQ GBS 构建入口：[`glibc-memopt-tools.spec`](../packaging/glibc-memopt-tools.spec) 与 [`host 构建记录`](../data/raw/gbs_package_20260903/README.md)；A2/H-V 仅形成含 GBS 样本的校准带，独立 held-out 验证前冻结件仍为 L2 默认。
 - Tizen 原生进程/工具交叉见证：[`tizen_native_evidence_20260904.md`](tizen_native_evidence_20260904.md)（enlightenment + `memps` + 官方 `gdb`；完成格与协议偏差分开登记，不作产品收益外推）。
 
 > **历史状态保留（2026-08-31，v2.6，现已被上条裁决取代）：** 当时 S2 因未复现产品 PD 峰谷而判定不成立，S3 等待 PM 在“降格为合成 bin 驻留 trim 扫描”与“修订 S2 代理方案”之间裁决。
@@ -268,7 +268,7 @@ L6 的收益直接取决于目标在触发时刻堆内**已释放但未归还**�
 
 历史瞬时释放格在换板换镜像后失去同板可比性；新镜像各一次的 mixed/medium-only 锚点为 `51.074077% / 50.387886%`，距 `49%` 机制预期 `+2.074077 / +1.387886 pp`。旧 `53.55% / 50.60%` 只保留为不可比参考。
 
-**2026-09-04 追注：** 上句是 S4 单次历史记录，不再作为现行容差中心。A2 预登记复测
+**2026-09-04 追注：** 上句是 S4 单次历史记录，不再作为现行容差中心。A2 固定合同重放
 命中 H-V 后，现行 frozen/GBS 共同 A 带为 mixed `52.794499% ±4.304705 pp`、
 medium-only `50.669791% ±4.918088 pp`，每档合并 `n=8`；旧“各 n=1”的现行局限据此
 撤销，原始单次值继续保留为历史证据。

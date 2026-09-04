@@ -96,7 +96,7 @@ FATAL ... Try 'sudo chmod 1777 /dev/shm' to fix.
 | 文件 | Unix 权限 | Smack label | XDG 对照结果 |
 |---|---|---|---|
 | `/tmp/chromium_diag_l3.html` | `0777 root:root` | `System` | 0.1 后 `/dev/shm` FATAL |
-| `/opt/usr/<USER_HOME>/chromium_diag_l3.html` | `0777 root:root` | `User::Shell` | 0.1 后同一 `/dev/shm` FATAL |
+| `/opt/usr/home/owner/chromium_diag_l3.html` | `0777 root:root` | `User::Shell` | 0.1 后同一 `/dev/shm` FATAL |
 
 更换文件目录和 label 没有改变错误。证据：`file_permissions.txt`、`L3home_xdg/`。板上无 `getfattr`，Smack label 由 `ls -Z` 取得。
 

@@ -3,14 +3,16 @@
 ```sh
 bash tools/reproduce/reproduce.sh
 bash tools/reproduce/reproduce.sh verify
-bash tools/reproduce/reproduce.sh board --artifact-source gbs --ip <address>
+bash tools/reproduce/reproduce.sh gbs
+bash tools/reproduce/reproduce.sh board --artifact-source frozen --ip <address>
 ```
 
 `verify` is the default, is host-only, and finishes in minutes. It must run from a
 real `git clone`; GitHub ZIP/source exports are unsupported because delivery
 identity is part of the contract. It runs every L1 recalculation, byte comparison,
-v4 acceptance check, local-link check, report rebuild, and host test. Any failed
-row makes the process exit nonzero.
+v4 acceptance check, local-link check, report rebuild, static GBS package contract,
+and host test. It never starts a real GBS build. Any failed row makes the process
+exit nonzero.
 
 Development-only overrides are explicit: `REPRODUCE_ALLOW_DIRTY=1` permits a dirty
 tree, `REPRODUCE_SKIP_TESTS=1` skips the nested host-test row, and
@@ -64,32 +66,46 @@ contain the GStreamer/GLib ARM headers, pkg-config metadata, and link libraries 
 checkout paths and compares all three hashes; if either variable is absent it
 prints an explicit `SKIPPED` row.
 
-The preferred HQ build is now
-`gbs -c config/gbs_llvm.conf build -A armv7l --overwrite`, which uses
+The explicit GBS build entry is
+`bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`, which uses
 [`packaging/glibc-memopt-tools.spec`](../../packaging/glibc-memopt-tools.spec) and
-produces one RPM with all three ELF files. `check_gbs_package.py` always validates
-spec syntax/`%files` and runs GBS when available. The artifacts passed the
-preregistered A-anchor board rebaseline through H-V; GBS is now the L2 default and
-the frozen bundle is the fallback. Select the GBS hashes with
+produces one RPM with all three ELF files. It requires network access to the pinned
+repositories, a root-capable GBS environment, sufficient buildroot disk space, and
+substantially more time than the minutes-scale host verify. Its buildroot is unique
+per run and protected by a cross-process lock. A GBS command/environment failure is
+`SKIPPED/REPORT_ONLY`; a static contract defect or drift in a successfully produced
+RPM/ELF remains a hard failure.
+
+The GBS artifacts participated in the fixed-contract H-V calibration sample, so
+acceptance v4 is not independent evidence that this path passes. Pending held-out
+validation, frozen is the L2 default and GBS is an explicit candidate selected with
 `--artifact-source gbs`. The media file is never built by either path and must come
 from the delivery location supplied with the package.
 
 Both modes read [`acceptance_bands.json`](acceptance_bands.json). `PASS` means a
 deterministic item, validity gate, or tolerance band passed. `EXPECTED` means an
-observed preregistered stability-monitor alert matched its waiver and was archived,
+observed registered stability-monitor alert matched its waiver and was archived,
 cleaned, and rechecked; an unobserved registration is
 `REGISTERED/NOT-EVALUATED`. The gst p99 direction and foreign/unattributed state are
-`REPORT_ONLY`; neither direction can fail acceptance when the preregistered
+`REPORT_ONLY`; neither direction can fail acceptance when the fixed-contract
 nearest-rank/dispersion rule was executed correctly. If a board reports
 `visible=true`, retain the output and all three repeats, report the margin over the
 none-arm dispersion, do not relabel it as workflow failure, and escalate it as a
 batch-specific business-cost finding.
 
-Acceptance v4 uses the preregistered H-V A-anchor result shared by frozen and GBS:
+Acceptance v4 uses the fixed-contract H-V A-anchor calibration shared by frozen and GBS:
 mixed `52.794499% ±4.304705 pp` and medium-only
 `50.669791% ±4.918088 pp`, each from eight combined observations. The derivation
 and public replay are in the
 [A-anchor report](../../docs/a_anchor_replication_20260904.md).
+
+## Board-round evidence ordering
+
+For every new board round, commit the immutable contract and its analyzer first and
+create a lightweight pre-run tag. Only then may the board run start. Board results,
+compact evidence, and conclusions land in a separate later commit. Without the
+pre-run commit/tag, historical wording is “fixed-contract replay”, not
+“preregistered”.
 
 The board preflight hard-gates remote `id -u=0`, writability of all four governor
 controls, and writability of `/opt/usr`. Without the internal bundle described by

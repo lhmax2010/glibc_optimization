@@ -14,7 +14,7 @@ Application/process names are aliases and the board address is represented as
 - `arm_summary.tsv`: median-of-repeat statistics and repeat ranges by arm.
 - `external_summary.tsv`: counts, overruns, and full-run faults for the six
   independent one-second series.
-- `comparison.json`: the preregistered p99 visibility decision.
+- `comparison.json`: the fixed-contract p99 visibility decision.
 - `health.json`: dmesg, zram, governor, and capture-metadata quality status.
 - `dmesg_increment.txt`: empty because the captured dmesg increment was zero
   lines.

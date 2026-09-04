@@ -1,8 +1,8 @@
 # A-anchor replication harness (2026-09-04)
 
-This harness executes the preregistered 12-cell frozen/GBS A-anchor matrix. The
+This harness executes the fixed-contract 12-cell frozen/GBS A-anchor matrix. The
 authoritative order, thresholds, prior observations, and temporary
-stability-monitor registration are in `preregistered_contract.json`.
+stability-monitor registration are in `fixed_contract.json`.
 
 ```sh
 bash tools/runners/a_anchor_replication_20260904/run_a_anchor_host.sh \

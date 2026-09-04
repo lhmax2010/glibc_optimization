@@ -7,7 +7,7 @@
 - 对照起点：annotated tag `demo-v2` peel 后提交
   `959b4fb1f18327eaeb07f6b34d9055e993b6a2cd`
 - 收口源提交：`09075df049c700e9d577c265403e25beabd5023e`
-- 交付账务截至：`20f576005b42cbe71ad13a8c8804d31b0cd9da60`
+- 交付账务截至：`20f5760aa73a97201ac815684bcc8eee830880bb`
 - `demo-v3 → demo-v4`：仅修复交付身份测试 fixture 的分支假设并新增三形态远端交付前自检；无测量、验收带或技术结论变化
 - 范围：三方第三轮复审使用的分类索引；不产生新测量数字，不替代各正式报告
 - 复核命令：`git log --reverse --oneline 959b4fb..09075df`
@@ -16,6 +16,9 @@
 main 提交序列列出变化，并把每个提交映射到下述发现项。编号 `A-*` / `GBS-*` 沿用
 [`第 2 轮评审闭环`](review_fix_20260903.md#第-2-轮复审与-gbs-闭环)；其余编号在本表中
 定义，供第三轮复审逐项引用。
+
+证据等级、验收聚合和路径优先级的现行裁决见
+[`PM 裁决台账`](pm_decisions.md)；本文件只索引对应代码、文档与证据提交。
 
 ## 1. 评审修复第 2 轮
 
@@ -44,14 +47,14 @@ main 提交序列列出变化，并把每个提交映射到下述发现项。编
 | 发现项编号 | 提交 | 变化 | 复核入口 |
 |---|---|---|---|
 | RB-D1–RB-D5、RB-A-OUT | `01f9bb651e04ba3b0ad9a0d93cf5d044d51da4c8` | GBS workflow 首轮完整矩阵发现 A/mixed 旧带外；闭环远端 SHA、livedump、stdin、验收退出码和即时停止五类执行器缺陷，保持停止门 | [`GBS 重基线 §3`](gbs_rebaseline_20260903.md#3-workflow-执行记录与一等发现) |
-| A2-HV、GBS-PROMOTE | `840b9572ac8ce75b9615141fbdf46b098cd035d4` | 预登记 12 格 frozen/GBS 交替复测命中 H-V；acceptance 升 v4 共同带，归档矩阵复判通过，GBS 转正为 HQ 首选 L2 | [`A2 报告`](a_anchor_replication_20260904.md)、[`裁决 JSON`](../data/raw/a_anchor_replication_20260904/decision.json) |
+| A2-HV、GBS-CALIBRATION | `840b9572ac8ce75b9615141fbdf46b098cd035d4` | 12 格 frozen/GBS 固定合同重放命中 H-V 并形成 v4 校准带；终审指出 GBS 观测参与建带，故撤回独立通过与首选路径结论，等待 held-out 验证 | [`A2 报告`](a_anchor_replication_20260904.md)、[`裁决 JSON`](../data/raw/a_anchor_replication_20260904/decision.json) |
 
 ## 5. Tizen 原生实证 B / B2
 
 | 发现项编号 | 提交 | 变化 | 复核入口 |
 |---|---|---|---|
 | B-T1、B-E1–B-E4、B-INT | `dff8ae677d38f51180fbb43c513319d464f74079` | 用 Tizen enlightenment、`memps`、`gst-launch-1.0` 与官方仓库 gdb 建立交叉见证；保留 T1 `1/5`、E4 `0/1` 和两个 `<120 s` 缺口；确认 M7 rest 不等于可回收量 | [`原生实证 §3–§4`](tizen_native_evidence_20260904.md#3-执行结果) |
-| B2-T1、B2-E4、B2-INT | `a35413df78f22d68d9eaac2ea59e807005c7f2c2` | 新预登记补齐官方 GST `5/5`、原生应用活动 `5/5` + E4′ `1/1`、四个 `≥120 s` 间隔，并保留旧格不追认 | [`B2 结果`](tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05)、[`B2 摘要`](../data/raw/tizen_native_evidence_20260905/summary.json) |
+| B2-T1、B2-E4、B2-INT | `a35413df78f22d68d9eaac2ea59e807005c7f2c2` | 固定合同重放补齐官方 GST `5/5`、原生应用活动 `5/5` + E4′ `1/1`、四个 `≥120 s` 间隔，并保留旧格不追认；原始纳秒时间戳确认执行日为 2026-09-04 | [`B2 结果`](tizen_native_evidence_20260904.md#7-b2-补跑结果实际板上执行日-2026-09-04)、[`B2 摘要`](../data/raw/tizen_native_evidence_b2_20260904/summary.json) |
 
 ## 6. 可回收估算器
 
@@ -63,11 +66,11 @@ main 提交序列列出变化，并把每个提交映射到下述发现项。编
 
 | 发现项编号 | 提交 | 变化 | 复核入口 |
 |---|---|---|---|
-| CLOSE-1 | `09075df049c700e9d577c265403e25beabd5023e` | 产品启用合同由旧三门定稿为四门，新增“同目标、同相位 trim 探针实测收益达到预登记阈值”，旧文字保留带日期追注 | [`落点建议 §1`](product_landing_recommendation_20260901.md#1-启用门清单) |
-| CLOSE-2 | `09075df049c700e9d577c265403e25beabd5023e` | Demo 合同纳入 GBS 首选 L2、A 锚点 v4 与 Tizen 原生 B/B2；HTML 新增四门章节 | [`Demo 合同`](demo_package_20260902.md#delivery-contracts)、[`HTML 决策门`](demo_report.html#decision-gate) |
+| CLOSE-1 | `09075df049c700e9d577c265403e25beabd5023e` | 产品启用合同由旧三门定稿为四门，新增“同目标、同相位 trim 探针实测收益达到事前固定阈值”，旧文字保留带日期追注 | [`落点建议 §1`](product_landing_recommendation_20260901.md#1-启用门清单) |
+| CLOSE-2 | `09075df049c700e9d577c265403e25beabd5023e` | Demo 合同纳入 GBS/v4 校准与 Tizen 原生 B/B2；HTML 新增四门章节；GBS 路径优先级随后由终审降为待 held-out | [`Demo 合同`](demo_package_20260902.md#delivery-contracts)、[`HTML 决策门`](demo_report.html#decision-gate) |
 | CLOSE-3 | `09075df049c700e9d577c265403e25beabd5023e` | HTML 与双语模板边界新增守护进程碎片化驻留收益微小、估算器不可用两条；delivery ref 预置为 `demo-v3` | [`HTML 边界`](demo_report.html#boundaries)、[`中文模板`](../tools/report/demo_README.zh-CN.md)、[`English template`](../tools/report/demo_README.md) |
 | CLOSE-META | `accd86b38516939fe9b50111dca898fd1fadc69c` | 新增本变更索引并把 demo-v3 收口写入时间线 | [`INDEX`](INDEX.md) |
-| CLOSE-HTML | `20f576005b42cbe71ad13a8c8804d31b0cd9da60` | 以包含全部 HTML 输入的 `09075df` 为父源提交，单独冻结 source marker 与逐字节派生 HTML | [`source marker`](../tools/report/source_commit.txt)、[`HTML`](demo_report.html) |
+| CLOSE-HTML | `20f5760aa73a97201ac815684bcc8eee830880bb` | 以包含全部 HTML 输入的 `09075df` 为父源提交，单独冻结 source marker 与逐字节派生 HTML | [`source marker`](../tools/report/source_commit.txt)、[`HTML`](demo_report.html) |
 
 ## 8. demo-v3 → demo-v4 交付阻断修复
 

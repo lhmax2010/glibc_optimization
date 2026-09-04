@@ -1,11 +1,12 @@
 # S4 A 锚点双 ELF 重复实验（2026-09-04）
 
-> 本节在任何板端连接之前写定。执行前 `main` 为
+> 本节在任何板端连接之前写定，但当时没有“合同提交 + 独立事前标签”的外部凭证，
+> 因而按 2026-09-04 PM 终审裁决统一称为**固定合同重放**，不称预登记。执行前 `main` 为
 > `01f9bb651e04ba3b0ad9a0d93cf5d044d51da4c8`；不得依据实测值改变矩阵、顺序、
 > 阈值、聚合口径或旧观测的纳入范围。板地址在全部入库内容中记为
 > `<TEST_BOARD_IP>`。
 
-## 1. 预登记规格
+## 1. 固定合同重放规格
 
 ### 1.1 目的与不变量
 
@@ -150,7 +151,7 @@ JSON、48 份相位 XML、外部序列、命令记录、dmesg 与 manifest 均�
 | 结束 governor | `schedutil 4/4` | PASS |
 | 工作目录 / 我方进程 / livedump | `ABSENT / 0 / 0` | PASS |
 
-stability-monitor 从 `0` 增至 `12`：每个预登记格恰好一个属于相应 PID/ELF 的
+stability-monitor 从 `0` 增至 `12`：每个固定合同格恰好一个属于相应 PID/ELF 的
 `cpu.relative` livedump，未超过“每格 1、合计 12”的临时上界。12 件全部归档并按精确
 路径清除，复核剩余 `0`，故依 v2 known-alert waiver 记为 `EXPECTED`；这只证明触发理由、
 窗口与 owner 可复现，不构成根因或无害性证明。健康汇总见
@@ -179,7 +180,7 @@ trim/refault faults 与外部序列统计，见
 | 11 | frozen | medium-only | 3 | 100516 → 52432 | 48084 | 47.837160 | 12.318019 | 3095 / 0 |
 | 12 | GBS | medium-only | 3 | 109304 → 53468 | 55836 | 51.083217 | 12.692926 | 3071 / 0 |
 
-### 3.2 预登记裁决
+### 3.2 固定合同裁决
 
 | ELF × profile | n | min (%) | median (%) | max (%) | 极差 (pp) |
 |---|---:|---:|---:|---:|---:|
@@ -190,7 +191,7 @@ trim/refault faults 与外部序列统计，见
 
 四组极差均 `>1.5 pp`，已经独立满足 H-V；此外两个 profile 的 frozen/GBS 闭区间也
 都交叠。mixed 两路径中位差只有 `0.286902 pp`；medium-only 虽为 `2.059107 pp`，但区间
-仍交叠。因此 H-L 的“二进制特定、低组内方差”前提不成立，按预登记规则唯一裁决为
+仍交叠。因此 H-L 的“二进制特定、低组内方差”前提不成立，按固定规则唯一裁决为
 **H-V：A 锚点方差此前被低估**。机器裁决原文见
 [`decision.json`](../data/raw/a_anchor_replication_20260904/decision.json)，四组派生见
 [`group_summary.tsv`](../data/raw/a_anchor_replication_20260904/group_summary.tsv)。
@@ -205,33 +206,35 @@ trim/refault faults 与外部序列统计，见
 | mixed | 50.939080–55.243785 | **52.794499** | **4.304705** | 48.489794–57.099204 |
 | medium-only | 47.837160–52.755248 | **50.669791** | **4.918088** | 45.751703–55.587879 |
 
-这不是依据单个 GBS 带外值事后扩带，而是建连前锁定的 H-V 分支在 12 格完整观测上的
-机械结果。`acceptance_bands.json` 升为 v4；原“各 n=1 锚点”的现行局限标注据此撤销，
+这是建连前写定的 H-V 分支在 12 格完整观测上的机械结果；但由于没有独立事前标签，
+证据等级只记为固定合同重放。`acceptance_bands.json` 升为 v4；原“各 n=1 锚点”的
+现行局限标注据此撤销，
 原始 S4/GBS 报告中的历史单次值继续保留为时间线事实；该旧局限的登记来源见
 [`review_fix_20260903.md` P1-7](review_fix_20260903.md#逐项闭环)。
 
 ## 4. 结论与文档同步
 
-### 4.1 GBS 重基线
+### 4.1 v4 校准带与 GBS 状态
 
 用 v4 共同带重放 [GBS 全矩阵](gbs_rebaseline_20260903.md) 的已归档派生件：GBS A/mixed
 `55.243785%` 落入 `52.794499% ±4.304705 pp`，A/medium-only `50.535918%` 落入
 `50.669791% ±4.918088 pp`。此前已经通过的 released payload 字节、页对齐、majflt、
 zram、dmesg、B 两档三重复中位、两类 trim 时延与 gst 规则执行均保持 PASS；gst p99
-方向仍为 REPORT_ONLY。结构化复判最终为 `OVERALL PASS`。
+方向仍为 REPORT_ONLY。结构化复放会输出 `OVERALL PASS`，但这只说明同一建带样本
+落在由自身参与标定的带内，不是独立验证。
 紧凑复判表见
 [`gbs_v4_recheck.tsv`](../data/raw/a_anchor_replication_20260904/gbs_v4_recheck.tsv)。
 
-**结论：GBS 重基线通过（经 A2/H-V 裁决）**。RPM NVR → 三个 ELF SHA → manifest →
-板上哈希的身份链已经闭合；`git clone → gbs build → 提取 ELF → reproduce.sh board`
-转正为 HQ 首选 L2 路径，冻结件降为备选。该结论只说明同镜像冻结矩阵与验收合同通过，
-不把合成代理外推为产品内存收益承诺。
+**2026-09-04 终审订正：撤回“GBS 重基线通过”和“GBS 为 HQ 首选 L2 路径”。**
+GBS 观测参与了 v4 中心与半宽的构造，因此 v4 是校准带，不能再用同批观测证明 GBS
+独立通过。RPM NVR → 三个 ELF SHA → manifest → 板上哈希的身份链仍成立；但路径优先级
+保持冻结件为默认、GBS 为待 held-out 验证候选。带的数值不变。
 
 ### 4.2 合同变更边界
 
 - 只改变 A 锚点回收率容差项；B、gst、deterministic、validity gates 和 stability-monitor
   v2 的常规登记均未改。
-- A 回收字节仍不是确定性项；同 seed 不钉死 arena 指派。v4 使用预登记的按 profile
+- A 回收字节仍不是确定性项；同 seed 不钉死 arena 指派。v4 使用固定合同重放的按 profile
   合并分布吸收布局/运行方差。
 - 本轮 stability-monitor 的 12 件临时登记只适用于本报告的 12 格，不扩展到常规 S4
   workflow。
@@ -241,7 +244,7 @@ zram、dmesg、B 两档三重复中位、两类 trim 时延与 gst 规则执行�
 板端 harness 位于
 [`tools/runners/a_anchor_replication_20260904/`](../tools/runners/a_anchor_replication_20260904/)，
 顺序、历史观测、H-L/H-V 算法与告警窗口的机器源为
-[`preregistered_contract.json`](../tools/runners/a_anchor_replication_20260904/preregistered_contract.json)。
+[`fixed_contract.json`](../tools/runners/a_anchor_replication_20260904/fixed_contract.json)。
 冻结参数以 §1.1 为准。板上完整复现：
 
 ```sh

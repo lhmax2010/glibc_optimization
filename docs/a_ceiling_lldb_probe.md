@@ -25,7 +25,7 @@ MISSING:lldb-server
 lldb: error while loading shared libraries: libclang-cpp.so.22.1: cannot open shared object file: No such file or directory
 ```
 
-`/usr/bin/lldb` 是指向 `/opt/usr/<USER_HOME>/share/tmp/sdk_tools/lldb/bin/lldb` 的符号链接；同目录实际存在 `lldb-server`，但它也缺少相同运行库。板上 RPM 为 `lldb-22.1.8-19.1.armv7l`，只安装了该一个 LLVM/Clang 相关包。
+`/usr/bin/lldb` 是指向 `/opt/usr/home/owner/share/tmp/sdk_tools/lldb/bin/lldb` 的符号链接；同目录实际存在 `lldb-server`，但它也缺少相同运行库。板上 RPM 为 `lldb-22.1.8-19.1.armv7l`，只安装了该一个 LLVM/Clang 相关包。
 
 为完成只临时运行的能力验证，从 Tizen 官方 Base Toolchain 仓库下载了精确匹配的 `clang-22.1.8-19.1.armv7l.rpm` 与 `libllvm-22.1.8-19.1.armv7l.rpm`，在 host 解包，仅将以下两个 ARM EABI5 `.so` 推到临时 `/root/lldb-runtime`，通过一次性 `LD_LIBRARY_PATH` 使用，未执行 RPM 安装：
 

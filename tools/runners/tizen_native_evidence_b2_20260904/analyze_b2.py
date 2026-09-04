@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and compact the 2026-09-05 Tizen native evidence B2 run."""
+"""Validate and compact the 2026-09-04 Tizen native evidence B2 run."""
 
 from __future__ import annotations
 

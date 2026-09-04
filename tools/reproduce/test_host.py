@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -13,6 +14,7 @@ import tempfile
 import unittest
 import zipfile
 import csv
+import fcntl
 from pathlib import Path
 
 
@@ -99,7 +101,7 @@ class ReproduceTests(unittest.TestCase):
 
             command_dir = root / "bin"
             command_dir.mkdir()
-            for command in ("bash", "cmp", "cp", "dirname", "find", "git", "grep", "mktemp", "python3", "sed", "tr"):
+            for command in ("bash", "cmp", "cp", "dirname", "find", "git", "grep", "ln", "mkdir", "mktemp", "python3", "sed", "tr"):
                 executable = shutil.which(command)
                 self.assertIsNotNone(executable, command)
                 (command_dir / command).symlink_to(executable)
@@ -122,6 +124,7 @@ class ReproduceTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("OVERALL\tPASS", result.stdout)
         self.assertIn("REGISTERED/NOT-EVALUATED\tstability-monitor", result.stdout)
+        self.assertIn("INFO\ttemplate-entry-links\ttemplates rendered at repository root", result.stdout)
 
     def test_predelivery_check_help_lists_all_hq_clone_shapes(self) -> None:
         result = subprocess.run(
@@ -140,7 +143,108 @@ class ReproduceTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("--ip <address>", result.stdout)
-        self.assertIn("default SHA source is GBS", result.stdout)
+        self.assertIn("default SHA source is the frozen bundle", result.stdout)
+
+    def test_default_verify_never_invokes_available_gbs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            marker = root / "gbs-was-run"
+            fake_gbs = fake_bin / "gbs"
+            fake_gbs.write_text(
+                f"#!/bin/sh\nprintf invoked > {marker}\nexit 42\n", encoding="utf-8",
+            )
+            fake_gbs.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{fake_bin}:{os.environ['PATH']}",
+                "REPRODUCE_ALLOW_DIRTY": "1",
+                "REPRODUCE_SKIP_TESTS": "1",
+                "REPRODUCE_EXPECTED_SHA": "HEAD",
+            }
+            result = subprocess.run(
+                ["bash", str(HERE / "reproduce.sh"), "verify"], cwd=REPO, env=env,
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertFalse(marker.exists(), result.stdout)
+            self.assertIn("SKIPPED\tgbs-build\treal GBS build is excluded", result.stdout)
+            self.assertIn("OVERALL\tPASS", result.stdout)
+
+    def test_explicit_gbs_environment_failure_is_report_only(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            fake_gbs = fake_bin / "gbs"
+            fake_gbs.write_text(
+                "#!/bin/sh\n"
+                "printf '%s\\n' \"$2\" >> \"$FAKE_GBS_LOG\"\n"
+                "grep '^buildroot=' \"$2\" >> \"$FAKE_GBS_LOG\"\n"
+                "echo fixture-gbs-failure\nexit 42\n",
+                encoding="utf-8",
+            )
+            fake_gbs.chmod(0o755)
+            for command in ("rpm", "rpm2cpio", "cpio"):
+                executable = shutil.which(command)
+                self.assertIsNotNone(executable, command)
+                (fake_bin / command).symlink_to(executable)
+            env = {
+                **os.environ,
+                "PATH": f"{fake_bin}:{os.environ['PATH']}",
+                "GLIBC_MEMOPT_GBS_LOCK": str(root / "gbs.lock"),
+                "FAKE_GBS_LOG": str(root / "gbs.log"),
+            }
+            results = [
+                subprocess.run(
+                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--lock-timeout", "1"],
+                    cwd=REPO, env=env, text=True, capture_output=True, check=False,
+                )
+                for _ in range(2)
+            ]
+            for result in results:
+                self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+                self.assertIn("REPORT_ONLY\tgbs-build-environment\tgbs build returned RC=42", result.stdout)
+                self.assertIn("SKIPPED\tgbs-build\tGBS environment unavailable", result.stdout)
+                self.assertIn("OVERALL\tPASS", result.stdout)
+            rows = (root / "gbs.log").read_text(encoding="utf-8").splitlines()
+            configs = rows[0::2]
+            buildroots = rows[1::2]
+            self.assertEqual(len(configs), 2)
+            self.assertNotEqual(configs[0], configs[1])
+            self.assertTrue(all("/tmp/glibc-memopt-gbs-" in item for item in configs))
+            self.assertNotEqual(buildroots[0], buildroots[1])
+
+    def test_explicit_gbs_reports_occupied_lock_without_failing_package(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            fake_gbs = fake_bin / "gbs"
+            fake_gbs.write_text("#!/bin/sh\nexit 42\n", encoding="utf-8")
+            fake_gbs.chmod(0o755)
+            for command in ("rpm", "rpm2cpio", "cpio"):
+                executable = shutil.which(command)
+                self.assertIsNotNone(executable, command)
+                (fake_bin / command).symlink_to(executable)
+            lock_path = root / "gbs.lock"
+            with lock_path.open("a+") as lock:
+                fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                env = {
+                    **os.environ,
+                    "PATH": f"{fake_bin}:{os.environ['PATH']}",
+                    "GLIBC_MEMOPT_GBS_LOCK": str(lock_path),
+                }
+                result = subprocess.run(
+                    [sys.executable, str(HERE / "check_gbs_package.py"), "--repo-root", str(REPO),
+                     "--build", "--lock-timeout", "0"],
+                    cwd=REPO, env=env, text=True, capture_output=True, check=False,
+                )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("WAITING\tgbs-build-lock", result.stdout)
+            self.assertIn("REPORT_ONLY\tgbs-build-environment", result.stdout)
+            self.assertIn("remained occupied", result.stdout)
 
     def test_stability_snapshot_remote_body_hashes_nonempty_directory(self) -> None:
         workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
@@ -373,8 +477,12 @@ class ReproduceTests(unittest.TestCase):
         manifest = json.loads((HERE / "deliverables_manifest.json").read_text())
         artifacts = {item["name"]: item for item in manifest["artifacts"]}
         self.assertEqual(manifest["schema"], "glibc-memopt-demo.deliverables.v3")
-        self.assertEqual(manifest["gbs_build"]["status"], "board_rebaseline_passed_via_preregistered_h_v")
+        self.assertEqual(manifest["gbs_build"]["status"], "held_out_validation_pending")
         self.assertEqual(manifest["board_rebaseline"]["decision"], "H-V")
+        self.assertEqual(
+            manifest["board_rebaseline"]["status"],
+            "calibration_only_pending_held_out_validation",
+        )
         self.assertEqual(len(artifacts), 4)
         for name in ("alloc_bench.armv7l", "gst_loop_decode.armv7l", "reclaim_probe.armv7l"):
             self.assertRegex(artifacts[name]["reproducible_build_sha256"], r"^[0-9a-f]{64}$")
@@ -393,7 +501,18 @@ class ReproduceTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("PASS\tgbs-spec-static", result.stdout)
-        self.assertIn("SKIPPED\tgbs-build\tgbs is not installed", result.stdout)
+        self.assertIn("SKIPPED\tgbs-build\treal GBS build is excluded", result.stdout)
+
+    def test_changes_document_commit_ids_resolve(self) -> None:
+        document = (REPO / "docs/changes_since_demo_v2.md").read_text(encoding="utf-8")
+        commits = sorted(set(re.findall(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])", document)))
+        self.assertTrue(commits)
+        for commit in commits:
+            result = subprocess.run(
+                ["git", "rev-parse", "--verify", f"{commit}^{{commit}}"], cwd=REPO,
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, f"unresolvable commit {commit}: {result.stderr}")
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
@@ -456,6 +575,8 @@ class ReproduceTests(unittest.TestCase):
         a = bands["tolerance_bands"]["s4_a_anchor_reclaim_pct"]
         self.assertEqual(a["center_pct_by_profile"], {"medium-only": 50.669791, "mixed": 52.794499})
         self.assertEqual(a["plus_minus_pp_by_profile"], {"medium-only": 4.918088, "mixed": 4.304705})
+        self.assertEqual(a["classification"], "calibration band")
+        self.assertEqual(a["independent_gbs_validation"], "pending held-out validation")
 
 
 if __name__ == "__main__":

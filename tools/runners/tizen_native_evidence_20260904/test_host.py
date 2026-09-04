@@ -10,7 +10,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 ANALYZER = HERE / "analyze_native_evidence.py"
 REMOTE = HERE / "run_native_evidence_remote.sh"
-CONTRACT = HERE / "preregistered_contract.json"
+CONTRACT = HERE / "fixed_contract.json"
 PACKAGE_HELPER = HERE / "manage_gdb_official_snapshot.sh"
 TRIM_HELPER = ROOT / "tools/reclaim_probe/trim_via_gdb.sh"
 

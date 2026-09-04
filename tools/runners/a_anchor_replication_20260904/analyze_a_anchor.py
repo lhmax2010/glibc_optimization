@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate, summarize, and adjudicate the preregistered A-anchor replication."""
+"""Validate, summarize, and adjudicate the fixed-contract A-anchor replay."""
 
 from __future__ import annotations
 
@@ -167,7 +167,7 @@ def main() -> int:
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--pull", type=Path)
     source.add_argument("--replay", type=Path, help="rebuild summaries from the public compact a_cells.tsv")
-    parser.add_argument("--contract", type=Path, default=Path(__file__).with_name("preregistered_contract.json"))
+    parser.add_argument("--contract", type=Path, default=Path(__file__).with_name("fixed_contract.json"))
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     pull, output = args.pull, args.output

@@ -84,10 +84,10 @@ DONE_MEMPS_PID
 
 `gst-launch-1.0 1.24.11` 可执行；`multifilesrc`、`filesrc`、`decodebin`、
 `avdec_mpeg4`、`fakesink`、`identity` 均由板上 `/usr/lib/gstreamer-1.0/` 插件提供。
-`app_launcher -l` 列出多个原生 UI 应用；预登记选择 `attach-panel-gallery`。能力存在只表示
+`app_launcher -l` 列出多个原生 UI 应用；固定合同选择 `attach-panel-gallery`。能力存在只表示
 命令/插件可解析，不预判其持续运行生命周期。
 
-## 2. 预登记规格
+## 2. 固定合同规格
 
 ### 2.1 不变量、身份门与健康门
 
@@ -100,7 +100,7 @@ DONE_MEMPS_PID
   可解析产物。正式格开始前把 4 核切为 `performance`，所有退出路径恢复
   `schedutil` 并复核。
 - 正式窗口前后记录 dmesg、zram `mm_stat`、`/proc/swaps`、进程 PID/启动时长和
-  stability-monitor livedump 快照。任何新增告警都逐件归档并归因；本轮不预登记豁免，
+  stability-monitor livedump 快照。任何新增告警都逐件归档并归因；本轮不登记豁免，
   可归因于注入或本轮 PID 的告警原样记为健康失败。要求零 OOM/LMK，Tizen 目标进程
   无崩溃、无重启。
 - 本轮官方仓库安装的 `gdb` 及依赖在收尾时反向卸载；随后复核包缺失、根分区空间、
@@ -154,7 +154,7 @@ arena，两者定义差异必须单列，不强行判一致。只允许陈述：
 业务指标，不由聚合 XML 推断具体 systrim/heap_trim/munmap 路径。
 
 完整机器可读冻结项见
-[`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260904/preregistered_contract.json)。
+[`fixed_contract.json`](../tools/runners/tizen_native_evidence_20260904/fixed_contract.json)。
 正式格开始前于 `2026-09-04T13:30:49,620002416+08:00` 记录该文件，SHA-256 为
 `9de3cdda433be68239add7f20da2ee4ace3fbeba8092288f2d34e8599afd1dfb`；原始登记摘要收录在
 [`execution_excerpt.txt`](../data/raw/tizen_native_evidence_20260904/execution_excerpt.txt)。
@@ -247,7 +247,7 @@ rpm -e        gdb python3 python3-base libpython3_141_0 libgmp gdbm
    不能把 rest 总量直接当回收上限。
 3. **T1 与释放相位格未闭合。** 原生命令管线只完成 `1/5`，Gallery 格为 `0/1`；
    enlightenment 两个间隔还各低于 120 s 约 0.2 s。故本轮不能声称“原生 GST 五次持续
-   注入”或“真实 UI 释放相位后回收”成立。这三项是下一次重新预登记前必须修正的缺口，
+   注入”或“真实 UI 释放相位后回收”成立。这三项是下一次按新规则提交事前合同/tag 前必须修正的缺口，
    不能用本轮数据补推。
 4. **主张边界不变。** 本报告不证明产品内存收益、不换算业务指标、不把含 ptrace 的
    1.15–1.77 s 注入时延当钩子代价，也不改变现有产品启用门。
@@ -256,7 +256,7 @@ rpm -e        gdb python3 python3-base libpython3_141_0 libgmp gdbm
 
 本轮 harness 位于
 [`tools/runners/tizen_native_evidence_20260904/`](../tools/runners/tizen_native_evidence_20260904/)；
-机器合同是 [`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260904/preregistered_contract.json)，
+机器合同是 [`fixed_contract.json`](../tools/runners/tizen_native_evidence_20260904/fixed_contract.json)，
 冻结命令见 §2。完整命令、官方 gdb 获取/卸载和本轮已知停止点见
 [`README.md`](../tools/runners/tizen_native_evidence_20260904/README.md)；Demo L2 手工入口见
 [`复现指南`](demo_reproduction_guide_20260901.md#l2-tizen-native-evidence)。
@@ -272,16 +272,21 @@ python3 tools/runners/tizen_native_evidence_20260904/analyze_native_evidence.py 
   可解析；PID + starttime 在格前后相同；`memps [heap]` 与项目 `[heap]` 逐值相同；
   majflt 增量、zram 三项增量、dmesg OOM/LMK、新增 stability 告警均为 0；最终包、目录、
   进程和 governor 清理门通过。
-- **容差/观察项：** 本轮没有为原生常驻进程预登记回收量或 gdb 注入耗时容差带；这些值
+- **容差/观察项：** 本轮固定合同没有为原生常驻进程设置回收量或 gdb 注入耗时容差带；这些值
   依赖运行时状态，只按原值报告，不作为 PASS 条件。重跑不得用 S4 的合成负载验收带
   套用 enlightenment。冻结 T1/T2 完成数和 ≥120 s 间隔未满足，应复现为公开的
   `INCOMPLETE/PROTOCOL-DEVIATION`，不能判整轮 PASS。
 
-## 6. B2 补跑：规格冻结（2026-09-05，执行前登记）
+## 6. B2 补跑：固定合同重放（实际板上执行日 2026-09-04）
 
 本节只追加、不改写 §1–§5 的原始观测和结论。机器合同为
-[`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260905/preregistered_contract.json)。
-以下规格在冻结前能力侦察通过后、任何正式格执行前写定；结果异常只报告，不改参数。
+[`fixed_contract.json`](../tools/runners/tizen_native_evidence_b2_20260904/fixed_contract.json)。
+原始纳秒时间戳确认本轮实际发生于 2026-09-04，原“2026-09-05”按终审裁决订正。
+以下规格在同一工作轮的能力侦察通过后、任何正式格执行前写定；因没有独立事前
+commit/tag 凭证，本节只称“固定合同重放”，不称预登记。结果异常只报告，不改参数。
+为保持执行身份链，归档 contract 与 remote runner 内部仍保留当时使用的
+`tizen_native_evidence_20260905` round/workdir 字面量及原哈希；订正的是 host 归档目录和
+报告日期，不把实际执行过的命令改写成新路径。
 
 ### 6.1 冻结前侦察与选择
 
@@ -335,12 +340,12 @@ starttime → 30 秒后确认仍存活且 starttime 不变 → `app_launcher -t`
 允许的主张仍限于：实测回收 KiB、M7、观测窗口内无崩溃/无重启、`memps` 与项目口径
 是否一致。gdb 时延包含 ptrace，不作钩子代价；不声称产品收益、不换算业务指标。
 
-## 7. B2 补跑结果（2026-09-05）
+## 7. B2 补跑结果（实际板上执行日 2026-09-04）
 
-派生事实总表见 [`summary.json`](../data/raw/tizen_native_evidence_20260905/summary.json)，
+派生事实总表见 [`summary.json`](../data/raw/tizen_native_evidence_b2_20260904/summary.json)，
 逐格与计时分别见
-[`cells_derived.tsv`](../data/raw/tizen_native_evidence_20260905/cells_derived.tsv) 和
-[`intervals.tsv`](../data/raw/tizen_native_evidence_20260905/intervals.tsv)。以下只按 §6
+[`cells_derived.tsv`](../data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv) 和
+[`intervals.tsv`](../data/raw/tizen_native_evidence_b2_20260904/intervals.tsv)。以下只按 §6
 冻结口径报告；不修改 §3 的旧值。
 
 ### 7.1 T1′：5/5 官方 GST 格完成
@@ -367,7 +372,7 @@ ptrace 的注入范围为 `1016.830208–1062.385152 ms`、中位 `1041.132032 m
 
 冻结应用的五次活动均满足：启动返回 0、30 秒后同 PID/starttime 存活、终止返回 0、
 2 秒后原 PID 消失；逐次记录见
-[`app_cycles.tsv`](../data/raw/tizen_native_evidence_20260905/app_cycles.tsv)。之后
+[`app_cycles.tsv`](../data/raw/tizen_native_evidence_b2_20260904/app_cycles.tsv)。之后
 enlightenment 仍为 PID `505`、`starttime_ticks=1468`，M7 与回收结果为：
 
 | 格 | M7 arena / fast / rest / unsorted (B) | 项目 heap PD (KiB) | `memps [heap]` (KiB) | 回收 (KiB) | gdb/ptrace 注入 (ms) | min/majflt Δ |
@@ -375,8 +380,8 @@ enlightenment 仍为 PID `505`、`starttime_ticks=1468`，M7 与回收结果为�
 | E4′ | 8 / 1864 / 6019572 / 11002 | 3324 → 3288 | 3324 → 3288 | **36** | 1707.005696 | 0 / 0 |
 
 M7 原文与派生值见
-[`malloc_info_E4_PRIME.xml`](../data/raw/tizen_native_evidence_20260905/malloc_info_E4_PRIME.xml)
-和 [`m7.tsv`](../data/raw/tizen_native_evidence_20260905/m7.tsv)。`malloc_trim(0)` 返回 1；
+[`malloc_info_E4_PRIME.xml`](../data/raw/tizen_native_evidence_b2_20260904/malloc_info_E4_PRIME.xml)
+和 [`m7.tsv`](../data/raw/tizen_native_evidence_b2_20260904/m7.tsv)。`malloc_trim(0)` 返回 1；
 `memps` 与项目口径的 `36 KiB` 下降一致。观测窗口内 enlightenment 的 PID/starttime
 没有变化，未见崩溃或重启。这里只证明“真实 UI 活动之后，本次注入看到这些量”。
 
@@ -384,7 +389,7 @@ M7 原文与派生值见
 
 同一个 E4′ XML 的 `<size>` 整页几何区间为 `2252800–8167424 B`，即
 `2200–7976 KiB`，而实测仅 `36 KiB`；区间两端误差为 `+2164 / +7940 KiB`。复算见
-[`estimator_E4_PRIME.json`](../data/raw/tizen_native_evidence_20260905/estimator_E4_PRIME.json)。
+[`estimator_E4_PRIME.json`](../data/raw/tizen_native_evidence_b2_20260904/estimator_E4_PRIME.json)。
 它与 host 验证集 `15/15` 个严格配对观测均落在区间外的裁决一致：直方图区间可作诊断，
 不能当量化启用门，M7 rest 也不能直接换算为回收量。
 
@@ -402,13 +407,13 @@ M7 原文与派生值见
 | gdb 六包/目录/进程 | 6/6 absent；轮次目录与父目录 absent；进程 0 | PASS |
 
 详细收尾记录见
-[`run_record.txt`](../data/raw/tizen_native_evidence_20260905/run_record.txt)。gdb 卸载事务本身
+[`run_record.txt`](../data/raw/tizen_native_evidence_b2_20260904/run_record.txt)。gdb 卸载事务本身
 返回 0，随后逐包复核为 6/6 absent；原卸载辅助脚本因“全部不存在”循环最后一个预期非零退出码
 误报 `FAIL_GDB_REMOVE_VERIFY`，独立复核后确认是 host 判定缺陷，并已在本轮 harness
 中补显式成功返回。安装前预算读取另有一处 `$4` 转义缺陷，失败发生在任何推送/安装前，
 同样已修复并纳入 host 测试；两条原始失败记录保留在本地完整原始件。
 
-## 8. B2 结论、边界与复现（2026-09-05）
+## 8. B2 结论、边界与复现（实际板上执行日 2026-09-04）
 
 1. **T1 数量缺口闭合。** 重新冻结的官方工具构造完成 `5/5` 注入，持续解码、自然退出、
    buffer 增长与双口径回收均有证据；不再用上一轮 `1/5` 外推稳定性。
@@ -422,18 +427,23 @@ M7 原文与派生值见
    hook 代价；“本次未崩溃/未重启”不外推长期可靠性。
 
 本次 harness 位于
-[`tools/runners/tizen_native_evidence_20260905/`](../tools/runners/tizen_native_evidence_20260905/)，
-冻结参数以 [`preregistered_contract.json`](../tools/runners/tizen_native_evidence_20260905/preregistered_contract.json)
+[`tools/runners/tizen_native_evidence_b2_20260904/`](../tools/runners/tizen_native_evidence_b2_20260904/)，
+冻结参数以 [`fixed_contract.json`](../tools/runners/tizen_native_evidence_b2_20260904/fixed_contract.json)
 为唯一事实源。host 复算：
 
 ```sh
-python3 tools/runners/tizen_native_evidence_20260905/test_host.py
+python3 tools/runners/tizen_native_evidence_b2_20260904/test_host.py
 python3 tools/analysis/test_trimmable_estimator.py
-python3 tools/runners/tizen_native_evidence_20260905/analyze_b2.py \
+python3 tools/runners/tizen_native_evidence_b2_20260904/analyze_b2.py \
   --pull <local-complete-board-pull> \
   --idle-log <local-idle-60s-raw-log> \
   --output /tmp/tizen-native-b2
 ```
+
+公开仓库只包含上述紧凑派生件与单个 E4′ XML，不能仅凭公开件重新运行 `analyze_b2.py`
+生成全部派生物；它仍需要完整 board pull 和 60 s idle 原始日志。完整原始件本地留存，
+可按请求提供。这是当前 B2 公开重放覆盖缺口，不把 host 测试的紧凑件核验表述成完整
+原始重放。
 
 - **确定性/有效性项：** 精确身份/环境/资产与 contract SHA；T1′/应用/E4′ 完成数；
   JSON/TSV/XML 可解析；PID/starttime 稳定；`memps` 与项目 heap 前后逐值一致；buffer

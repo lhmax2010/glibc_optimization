@@ -18,8 +18,8 @@ classifying any new stability-monitor artifact.
 | governor (`cpu0`–`cpu3`) |  |  |  | n/a |  |
 | work directory and test processes |  |  |  |  |  |
 
-An attributable alert that is not preregistered is `FAIL`. A foreign or
-unattributed alert is `REPORT_ONLY` and must not be altered. A preregistered alert
+An attributable alert that is not registered in the fixed contract is `FAIL`. A foreign or
+unattributed alert is `REPORT_ONLY` and must not be altered. A registered alert
 uses a **known-alert waiver**: it is `EXPECTED` only when its reason, workload
 window, binary and count all match, and it has been recorded, archived, removed by
 exact path, and rechecked. If it is not observed, report

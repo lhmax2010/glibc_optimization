@@ -18,7 +18,7 @@ REPO = HERE.parents[2]
 
 class ContractTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.contract = json.loads((HERE / "preregistered_contract.json").read_text(encoding="utf-8"))
+        self.contract = json.loads((HERE / "fixed_contract.json").read_text(encoding="utf-8"))
 
     def _decision(self, values: dict[tuple[str, str], list[float]]) -> str:
         return str(adjudicate(values, self.contract)["verdict"])
@@ -111,7 +111,7 @@ class ContractTests(unittest.TestCase):
                     "python3", str(REPO / "tools/reproduce/stability_monitor.py"), "classify",
                     "--before", str(before), "--after", str(after), "--archive-dir", str(archives),
                     "--pull", str(root / "pull"), "--workload", "a-anchor",
-                    "--bands", str(HERE / "preregistered_contract.json"),
+                    "--bands", str(HERE / "fixed_contract.json"),
                     "--output", str(output), "--clean-list", str(clean),
                 ],
                 text=True, capture_output=True, check=False,

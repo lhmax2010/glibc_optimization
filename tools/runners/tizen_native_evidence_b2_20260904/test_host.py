@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 RUNNER = Path(__file__).resolve().parent
-RAW = ROOT / "data/raw/tizen_native_evidence_20260905"
+RAW = ROOT / "data/raw/tizen_native_evidence_b2_20260904"
 sys.path.insert(0, str(ROOT / "tools/analysis"))
 from trimmable_estimator import estimate_xml  # noqa: E402
 
@@ -27,7 +27,7 @@ class NativeEvidenceB2HostTest(unittest.TestCase):
     def test_scripts_and_contract(self) -> None:
         for script in RUNNER.glob("*.sh"):
             subprocess.run(["sh", "-n", str(script)], check=True)
-        contract = json.loads((RUNNER / "preregistered_contract.json").read_text())
+        contract = json.loads((RUNNER / "fixed_contract.json").read_text())
         self.assertEqual(contract["t1_prime"]["cells"], 5)
         self.assertEqual(contract["t1_prime"]["minimum_injection_start_interval_seconds"], 120.0)
         self.assertEqual(contract["e4_prime"]["app_id"], "setting-myaccount-efl")
