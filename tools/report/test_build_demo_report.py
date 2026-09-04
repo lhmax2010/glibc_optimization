@@ -74,6 +74,13 @@ class DemoReportTests(unittest.TestCase):
                 "3324 → 3288 KiB",
                 "2200–7976 KiB",
                 "15/15",
+                "产品启用必须连续通过四道硬门",
+                "同目标/同相位实测收益 ≥ 预登记阈值",
+                "守护进程碎片化驻留的实测收益很小",
+                "估算器不可用作启用门",
+                "L2 首选 GBS 构建",
+                "S4 A v4",
+                "Tizen 原生 B/B2",
             ):
                 self.assertIn(expected, document)
 
@@ -114,6 +121,10 @@ class DemoReportTests(unittest.TestCase):
             document = documents[name]
             self.assertIn("<TEST_IMAGE_B>", document, name)
             self.assertIn("glibc-2.40-2.8", document, name)
+        for name in ("narrative", "package", "demo-en", "demo-zh"):
+            document = documents[name]
+            self.assertTrue("四道硬门" in document or "four hard gates" in document, name)
+            self.assertTrue("预登记阈值" in document or "preregistered threshold" in document, name)
         for name in ("package", "guide", "demo-en", "demo-zh"):
             document = documents[name]
             self.assertIn("0.555556 ms", document, name)

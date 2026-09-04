@@ -9,8 +9,9 @@
 
 This frozen Demo delivers a gated Tizen glibc (ptmalloc) trim method: exclude
 visible automatic reclaim as an anti-signal, confirm allocator-retained free space
-with M7, then call `malloc_trim(0)` only at a known release phase while accepting
-reclaim, refault, latency, and health evidence together. On the frozen RPI4/Tizen
+with M7, require a same-target, same-phase trim probe to meet a preregistered reclaim
+threshold, then call `malloc_trim(0)` only at a known release phase while accepting
+refault, latency, and health evidence together. On the frozen RPI4/Tizen
 glibc-2.40-1.6.armv7l matrix, anchors were about 50%, gated trim reclaimed about
 80%–85% of released payload; per-profile median calls were mixed 1.233269 ms and
 medium-only 1.218361 ms, and the gst p99
@@ -110,6 +111,16 @@ after record/archive/exact cleanup/recheck; no observation is
 `REGISTERED/NOT-EVALUATED`. The trigger and window are reproducible, but root cause
 is not proven.
 
+## Four product enablement gates
+
+Product enablement must pass four hard gates in order: **exclude the automatic-reclaim
+anti-signal → confirm M7 retention → show that a same-target, same-phase trim probe
+meets its preregistered reclaim threshold → pass the cost budget**. Register the
+target/phase threshold before seeing results; no measurement, a below-threshold result,
+or unstable repeats keeps the feature off. M7, `rest`/`unsorted`, and histogram estimates
+cannot replace gate three. See the dated finalization and preserved older wording in the
+[landing recommendation](docs/product_landing_recommendation_20260901.md#1-启用门清单).
+
 ## Boundaries and glossary
 
 - Synthetic evidence lacks product-candidate M7 live/bin separation, product
@@ -124,10 +135,15 @@ is not proven.
   paired validation cells and estimated `2200–7976 KiB` for the `36 KiB` E4′
   reclaim. It is diagnostic only, not a quantitative enablement threshold; see
   the [estimator report](docs/trimmable_estimator_20260905.md).
+- The enlightenment daemon had about `5.84 MiB rest`, but its historical cells reclaimed
+  only `272/4/4 KiB`, and E4′ after real UI activity reclaimed only `36 KiB`. Fragmented
+  retention had little measured benefit in these cells; this does not extrapolate to
+  other daemons or phases.
 - “p99 cost not detected” does not mean zero cost. If another board reports visible,
   preserve all repeats and report its margin; direction remains `REPORT_ONLY`.
 - Product enablement remains closed pending anti-signal exclusion, M7 retention
-  confirmation, and a cost budget. See the
+  confirmation, a same-target measured benefit above its preregistered threshold, and
+  a cost budget: four hard gates. See the
   [landing recommendation](docs/product_landing_recommendation_20260901.md#1-启用门清单).
 - **Retained floor:** Private_Dirty that stays elevated after a release observation;
   smaps alone cannot prove whether it is live or allocator-held.

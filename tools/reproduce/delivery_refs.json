@@ -1,8 +1,8 @@
 {
   "schema": "glibc-memopt-demo.delivery-ref.v2",
   "branch_refs": {
-    "demo": {"mode": "required", "ref": "demo-v2"},
-    "main": {"mode": "report_only", "ref": "demo-v2"}
+    "demo": {"mode": "required", "ref": "demo-v3"},
+    "main": {"mode": "report_only", "ref": "demo-v3"}
   },
-  "default": {"mode": "required", "ref": "demo-v2"}
+  "default": {"mode": "required", "ref": "demo-v3"}
 }

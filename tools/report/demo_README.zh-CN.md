@@ -7,8 +7,9 @@
 ## 这是什么
 
 这是 Tizen glibc（ptmalloc）门控 trim 的冻结 Demo：把可见自动归还当作反信号，先用
-M7 确认 allocator 空闲驻留，再只在明确释放相位调用 `malloc_trim(0)`，并把回收、
-再激活、时延和健康证据作为同一合同验收。在冻结的 RPI4/Tizen
+M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针实测收益达到预登记阈值，
+最后只在明确释放相位调用 `malloc_trim(0)`，并把再激活、时延和健康证据作为同一合同
+验收。在冻结的 RPI4/Tizen
 `glibc-2.40-1.6.armv7l` 矩阵上，锚点约 50%，门控 trim 回收已释放 payload 的约
 80%–85%，调用耗时分档中位为 mixed `1.233269 ms` / medium-only `1.218361 ms`；gst p99
 方向按预登记规则未检出。
@@ -93,6 +94,14 @@ stability-monitor v2 known-alert waiver 覆盖 S4 A 至多两个
 `EXPECTED`；未观测记 `REGISTERED/NOT-EVALUATED`。触发理由与窗口可复现，但未做
 根因证明。
 
+## 产品启用四门
+
+产品侧必须依次通过四道硬门：**反信号排除 → M7 驻留确认 → 同目标、同相位的 trim
+探针实测收益达到预登记阈值 → 代价预算**。阈值必须在看结果前按目标/相位登记；未实测、
+低于阈值或重复不稳定均不启用。M7、`rest`/`unsorted` 和直方图估计不能代替第三门。
+带日期定稿和保留的旧三门文字见
+[`产品落点建议`](docs/product_landing_recommendation_20260901.md#1-启用门清单)。
+
 ## 边界与术语
 
 - 合成代理缺产品候选 M7 live/bin 分解、产品业务时延及其他线程仍分配时的全 arena
@@ -104,9 +113,13 @@ stability-monitor v2 known-alert waiver 覆盖 S4 A 至多两个
 - M7 驻留量不等于可回收量：`<size>` 估算器在 `15/15` 个严格配对格上未覆盖实测，
   E4′ 对 `36 KiB` 实测给出 `2200–7976 KiB`。它只作诊断，不是量化启用阈值；见
   [`估算器报告`](docs/trimmable_estimator_20260905.md)。
+- enlightenment 守护进程虽有约 `5.84 MiB rest`，历史三格只回收 `272/4/4 KiB`，
+  真实 UI 活动后的 E4′也只回收 `36 KiB`；这些格上的碎片化驻留收益很小，不外推到
+  其他守护进程或相位。
 - “p99 未检出”不等于零代价；若另一块板判可见，保留三重复并报告越带 margin，方向
   仍是 `REPORT_ONLY`。
-- 产品启用仍须通过反信号排除、M7 驻留确认、代价预算三道硬门，见
+- 产品启用仍须通过反信号排除、M7 驻留确认、同目标实测收益达到预登记阈值、代价预算
+  四道硬门，见
   [落点建议](docs/product_landing_recommendation_20260901.md#1-启用门清单)。
 - **retained floor**：释放观察后仍抬高的 Private_Dirty；仅靠 smaps 不能判断 live/bin。
 - **nearest-rank**：排序 `n` 个样本后取 `ceil(p×n)`；gst 主样本 50 个时 p99 即最大值。

@@ -21,18 +21,18 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
 <body>
 <header>
   <div class="eyebrow">Tizen · glibc 2.40 · ptmalloc</div>
-  <h1>只在“确有驻留”时 trim</h1>
-  <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再在明确释放相位执行 <code>malloc_trim(0)</code>，并把回收、再激活 faults、业务 p99 和健康门作为同一份合同验收。</p>
+  <h1>只在四门全过时 trim</h1>
+  <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针实测收益达到预登记阈值，最后把再激活 faults、业务 p99 和健康门作为同一份代价合同验收。</p>
 </header>
-<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#native">真实平台进程</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
+<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#native">真实平台进程</a><a href="#decision-gate">决策门</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
 <main>
 <section id="summary">
   <span class="pill">一页摘要</span><h2>方案、交付合同与头条结果</h2>
-  <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到 retained-bin 表型。</p>
+  <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 同目标实测收益达到预登记阈值 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到经过实测的 retained-bin 表型。</p>
   <div class="grid">
-    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 身份门、哈希、矩阵、拉回、恢复现场。</small></div>
-    <div class="card contract"><strong>同板同镜像对照</strong><small>S4 锚点 + trim/none；gst 两臂各三重复。</small></div>
-    <div class="card contract"><strong>结果说明价值</strong><small>收益、faults、业务 p99、健康门和边界同批呈现。</small></div>
+    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 首选 GBS 构建，再执行身份门、哈希、矩阵、拉回与恢复。</small></div>
+    <div class="card contract"><strong>同板同镜像对照</strong><small>S4 A v4 + trim/none；gst 两臂各三重复；Tizen 原生 B/B2 交叉见证。</small></div>
+    <div class="card contract"><strong>结果说明价值</strong><small>四门分开驻留与收益；S4/gst 量化代价，B/B2 暴露驻留收益微小的边界。</small></div>
     <div class="card contract"><strong>同条件复现同数据</strong><small>payload 确定性字节逐值一致；容差项落带；validity gates 全部通过。</small></div>
   </div>
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="demo_reproduction_guide_20260901.md#l2-acceptance">复现指南验收带</a></p>
@@ -79,7 +79,7 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
 
 <section id="s4">
   <span class="pill">效果</span><h2>S4：M7 阳性后，valley trim 回收驻留页</h2>
-  <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → valley trim → faults / 时延 / 健康门</div>
+  <div class="flow">反信号排除 → M7 rest/unsorted 驻留确认 → 实测 trim 探针收益达到预登记阈值 → faults / 时延 / 健康门</div>
   <div class="grid">
     <div class="card wide"><h3>瞬时释放共同锚点（n=8/profile）</h3>
 <svg class="chart" viewBox="0 0 820 300" role="img" aria-label="S4 A 组 frozen/GBS H-V 共同锚点">
@@ -143,6 +143,19 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
   <p class="source-links"><a href="tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05">B2 完整报告</a> · <a href="../data/raw/tizen_native_evidence_20260905/cells_derived.tsv">B2 格级证据</a> · <a href="../data/raw/tizen_native_evidence_20260905/summary.json">B2 完成与健康</a> · <a href="trimmable_estimator_20260905.md">估算器裁决</a> · <a href="demo_reproduction_guide_20260901.md#l1-tizen-native-b2">L1 复算</a> · <a href="demo_reproduction_guide_20260901.md#l2-tizen-native-evidence-b2">L2 B2 复现</a></p>
 </section>
 
+<section id="decision-gate">
+  <span class="pill">决策门</span><h2>产品启用必须连续通过四道硬门</h2>
+  <div class="flow">反信号排除 → M7 驻留确认 → 同目标/同相位实测收益 ≥ 预登记阈值 → 代价预算</div>
+  <div class="grid">
+    <div class="card"><strong>① 反信号</strong><small>PD 已自动实跌的分量不重复 trim。</small></div>
+    <div class="card"><strong>② M7 驻留</strong><small>只定性确认 allocator 空闲驻留；smaps floor 不足以过门。</small></div>
+    <div class="card"><strong>③ 实测收益</strong><small>同目标、同相位探针/A-B 必须达到看结果前登记的阈值；估算不替代实测。</small></div>
+    <div class="card"><strong>④ 代价预算</strong><small>调用、refault、业务时延/能耗与并发锁停顿任一未测或超预算即关闭。</small></div>
+  </div>
+  <p>这道新增的实测门由反例直接约束：enlightenment 历史 E1 回收 <strong>272 KiB</strong>，真实 UI 活动后的 E4′回收 <strong>36 KiB</strong>，Tizen 官方 GST 五格为 <strong>8–20 KiB</strong>；M7/直方图不能预测这些量。</p>
+  <p class="source-links"><a href="product_landing_recommendation_20260901.md#1-启用门清单">四门定稿与旧口径追注</a> · <a href="tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05">B/B2 证据</a> · <a href="trimmable_estimator_20260905.md#3-失败模式与裁决">估算器裁决</a></p>
+</section>
+
 <section id="reproduce">
   <span class="pill">复现入口</span><h2>三条路，同一事实源</h2>
   <div class="grid">
@@ -162,10 +175,12 @@ code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em} 
     <li><strong>同 seed 不钉 arena 指派</strong>：单重复实测出现 <a href="../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv">68.169197%</a>（约 1 MiB 页台阶）；回收字节值不属于确定性项，S4 B 分别锚定发布值 81.661264% / 84.446566% 并按每档三重复中位 ±5 pp 验收。n=3 的中位至多容忍一个离群。<a href="../tools/reproduce/acceptance_bands.json">机器规则</a></li>
     <li><strong>known-alert waiver 不是无害性证明</strong>：S4 A 最多 2 个匹配 <code>alloc_bench cpu.relative</code> 的 livedump；触发理由与窗口可复现，但未做根因证明。观测到且完成记录、归档、精确清理和复核才记 <code>EXPECTED</code>，未观测只记 <code>REGISTERED/NOT-EVALUATED</code>；其他可归因告警仍失败。<a href="../tools/reproduce/health_gate_template.md">健康门模板</a></li>
     <li>Tizen 原生 B2 已补齐官方 GST 5/5 与 UI 活动后 E4′ 观测，但旧 E1–E3 两个间隔仍短约 0.2 s；新格只证明本次量，不外推产品收益。M7/直方图驻留量也不能直接换算可回收量。</li>
+    <li><strong>守护进程碎片化驻留的实测收益很小</strong>：enlightenment 约 5.84 MiB rest 的历史三格只回收 272/4/4 KiB，真实 UI 活动后的 E4′只回收 36 KiB；只约束这些格，不外推其他守护进程。</li>
+    <li><strong>估算器不可用作启用门</strong>：<code>&lt;size&gt;</code> 整页区间在严格配对验证中 15/15 未覆盖实测；它只能诊断，不能替代同目标 trim 探针或设置产品阈值。<a href="trimmable_estimator_20260905.md">估算器报告</a></li>
   </ul>
-  <p>产品侧启用仍须通过反信号排除、M7 驻留确认和代价预算三道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
+  <p>产品侧启用仍须通过反信号排除、M7 驻留确认、同目标实测收益达到预登记阈值和代价预算四道硬门：<a href="product_landing_recommendation_20260901.md#1-启用门清单">落点建议</a>。</p>
 </section>
 </main>
-<footer>构建来源 commit：<code>dff8ae677d38f51180fbb43c513319d464f74079</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>
+<footer>构建来源 commit：<code>a35413df78f22d68d9eaac2ea59e807005c7f2c2</code> · 本文件为派生产物，可由 <code>python3 tools/report/build_demo_report.py</code> 重建。全部图表使用仓库内 TSV/JSON 生成，无 CDN、无外部图片。</footer>
 </body>
 </html>

@@ -35,7 +35,7 @@ class ReproduceTests(unittest.TestCase):
             if branch == "demo":
                 subprocess.run(["git", "branch", "-m", "demo"], cwd=clone, check=True)
             if include_delivery_tag:
-                subprocess.run(["git", "tag", "demo-v2"], cwd=clone, check=True)
+                subprocess.run(["git", "tag", "demo-v3"], cwd=clone, check=True)
 
             command_dir = root / "bin"
             command_dir.mkdir()
@@ -327,15 +327,15 @@ class ReproduceTests(unittest.TestCase):
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v2"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v2"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v3"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v3"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn(
             "REPORT_ONLY\tdelivery-identity\tthis is not the delivery snapshot; "
-            "checkout demo-v2 (reference unavailable in this clone)",
+            "checkout demo-v3 (reference unavailable in this clone)",
             result.stdout,
         )
         self.assertIn("OVERALL\tPASS", result.stdout)

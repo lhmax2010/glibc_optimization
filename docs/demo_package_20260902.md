@@ -16,9 +16,9 @@
 
 | 交付要求 | 可审计实现 | 验收入口 |
 |---|---|---|
-| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 从身份门、资产哈希到板端清理给出可照抄命令 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南快速通道`](demo_reproduction_guide_20260901.md#workflow-fast-path)、[`workflow verify`](../tools/reproduce/README.md) |
-| 同板同镜像多组对照 | S4 A 在同一 RPI4/Tizen 镜像上含 frozen/GBS 两路径 × 两档 × 三重复，B 含 `trim/none` 对照；gst 含两臂各三重复 | [`A2 报告`](a_anchor_replication_20260904.md)、[`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
-| 结果说明价值 | 反信号先排除无需重复回收的对象，M7 阳性后才在释放相位 trim；效果、faults、业务 p99 与边界同时报告 | [`HTML 自动归还`](demo_report.html#finding-one)、[`HTML 门控效果`](demo_report.html#s4)、[`HTML 边界`](demo_report.html#boundaries) |
+| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 首选 GBS 构建三项 ELF，再由 workflow 从身份门、资产哈希走到板端清理 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南 GBS 首选路径`](demo_reproduction_guide_20260901.md#l2-gbs-build)、[`指南快速通道`](demo_reproduction_guide_20260901.md#workflow-fast-path)、[`workflow verify`](../tools/reproduce/README.md) |
+| 同板同镜像多组对照 | S4 A 在同一 RPI4/Tizen 镜像上含 frozen/GBS 两路径 × 两档 × 三重复并形成 v4 共同带，B 含 `trim/none` 对照；gst 含两臂各三重复；Tizen 原生 B/B2 以官方工具、守护进程和 `memps` 交叉见证实测回收 | [`A2/v4 报告`](a_anchor_replication_20260904.md)、[`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`HTML 原生进程`](demo_report.html#native)、[`workflow board`](demo_reproduction_guide_20260901.md#l2-run) |
+| 结果说明价值 | 四道硬门把自动归还、驻留存在、实测收益和代价分开；S4/gst 给出机制与代价，原生 B/B2 证明 M7 驻留量不等于可回收收益 | [`HTML 自动归还`](demo_report.html#finding-one)、[`HTML 门控效果`](demo_report.html#s4)、[`HTML 原生进程`](demo_report.html#native)、[`HTML 四门`](demo_report.html#decision-gate)、[`HTML 边界`](demo_report.html#boundaries) |
 | 同条件复现同数据 | released payload 是唯一确定性数字并逐字节核对；容差项落带且 page alignment、majflt、zram、OOM/LMK validity gates 通过。S4 B 按分别锚定发布值的每档三重复中位 `±5 pp`；p99 方向只报告。彩排 rep2 的 `68.169197%` 说明同 seed 不钉 arena 指派 | [`HTML 边界`](demo_report.html#boundaries)、[`rep2 紧凑证据`](../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv)、[`L2 验收带`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`机器配置`](../tools/reproduce/acceptance_bands.json) |
 
 离线 HTML、手工指南与 workflow 是同一合同的三个入口：HTML 用于演示，指南是流程
@@ -39,7 +39,7 @@
    分类和候选登记，强调 floor 只是待 M7 验证的 surface。
 4. **展示门控链已有的测试板证据。** 用
    [`S4 门控链`](demo_narrative_20260901.md#4-门控链与测试板实证)说明“反信号排除 → M7
-   确认 → valley trim → faults/健康门”。
+   确认 → 实测收益达到预登记阈值 → 代价/健康门”。
 5. **补上第 2 周真实多线程目标。** 展示
    [`GStreamer 业务代价报告 §6`](gst_trim_cost_20260901.md#6-判断)：按预登记 p99 规则，本批
    方向未越过基线重复离散并记 `REPORT_ONLY`；同时明确 trim 位于 NULL release 后，没有测到并发分配线程
@@ -47,7 +47,7 @@
 6. **以产品决策门收尾。** 用
    [`何时 trim`](demo_narrative_20260901.md#6-决策门何时-trim何时不-trim)和
    [`产品 M7 推荐顺序`](product_m7_feasibility_20260902.md#7-路径对照与推荐排序)说明：
-   自动下降、M7 阴性、ownership 不明或代价未过门时都不启用。
+   自动下降、M7 阴性、ownership 不明、实测收益未达预登记阈值或代价未过门时都不启用。
 
 ## 2. 现场可跑的 L1 复算
 
@@ -215,9 +215,10 @@ pipeline NULL release 后执行，不能量化其他线程仍在分配时的直�
 
 正式主线是让目标 owner 提供受控签名构建，在真实释放相位低频导出 M7；测试板代理可
 并行校准 harness；debugger attach 只在产品安全明确授权时做一次性筛选。三条路径的
-前置、成本、证据强度和三门覆盖见
-[`产品 M7 可行性评估`](product_m7_feasibility_20260902.md)。取得产品 M7 阳性之前，候选
-floor 不换算收益，也不进入 trim A/B。
+前置、成本、证据强度和当时三门覆盖见
+[`产品 M7 可行性评估`](product_m7_feasibility_20260902.md)；现行四门另要求同目标、同相位
+trim 探针实测收益达到预登记阈值。取得产品 M7 阳性之前，候选 floor 不换算收益，也不
+进入 trim A/B。
 
 ## 5. 已知边界：一页说明
 
@@ -229,12 +230,19 @@ floor 不换算收益，也不进入 trim A/B。
    全 arena 锁阻塞的直接 stall、帧时延或能耗
    ([gst 未关闭项](gst_trim_cost_20260901.md#d-是否填上并发线程代价未知))。
 3. **跨板外推缺口。** 测试板与产品板的镜像、内存环境和工作负载不同；测试板百分比只
-   支持机制与量级，产品收益必须按同一三门合同重建
+   支持机制与量级，产品收益必须按现行四门合同重建
    ([Demo 原边界](demo_narrative_20260901.md#7-边界与未决))。
 4. **gst NULL 后触发限制。** PLAYING 阶段观察到多线程 pipeline，但 trim 在 NULL release
    完成后调用；当前证据说明 release-point 调用和下一轮后效，没有证明业务线程仍执行时
    的锁竞争安全性
    ([报告边界](gst_trim_cost_20260901.md#b-与-s4-单线程约-12-ms-的关系))。
+5. **守护进程碎片化驻留收益微小。** enlightenment 虽有约 `5.84 MiB rest`，历史三格
+   仅回收 `272/4/4 KiB`；真实 UI 活动后的 E4′ 也只回收 `36 KiB`。这些格证明必须实测，
+   不证明其他守护进程或相位同样微小
+   ([原生 B/B2](tizen_native_evidence_20260904.md#7-b2-补跑结果2026-09-05))。
+6. **估算器不可作启用门。** `<size>` 几何整页估算严格配对 `15/15` 未覆盖实测，只能
+   离线诊断，不能替代同目标 trim 探针或设置产品阈值
+   ([估算器裁决](trimmable_estimator_20260905.md#3-失败模式与裁决))。
 
 演示结论应停在“门控机制已在测试板闭合，产品候选与直接并发锁停顿仍需证据”，不得
 升级为产品收益承诺。
