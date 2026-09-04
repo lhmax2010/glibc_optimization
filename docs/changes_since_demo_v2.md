@@ -7,6 +7,7 @@
 - 对照起点：annotated tag `demo-v2` peel 后提交
   `959b4fb1f18327eaeb07f6b34d9055e993b6a2cd`
 - 收口源提交：`09075df049c700e9d577c265403e25beabd5023e`
+- 交付账务截至：`20f576005b42cbe71ad13a8c8804d31b0cd9da60`
 - 范围：三方第三轮复审使用的分类索引；不产生新测量数字，不替代各正式报告
 - 复核命令：`git log --reverse --oneline 959b4fb..09075df`
 
@@ -64,10 +65,12 @@ main 提交序列列出变化，并把每个提交映射到下述发现项。编
 | CLOSE-1 | `09075df049c700e9d577c265403e25beabd5023e` | 产品启用合同由旧三门定稿为四门，新增“同目标、同相位 trim 探针实测收益达到预登记阈值”，旧文字保留带日期追注 | [`落点建议 §1`](product_landing_recommendation_20260901.md#1-启用门清单) |
 | CLOSE-2 | `09075df049c700e9d577c265403e25beabd5023e` | Demo 合同纳入 GBS 首选 L2、A 锚点 v4 与 Tizen 原生 B/B2；HTML 新增四门章节 | [`Demo 合同`](demo_package_20260902.md#delivery-contracts)、[`HTML 决策门`](demo_report.html#decision-gate) |
 | CLOSE-3 | `09075df049c700e9d577c265403e25beabd5023e` | HTML 与双语模板边界新增守护进程碎片化驻留收益微小、估算器不可用两条；delivery ref 预置为 `demo-v3` | [`HTML 边界`](demo_report.html#boundaries)、[`中文模板`](../tools/report/demo_README.zh-CN.md)、[`English template`](../tools/report/demo_README.md) |
+| CLOSE-META | `accd86b38516939fe9b50111dca898fd1fadc69c` | 新增本变更索引并把 demo-v3 收口写入时间线 | [`INDEX`](INDEX.md) |
+| CLOSE-HTML | `20f576005b42cbe71ad13a8c8804d31b0cd9da60` | 以包含全部 HTML 输入的 `09075df` 为父源提交，单独冻结 source marker 与逐字节派生 HTML | [`source marker`](../tools/report/source_commit.txt)、[`HTML`](demo_report.html) |
 
 ## 8. 提交覆盖核对
 
-下列 11 个 main 提交构成 `demo-v2..09075df` 的完整非合并提交清单，均已在上表出现：
+下列 13 个 main 提交构成 `demo-v2..20f5760` 的完整非合并提交清单，均已在上表出现：
 
 ```text
 20ab8c8 fix(review): close round-2 A1-A10 and add GBS package
@@ -81,7 +84,13 @@ f054943 docs(provenance): audit Tizen repos for demo tools
 dff8ae6 Add Tizen native trim cross-witness evidence
 a35413d evidence: close native B2 gaps and validate trim estimator
 09075df docs(demo): finalize four-gate delivery contract
+accd86b docs(demo): index changes since demo-v2
+20f5760 build(report): freeze demo-v3 source provenance
 ```
+
+本文件的最终发布提交不自写自身 SHA；它只完善上述已知提交的索引，不承载新的技术或
+测量变更。最终边界以 `demo-v3^{}` 和 `git log --reverse --no-merges
+959b4fb..demo-v3^{}` 复核，避免循环自引用。
 
 第三轮复审应以 `demo-v3^{}` 的 peel 后提交为最终快照身份，并分别核验：host verify
 required 模式、双语 README/INDEX 链接、HTML source-marker byte-cmp 和脱敏扫描。各实验
