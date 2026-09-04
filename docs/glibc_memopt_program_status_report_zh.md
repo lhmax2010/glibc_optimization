@@ -17,12 +17,17 @@
 
 > **2026-09-04 A2/GBS 终审订正：** 12 格 frozen/GBS 固定合同重放命中 H-V（四组极差均 `>1.5 pp`，两个 profile 分布均交叠），现行 A 校准带仍为 mixed `52.794499% ±4.304705 pp`、medium-only `50.669791% ±4.918088 pp`（每档合并 `n=8`）。由于 GBS 观测参与建带，v4 内重放不构成独立通过；撤回 GBS 转正结论，冻结件恢复为默认，GBS 等待 held-out 验证。见 [`a_anchor_replication_20260904.md`](a_anchor_replication_20260904.md)。
 
+> **2026-09-04 GBS held-out 更新：** 事前提交/tag 固定且不参与建带的 GBS-only 四格
+> 以 4/4 落入 v4 校准带，健康与现场恢复门全过；据合同独立闭合 GBS 重基线并恢复
+> HQ 默认 L2 路径，冻结件为备选。v4 数值与“校准带”定性不变。见
+> [`gbs_heldout_validation_20260904.md`](gbs_heldout_validation_20260904.md)。
+
 - Demo 决策叙事入口：[`demo_narrative_20260901.md`](demo_narrative_20260901.md)（逐数字复现入口由文内链接到 HQ 指南）。
 - 2026-09-03 三方评审修复闭环：[`review_fix_20260903.md`](review_fix_20260903.md)（acceptance v3、交付资产、对客一致性与 demo-v2 冻结记录）。
 - 产品侧落点与三条件硬门：[`product_landing_recommendation_20260901.md`](product_landing_recommendation_20260901.md)。
 - 产品 M7 路径评估与演示日入口：[`product_m7_feasibility_20260902.md`](product_m7_feasibility_20260902.md)、[`demo_package_20260902.md`](demo_package_20260902.md)。
 - HQ 最终交付入口：[`demo_report.html`](demo_report.html)（离线图文）与 [`reproduce.sh`](../tools/reproduce/reproduce.sh)（host verify / 完整板上 workflow）。
-- HQ GBS 构建入口：[`glibc-memopt-tools.spec`](../packaging/glibc-memopt-tools.spec) 与 [`host 构建记录`](../data/raw/gbs_package_20260903/README.md)；A2/H-V 仅形成含 GBS 样本的校准带，独立 held-out 验证前冻结件仍为 L2 默认。
+- HQ GBS 构建入口：[`glibc-memopt-tools.spec`](../packaging/glibc-memopt-tools.spec) 与 [`host 构建记录`](../data/raw/gbs_package_20260903/README.md)；A2/H-V 形成校准带，随后不参与建带的 held-out 四格 4/4 通过，GBS 现为 L2 默认。
 - Tizen 原生进程/工具交叉见证：[`tizen_native_evidence_20260904.md`](tizen_native_evidence_20260904.md)（enlightenment + `memps` + 官方 `gdb`；完成格与协议偏差分开登记，不作产品收益外推）。
 
 > **历史状态保留（2026-08-31，v2.6，现已被上条裁决取代）：** 当时 S2 因未复现产品 PD 峰谷而判定不成立，S3 等待 PM 在“降格为合成 bin 驻留 trim 扫描”与“修订 S2 代理方案”之间裁决。

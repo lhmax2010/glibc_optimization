@@ -27,7 +27,7 @@ bash tools/reproduce/reproduce.sh
 bash tools/reproduce/reproduce.sh verify
 
 # 完整 L2；需本节规定的 RPI4、镜像、SDB 与内部产物包，小时级
-bash tools/reproduce/reproduce.sh board --artifact-source frozen --ip <addr>
+bash tools/reproduce/reproduce.sh board --ip <addr>
 ```
 
 入口必须在真实 `git clone` 内运行，GitHub ZIP/source export 不受支持；workflow 会把
@@ -283,6 +283,26 @@ replayed cells=12 verdict=H-V
 `50.669791% ±4.918088 pp`，各合并 `n=8/profile`，两条 ELF 路径共用。数据与裁决解释见
 [`A2 报告`](a_anchor_replication_20260904.md)。
 
+<a id="l1-gbs-heldout"></a>
+### GBS held-out 独立判定复算
+
+四格均在 A2 建带样本之外，合同先由轻量 tag
+`gbs-heldout-contract-20260904` 固定。仅从公开 TSV 重建逐格闭区间判定：
+
+```sh
+python3 tools/runners/gbs_heldout_validation_20260904/analyze_heldout.py \
+  --replay data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv \
+  --output "$OUT/gbs-heldout"
+cmp "$OUT/gbs-heldout/heldout_cells.tsv" \
+  data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv
+cmp "$OUT/gbs-heldout/decision.json" \
+  data/raw/gbs_heldout_validation_20260904/decision.json
+```
+
+预期原文是 `replayed cells=4 verdict=PASS passed=4/4`，两条 `cmp` 静默。四格为
+mixed `49.492012% / 54.266910%`、medium-only `51.806724% / 49.656064%`；判定与
+健康边界见 [`held-out 报告`](gbs_heldout_validation_20260904.md)。
+
 <a id="l1-gst-trim-cost"></a>
 ### GStreamer 真实多线程目标的业务 p99、trim 分布与首次回收
 
@@ -430,8 +450,8 @@ SDB 随 Tizen Studio 提供。基线使用
 ([证据](../data/raw/s4_retention_20260901/preflight_and_integrity.txt))；将 Tizen Studio
 的 `tools/` 加入 `PATH` 后运行 `sdb version` 核对。板只走 SDB，不配置 SSH。
 
-ARM 二进制不入公开仓库。held-out 验证完成前，冻结件是当前默认路径；GBS 构建候选
-另见下一小节。以下两条给出冻结件与源码重建路径：
+ARM 二进制不入公开仓库。独立 held-out 四格通过后，GBS 构建是当前 HQ 默认路径；
+冻结件与固定目录源码重建是备选。以下两条给出备选路径：
 
 1. 从内部制品交付取得 S2/S4 使用过的 `alloc_bench.armv7l`，先核对 SHA-256 必须为
    `dca27ec8a027356c3eea2962d936d06e688351499ce56a7c66aa69cd1ea761fd`
@@ -468,7 +488,7 @@ scratch root/sysroot 路径。媒体资产的自产/可再分发 provenance 尚�
 不得在板上即兴找文件替代。
 
 <a id="l2-gbs-build"></a>
-### HQ 候选：GBS 构建三项 ELF（待 held-out 验证）
+### HQ 首选：GBS 构建三项 ELF（held-out 4/4 通过）
 
 对三项 ELF，可从真实 `git clone` 使用仓库内 spec 和固定快照配置构建。真实 GBS
 构建不属于分钟级 host verify；推荐通过显式入口执行：
@@ -498,10 +518,14 @@ filelists 的来源排查及五项 BuildRequires 版本复核见
 RPM/ELF 若身份或哈希漂移仍硬失败。
 
 GBS 三项 ELF 参与了
-[`A2 固定合同 H-V 校准`](a_anchor_replication_20260904.md)。GBS 观测参与 v4 建带，
-因此该带不构成独立 GBS 通过证据。held-out 验证前，旧冻结 bundle 是 workflow 默认，
-GBS 与固定路径交叉构建是候选。即使三项 ELF 由 GBS 产生，媒体仍须按 manifest 的包外
-方式交付；显式测试 GBS 时用 `reproduce.sh board --artifact-source gbs ...`。
+[`A2 固定合同 H-V 校准`](a_anchor_replication_20260904.md)，故该批本身只用于建带。
+之后由事前提交与轻量 tag 固定的 GBS-only 四格 held-out 合同独立得到 4/4 落带，且
+不回灌建带样本；见
+[`held-out 报告`](gbs_heldout_validation_20260904.md) 与
+[`decision.json`](../data/raw/gbs_heldout_validation_20260904/decision.json)。因此 workflow
+现默认选择 `gbs_build_sha256`，冻结 bundle 降为显式备选
+`--artifact-source frozen`。即使三项 ELF 由 GBS 产生，媒体仍须按 manifest 的包外方式
+交付。
 
 <a id="l2-run"></a>
 ### 完整执行命令
@@ -639,6 +663,8 @@ validity gates 全部通过。回收量字节值本身不是确定性项。bench
 - A 组瞬时释放回收率：mixed `52.794499% ±4.304705 pp`、medium-only
   `50.669791% ±4.918088 pp`；每档合并 frozen/GBS 共 `n=8`，分母为 pre-trim heap。
   旧“各 `n=1` 锚点”的现行局限已由 H-V 复测撤销；历史单次值仍保留为来源记录。
+  这仍是校准带；未参与建带的 GBS held-out 四格以 4/4 落带独立通过，见
+  [`heldout_cells.tsv`](../data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv)。
 - B 组 trim 回收/已释放：验收单位固定为每个 profile 的三重复中位，即先取每个重复
   两周期的中位、再取三重复中位；mixed 锚定发布值 `81.661264% ±5 pp`，medium-only
   锚定发布值 `84.446566% ±5 pp`。`n=3` 中位能容忍一个离群重复，但不能覆盖两个偏移
@@ -675,9 +701,9 @@ glibc 主版本必须属于 `2.40` 系；若为 `2.41+`，停止沿用本基线�
 `3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d`；公开仓库不分发媒体
 或 ARM ELF。
 
-当前默认冻结 bench 的 SHA-256 为
-`204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`；GBS 候选为
-`7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034`，也可用
+当前 GBS 默认 bench 的 SHA-256 为
+`7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034`；冻结备选为
+`204d64f5d66419025d2d4c4af40c86a9fb5301bd6e7cde2d8cf9e5df5caf62e6`，也可用
 GCC `14.2.0` 的 glibc-2.40 scratch root 与含 GStreamer 1.24 armv7l devel/runtime 链接
 输入的兼容 sysroot 重建：
 

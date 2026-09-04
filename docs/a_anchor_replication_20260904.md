@@ -230,6 +230,11 @@ GBS 观测参与了 v4 中心与半宽的构造，因此 v4 是校准带，不�
 独立通过。RPM NVR → 三个 ELF SHA → manifest → 板上哈希的身份链仍成立；但路径优先级
 保持冻结件为默认、GBS 为待 held-out 验证候选。带的数值不变。
 
+**2026-09-04 held-out 后续裁决：** 上述终审订正仍保留为当时状态，v4 也继续只称
+“校准带”。随后事前提交/tag 固定、且不参与建带的四格 GBS-only 验证 4/4 落入该带，
+据此独立闭合 GBS 重基线并恢复其 HQ 首选路径；没有用 held-out 数据修改中心或半宽。
+见 [`gbs_heldout_validation_20260904.md`](gbs_heldout_validation_20260904.md)。
+
 ### 4.2 合同变更边界
 
 - 只改变 A 锚点回收率容差项；B、gst、deterministic、validity gates 和 stability-monitor

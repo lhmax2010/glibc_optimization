@@ -1,0 +1,53 @@
+{
+  "cells": [
+    {
+      "center_pct": 52.794499,
+      "in_band": true,
+      "lower_pct": 48.489794,
+      "observed_pct": 49.492012,
+      "order": 1,
+      "plus_minus_pp": 4.304705,
+      "profile": "mixed",
+      "rep": 1,
+      "upper_pct": 57.099204
+    },
+    {
+      "center_pct": 50.669791,
+      "in_band": true,
+      "lower_pct": 45.751703,
+      "observed_pct": 51.806724,
+      "order": 2,
+      "plus_minus_pp": 4.918088,
+      "profile": "medium-only",
+      "rep": 1,
+      "upper_pct": 55.587879
+    },
+    {
+      "center_pct": 52.794499,
+      "in_band": true,
+      "lower_pct": 48.489794,
+      "observed_pct": 54.26691,
+      "order": 3,
+      "plus_minus_pp": 4.304705,
+      "profile": "mixed",
+      "rep": 2,
+      "upper_pct": 57.099204
+    },
+    {
+      "center_pct": 50.669791,
+      "in_band": true,
+      "lower_pct": 45.751703,
+      "observed_pct": 49.656064,
+      "order": 4,
+      "plus_minus_pp": 4.918088,
+      "profile": "medium-only",
+      "rep": 2,
+      "upper_pct": 55.587879
+    }
+  ],
+  "exclude_from_calibration_samples": true,
+  "passed_cells": 4,
+  "schema": "glibc-memopt.gbs-heldout-decision.v1",
+  "total_cells": 4,
+  "verdict": "PASS"
+}

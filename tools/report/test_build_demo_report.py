@@ -78,9 +78,15 @@ class DemoReportTests(unittest.TestCase):
                 "同目标/同相位实测收益 ≥ 事前固定阈值",
                 "守护进程碎片化驻留的实测收益很小",
                 "估算器不可用作启用门",
-                "L2 当前默认冻结件",
                 "S4 A v4",
                 "Tizen 原生 B/B2",
+                "GBS held-out 4/4",
+                "49.492012%",
+                "51.806724%",
+                "54.266910%",
+                "49.656064%",
+                "gbs-heldout-contract-20260904",
+                "L2 当前默认 GBS",
             ):
                 self.assertIn(expected, document)
 
@@ -169,12 +175,13 @@ class DemoReportTests(unittest.TestCase):
             self.assertIn("gbs_llvm.conf", document, path.name)
             self.assertTrue("held-out" in document, path.name)
             self.assertTrue(
-                "current default L2 path" in document
-                or "frozen artifacts remain the default" in document
-                or "冻结件是当前默认路径" in document
-                or "冻结制品仍为 L2 默认路径" in document,
+                "default HQ L2 path" in document
+                or "default L2 path" in document
+                or "当前 HQ 默认路径" in document
+                or "L2 默认路径" in document,
                 path.name,
             )
+            self.assertIn("4/4", document, path.name)
 
     def test_checked_in_report_matches_rebuild(self) -> None:
         checked_in = REPO / "docs/demo_report.html"

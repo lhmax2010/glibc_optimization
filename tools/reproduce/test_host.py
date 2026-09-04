@@ -143,7 +143,7 @@ class ReproduceTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("--ip <address>", result.stdout)
-        self.assertIn("default SHA source is the frozen bundle", result.stdout)
+        self.assertIn("default SHA source is the GBS build", result.stdout)
 
     def test_default_verify_never_invokes_available_gbs(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -477,12 +477,16 @@ class ReproduceTests(unittest.TestCase):
         manifest = json.loads((HERE / "deliverables_manifest.json").read_text())
         artifacts = {item["name"]: item for item in manifest["artifacts"]}
         self.assertEqual(manifest["schema"], "glibc-memopt-demo.deliverables.v3")
-        self.assertEqual(manifest["gbs_build"]["status"], "held_out_validation_pending")
+        self.assertEqual(manifest["gbs_build"]["status"], "held_out_validation_pass")
         self.assertEqual(manifest["board_rebaseline"]["decision"], "H-V")
         self.assertEqual(
             manifest["board_rebaseline"]["status"],
-            "calibration_only_pending_held_out_validation",
+            "calibration_with_independent_gbs_held_out_pass",
         )
+        heldout = manifest["board_rebaseline"]["held_out_validation"]
+        self.assertEqual(heldout["verdict"], "PASS")
+        self.assertEqual((heldout["passed_cells"], heldout["total_cells"]), (4, 4))
+        self.assertFalse(heldout["included_in_calibration_samples"])
         self.assertEqual(len(artifacts), 4)
         for name in ("alloc_bench.armv7l", "gst_loop_decode.armv7l", "reclaim_probe.armv7l"):
             self.assertRegex(artifacts[name]["reproducible_build_sha256"], r"^[0-9a-f]{64}$")
@@ -576,7 +580,7 @@ class ReproduceTests(unittest.TestCase):
         self.assertEqual(a["center_pct_by_profile"], {"medium-only": 50.669791, "mixed": 52.794499})
         self.assertEqual(a["plus_minus_pp_by_profile"], {"medium-only": 4.918088, "mixed": 4.304705})
         self.assertEqual(a["classification"], "calibration band")
-        self.assertEqual(a["independent_gbs_validation"], "pending held-out validation")
+        self.assertIn("passed 4/4 held-out cells", a["independent_gbs_validation"])
 
 
 if __name__ == "__main__":

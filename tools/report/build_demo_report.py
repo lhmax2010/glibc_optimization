@@ -139,6 +139,9 @@ def build(repo: Path, source_commit: str) -> str:
     plateau = read_tsv(raw / "cyclic_fall_attribution_20260901/plateau_cyclic_crosscheck.tsv")
     a2_cells = read_tsv(raw / "a_anchor_replication_20260904/a_cells.tsv")
     a2_decision = json.loads((raw / "a_anchor_replication_20260904/decision.json").read_text())
+    heldout_cells = read_tsv(raw / "gbs_heldout_validation_20260904/heldout_cells.tsv")
+    heldout_decision = json.loads((raw / "gbs_heldout_validation_20260904/decision.json").read_text())
+    heldout_health = json.loads((raw / "gbs_heldout_validation_20260904/health.json").read_text())
     b_cells = read_tsv(raw / "s4_retention_20260901/b_cells.tsv")
     b_cycles = read_tsv(raw / "s4_retention_20260901/b_cycles.tsv")
     s4_health = json.loads((raw / "s4_retention_20260901/health.json").read_text())
@@ -160,6 +163,7 @@ def build(repo: Path, source_commit: str) -> str:
         "docs/demo_package_20260902.md",
         "docs/tizen_native_evidence_20260904.md",
         "docs/trimmable_estimator_20260905.md",
+        "docs/gbs_heldout_validation_20260904.md",
     )
     for relative in expected_docs:
         if not (repo / relative).is_file():
@@ -288,6 +292,15 @@ def build(repo: Path, source_commit: str) -> str:
     assert anchor_radius == {"mixed": 4.304705, "medium-only": 4.918088}
     assert all(item["n"] == 8 for item in a2_decision["candidate_bands"].values())
     assert round(anchor_trim_max, 6) == 15.885352
+    assert heldout_decision["verdict"] == "PASS"
+    assert heldout_decision["passed_cells"] == heldout_decision["total_cells"] == 4
+    assert heldout_decision["exclude_from_calibration_samples"] is True
+    assert [float(row["reclaim_pct_of_pretrim"]) for row in heldout_cells] == [49.492012, 51.806724, 54.26691, 49.656064]
+    assert all(item["in_band"] is True for item in heldout_decision["cells"])
+    assert heldout_health["zram_original_data_size_delta"] == heldout_health["zram_compressed_data_size_delta"] == heldout_health["zram_mem_used_total_delta"] == 0
+    assert heldout_health["trim_majflt_max"] == heldout_health["refault_majflt_max"] == 0
+    assert heldout_health["reclaimed_4k_aligned_count"] == heldout_health["reclaimed_4k_aligned_total"] == 4
+    assert heldout_health["trim_elapsed_ms_max"] == 15.04687
     assert b_ratio == {"mixed": 81.661264, "medium-only": 84.446566}
     assert min(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 80.175875
     assert max(float(row["trim_reclaim_pct_of_released"]) for row in b_cycles if row["trim_at"] == "valley") == 85.453954
@@ -309,6 +322,8 @@ def build(repo: Path, source_commit: str) -> str:
     assert acceptance["schema"] == "glibc-memopt-demo.acceptance.v4"
     assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["center_pct_by_profile"] == anchors
     assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["plus_minus_pp_by_profile"] == anchor_radius
+    assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["classification"] == "calibration band"
+    assert acceptance["tolerance_bands"]["s4_a_anchor_reclaim_pct"]["independent_gbs_validation"].startswith("passed 4/4 held-out cells")
     assert native["completion"] == {
         "t1_completed": 1,
         "t1_preregistered": 5,
@@ -372,6 +387,8 @@ def build(repo: Path, source_commit: str) -> str:
     evidence_service = "../data/raw/cyclic_fall_attribution_20260901/serviceA_fall_recheck.tsv"
     evidence_s4_a = "../data/raw/a_anchor_replication_20260904/a_cells.tsv"
     evidence_s4_a_decision = "../data/raw/a_anchor_replication_20260904/decision.json"
+    evidence_gbs_heldout = "../data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv"
+    evidence_gbs_heldout_decision = "../data/raw/gbs_heldout_validation_20260904/decision.json"
     evidence_s4_b = "../data/raw/s4_retention_20260901/b_cycles.tsv"
     evidence_gst = "../data/raw/gst_trim_cost_20260901/cycles.tsv"
     evidence_native_b2 = "../data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv"
@@ -408,14 +425,14 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <span class="pill">一页摘要</span><h2>方案、交付合同与头条结果</h2>
   <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 同目标实测收益达到事前固定阈值 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到经过实测的 retained-bin 表型。</p>
   <div class="grid">
-    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 当前默认冻结件，再执行身份门、哈希、矩阵、拉回与恢复；GBS 等待 held-out 验证。</small></div>
-    <div class="card contract"><strong>同板同镜像对照</strong><small>S4 A v4 + trim/none；gst 两臂各三重复；Tizen 原生 B/B2 交叉见证。</small></div>
+    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 当前默认 GBS，再执行身份门、哈希、矩阵、拉回与恢复；冻结件为备选。</small></div>
+    <div class="card contract"><strong>同板同镜像对照</strong><small>S4 A v4 校准 + GBS held-out 4/4；trim/none；gst 两臂；Tizen 原生 B/B2。</small></div>
     <div class="card contract"><strong>结果说明价值</strong><small>四门分开驻留与收益；S4/gst 量化代价，B/B2 暴露驻留收益微小的边界。</small></div>
     <div class="card contract"><strong>同条件复现同数据</strong><small>payload 确定性字节逐值一致；容差项落带；validity gates 全部通过。</small></div>
   </div>
   <p class="source-links">合同映射：<a href="demo_package_20260902.md#delivery-contracts">Demo 包 §0</a> · <a href="{guide}#l2-acceptance">复现指南验收带</a></p>
   <div class="grid">
-    <div class="card"><small>瞬时释放校准带（frozen/GBS 建带样本，n=8/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>mixed ±{anchor_radius['mixed']:.6f} pp；medium-only ±{anchor_radius['medium-only']:.6f} pp；of pre-trim heap；非 GBS 独立通过证据</span><br><a href="{evidence_s4_a_decision}">裁决 JSON</a> · <a href="{guide}#l1-a-anchor-replication">L1 复算</a></div>
+    <div class="card"><small>瞬时释放校准带（frozen/GBS 建带样本，n=8/profile）</small><strong class="metric">{anchors['mixed']:.2f}% / {anchors['medium-only']:.2f}%</strong><span>mixed ±{anchor_radius['mixed']:.6f} pp；medium-only ±{anchor_radius['medium-only']:.6f} pp；另有未参与建带的 GBS held-out 4/4 PASS</span><br><a href="{evidence_s4_a_decision}">校准裁决</a> · <a href="{evidence_gbs_heldout_decision}">独立判定</a></div>
     <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>调用中位 mixed {s4_trim_median_by_profile['mixed']:.6f} / medium-only {s4_trim_median_by_profile['medium-only']:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
     <div class="card"><small>gst 业务 p99 固定规则判定（REPORT_ONLY）</small><strong class="metric">+{gst_comparison['delta_p99_ms']:.3f} ms &lt; {gst_comparison['none_p99_repeat_dispersion_ms']:.3f} ms</strong><span class="pill">未检出；margin {gst_p99_margin:.3f} ms（阈值 {gst_p99_threshold_pct:.1f}%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="{guide}#l1-gst-trim-cost">L1 复算</a></div>
   </div>
@@ -451,6 +468,11 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     <div class="card wide"><h3>瞬时释放校准带（n=8/profile）</h3>{bar_chart([('mixed', anchors['mixed'], 'trim'), ('medium-only', anchors['medium-only'], 'trim')], title='S4 A 组 frozen/GBS H-V 校准中心', unit='reclaim / pre-trim heap (%)', ceiling=60)}<p>mixed {anchors['mixed']:.6f}% ±{anchor_radius['mixed']:.6f} pp；medium-only {anchors['medium-only']:.6f}% ±{anchor_radius['medium-only']:.6f} pp。GBS 观测参与建带，因此这不是其独立通过证据。<a href="{evidence_s4_a}">12 格证据</a> · <a href="{evidence_s4_a_decision}">H-V 裁决</a> · <a href="{guide}#l1-a-anchor-replication">复算</a></p></div>
     <div class="card wide"><h3>B 组三重复中位</h3>{bar_chart([('mixed trim', b_ratio['mixed'], 'trim'), ('mixed none', 0.0, 'none'), ('medium trim', b_ratio['medium-only'], 'trim'), ('medium none', 0.0, 'none')], title='S4 B 组 trim/none 回收已释放 payload', unit='reclaim / released (%)', ceiling=100)}<p><a href="../data/raw/s4_retention_20260901/b_cells.tsv">格级证据</a> · <a href="{guide}#l2-acceptance">中位验收规则</a></p></div>
   </div>
+  <h3>GBS-only held-out：不回灌建带样本，4/4 落带</h3>
+  <table><thead><tr><th>profile / rep</th><th>实测回收 / pre-trim</th><th>v4 闭区间</th><th>判定</th></tr></thead><tbody>
+    {''.join(f'<tr><td>{row["profile"]} / rep{row["rep"]}</td><td class="number">{float(row["reclaim_pct_of_pretrim"]):.6f}%</td><td>{float(heldout_decision["cells"][index]["lower_pct"]):.6f}%–{float(heldout_decision["cells"][index]["upper_pct"]):.6f}%</td><td>PASS</td></tr>' for index, row in enumerate(heldout_cells))}
+  </tbody></table>
+  <p class="source-links">事前合同由轻量 tag <code>gbs-heldout-contract-20260904</code> 固定；四格均在建带样本之外，健康门与现场恢复通过，故 GBS 重基线独立闭合并恢复为 HQ 默认 L2 路径。<a href="gbs_heldout_validation_20260904.md">完整报告</a> · <a href="{evidence_gbs_heldout}">四格 TSV</a> · <a href="{evidence_gbs_heldout_decision}">判定 JSON</a></p>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
     <tr><td>mixed</td><td class="number">{b_ratio['mixed']:.2f}%</td><td class="number">{s4_trim_median_by_profile['mixed']:.6f} ms</td><td class="number">+{next_fault['mixed']}</td><td class="number">0</td></tr>
     <tr><td>medium-only</td><td class="number">{b_ratio['medium-only']:.2f}%</td><td class="number">{s4_trim_median_by_profile['medium-only']:.6f} ms</td><td class="number">+{next_fault['medium-only']}</td><td class="number">0</td></tr>
@@ -503,7 +525,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <div class="grid">
     <div class="card"><strong>① 离线阅读</strong><small>本 HTML 是单文件派生产物；所有图表由公开证据生成。</small></div>
     <div class="card"><strong>② Host verify · 分钟级</strong><small><code>bash tools/reproduce/reproduce.sh</code> 执行全部 L1 与 cmp。</small></div>
-    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --artifact-source frozen --ip &lt;addr&gt;</code> 编排既有 S4/gst harness。A2/v4 是包含 GBS 观测的校准带，不是 GBS 独立通过证据；GBS 等待 held-out 验证。</small></div>
+    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --ip &lt;addr&gt;</code> 默认使用 GBS 三项 ELF 编排既有 S4/gst harness；独立 held-out 已 4/4 通过。冻结件用 <code>--artifact-source frozen</code>。</small></div>
   </div>
   <p><a href="../tools/reproduce/README.md">Workflow 上手</a> · <a href="{guide}#workflow-fast-path">快速通道</a> · <a href="{guide}#l2-run">手工 L2</a>。确定性项、validity gates 和容差带都来自 <a href="../tools/reproduce/acceptance_bands.json">acceptance_bands.json</a>。“同样的数据”指 payload 确定性字节逐值一致、容差项落带且 validity gates 通过。</p>
 </section>

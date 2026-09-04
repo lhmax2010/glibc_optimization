@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -9,6 +11,7 @@ from .analyze_heldout import adjudicate
 
 
 HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[2]
 
 
 class HeldoutContractTests(unittest.TestCase):
@@ -45,6 +48,21 @@ class HeldoutContractTests(unittest.TestCase):
         manifest = json.loads((HERE.parents[1] / "reproduce/deliverables_manifest.json").read_text(encoding="utf-8"))
         artifact = next(item for item in manifest["artifacts"] if item["name"] == "alloc_bench.armv7l")
         self.assertEqual(self.contract["artifact"]["sha256"], artifact["gbs_build_sha256"])
+
+    def test_public_replay_matches_frozen_derivatives_byte_for_byte(self) -> None:
+        public = REPO / "data/raw/gbs_heldout_validation_20260904"
+        with tempfile.TemporaryDirectory() as directory:
+            result = subprocess.run(
+                [
+                    "python3", str(HERE / "analyze_heldout.py"), "--replay",
+                    str(public / "heldout_cells.tsv"), "--output", directory,
+                ],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("verdict=PASS passed=4/4", result.stdout)
+            for name in ("heldout_cells.tsv", "decision.json"):
+                self.assertEqual((Path(directory) / name).read_bytes(), (public / name).read_bytes(), name)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,3 @@
+writable=/opt/usr
+RC=0
+DONE_OPT_USR_WRITABLE

@@ -1,0 +1,5 @@
+order	elf	profile	rep	pretrim_glibc_pd_kb	posttrim_glibc_pd_kb	reclaimed_kb	reclaim_pct_of_pretrim	reclaim_pct_of_released	released_payload_bytes	trim_return	trim_elapsed_ms	posttrim_refault_elapsed_ms	trim_minflt	trim_majflt	refault_minflt	refault_majflt	external_samples	external_minflt_delta	external_majflt_delta	exit_code
+1	gbs	mixed	1	108664	54884	53780	49.492012	111.401543	49434432	1	12.860037	24.625741	6	0	1452	0	41	30775	0	0
+2	gbs	medium-only	1	105052	50628	54424	51.806724	105.497402	52826112	1	11.718556	29.779278	6	0	3088	0	41	27559	0	0
+3	gbs	mixed	2	109400	50032	59368	54.26691	121.319731	50109600	1	15.04687	33.391685	6	0	1693	0	41	31532	0	0
+4	gbs	medium-only	2	105252	52988	52264	49.656064	102.432236	52247552	1	12.924167	29.798889	6	0	3100	0	41	29144	0	0

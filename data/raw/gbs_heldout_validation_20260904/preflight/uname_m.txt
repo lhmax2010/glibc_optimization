@@ -1,0 +1,3 @@
+armv7l
+RC=0
+DONE_UNAME_M

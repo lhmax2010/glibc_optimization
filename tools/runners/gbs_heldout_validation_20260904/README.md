@@ -17,3 +17,17 @@ temporary known-alert registration are in `contract.json`. No failed or
 out-of-band cell may be replaced. Complete artifacts remain in local
 `board_results/`; compact rows, decision, and health records are published only
 after the run.
+
+The official run passed all four cells. Rebuild its decision from compact public
+evidence:
+
+```sh
+tmp=$(mktemp -d)
+python3 tools/runners/gbs_heldout_validation_20260904/analyze_heldout.py \
+  --replay data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv --output "$tmp"
+cmp "$tmp/heldout_cells.tsv" data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv
+cmp "$tmp/decision.json" data/raw/gbs_heldout_validation_20260904/decision.json
+```
+
+Expected output: `replayed cells=4 verdict=PASS passed=4/4`; both `cmp` commands
+are silent.

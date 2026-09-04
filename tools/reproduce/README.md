@@ -4,7 +4,7 @@
 bash tools/reproduce/reproduce.sh
 bash tools/reproduce/reproduce.sh verify
 bash tools/reproduce/reproduce.sh gbs
-bash tools/reproduce/reproduce.sh board --artifact-source frozen --ip <address>
+bash tools/reproduce/reproduce.sh board --ip <address>
 ```
 
 `verify` is the default, is host-only, and finishes in minutes. It must run from a
@@ -77,10 +77,12 @@ per run and protected by a cross-process lock. A GBS command/environment failure
 RPM/ELF remains a hard failure.
 
 The GBS artifacts participated in the fixed-contract H-V calibration sample, so
-acceptance v4 is not independent evidence that this path passes. Pending held-out
-validation, frozen is the L2 default and GBS is an explicit candidate selected with
-`--artifact-source gbs`. The media file is never built by either path and must come
-from the delivery location supplied with the package.
+that sample alone is not independent evidence. A separately tagged four-cell
+GBS-only held-out contract, excluded from band construction, passed 4/4. GBS is now
+the L2 default; select the archived fallback explicitly with
+`--artifact-source frozen`. The media file is never built by either path and must
+come from the delivery location supplied with the package. See the
+[held-out report](../../docs/gbs_heldout_validation_20260904.md).
 
 Both modes read [`acceptance_bands.json`](acceptance_bands.json). `PASS` means a
 deterministic item, validity gate, or tolerance band passed. `EXPECTED` means an
@@ -97,7 +99,10 @@ Acceptance v4 uses the fixed-contract H-V A-anchor calibration shared by frozen 
 mixed `52.794499% ±4.304705 pp` and medium-only
 `50.669791% ±4.918088 pp`, each from eight combined observations. The derivation
 and public replay are in the
-[A-anchor report](../../docs/a_anchor_replication_20260904.md).
+[A-anchor report](../../docs/a_anchor_replication_20260904.md). The values remain
+calibration limits; independent GBS status comes from the excluded four-cell
+[held-out run](../../docs/gbs_heldout_validation_20260904.md), which passed 4/4
+without modifying them.
 
 ## Board-round evidence ordering
 

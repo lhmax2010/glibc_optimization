@@ -17,8 +17,8 @@ verify is host-only, normally completes in minutes, and is the default. It appli
 static GBS package gates but never starts a real GBS build. gbs explicitly starts
 the real build and needs the configured network repositories, root-capable GBS
 environment, buildroot disk space, and substantially more time. board performs the
-complete S4 + gst L2 workflow; frozen is the current default artifact source until
-the independent GBS held-out validation is complete.
+complete S4 + gst L2 workflow; GBS is the default artifact source after its
+independent four-cell held-out validation passed.
 EOF
 }
 
@@ -174,6 +174,15 @@ a_anchor_replay()
     cmp "$out/decision.json" "$repo/data/raw/a_anchor_replication_20260904/decision.json"
 }
 
+gbs_heldout_replay()
+{
+    out="$tmp/gbs-heldout"
+    python3 "$repo/tools/runners/gbs_heldout_validation_20260904/analyze_heldout.py" \
+      --replay "$repo/data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv" --output "$out" || return 1
+    cmp "$out/heldout_cells.tsv" "$repo/data/raw/gbs_heldout_validation_20260904/heldout_cells.tsv" || return 1
+    cmp "$out/decision.json" "$repo/data/raw/gbs_heldout_validation_20260904/decision.json"
+}
+
 gst_replay()
 {
     out="$tmp/gst"
@@ -228,6 +237,7 @@ link_check()
       "$repo/docs/demo_narrative_20260901.md" \
       "$repo/docs/demo_reproduction_guide_20260901.md" \
       "$repo/docs/a_anchor_replication_20260904.md" \
+      "$repo/docs/gbs_heldout_validation_20260904.md" \
       "$repo/docs/product_landing_recommendation_20260901.md" \
       "$repo/docs/tool_provenance_20260903.md" \
       "$repo/docs/tizen_native_evidence_20260904.md" \
@@ -250,6 +260,7 @@ host_tests()
       tools/runners/s4_retention_20260901/test_host.py \
       tools/runners/gst_trim_cost_20260901/test_host.py \
       tools/runners/a_anchor_replication_20260904/test_host.py \
+      tools/runners/gbs_heldout_validation_20260904/test_host.py \
       tools/runners/tizen_native_evidence_20260904/test_host.py \
       tools/runners/tizen_native_evidence_b2_20260904/test_host.py \
       tools/analysis/test_trimmable_estimator.py \
@@ -269,6 +280,7 @@ check phenotype-cmp phenotype_replay
 check batch-release-output batch_replay
 check s4-public-replay s4_replay
 check a-anchor-public-replay-cmp a_anchor_replay
+check gbs-heldout-public-replay-cmp gbs_heldout_replay
 check gst-public-replay-cmp gst_replay
 check trimmable-estimator-cmp trimmable_estimator_replay
 check acceptance-v4 acceptance_replay

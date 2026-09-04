@@ -14,7 +14,7 @@
     "rpm_sha256_scope": "observed host build record; NVR, %files, and extracted ELF hashes are rebuild gates",
     "compiler": "clang-22.1.8-1.6.armv7l",
     "glibc": "glibc-2.40-1.6.armv7l",
-    "status": "held_out_validation_pending"
+    "status": "held_out_validation_pass"
   },
   "board_rebaseline": {
     "report": "docs/a_anchor_replication_20260904.md",
@@ -30,7 +30,17 @@
       "medium-only": 4.918088,
       "mixed": 4.304705
     },
-    "status": "calibration_only_pending_held_out_validation"
+    "status": "calibration_with_independent_gbs_held_out_pass",
+    "held_out_validation": {
+      "contract_tag": "gbs-heldout-contract-20260904",
+      "contract_commit": "1b6304c583a7ed2e03790ffe5308dabf158eb30c",
+      "report": "docs/gbs_heldout_validation_20260904.md",
+      "decision_source": "data/raw/gbs_heldout_validation_20260904/decision.json",
+      "passed_cells": 4,
+      "total_cells": 4,
+      "included_in_calibration_samples": false,
+      "verdict": "PASS"
+    }
   },
   "artifacts": [
     {

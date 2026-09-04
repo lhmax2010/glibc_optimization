@@ -245,6 +245,18 @@ PASS，§4–§6 已通过项保持不变，结构化结果为 `OVERALL PASS`。
 `OVERALL PASS` 是校准样本内重放，不能作为 GBS 独立通过证据。撤回“GBS 重基线通过”
 与“GBS 路径转正为 HQ 首选”；冻结件恢复为当前默认，GBS 等待 held-out 验证。数值带
 保持不变。
+
+## 10. 2026-09-04 held-out 独立验证追注
+
+§9 的终审订正保留为当时状态：同一建带样本不能证明自身通过。随后在连接板之前，
+四格 GBS-only 合同与分析器由提交 `1b6304c583a7ed2e03790ffe5308dabf158eb30c`
+和轻量标签 `gbs-heldout-contract-20260904` 固定；结果不并入校准样本。mixed 两格为
+`49.492012% / 54.266910%`，medium-only 两格为 `51.806724% / 49.656064%`，4/4
+独立落入现行 v4 闭区间，健康与清理门全过。
+
+因此按事前规则，**GBS 重基线通过，GBS 恢复为 HQ 默认 L2 路径，冻结件为备选**。
+校准带的中心、半宽、分类与 `n=8/profile` 建带样本均不变。完整证据与边界见
+[`gbs_heldout_validation_20260904.md`](gbs_heldout_validation_20260904.md)。
 现行机器合同见
 [`acceptance_bands.json`](../tools/reproduce/acceptance_bands.json)，紧凑 A2 证据见
 [`data/raw/a_anchor_replication_20260904/`](../data/raw/a_anchor_replication_20260904/)。

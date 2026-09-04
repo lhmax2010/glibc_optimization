@@ -1,0 +1,67 @@
+{
+  "after_count": 4,
+  "alerts": [
+    {
+      "archive_present": true,
+      "attributable": true,
+      "executable": "/opt/usr/glibc_memopt/gbs_heldout_validation_20260904/bin/alloc_bench.armv7l",
+      "expected_shape": true,
+      "explanation": "known-alert waiver matched reason/window/owner/count; archived and absent after cleanup; root cause not proven",
+      "pid": 15745,
+      "reason": "Stability-monitor detected abnormality.\nProcess name: alloc_bench.armv7l\nPID: 15745\nExceeded parameter: cpu.relative\nActual value: 3.8428809789209675\nAllowed value: 3.7999999999999998",
+      "remote_path": "/opt/usr/share/crash/livedump/alloc_bench.armv7l_15745_20260904222152.zip",
+      "sha256": "8008f83da79952b88eb7ff06ff8127f7542d60a4068c5c3674c7050ce751ae42",
+      "size": 332974,
+      "verdict": "EXPECTED",
+      "window": "01_gbs_mixed_rep1"
+    },
+    {
+      "archive_present": true,
+      "attributable": true,
+      "executable": "/opt/usr/glibc_memopt/gbs_heldout_validation_20260904/bin/alloc_bench.armv7l",
+      "expected_shape": true,
+      "explanation": "known-alert waiver matched reason/window/owner/count; archived and absent after cleanup; root cause not proven",
+      "pid": 16528,
+      "reason": "Stability-monitor detected abnormality.\nProcess name: alloc_bench.armv7l\nPID: 16528\nExceeded parameter: cpu.relative\nActual value: 3.8294368813945909\nAllowed value: 3.7999999999999998",
+      "remote_path": "/opt/usr/share/crash/livedump/alloc_bench.armv7l_16528_20260904222232.zip",
+      "sha256": "6fb43fcbba36f3821ef87e1ddf53e2b6c2d433762c503e0af27cfff8daa403d8",
+      "size": 361740,
+      "verdict": "EXPECTED",
+      "window": "02_gbs_medium-only_rep1"
+    },
+    {
+      "archive_present": true,
+      "attributable": true,
+      "executable": "/opt/usr/glibc_memopt/gbs_heldout_validation_20260904/bin/alloc_bench.armv7l",
+      "expected_shape": true,
+      "explanation": "known-alert waiver matched reason/window/owner/count; archived and absent after cleanup; root cause not proven",
+      "pid": 17294,
+      "reason": "Stability-monitor detected abnormality.\nProcess name: alloc_bench.armv7l\nPID: 17294\nExceeded parameter: cpu.relative\nActual value: 3.8561680916719774\nAllowed value: 3.7999999999999998",
+      "remote_path": "/opt/usr/share/crash/livedump/alloc_bench.armv7l_17294_20260904222312.zip",
+      "sha256": "59bda8bd8baf370d93cb1179aa11837d57ababce6c46e00bab244eb9f7ffdd74",
+      "size": 360159,
+      "verdict": "EXPECTED",
+      "window": "03_gbs_mixed_rep2"
+    },
+    {
+      "archive_present": true,
+      "attributable": true,
+      "executable": "/opt/usr/glibc_memopt/gbs_heldout_validation_20260904/bin/alloc_bench.armv7l",
+      "expected_shape": true,
+      "explanation": "known-alert waiver matched reason/window/owner/count; archived and absent after cleanup; root cause not proven",
+      "pid": 18069,
+      "reason": "Stability-monitor detected abnormality.\nProcess name: alloc_bench.armv7l\nPID: 18069\nExceeded parameter: cpu.relative\nActual value: 3.8448131972014372\nAllowed value: 3.7999999999999998",
+      "remote_path": "/opt/usr/share/crash/livedump/alloc_bench.armv7l_18069_20260904222352.zip",
+      "sha256": "1fbb3d507403d71dde4034c291a90b5114e68484ed0c74ff58c766b7ed0c5343",
+      "size": 360830,
+      "verdict": "EXPECTED",
+      "window": "04_gbs_medium-only_rep2"
+    }
+  ],
+  "before_count": 0,
+  "expected_match_count": 4,
+  "expected_paths_present_after_cleanup": 0,
+  "new_count": 4,
+  "schema": "glibc-memopt-demo.stability-monitor.v2",
+  "workload": "a-anchor"
+}
