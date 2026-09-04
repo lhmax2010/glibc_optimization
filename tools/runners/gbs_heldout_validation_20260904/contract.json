@@ -1,0 +1,77 @@
+{
+  "schema": "glibc-memopt.gbs-heldout-validation.v1",
+  "effective_date": "2026-09-04",
+  "contract_status": "prospective; commit and lightweight tag must predate board connection",
+  "contract_tag": "gbs-heldout-contract-20260904",
+  "artifact": {
+    "name": "alloc_bench.armv7l",
+    "sha_source": "tools/reproduce/deliverables_manifest.json:gbs_build_sha256",
+    "sha256": "88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa"
+  },
+  "histogram_sha256": "2082e156db133f4e6e900aec7c202e44a453d2f23b60225c40251de08a27960b",
+  "parameters": {
+    "threads": 4,
+    "seed": 20260813,
+    "warmup_s": 5,
+    "duration_s": 20,
+    "idle_s": 15,
+    "idle_trim": true,
+    "post_trim_ops_per_thread": 4096,
+    "live_set_per_thread": 4096,
+    "idle_release_pct": 50,
+    "release_order": "high"
+  },
+  "order": [
+    {"order": 1, "elf": "gbs", "profile": "mixed", "rep": 1},
+    {"order": 2, "elf": "gbs", "profile": "medium-only", "rep": 1},
+    {"order": 3, "elf": "gbs", "profile": "mixed", "rep": 2},
+    {"order": 4, "elf": "gbs", "profile": "medium-only", "rep": 2}
+  ],
+  "calibration_bands": {
+    "mixed": {"center_pct": 52.794499, "plus_minus_pp": 4.304705, "lower_pct": 48.489794, "upper_pct": 57.099204},
+    "medium-only": {"center_pct": 50.669791, "plus_minus_pp": 4.918088, "lower_pct": 45.751703, "upper_pct": 55.587879}
+  },
+  "decision": {
+    "pass": "all four held-out cells fall inside their profile's closed calibration interval",
+    "fail": "one or more held-out cells fall outside its profile's closed calibration interval",
+    "no_replacement_runs": true,
+    "exclude_from_calibration_samples": true
+  },
+  "health_gates": {
+    "identity": ["uname -r contains rpi4", "uname -m equals armv7l", "BUILD_ID equals tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l"],
+    "environment": ["glibc equals glibc-2.40-1.6.armv7l", "MemTotal is within one percent of 8117408 kB"],
+    "governor": "four cores start schedutil, run performance, finish schedutil",
+    "zram_mm_stat_first_three_delta": 0,
+    "dmesg_oom_lmk_matches": 0,
+    "trim_and_refault_majflt_max": 0,
+    "reclaimed_bytes_alignment": 4096
+  },
+  "stability_monitor": {
+    "version": 2,
+    "policy_name": "known-alert waiver",
+    "unregistered_attributable_alert": "FAIL",
+    "unattributed_or_foreign_alert": "REPORT_ONLY",
+    "expected_alerts": [
+      {
+        "id": "heldout-alloc-bench-cpu-relative",
+        "workload": "GBS held-out A-anchor validation",
+        "binary_basename": "alloc_bench.armv7l",
+        "executable_prefix": "/opt/usr/glibc_memopt/gbs_heldout_validation_20260904/",
+        "trigger_reason_contains": "cpu.relative",
+        "registered_windows": [
+          "01_gbs_mixed_rep1",
+          "02_gbs_medium-only_rep1",
+          "03_gbs_mixed_rep2",
+          "04_gbs_medium-only_rep2"
+        ],
+        "max_count_per_window": 1,
+        "max_count_total": 4,
+        "classification": "known-alert waiver",
+        "root_cause_status": "trigger reason and window are reproducible; root cause is not proven",
+        "required_disposition": ["record", "archive", "clean", "post-cleanup-recheck"],
+        "verdict_when_matched": "EXPECTED",
+        "verdict_when_not_observed": "REGISTERED/NOT-EVALUATED"
+      }
+    ]
+  }
+}
