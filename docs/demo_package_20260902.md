@@ -24,6 +24,31 @@
 离线 HTML、手工指南与 workflow 是同一合同的三个入口：HTML 用于演示，指南是流程
 权威参考，workflow 将其机械化并给出可机读判定；三者不各自维护第二套统计口径。
 
+### 0.1 交付快照强制自检
+
+自 `demo-v4` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三次全新克隆，并在
+每个克隆中执行不跳过 host tests 的完整 `verify`：
+
+```sh
+git clone --branch demo <url>
+git clone --branch demo-v4 <url>
+git clone <url>                 # 远端默认分支必须为 main
+```
+
+机械入口为：
+
+```sh
+bash tools/reproduce/predelivery_check.sh \
+  --repo-url "$(git remote get-url origin)" \
+  --branch demo \
+  --tag demo-v4
+```
+
+三种形态都必须出现 `PASS host-tests` 与 `OVERALL PASS` 才能宣告交付就绪。`demo` 与
+detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REPORT_ONLY` 身份语义，
+但其完整 verify 同样是硬门。脚本、参数及后续标签递增规则见
+[`tools/reproduce/README`](../tools/reproduce/README.md#mandatory-pre-delivery-clone-matrix)。
+
 ## 1. 建议演示流程
 
 按以下顺序演示，主讲内容直接使用第 1 周叙事的对应章节：
