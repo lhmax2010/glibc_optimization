@@ -281,12 +281,14 @@ python3 tools/runners/tizen_native_evidence_20260904/analyze_native_evidence.py 
 
 本节只追加、不改写 §1–§5 的原始观测和结论。机器合同为
 [`fixed_contract.json`](../tools/runners/tizen_native_evidence_b2_20260904/fixed_contract.json)。
-原始纳秒时间戳确认本轮实际发生于 2026-09-04，原“2026-09-05”按终审裁决订正。
+原始纳秒时间戳确认本轮实际发生于 2026-09-04，报告与当前复现路径均按该日期统一。
 以下规格在同一工作轮的能力侦察通过后、任何正式格执行前写定；因没有独立事前
 commit/tag 凭证，本节只称“固定合同重放”，不称预登记。结果异常只报告，不改参数。
-为保持执行身份链，归档 contract 与 remote runner 内部仍保留当时使用的
-`tizen_native_evidence_20260905` round/workdir 字面量及原哈希；订正的是 host 归档目录和
-报告日期，不把实际执行过的命令改写成新路径。
+当前 contract 与 remote runner 使用统一的 `tizen_native_evidence_b2_20260904`
+round/workdir。板上实际执行版本的 contract/runner SHA 仍以
+[`run_record.txt`](../data/raw/tizen_native_evidence_b2_20260904/run_record.txt) 中的
+`executed_*_sha256` 为准；原文件可从提交
+`a35413df78f22d68d9eaac2ea59e807005c7f2c2` 复核，不把当前复现文件误称为板上原字节。
 
 ### 6.1 冻结前侦察与选择
 

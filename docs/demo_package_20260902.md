@@ -16,7 +16,7 @@
 
 | 交付要求 | 可审计实现 | 验收入口 |
 |---|---|---|
-| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；L2 现默认使用独立 held-out 4/4 通过的 GBS 路径，再由 workflow 从身份门、资产哈希走到板端清理；冻结件为可审计备选 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南 GBS 首选路径`](demo_reproduction_guide_20260901.md#l2-gbs-build)、[`held-out 报告`](gbs_heldout_validation_20260904.md)、[`workflow verify`](../tools/reproduce/README.md) |
+| 有力复现步骤 | L1 从公开紧凑证据逐数字复算；GBS 为默认 L2 路径（经 held-out 4/4 验证），再由 workflow 从身份门、资产哈希走到板端清理；冻结件为可审计备选 | [`HTML 复现入口`](demo_report.html#reproduce)、[`指南 GBS 默认路径`](demo_reproduction_guide_20260901.md#l2-gbs-build)、[`held-out 报告`](gbs_heldout_validation_20260904.md)、[`workflow verify`](../tools/reproduce/README.md) |
 | 同板同镜像多组对照 | S4 A 的 frozen/GBS 建带样本形成 v4 校准带，独立 GBS-only 四格 held-out 以 4/4 落带闭合路径；B 含 `trim/none`，gst 含两臂各三重复；Tizen 原生 B/B2 以官方工具、守护进程和 `memps` 交叉见证 | [`A2/v4 报告`](a_anchor_replication_20260904.md)、[`held-out 判定`](../data/raw/gbs_heldout_validation_20260904/decision.json)、[`HTML S4`](demo_report.html#s4)、[`HTML gst`](demo_report.html#gst)、[`HTML 原生进程`](demo_report.html#native) |
 | 结果说明价值 | 四道硬门把自动归还、驻留存在、实测收益和代价分开；S4/gst 给出机制与代价，原生 B/B2 证明 M7 驻留量不等于可回收收益 | [`HTML 自动归还`](demo_report.html#finding-one)、[`HTML 门控效果`](demo_report.html#s4)、[`HTML 原生进程`](demo_report.html#native)、[`HTML 四门`](demo_report.html#decision-gate)、[`HTML 边界`](demo_report.html#boundaries) |
 | 同条件复现同数据 | released payload 是唯一确定性数字并逐字节核对；容差项落带且 page alignment、majflt、zram、OOM/LMK validity gates 通过。S4 B 按分别锚定发布值的每档三重复中位 `±5 pp`；p99 方向只报告。彩排 rep2 的 `68.169197%` 说明同 seed 不钉 arena 指派 | [`HTML 边界`](demo_report.html#boundaries)、[`rep2 紧凑证据`](../data/raw/demo_rehearsal_20260902/s4_medium_only_rep2_reclaim.tsv)、[`L2 验收带`](demo_reproduction_guide_20260901.md#l2-acceptance)、[`机器配置`](../tools/reproduce/acceptance_bands.json) |
@@ -37,7 +37,7 @@
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v4 <url>
+git clone --branch demo-v5 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -47,7 +47,7 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v4
+  --tag demo-v5
 ```
 
 三种形态都必须出现 `PASS host-tests` 与 `OVERALL PASS` 才能宣告交付就绪。`demo` 与

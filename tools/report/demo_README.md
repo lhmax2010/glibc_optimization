@@ -56,7 +56,7 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
 Without that internal bundle, board mode cannot start. The media asset has no
 established redistributable provenance and is delivered outside this repository.
 
-### Preferred HQ GBS build (held-out 4/4 passed)
+### Default HQ L2 path: GBS build (held-out 4/4 validated)
 
 For the three ELF files, GBS can be evaluated from a real `git clone` with
 `bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`. This explicit path requires repository
@@ -73,8 +73,9 @@ official repositories and independently resolves every spec BuildRequires.
 
 The GBS artifacts participated in the fixed-contract H-V calibration sample, so
 that sample alone does not independently validate GBS. A separately tagged
-GBS-only held-out contract, excluded from band construction, then passed 4/4;
-GBS is now the default L2 path and frozen/fixed-directory builds are alternatives.
+GBS-only held-out contract, excluded from band construction, then passed 4/4.
+GBS is the default L2 path after held-out validation; frozen/fixed-directory builds
+are fallbacks.
 GBS does not provide the media file, which remains an out-of-repository delivery
 prerequisite. See the
 [held-out report](docs/gbs_heldout_validation_20260904.md) and

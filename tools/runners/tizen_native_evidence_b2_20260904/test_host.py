@@ -28,11 +28,38 @@ class NativeEvidenceB2HostTest(unittest.TestCase):
         for script in RUNNER.glob("*.sh"):
             subprocess.run(["sh", "-n", str(script)], check=True)
         contract = json.loads((RUNNER / "fixed_contract.json").read_text())
+        self.assertEqual(contract["round"], "tizen_native_evidence_b2_20260904")
+        self.assertEqual(
+            contract["workdir"],
+            "/opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904",
+        )
         self.assertEqual(contract["t1_prime"]["cells"], 5)
         self.assertEqual(contract["t1_prime"]["minimum_injection_start_interval_seconds"], 120.0)
         self.assertEqual(contract["e4_prime"]["app_id"], "setting-myaccount-efl")
+        active_replay_files = [RUNNER / "fixed_contract.json", *RUNNER.glob("*.sh")]
+        stale_round = "tizen_native_evidence_" + "20260905"
+        for path in active_replay_files:
+            self.assertNotIn(stale_round, path.read_text(), path.name)
+        run_record = (RAW / "run_record.txt").read_text(encoding="utf-8")
+        self.assertIn("round=tizen_native_evidence_b2_20260904", run_record)
+        self.assertIn("executed_contract_sha256=de6796fc", run_record)
+        self.assertIn("executed_formal_runner_sha256=df205c2f", run_record)
+        self.assertNotIn(stale_round, run_record)
 
     def test_published_t1_and_interval_derivations(self) -> None:
+        summary = json.loads((RAW / "summary.json").read_text(encoding="utf-8"))
+        self.assertEqual(summary["schema"], "glibc-memopt.tizen-native-evidence-b2.summary.v2")
+        self.assertEqual(
+            summary["completion"],
+            {
+                "e4_app_cycles_completed": 5,
+                "e4_app_cycles_fixed_contract": 5,
+                "e4_prime_completed": 1,
+                "e4_prime_fixed_contract": 1,
+                "t1_prime_completed": 5,
+                "t1_prime_fixed_contract": 5,
+            },
+        )
         rows = read_tsv(RAW / "cells_derived.tsv")
         t1 = rows[:5]
         self.assertEqual([row["cell"] for row in t1], [f"T1_{i}" for i in range(1, 6)])

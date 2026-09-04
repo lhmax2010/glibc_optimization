@@ -86,7 +86,7 @@ class DemoReportTests(unittest.TestCase):
                 "54.266910%",
                 "49.656064%",
                 "gbs-heldout-contract-20260904",
-                "L2 当前默认 GBS",
+                "GBS 为默认 L2 路径（经 held-out 验证）",
             ):
                 self.assertIn(expected, document)
 
@@ -148,6 +148,10 @@ class DemoReportTests(unittest.TestCase):
             document = documents[name]
             self.assertTrue("held-out" in document, name)
             self.assertTrue("calibration" in document.lower() or "校准" in document, name)
+        self.assertIn("GBS 为默认 L2 路径（经 held-out", documents["package"])
+        self.assertIn("GBS 是默认 L2 路径（经独立 held-out", documents["guide"])
+        self.assertIn("GBS 为默认\nL2 路径（经 held-out 验证）", documents["demo-zh"])
+        self.assertIn("GBS is the default L2 path after held-out validation", documents["demo-en"])
 
     def test_native_evidence_customer_surfaces_match(self) -> None:
         surfaces = (
@@ -178,7 +182,8 @@ class DemoReportTests(unittest.TestCase):
                 "default HQ L2 path" in document
                 or "default L2 path" in document
                 or "当前 HQ 默认路径" in document
-                or "L2 默认路径" in document,
+                or "L2 默认路径" in document
+                or "默认 L2 路径" in document,
                 path.name,
             )
             self.assertIn("4/4", document, path.name)

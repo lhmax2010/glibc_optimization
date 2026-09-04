@@ -5,12 +5,12 @@ scripts, the official-snapshot GDB package helper, formal board controller,
 host analyzer, and host tests for the dated append in
 `docs/tizen_native_evidence_20260904.md`.
 
-The original run had no independent pre-run commit/tag. Its former 2026-09-05
-label and “preregistered” wording were corrected from the raw nanosecond timestamps;
-the machine evidence itself is unchanged. The archived contract and remote scripts
-retain their original `tizen_native_evidence_20260905` round/workdir literals so the
-published contract/runner hashes still identify exactly what executed; only the host
-archive directory and prose date are corrected.
+The original run had no independent pre-run commit/tag. Its date and evidence-level
+wording were corrected from the raw nanosecond timestamps; the measured machine
+evidence is unchanged. The current replay contract and scripts consistently use the
+2026-09-04 round/workdir. The exact hashes of the contract and runner that executed
+remain recorded as `executed_*_sha256` in the public `run_record.txt` and can be
+recovered from Git commit `a35413df78f22d68d9eaac2ea59e807005c7f2c2`.
 
 The workflow is intentionally split:
 

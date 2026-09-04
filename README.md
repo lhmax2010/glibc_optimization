@@ -2,7 +2,7 @@
 
 This repository is the long-term, sanitized workspace for source audits, controlled benchmarks, board measurements, and implementation evidence related to reducing glibc runtime memory and image footprint on 32-bit ARM Tizen systems.
 
-Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v4` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v4).
+Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v5` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v5).
 
 The HQ packaging path is [`packaging/glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec):
 `bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>` uses
@@ -11,9 +11,10 @@ experiment tools against the pinned Unified Toolchain snapshot. Build identity a
 hashes are recorded in the
 [`deliverables manifest`](tools/reproduce/deliverables_manifest.json); these GBS
 artifacts participated in the A-anchor H-V calibration sample, so that sample alone
-is not independent evidence. A separately preregistered four-cell held-out run then
-passed 4/4 without changing the v4 bands; GBS is now the default HQ L2 path and the
-frozen bundle is the auditable fallback. See the
+is not independent evidence. A separate four-cell contract was committed and tagged
+before board execution; its held-out run passed 4/4 without changing the v4 bands.
+GBS is the default HQ L2 path after that held-out validation, and the frozen bundle
+is the auditable fallback. See the
 [held-out report](docs/gbs_heldout_validation_20260904.md).
 
 文中应用/进程名为代号；host 侧路径已脱敏，板端运行路径保留。冻结测试镜像 BUILD_ID 为复现需要有意公开。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）在 host 本地留存，可按请求提供；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。

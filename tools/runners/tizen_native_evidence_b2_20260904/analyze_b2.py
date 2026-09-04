@@ -197,14 +197,14 @@ def analyze(pull: Path, idle_log: Path, output: Path) -> dict:
     t1 = derived[:5]
     e4 = derived[5]
     summary = {
-        "schema": "glibc-memopt.tizen-native-evidence-b2.summary.v1",
+        "schema": "glibc-memopt.tizen-native-evidence-b2.summary.v2",
         "completion": {
             "t1_prime_completed": 5,
-            "t1_prime_preregistered": 5,
+            "t1_prime_fixed_contract": 5,
             "e4_app_cycles_completed": 5,
-            "e4_app_cycles_preregistered": 5,
+            "e4_app_cycles_fixed_contract": 5,
             "e4_prime_completed": 1,
-            "e4_prime_preregistered": 1,
+            "e4_prime_fixed_contract": 1,
         },
         "reconnaissance": {
             "enlightenment_idle_samples": len(idle_rows),

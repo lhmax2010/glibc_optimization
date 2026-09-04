@@ -375,9 +375,9 @@ s = json.loads((p / "summary.json").read_text())
 v = list(csv.DictReader(open("data/raw/trimmable_estimator_20260905/validation.tsv"), delimiter="\t"))
 paired = [r for r in v if r["validation_status"] == "paired"]
 print("B2 completion gst=%d/%d app=%d/%d e4=%d/%d" % (
-    s["completion"]["t1_prime_completed"], s["completion"]["t1_prime_preregistered"],
-    s["completion"]["e4_app_cycles_completed"], s["completion"]["e4_app_cycles_preregistered"],
-    s["completion"]["e4_prime_completed"], s["completion"]["e4_prime_preregistered"]))
+    s["completion"]["t1_prime_completed"], s["completion"]["t1_prime_fixed_contract"],
+    s["completion"]["e4_app_cycles_completed"], s["completion"]["e4_app_cycles_fixed_contract"],
+    s["completion"]["e4_prime_completed"], s["completion"]["e4_prime_fixed_contract"]))
 print("B2 gst_reclaim=%sKiB interval=%.9f-%.9fs" % (
     "/".join(map(str, s["t1_prime"]["reclaimed_kb"])),
     s["t1_prime"]["interval_min_s"], s["t1_prime"]["interval_max_s"]))
@@ -450,7 +450,7 @@ SDB 随 Tizen Studio 提供。基线使用
 ([证据](../data/raw/s4_retention_20260901/preflight_and_integrity.txt))；将 Tizen Studio
 的 `tools/` 加入 `PATH` 后运行 `sdb version` 核对。板只走 SDB，不配置 SSH。
 
-ARM 二进制不入公开仓库。独立 held-out 四格通过后，GBS 构建是当前 HQ 默认路径；
+ARM 二进制不入公开仓库。GBS 是默认 L2 路径（经独立 held-out 四格 4/4 验证）；
 冻结件与固定目录源码重建是备选。以下两条给出备选路径：
 
 1. 从内部制品交付取得 S2/S4 使用过的 `alloc_bench.armv7l`，先核对 SHA-256 必须为
@@ -488,7 +488,7 @@ scratch root/sysroot 路径。媒体资产的自产/可再分发 provenance 尚�
 不得在板上即兴找文件替代。
 
 <a id="l2-gbs-build"></a>
-### HQ 首选：GBS 构建三项 ELF（held-out 4/4 通过）
+### HQ 默认 L2 路径：GBS 构建三项 ELF（经 held-out 4/4 验证）
 
 对三项 ELF，可从真实 `git clone` 使用仓库内 spec 和固定快照配置构建。真实 GBS
 构建不属于分钟级 host verify；推荐通过显式入口执行：
@@ -523,7 +523,7 @@ GBS 三项 ELF 参与了
 不回灌建带样本；见
 [`held-out 报告`](gbs_heldout_validation_20260904.md) 与
 [`decision.json`](../data/raw/gbs_heldout_validation_20260904/decision.json)。因此 workflow
-现默认选择 `gbs_build_sha256`，冻结 bundle 降为显式备选
+现默认选择 `gbs_build_sha256`；即 GBS 为默认 L2 路径（经 held-out 验证），冻结 bundle 为显式备选
 `--artifact-source frozen`。即使三项 ELF 由 GBS 产生，媒体仍须按 manifest 的包外方式
 交付。
 
@@ -955,7 +955,7 @@ B2 不改写上述旧格；它以新合同补跑官方 GST 5 格与 UI 活动后
 ```sh
 export B2_ADDR='<TEST_BOARD_IP>'
 export B2_SERIAL="$B2_ADDR:26101"
-export B2_REMOTE='/opt/usr/glibc_memopt/tizen_native_evidence_20260905' # executed legacy literal; retained for hash fidelity
+export B2_REMOTE='/opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904'
 export B2_HOST='board_results/tizen_native_evidence_b2_20260904_reproduction'
 export B2_MEDIA='/path/to/small_320x240.mp4'
 export B2_ALLOC='/path/to/gbs/alloc_bench.armv7l'

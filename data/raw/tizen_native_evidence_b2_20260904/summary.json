@@ -1,11 +1,11 @@
 {
   "completion": {
     "e4_app_cycles_completed": 5,
-    "e4_app_cycles_preregistered": 5,
+    "e4_app_cycles_fixed_contract": 5,
     "e4_prime_completed": 1,
-    "e4_prime_preregistered": 1,
+    "e4_prime_fixed_contract": 1,
     "t1_prime_completed": 5,
-    "t1_prime_preregistered": 5
+    "t1_prime_fixed_contract": 5
   },
   "e4_prime": {
     "app_cycles": 5,
@@ -46,7 +46,7 @@
     "gst_sequence_cells": 5,
     "gst_sequence_span_s": 301.16599608
   },
-  "schema": "glibc-memopt.tizen-native-evidence-b2.summary.v1",
+  "schema": "glibc-memopt.tizen-native-evidence-b2.summary.v2",
   "t1_prime": {
     "injection_ms": [
       1047.25248,

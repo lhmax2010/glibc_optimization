@@ -7,10 +7,11 @@
 - 对照起点：annotated tag `demo-v2` peel 后提交
   `959b4fb1f18327eaeb07f6b34d9055e993b6a2cd`
 - 收口源提交：`09075df049c700e9d577c265403e25beabd5023e`
-- 交付账务截至：`20f5760aa73a97201ac815684bcc8eee830880bb`
+- 交付账务截至：`e8be0e9652806eef1772dc8dd346770a38551b9d`
 - `demo-v3 → demo-v4`：仅修复交付身份测试 fixture 的分支假设并新增三形态远端交付前自检；无测量、验收带或技术结论变化
+- `demo-v4 → demo-v5`：闭合第三轮终审 A 段，并以事前 tag 固定、未参与建带的 GBS-only held-out 四格独立关闭 V4-1；随后只做交付措辞、日期路径与快照身份收口
 - 范围：三方第三轮复审使用的分类索引；不产生新测量数字，不替代各正式报告
-- 复核命令：`git log --reverse --oneline 959b4fb..09075df`
+- 复核命令：`git log --reverse --oneline 959b4fb..e8be0e9`
 
 `demo-v2` 是从当时 main 切出的交付快照提交，不是当前 main 的祖先；本表按共同基线后的
 main 提交序列列出变化，并把每个提交映射到下述发现项。编号 `A-*` / `GBS-*` 沿用
@@ -82,7 +83,7 @@ main 提交序列列出变化，并把每个提交映射到下述发现项。编
 `demo-v3` 保留用于审计；`demo-v4` 只承载上述 fixture 与交付前自检修复，以及随标签递增
 所需的交付引用/入口指针更新，不改变任何既有实验数据或结论。
 
-## 9. 提交覆盖核对
+## 9. demo-v3 前提交覆盖核对
 
 下列 13 个 main 提交构成 `demo-v2..20f5760` 的完整非合并提交清单，均已在上表出现：
 
@@ -117,3 +118,18 @@ TSV/JSON 为唯一事实源。
 | 发现项编号 | 提交 | 变化 | 复核入口 |
 |---|---|---|---|
 | N4-01 / V4-1–V4-4 | `8e117142211f8a66bef0de56337fb51017dec126` | 默认 verify 去真实 GBS 构建；v4 降为校准带并恢复冻结件默认；B2 日期/证据等级订正；新增 PM 裁决台账与板上轮次事前 tag 规则；闭环终审 minor 项 | [`第 3 轮闭环`](review_fix_20260903.md#第-3-轮终审-a-段闭环2026-09-04)、[`PM 裁决`](pm_decisions.md) |
+
+## 11. demo-v4 → demo-v5：第三轮终审 A/B 闭环
+
+| 发现项编号 | 提交 / tag | 变化 | 复核入口 |
+|---|---|---|---|
+| N4-01 / V4-1–V4-4 | `8e117142211f8a66bef0de56337fb51017dec126` | A 段把默认 verify 与真实 GBS 环境解耦；v4 降级为校准带；撤回循环使用建带样本得出的 GBS 独立通过；统一 B2 日期/证据等级并建立 PM 台账 | [`第 3 轮 A 段`](review_fix_20260903.md#第-3-轮终审-a-段闭环2026-09-04)、[`PM 台账`](pm_decisions.md) |
+| A-CLOSURE | `a7e2379e787a1a1b1bb83440a2515d0994fa5484` | 回填 A 段修复 SHA、重建派生 HTML，并确认默认 verify 在有/无 GBS 两类 PATH 下都不执行真实构建 | [`修复记录`](review_fix_20260903.md)、[`workflow`](../tools/reproduce/README.md) |
+| V4-1 / HELDOUT-CONTRACT | `1b6304c583a7ed2e03790ffe5308dabf158eb30c`；轻量 tag `gbs-heldout-contract-20260904` | 在连板前固定 GBS ELF × mixed/medium-only × 2 重复四格合同、既有 v4 闭区间逐格判据、analyzer 与 runner；明确四格不回灌建带样本 | [`合同`](../tools/runners/gbs_heldout_validation_20260904/contract.json)、[`事前规格`](gbs_heldout_validation_20260904.md#1-固定规格) |
+| V4-1 / HELDOUT-RESULT | `7f6d95ff10a3dc5ef7a38ac3724dd9ce8473318a` | B 段四格 4/4 落入冻结后的 v4 校准闭区间，身份、validity、stability-monitor 和清理门通过；由独立样本关闭 V4-1，恢复 GBS 默认 L2、冻结件备选 | [`held-out 报告`](gbs_heldout_validation_20260904.md)、[`判定 JSON`](../data/raw/gbs_heldout_validation_20260904/decision.json) |
+| V4-1 / HELDOUT-HTML | `e8be0e9652806eef1772dc8dd346770a38551b9d` | 以结果提交为 source marker 重建离线 HTML，使交付层的 GBS 优先级与独立 held-out 依据一致 | [`HTML`](demo_report.html#s4)、[`source marker`](../tools/report/source_commit.txt) |
+
+V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成的**校准带**；另取在该带
+冻结之后、由事前提交与轻量 tag 固定且不参与建带的 GBS-only 四格，按原闭区间得到
+4/4 PASS。因而“GBS 重基线通过”只由 held-out 结果支持，不能倒推为 A2 建带样本的
+独立结论。`demo-v5` 不改任何测量数字或验收带，只冻结这条证据等级与路径优先级。

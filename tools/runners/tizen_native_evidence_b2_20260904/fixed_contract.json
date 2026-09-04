@@ -1,7 +1,7 @@
 {
   "schema": "glibc-memopt.tizen-native-evidence-b2.contract.v1",
-  "round": "tizen_native_evidence_20260905",
-  "workdir": "/opt/usr/glibc_memopt/tizen_native_evidence_20260905",
+  "round": "tizen_native_evidence_b2_20260904",
+  "workdir": "/opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904",
   "identity": {
     "kernel_contains": "rpi4",
     "arch_exact": "armv7l",

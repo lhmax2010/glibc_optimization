@@ -50,9 +50,9 @@ M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针
 没有内部 bundle 时 board 模式不可启动。媒体资产尚无可再分发 provenance，随包外内部
 渠道交付，不进入公开仓库。
 
-### HQ 首选 GBS 构建（held-out 4/4 通过）
+### HQ 默认 L2 路径：GBS 构建（经 held-out 4/4 验证）
 
-三项 ELF 的 GBS 首选路径是真实 `git clone` 后执行
+三项 ELF 的 GBS 默认路径是真实 `git clone` 后执行
 `bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`。该显式模式需要仓库网络访问、可执行 root
 构建的 GBS 环境、buildroot 磁盘空间，耗时也显著长于分钟级 host verify。固定快照
 [`gbs_llvm.conf`](config/gbs_llvm.conf) 与
@@ -64,8 +64,8 @@ Provides、filelists 零命中结果及 spec 全部 BuildRequires 的独立版�
 [`三工具来源声明`](docs/tool_provenance_20260903.md)。
 
 GBS 产物参与了固定合同 H-V 校准样本，因此该样本本身不能作为独立通过证据。随后由
-独立事前 tag 固定、且不参与建带的 GBS-only 四格 held-out 验证 4/4 通过；GBS 现为
-L2 默认路径，冻结件和固定目录交叉构建为备选。GBS 不提供媒体文件，媒体仍是仓库外的
+独立事前 tag 固定、且不参与建带的 GBS-only 四格 held-out 验证 4/4 通过；GBS 为默认
+L2 路径（经 held-out 验证），冻结件和固定目录交叉构建为备选。GBS 不提供媒体文件，媒体仍是仓库外的
 交付前置。见 [`held-out 报告`](docs/gbs_heldout_validation_20260904.md) 与
 [`decision.json`](data/raw/gbs_heldout_validation_20260904/decision.json)。
 

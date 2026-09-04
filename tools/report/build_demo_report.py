@@ -348,11 +348,11 @@ def build(repo: Path, source_commit: str) -> str:
     )] == [0, 0, 0]
     assert native_b2["completion"] == {
         "t1_prime_completed": 5,
-        "t1_prime_preregistered": 5,
+        "t1_prime_fixed_contract": 5,
         "e4_app_cycles_completed": 5,
-        "e4_app_cycles_preregistered": 5,
+        "e4_app_cycles_fixed_contract": 5,
         "e4_prime_completed": 1,
-        "e4_prime_preregistered": 1,
+        "e4_prime_fixed_contract": 1,
     }
     assert native_b2["t1_prime"]["reclaimed_kb"] == [8, 16, 16, 20, 16]
     assert native_b2["t1_prime"]["injection_ms_median"] == 1041.132032
@@ -425,7 +425,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <span class="pill">一页摘要</span><h2>方案、交付合同与头条结果</h2>
   <p class="lead">机会面不是“大进程”，而是“未自动下降 + M7 已确认驻留 + 同目标实测收益达到事前固定阈值 + 代价过门”的释放相位。证据链先排除已由 glibc 自动归还的周期分量，再把 trim 限定到经过实测的 retained-bin 表型。</p>
   <div class="grid">
-    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；L2 当前默认 GBS，再执行身份门、哈希、矩阵、拉回与恢复；冻结件为备选。</small></div>
+    <div class="card contract"><strong>有力复现步骤</strong><small>L1 公开证据复算；GBS 为默认 L2 路径（经 held-out 验证），再执行身份门、哈希、矩阵、拉回与恢复；冻结件为备选。</small></div>
     <div class="card contract"><strong>同板同镜像对照</strong><small>S4 A v4 校准 + GBS held-out 4/4；trim/none；gst 两臂；Tizen 原生 B/B2。</small></div>
     <div class="card contract"><strong>结果说明价值</strong><small>四门分开驻留与收益；S4/gst 量化代价，B/B2 暴露驻留收益微小的边界。</small></div>
     <div class="card contract"><strong>同条件复现同数据</strong><small>payload 确定性字节逐值一致；容差项落带；validity gates 全部通过。</small></div>
@@ -472,7 +472,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <table><thead><tr><th>profile / rep</th><th>实测回收 / pre-trim</th><th>v4 闭区间</th><th>判定</th></tr></thead><tbody>
     {''.join(f'<tr><td>{row["profile"]} / rep{row["rep"]}</td><td class="number">{float(row["reclaim_pct_of_pretrim"]):.6f}%</td><td>{float(heldout_decision["cells"][index]["lower_pct"]):.6f}%–{float(heldout_decision["cells"][index]["upper_pct"]):.6f}%</td><td>PASS</td></tr>' for index, row in enumerate(heldout_cells))}
   </tbody></table>
-  <p class="source-links">事前合同由轻量 tag <code>gbs-heldout-contract-20260904</code> 固定；四格均在建带样本之外，健康门与现场恢复通过，故 GBS 重基线独立闭合并恢复为 HQ 默认 L2 路径。<a href="gbs_heldout_validation_20260904.md">完整报告</a> · <a href="{evidence_gbs_heldout}">四格 TSV</a> · <a href="{evidence_gbs_heldout_decision}">判定 JSON</a></p>
+  <p class="source-links">事前合同由轻量 tag <code>gbs-heldout-contract-20260904</code> 固定；四格均在建带样本之外，健康门与现场恢复通过。GBS 重基线据此独立闭合：GBS 为默认 L2 路径（经 held-out 验证），冻结件为备选。<a href="gbs_heldout_validation_20260904.md">完整报告</a> · <a href="{evidence_gbs_heldout}">四格 TSV</a> · <a href="{evidence_gbs_heldout_decision}">判定 JSON</a></p>
   <table><thead><tr><th>profile</th><th>回收 / 已释放（三重复中位）</th><th>trim 耗时中位</th><th>下一周期额外 minflt</th><th>majflt</th></tr></thead><tbody>
     <tr><td>mixed</td><td class="number">{b_ratio['mixed']:.2f}%</td><td class="number">{s4_trim_median_by_profile['mixed']:.6f} ms</td><td class="number">+{next_fault['mixed']}</td><td class="number">0</td></tr>
     <tr><td>medium-only</td><td class="number">{b_ratio['medium-only']:.2f}%</td><td class="number">{s4_trim_median_by_profile['medium-only']:.6f} ms</td><td class="number">+{next_fault['medium-only']}</td><td class="number">0</td></tr>
@@ -498,12 +498,12 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     {''.join(f'<tr><td>{row["cell"]}</td><td class="number">{row["m7_rest_bytes"]}</td><td>{row["project_pre_kb"]} → {row["project_post_kb"]}</td><td>{row["memps_pre_heap_kb"]} → {row["memps_post_heap_kb"]}</td><td class="number">{row["project_reclaimed_kb"]} KiB</td><td>{row["injection_ms"]:.6f} ms</td></tr>' for row in native["cells"] if row["group"] == "T2")}
   </tbody></table>
   <h3>B2 补跑：官方 GST 5/5 与真实 UI 活动格</h3>
-  <p>重新冻结为 5 个顺序 Tizen <code>gst-launch-1.0</code> 进程后，五格均持续解码并自然退出，buffer 从约 902/903 增至 997；项目 heap 与 <code>memps</code> 同时看到 <strong>8 / 16 / 16 / 20 / 16 KiB</strong> 回收。四个注入开始间隔为 <strong>120.122271759–120.142672892 s</strong>，全部满足 ≥120.000 s。</p>
+  <p>固定合同使用 5 个顺序 Tizen <code>gst-launch-1.0</code> 进程；五格均持续解码并自然退出，buffer 从约 902/903 增至 997；项目 heap 与 <code>memps</code> 同时看到 <strong>8 / 16 / 16 / 20 / 16 KiB</strong> 回收。四个注入开始间隔为 <strong>120.122271759–120.142672892 s</strong>，全部满足 ≥120.000 s。</p>
   <table><thead><tr><th>格</th><th>项目/memps heap PD (KiB)</th><th>回收</th><th>buffer</th><th>含 ptrace 的注入时延</th></tr></thead><tbody>
     {''.join(f'<tr><td>{row["cell"]}</td><td>{row["project_pre_kb"]} → {row["project_post_kb"]}</td><td class="number">{row["reclaimed_kb"]} KiB</td><td>{row["buffers_pre"]} → {row["buffers_post"]}</td><td>{float(row["injection_ms"]):.6f} ms</td></tr>' for row in native_b2_cells if row["group"] == "T1")}
   </tbody></table>
   <p>冻结原生应用完成 5/5 次“启动—30 秒同进程存活—正常终止”。之后 E4′ 的 M7 为 8 arena、rest <strong>6019572 B</strong>，项目 heap 与 <code>memps</code> 均为 <strong>3324 → 3288 KiB</strong>，即回收 <strong>36 KiB</strong>；PID/starttime 未变。<code>&lt;size&gt;</code> 估算器却给出 <strong>2200–7976 KiB</strong>，连本格也不能覆盖实测，连同验证集 <strong>15/15</strong> 失败，故不能成为量化启用门。</p>
-  <div class="callout"><strong>历史与边界并存：</strong>旧 T1 1/5、UI 0/1 和 E1–E3 的 119.806876910/119.856460299 s 偏差不改写；B2 用新登记构造补齐数量与 E4 覆盖，并验证新计时器。全部 gdb 时间包含 ptrace，不是钩子代价；回收量不外推产品收益。</div>
+  <div class="callout"><strong>历史与边界并存：</strong>旧 T1 1/5、UI 0/1 和 E1–E3 的 119.806876910/119.856460299 s 偏差不改写；B2 固定合同重放补齐数量与 E4 覆盖，并验证新计时器。全部 gdb 时间包含 ptrace，不是钩子代价；回收量不外推产品收益。</div>
   <p class="source-links"><a href="tizen_native_evidence_20260904.md#7-b2-补跑结果实际板上执行日-2026-09-04">B2 完整报告</a> · <a href="{evidence_native_b2}">B2 格级证据</a> · <a href="../data/raw/tizen_native_evidence_b2_20260904/summary.json">B2 完成与健康</a> · <a href="trimmable_estimator_20260905.md">估算器裁决</a> · <a href="{guide}#l1-tizen-native-b2">L1 复算</a> · <a href="{guide}#l2-tizen-native-evidence-b2">L2 B2 复现</a></p>
 </section>
 
@@ -525,7 +525,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <div class="grid">
     <div class="card"><strong>① 离线阅读</strong><small>本 HTML 是单文件派生产物；所有图表由公开证据生成。</small></div>
     <div class="card"><strong>② Host verify · 分钟级</strong><small><code>bash tools/reproduce/reproduce.sh</code> 执行全部 L1 与 cmp。</small></div>
-    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --ip &lt;addr&gt;</code> 默认使用 GBS 三项 ELF 编排既有 S4/gst harness；独立 held-out 已 4/4 通过。冻结件用 <code>--artifact-source frozen</code>。</small></div>
+    <div class="card"><strong>③ Board · 小时级</strong><small><code>reproduce.sh board --ip &lt;addr&gt;</code> 使用默认 GBS L2 路径（经 held-out 4/4 验证）编排既有 S4/gst harness；冻结件用 <code>--artifact-source frozen</code>。</small></div>
   </div>
   <p><a href="../tools/reproduce/README.md">Workflow 上手</a> · <a href="{guide}#workflow-fast-path">快速通道</a> · <a href="{guide}#l2-run">手工 L2</a>。确定性项、validity gates 和容差带都来自 <a href="../tools/reproduce/acceptance_bands.json">acceptance_bands.json</a>。“同样的数据”指 payload 确定性字节逐值一致、容差项落带且 validity gates 通过。</p>
 </section>

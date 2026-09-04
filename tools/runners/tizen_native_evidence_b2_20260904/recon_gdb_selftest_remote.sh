@@ -1,7 +1,7 @@
 #!/bin/sh
 set -u
 
-work=/opt/usr/glibc_memopt/tizen_native_evidence_20260905
+work=/opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904
 selftest="$work/selftest"
 bench="$selftest/alloc_bench.armv7l"
 trim="$selftest/trim_via_gdb.sh"

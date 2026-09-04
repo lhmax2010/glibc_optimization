@@ -518,10 +518,36 @@ class ReproduceTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, f"unresolvable commit {commit}: {result.stderr}")
 
+    def test_delivery_closure_has_no_unqualified_preregistration_or_stale_b2_round(self) -> None:
+        result = subprocess.run(
+            ["git", "ls-files", "-z"], cwd=REPO, check=True, capture_output=True,
+        )
+        preregistration_violations: list[str] = []
+        stale_b2: list[str] = []
+        stale_round = "tizen_native_evidence_" + "20260905"
+        preregistration_term = "预" + "登记"
+        for raw_name in result.stdout.split(b"\0"):
+            if not raw_name:
+                continue
+            relative = raw_name.decode("utf-8")
+            data = (REPO / relative).read_bytes()
+            if b"\0" in data:
+                continue
+            document = data.decode("utf-8", errors="replace")
+            if stale_round in document:
+                stale_b2.append(relative)
+            for line_number, line in enumerate(document.splitlines(), 1):
+                if preregistration_term in line and not any(
+                    qualifier in line for qualifier in ("不称", "不得称", "降级")
+                ):
+                    preregistration_violations.append(f"{relative}:{line_number}:{line}")
+        self.assertEqual(stale_b2, [])
+        self.assertEqual(preregistration_violations, [])
+
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v4"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v4"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v5"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v5"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)

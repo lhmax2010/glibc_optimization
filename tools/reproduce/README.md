@@ -29,7 +29,7 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v4
+  --tag demo-v5
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote and runs
@@ -37,7 +37,7 @@ the complete `reproduce.sh verify` in each, with nested host tests enabled:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v4 <url>
+git clone --branch demo-v5 <url>
 git clone <url>                 # remote default must be main
 ```
 

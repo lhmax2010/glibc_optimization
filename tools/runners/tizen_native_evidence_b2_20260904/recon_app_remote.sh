@@ -5,7 +5,7 @@ app_id=${1:-}
 case "$app_id" in
     ''|*[!A-Za-z0-9._-]*) echo RC=2; echo FAIL_APP_RECON; exit 2 ;;
 esac
-work=/opt/usr/glibc_memopt/tizen_native_evidence_20260905
+work=/opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904
 log="$work/recon_app_${app_id}.log"
 pid=
 

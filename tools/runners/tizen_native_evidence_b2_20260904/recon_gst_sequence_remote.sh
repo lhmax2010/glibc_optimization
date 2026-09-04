@@ -1,7 +1,7 @@
 #!/bin/sh
 set -u
 
-work=/opt/usr/glibc_memopt/tizen_native_evidence_20260905
+work=/opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904
 asset="$work/small_320x240.mp4"
 out="$work/recon_gst_sequence.tsv"
 pid=

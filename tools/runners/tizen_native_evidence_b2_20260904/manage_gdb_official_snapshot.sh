@@ -5,7 +5,7 @@ mode=${1:-}
 shift 2>/dev/null || true
 ip=
 cache=
-remote=/opt/usr/glibc_memopt/tizen_native_evidence_20260905/input
+remote=/opt/usr/glibc_memopt/tizen_native_evidence_b2_20260904/input
 base=https://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20260813.050338/repos/standard/packages/armv7l
 packages='libgmp-4.2.1-1.6.armv7l.rpm gdbm-1.8.3-1.7.armv7l.rpm libpython3_141_0-3.14.2-1.6.armv7l.rpm python3-base-3.14.2-1.6.armv7l.rpm python3-3.14.2-1.5.armv7l.rpm gdb-16.3-1.1.armv7l.rpm'
 
