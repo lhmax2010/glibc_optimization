@@ -14,7 +14,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[3]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(REPO / "tools/reproduce"))
-from check_gbs_package import validate_provenance
+from check_gbs_package import checked_bytes, read_provenance, validate_provenance
 
 
 def sha(path: Path) -> str:
@@ -29,10 +29,13 @@ def main() -> None:
     args = parser.parse_args()
     record = json.loads((args.bundle / "gbs_build_summary.json").read_text())
     provenance_path = args.bundle / "execution_provenance.json"
-    provenance = json.loads(provenance_path.read_text())  # Missing evidence is fatal.
+    provenance = read_provenance(provenance_path, record["provenance_sha256"], "publication proof rewritten")
     validate_provenance(REPO, provenance)
     if sha(provenance_path) != record["provenance_sha256"]:
         raise ValueError("execution provenance differs from checker summary")
+    # Verify the raw, combined GBS stdout/stderr, not the filtered wrapper log.
+    # Public summary carries its checker-generated digest; raw log stays local.
+    checked_bytes(args.bundle / "gbs.log", record["gbs_log_sha256"], "publication GBS log rewritten")
     for field in ("workflow_commit", "entrypoint_sha256", "checker_sha256"):
         if record[field] != provenance[field]:
             raise ValueError(f"summary/provenance mismatch: {field}")
@@ -52,6 +55,10 @@ def main() -> None:
     # The publisher never synthesizes or rewrites execution fingerprints.
     shutil.copyfile(args.bundle / "gbs_build_summary.json", args.output / "build_summary.json")
     shutil.copyfile(provenance_path, args.output / provenance_path.name)
+    persisted = read_provenance(args.output / provenance_path.name, record["provenance_sha256"],
+                                "published proof rewritten")
+    validate_provenance(REPO, persisted)
+    checked_bytes(args.bundle / "gbs.log", record["gbs_log_sha256"], "publication GBS log rewritten")
     public_lines = []
     for line in args.log.read_text().splitlines():
         if line.startswith(("PASS\t", "REPORT_ONLY\t", "INFO\t", "OVERALL\t", "MODE\t")):

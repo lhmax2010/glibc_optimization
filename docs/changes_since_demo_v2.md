@@ -175,3 +175,18 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 | N7-03 | `demo-v8^` | 白名单拒绝函数、别名与非可执行文件；真最小/损坏工具等 15 格复核 |
 | N7-02b / N7-06 | `demo-v8^` | README 标题限定 alloc_bench；packaging 唯一 workflow 操作入口/固定 payload source/唯一 buildroot/默认路径/范围纳入一致性测试 |
 | V6-8 / V6-9 / F12 | `demo-v8^` | 固定 repo 字节比较与移动指针现状分组；导语改为既有带中心两位；同板性依据与缺少唯一硬件序列号证据的局限明确披露 |
+
+## 15. demo-v8 → demo-v9
+
+仅交付工具校验加固与文档，不改任何测量、验收带、held-out 独立性或技术结论。
+`demo-v8` 保留，`demo-v9^` 指向本轮最终 main。批准依据见
+[`第六轮 PM 裁决`](pm_decisions.md#2026-09-07-第六轮裁决demo-v8-demo-v9)，逐项验证见
+[`第六轮修复记录`](review_fix_20260903.md#第-6-轮终审闭环demo-v82026-09-07)。
+
+| 发现编号 | 修复提交/引用 | 变化与验证 |
+|---|---|---|
+| N8-01 | `demo-v9^` | 执行前 proof 自身字节 SHA；构建后重新打开磁盘文件、先字节后 JSON；输出/发布副本复核；改写、截断、删除、符号链接替换均硬失败 |
+| N8-02 | `demo-v9^` | Python 文件系统引导与 shutil.which，不信任 shell command 覆盖；导出 command+目标函数回归；环境标记阻断自调用递归 |
+| CC N8-01 | `demo-v9^` | 两份 GBS config、manifest、全部 tracked spec 加入 Git 对象哈希集合；skip-worktree 四输入篡改测试 |
+| N8-03 / V8-1 | `demo-v9^` | 缺头文件单列 unknown/需人工二判；明确环境 → 缺头文件歧义 → 源码错误 → 未知的诊断优先级 |
+| CC N8-02/N8-03 / N8-04 | `demo-v9^` | 自记而非签名级远程证明、入口字节非调用者的边界声明；原始 GBS 日志哈希归档/校验；脏快照独立失败标签 |

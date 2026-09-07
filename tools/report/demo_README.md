@@ -75,6 +75,13 @@ The exact extraction commands are in the
 from package-name, Provides, and file-list searches across all four configured
 official repositories and independently resolves every spec BuildRequires.
 
+Build provenance binds the clean Git snapshot, both workflow scripts, both GBS
+configs, the manifest and tracked spec files. Proof bytes are checked after the
+build and after copying; the raw GBS log hash is verified at publication. This is
+a self-recorded integrity check, **not signed remote attestation**;
+`entrypoint_sha256` identifies the repository entrypoint bytes, not the actual
+caller. See [coverage and limitations](tools/reproduce/README.md#gbs-execution-provenance).
+
 The GBS artifacts participated in the fixed-contract H-V calibration sample, so
 that sample alone does not independently validate GBS. A separately tagged
 GBS-only held-out contract, excluded from band construction, then passed 4/4.

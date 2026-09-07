@@ -36,7 +36,13 @@ CLI output and fixtures. `cmp`, `cp`, `ln`, `mkdir`, `mktemp`, `find` handle rep
 and temporary trees; `dirname`, `grep`, `sed`, `tr` support the shell entrypoint.
 GNU-compatible `date -Ins/+%s%N` and `stat -c` are required (Ubuntu/Debian coreutils).
 Every whitelist command is checked by preflight for resolution to a real,
-executable file (not a shell function/alias); no other PATH executable is
+executable file using Python `shutil.which`, not shell `command -v`. Python is
+bootstrapped by filesystem PATH traversal, never by invoking an exported function.
+Exported `BASH_FUNC_*` functions and `BASH_ENV`/`ENV` startup injection are rejected;
+run from an ordinary clean shell (functions/aliases are unsupported). The exported
+`REPRODUCE_ACTIVE_ENTRYPOINT` marker rejects self-recursion before any child command.
+Only the controlled host-test boundary resets it for independent CLI fixtures.
+No other PATH executable is
 available in the mandatory minimal profile. Git/Python retain their installed
 runtime libraries; this is a command-PATH isolation test, not an OS-container test.
 `gbs`, `rpm`, `rpm2cpio`, `cpio`, `rpmspec`, an ARM compiler, SDB, network access,
@@ -60,14 +66,14 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v8
+  --tag demo-v9
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v8 <url>
+git clone --branch demo-v9 <url>
 git clone <url>                 # remote default must be main
 ```
 
@@ -146,9 +152,17 @@ repositories, a root-capable GBS environment, sufficient buildroot disk space, a
 substantially more time than the minutes-scale host verify. Its buildroot is unique
 per run and protected by a cross-process lock. A missing/broken GBS/RPM command,
 unwritable lock or lock timeout emits `NOT-EVALUATED` plus `OVERALL FAIL` (RC=2).
-A nonzero GBS result with an explicit source-file/line compiler error is `FAIL`
-(RC=1); without that evidence it is `NOT-EVALUATED` with the classification basis,
-not a claim that the package is defective. Missing RPM/ELF or hash/identity drift
+A nonzero GBS result is classified in this explicit priority order:
+
+| Diagnostic (first matching row wins) | Label / exit |
+|---|---|
+| Definite environment diagnostic: no disk space, permission denied, shared-library loader failure | `NOT-EVALUATED gbs-build-environment`, RC=2 |
+| Missing-header diagnostic (`file not found` / `No such file`), even with a source location | `NOT-EVALUATED gbs-build-unknown`, RC=2; **manual second judgment required**, not an environment finding |
+| Other explicit source-file/line compiler error | `FAIL gbs-package-artifact`, RC=1 |
+| Unrecognized GBS failure | `NOT-EVALUATED gbs-build-unknown`, RC=2; manual judgment, no package-defect claim |
+
+Broken RPM inspection/extraction tools remain environment failures (RC=2).
+Missing RPM/ELF or hash/identity drift
 remains hard `FAIL` (RC=1). A successful
 static check cannot make an unevaluated explicit build pass. `--output-dir` must be
 new; `PASS` requires the RPM and all three ELF files to have been generated,
@@ -161,9 +175,23 @@ machine-readable `gbs_build_summary.json`.
 Use a **clean, committed clone**. After taking the lock, before invoking GBS, the
 checker creates `execution_provenance.json` in the unique build workspace:
 workflow HEAD, `git status --porcelain --untracked-files=all` and its dirty flag,
-entrypoint/checker SHA-256, Python version, and UTC timestamp. Both file hashes
-must equal their `git show <workflow_commit>:<path>` bytes. Dirty state is rejected
-before GBS; state/bytes are checked again before the bundle is finalized. The
+entrypoint/checker SHA-256, Python version, and UTC timestamp. Schema v2 binds the
+complete file set below to `git show <workflow_commit>:<path>` byte hashes in
+`committed_file_sha256`, independently of the porcelain summary:
+
+- `tools/reproduce/reproduce.sh` and `tools/reproduce/check_gbs_package.py`;
+- `config/gbs_llvm.conf` and `config/gbs.conf`;
+- `tools/reproduce/deliverables_manifest.json`;
+- every tracked `packaging/*.spec` in that commit.
+
+Dirty state is `FAIL gbs-dirty-snapshot` (RC=1), rejected before GBS. A
+`skip-worktree` modification still fails the committed-byte comparison. The checker
+captures the proof file's own `provenance_sha256` **before** GBS. After GBS returns,
+it reopens the proof without following symlinks, checks the bytes first, then
+validates the re-read JSON and snapshot. Rewrite, truncation, deletion or symlink
+substitution produces `FAIL gbs-proof-integrity` / `proof rewritten during build`
+(RC=1), even when GBS returns zero. It repeats the byte/JSON checks on the output
+copy, and once more before a PASS summary is written. The
 manifest's `source_commit` remains the separate frozen **payload source** commit.
 
 The [publisher](../runners/demo_v7_delivery_20260907/publish_gbs_build.py) must run
@@ -171,9 +199,25 @@ at the same clean HEAD and only validates/copies the execution proof and summary
 byte-for-byte. It never fills in hashes after execution. Publish to an external or
 git-ignored directory first, then import the validated records into `data/raw/`
 in a later commit. Missing proof, changed HEAD, dirty state or mismatched hashes
-refuse publication with nonzero exit. Delivery host tests independently compare
-the archived hashes with both the recorded commit objects and delivery file
-bytes. This is an auditable local execution record, not a signed remote attestation.
+refuse publication with nonzero exit; the published proof copy is rechecked too.
+The checker also saves raw combined GBS stdout/stderr as `gbs.log`, computes
+`gbs_log_sha256`, and verifies the bundle copy. Publisher requires that raw log to
+match before publishing the unchanged summary containing its hash; raw logs remain
+local because they may contain host paths. Missing/altered/symlinked logs fail.
+The filtered `workflow_summary.tsv` is not the raw log and cannot substitute for it.
+Delivery host tests compare the current execution record with its recorded Git
+objects and delivery bytes. Older v8 proof stays immutable and is checked against
+its recorded commit and v8 tag, not represented as a v9 execution.
+
+### Provenance capability boundary
+
+This is a self-recorded (self-attested) local provenance document: it detects
+accidental changes and silent file tampering at the checked boundaries, **not a
+cryptographically signed remote attestation**. It does not defend against a hostile
+host able to replace Python/Git/the checker, forge the record and all its hashes,
+or change files after the final verification. `entrypoint_sha256` means **bytes of
+the repository entrypoint file**, not proof of the actual caller or launch chain.
+Neither unsigned tags nor these hashes establish an independent signing identity.
 
 GBS may leave root-owned files in its unique temporary workspace; an unprivileged
 checker cannot always delete them (EPERM). Cleanup failure alone is

@@ -13,6 +13,7 @@ import os
 import re
 import shlex
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -32,10 +33,24 @@ class GbsEnvironmentUnavailable(RuntimeError):
     """GBS could not provide a usable build environment; package status is unknown."""
 
 
+class GbsCauseUnknown(RuntimeError):
+    """Logs do not establish whether the package or environment is at fault."""
+
+
+class DirtySnapshot(ValueError):
+    """The snapshot cannot be bound to the committed inputs."""
+
+
+class ProofIntegrityError(ValueError):
+    """Execution evidence is missing, substituted or rewritten."""
+
+
 FINGERPRINT_FILES = {
     "entrypoint_sha256": "tools/reproduce/reproduce.sh",
     "checker_sha256": "tools/reproduce/check_gbs_package.py",
 }
+BUILD_INPUTS = ("config/gbs_llvm.conf", "config/gbs.conf",
+                "tools/reproduce/deliverables_manifest.json")
 
 
 def git_output(repo: Path, *args: str) -> bytes:
@@ -43,15 +58,57 @@ def git_output(repo: Path, *args: str) -> bytes:
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout
 
 
+def bound_paths(repo: Path, commit: str) -> set[str]:
+    specs = git_output(repo, "ls-tree", "-r", "--name-only", commit, "packaging").decode().splitlines()
+    return set(FINGERPRINT_FILES.values()) | set(BUILD_INPUTS) | {
+        path for path in specs if Path(path).parent == Path("packaging") and path.endswith(".spec")
+    }
+
+
+def checked_bytes(path: Path, expected: str, context: str) -> bytes:
+    """Read one regular, non-symlink file descriptor; hash the very bytes consumed."""
+    try:
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        with os.fdopen(fd, "rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise ProofIntegrityError(f"{context}: not a regular file")
+            contents = stream.read()
+        if hashlib.sha256(contents).hexdigest() != expected:
+            raise ProofIntegrityError(f"{context}: byte SHA mismatch")
+        return contents
+    except OSError as error:
+        raise ProofIntegrityError(f"{context}: {error}") from error
+
+
+def read_provenance(path: Path, expected: str, context: str) -> dict:
+    contents = checked_bytes(path, expected, context)  # Bytes first, JSON second.
+    try:
+        proof = json.loads(contents)
+        if not isinstance(proof, dict):
+            raise ValueError("expected JSON object")
+        return proof
+    except (ValueError, UnicodeError) as error:
+        raise ProofIntegrityError(f"{context}: invalid JSON: {error}") from error
+
+
 def validate_provenance(repo: Path, provenance: dict, *, publication: bool = True) -> None:
     """Bind execution bytes to git objects, and (when publishing) the exact clean HEAD."""
-    if provenance.get("schema") != "glibc-memopt-gbs-execution.v1":
+    if provenance.get("schema") != "glibc-memopt-gbs-execution.v2":
         raise ValueError("missing or unsupported execution provenance")
     commit = provenance["workflow_commit"]
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError("invalid execution commit")
     if provenance["dirty"] or provenance["git_status_porcelain"]:
-        raise ValueError("dirty execution snapshot cannot be published")
+        raise DirtySnapshot("dirty execution snapshot cannot be published")
+    paths = bound_paths(repo, commit)
+    fingerprints = provenance.get("committed_file_sha256", {})
+    if set(fingerprints) != paths:
+        raise ProofIntegrityError("execution proof has incomplete committed file coverage")
+    for path in sorted(paths):
+        expected = hashlib.sha256(git_output(repo, "show", f"{commit}:{path}")).hexdigest()
+        if fingerprints[path] != expected:
+            raise ProofIntegrityError(f"execution/commit bytes mismatch: {path}")
+        checked_bytes(repo / path, expected, f"snapshot/commit bytes mismatch: {path}")
     for field, path in FINGERPRINT_FILES.items():
         committed = hashlib.sha256(git_output(repo, "show", f"{commit}:{path}")).hexdigest()
         if provenance[field] != committed or sha256(repo / path) != committed:
@@ -60,26 +117,31 @@ def validate_provenance(repo: Path, provenance: dict, *, publication: bool = Tru
         if git_output(repo, "rev-parse", "HEAD").decode().strip() != commit:
             raise ValueError("publication HEAD differs from execution HEAD")
         if git_output(repo, "status", "--porcelain", "--untracked-files=all").strip():
-            raise ValueError("publication working tree is dirty")
+            raise DirtySnapshot("publication working tree is dirty")
 
 
 def capture_provenance(repo: Path, destination: Path) -> dict:
     """Called under the lock, before GBS; rejected dirty state is recorded too."""
     status = git_output(repo, "status", "--porcelain", "--untracked-files=all").decode()
+    commit = git_output(repo, "rev-parse", "HEAD").decode().strip()
     provenance = {
-        "schema": "glibc-memopt-gbs-execution.v1",
-        "workflow_commit": git_output(repo, "rev-parse", "HEAD").decode().strip(),
+        "schema": "glibc-memopt-gbs-execution.v2",
+        "workflow_commit": commit,
         "dirty": bool(status),
         "git_status_porcelain": status,
         "python_version": sys.version.split()[0],
         "captured_utc": datetime.now(timezone.utc).isoformat(),
         **{field: sha256(repo / path) for field, path in FINGERPRINT_FILES.items()},
+        "committed_file_sha256": {
+            path: hashlib.sha256(git_output(repo, "show", f"{commit}:{path}")).hexdigest()
+            for path in sorted(bound_paths(repo, commit))
+        },
     }
     destination.write_text(json.dumps(provenance, indent=2) + "\n", encoding="utf-8")
     if sha256(Path(__file__).resolve()) != provenance["checker_sha256"]:
         raise ValueError("executing checker differs from repository checker")
     if sha256(Path(__file__).resolve().with_name("reproduce.sh")) != provenance["entrypoint_sha256"]:
-        raise ValueError("executing entrypoint differs from repository entrypoint")
+        raise ValueError("checker-adjacent entrypoint differs from repository entrypoint (not caller attestation)")
     validate_provenance(repo, provenance)
     print(f"PASS\tgbs-execution-provenance\tHEAD={provenance['workflow_commit']} dirty=false", flush=True)
     return provenance
@@ -99,17 +161,23 @@ def run_rpm_tool(command: list[str]) -> str:
 
 
 def classify_gbs_failure(returncode: int, output: str) -> None:
-    # Only recognizable source diagnostics justify a package-defect verdict.
+    # Priority: definite environment failure, ambiguous missing header, source
+    # compiler error, then unknown. Missing headers need manual source/env triage.
     environment = re.search(
-        r"No space left on device|Permission denied|error while loading shared libraries|"
-        r"fatal error:.*(?:file not found|No such file)", output, re.IGNORECASE,
+        r"No space left on device|Permission denied|error while loading shared libraries",
+        output, re.IGNORECASE,
     )
     if environment:
         raise GbsEnvironmentUnavailable(f"gbs build returned RC={returncode}; environment diagnostic: {environment.group(0)}")
+    if re.search(r"fatal error:.*(?:file not found|No such file)", output, re.IGNORECASE):
+        raise GbsCauseUnknown(
+            f"gbs RC={returncode}; unknown cause: missing header; manual second judgment required "
+            "(source/package declaration versus build environment not determined)"
+        )
     diagnostic = re.search(r"^.*\.(?:c|cc|cpp|h):\d+(?::\d+)?: (?:fatal )?error:.*$", output, re.MULTILINE)
     if diagnostic:
         raise ValueError(f"gbs RC={returncode}; source compilation defect: {diagnostic.group(0)}")
-    raise GbsEnvironmentUnavailable(
+    raise GbsCauseUnknown(
         f"gbs build returned RC={returncode}; no unambiguous source compiler diagnostic; "
         "environment unavailable or unknown cause, package correctness not adjudicated"
     )
@@ -276,13 +344,21 @@ def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path)
             print(f"INFO\tgbs-command\t{shlex.join(command)}", flush=True)
             try:
                 result = subprocess.run(
-                    command, cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                    command, cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 )
             except OSError as error:
                 raise GbsEnvironmentUnavailable(f"cannot execute gbs: {error}") from error
+            # Never validate the execution-before in-memory object after GBS.
+            provenance = read_provenance(provenance_path, record["provenance_sha256"],
+                                         "proof rewritten during build")
+            validate_provenance(repo, provenance)
+            raw_log = workspace / "gbs.log"
+            raw_log.write_bytes(result.stdout)
+            record["gbs_log_sha256"] = hashlib.sha256(result.stdout).hexdigest()
             if result.returncode:
-                print(result.stdout[-12000:])
-                classify_gbs_failure(result.returncode, result.stdout)
+                output = result.stdout.decode("utf-8", errors="replace")
+                print(output[-12000:])
+                classify_gbs_failure(result.returncode, output)
 
             rpm_dir = buildroot / "local/repos/tizen_unified_standard/armv7l/RPMS"
             rpm_path = rpm_dir / "glibc-memopt-tools-1.0.0-1.armv7l.rpm"
@@ -347,9 +423,16 @@ def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path)
                         )
                     record["elf_sha256"][manifest_name] = actual
                     print(f"PASS\tgbs-elf\t{manifest_name} sha256={actual}")
+                provenance = read_provenance(provenance_path, record["provenance_sha256"],
+                                             "proof rewritten during build")
                 validate_provenance(repo, provenance)
                 output_dir.mkdir(parents=True, exist_ok=False)
                 shutil.copyfile(provenance_path, output_dir / provenance_path.name)
+                persisted = read_provenance(output_dir / provenance_path.name, record["provenance_sha256"],
+                                            "output proof rewritten")
+                validate_provenance(repo, persisted)
+                shutil.copyfile(raw_log, output_dir / raw_log.name)
+                checked_bytes(output_dir / raw_log.name, record["gbs_log_sha256"], "output GBS log rewritten")
                 shutil.copy2(rpm_path, output_dir / rpm_path.name)
                 if sha256(output_dir / rpm_path.name) != observed_rpm_sha:
                     raise ValueError("persisted RPM SHA differs from generated RPM")
@@ -377,6 +460,10 @@ def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path)
         lock.close()
     record["finished_utc"] = datetime.now(timezone.utc).isoformat()
     record["elapsed_seconds"] = round(time.monotonic() - started, 6)
+    persisted = read_provenance(output_dir / "execution_provenance.json", record["provenance_sha256"],
+                                "output proof rewritten")
+    validate_provenance(repo, persisted)
+    checked_bytes(output_dir / "gbs.log", record["gbs_log_sha256"], "output GBS log rewritten")
     record["verdict"] = "PASS"
     (output_dir / "gbs_build_summary.json").write_text(
         json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8",
@@ -416,6 +503,10 @@ def main() -> int:
         return 2
     try:
         gbs_build(args.repo_root.resolve(), manifest, args.lock_timeout, output_dir)
+    except GbsCauseUnknown as error:
+        print(f"NOT-EVALUATED\tgbs-build-unknown\t{error}")
+        print("FAIL\tgbs-build\tmanual second judgment required; no verified bundle")
+        return 2
     except GbsEnvironmentUnavailable as error:
         print(f"NOT-EVALUATED\tgbs-build-environment\t{error}")
         print("FAIL\tgbs-build\tno verified RPM/ELF bundle; static package gates alone are insufficient")
@@ -423,6 +514,12 @@ def main() -> int:
     except (OSError, subprocess.SubprocessError) as error:
         print(f"NOT-EVALUATED\tgbs-build-environment\thost I/O or command failure: {error}")
         return 2
+    except DirtySnapshot as error:
+        print(f"FAIL\tgbs-dirty-snapshot\t{error}")
+        return 1
+    except ProofIntegrityError as error:
+        print(f"FAIL\tgbs-proof-integrity\t{error}")
+        return 1
     except ValueError as error:
         print(f"FAIL\tgbs-package-artifact\t{error}")
         return 1

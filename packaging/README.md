@@ -47,5 +47,13 @@ publisher only validates and copies this file, requiring the exact same clean
 HEAD at publication. A later delivery commit must retain the recorded script bytes.
 See [`workflow provenance`](../tools/reproduce/README.md#gbs-execution-provenance).
 
+Schema v2 also binds `config/gbs_llvm.conf`, `config/gbs.conf`,
+`tools/reproduce/deliverables_manifest.json` and tracked `packaging/*.spec` to Git
+object bytes, including skip-worktree-hidden changes. After GBS returns, proof
+bytes are re-read and compared with their pre-build digest before JSON validation;
+output and publication copies are checked again. The raw GBS log hash is recorded
+and required by the publisher. This self-recorded proof is not signed remote
+attestation; `entrypoint_sha256` identifies repository file bytes, not the caller.
+
 That explicit mode needs the configured network repositories, a root-capable GBS
 environment, buildroot disk space, and substantially more time than host verify.

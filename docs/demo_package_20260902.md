@@ -40,7 +40,7 @@
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v8 <url>
+git clone --branch demo-v9 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -50,7 +50,7 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v8
+  --tag demo-v9
 ```
 
 五种 PATH 是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上
@@ -74,6 +74,14 @@ detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REP
 相同 clean HEAD 校验并原样搬运，不得事后补哈希；结果后续提交与交付快照中的脚本
 字节必须与执行 commit 一致。旧 demo-v7 工作树构建记录保留为被替代历史，不再作
 交付自证。具体拒绝条件见 [workflow provenance](../tools/reproduce/README.md#gbs-execution-provenance)。
+
+2026-09-07 追注（N8-01/N8-02）：schema v2 把两份 GBS 配置、manifest、已跟踪
+`packaging/*.spec` 一并按 Git 对象字节绑定；GBS 返回后先核验磁盘 proof 与执行前
+字节 SHA，再解析/校验重读 JSON，输出与发布副本重复核验。原始 GBS 日志哈希由
+checker 记录、publisher 校验后原样搬运摘要，原始日志本地留存。预检不信任 shell
+`command` 覆盖，拒绝导出函数/启动脚本注入，并在外部程序启动前阻断自调用递归。
+这仍是本机自记证据，不是签名级远程证明；`entrypoint_sha256` 不是实际调用者证明。
+本轮不连接板端、不改变测量或技术结论；历史 v8 构建 proof 按 v8 提交继续保留。
 
 ## 1. 建议演示流程
 

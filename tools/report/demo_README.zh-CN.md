@@ -65,6 +65,11 @@ M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针
 Provides、filelists 零命中结果及 spec 全部 BuildRequires 的独立版本复核见
 [`三工具来源声明`](docs/tool_provenance_20260903.md)。
 
+构建自证绑定干净 Git 快照、两个 workflow 脚本、两份 GBS 配置、manifest 与已跟踪 spec。
+构建返回后及复制后重新核验 proof 字节，发布时核验原始 GBS 日志哈希。这是本机自记的
+完整性检查，**不是签名级远程证明**；`entrypoint_sha256` 表示仓库入口文件字节，不代表
+实际调用者。覆盖范围与能力边界见 [workflow 说明](tools/reproduce/README.md#gbs-execution-provenance)。
+
 GBS 产物参与了固定合同 H-V 校准样本，因此该样本本身不能作为独立通过证据。随后由
 独立事前 tag 固定、且不参与建带的 GBS-only 四格 held-out 验证 4/4 通过；GBS 为默认
 L2 路径（经 held-out 验证），冻结件和固定目录交叉构建为备选。GBS 不提供媒体文件，媒体仍是仓库外的

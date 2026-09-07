@@ -162,7 +162,7 @@ class ReproduceTests(unittest.TestCase):
     def test_default_host_test_dependency_audit_covers_inventory(self) -> None:
         entrypoint = (HERE / "reproduce.sh").read_text(encoding="utf-8")
         start = entrypoint.index("host_tests()\n")
-        end = entrypoint.index("\n}\n", start)
+        end = entrypoint.index("\n)\n", start)
         modules = re.findall(r"^\s+(tools/\S+\.py)(?:\s+\\)?$", entrypoint[start:end], re.MULTILINE)
         self.assertEqual(len(modules), 11, modules)
         documentation = (HERE / "README.md").read_text(encoding="utf-8")
@@ -240,7 +240,7 @@ class ReproduceTests(unittest.TestCase):
             ]
             for result in results:
                 self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
-                self.assertIn("NOT-EVALUATED\tgbs-build-environment\tgbs build returned RC=42", result.stdout)
+                self.assertIn("NOT-EVALUATED\tgbs-build-unknown\tgbs build returned RC=42", result.stdout)
                 self.assertIn("OVERALL\tFAIL", result.stdout)
             rows = (root / "gbs.log").read_text(encoding="utf-8").splitlines()
             configs = rows[0::2]
@@ -285,7 +285,7 @@ class ReproduceTests(unittest.TestCase):
     def _gbs_artifact_fixture(self, root: Path) -> tuple[Path, dict]:
         """Exercise the CLI, extraction and hash gates with no host RPM dependency."""
         repo = root / "repo"
-        for name in ("packaging/glibc-memopt-tools.spec", "config/gbs_llvm.conf",
+        for name in ("packaging/glibc-memopt-tools.spec", "config/gbs_llvm.conf", "config/gbs.conf",
                      "tools/reproduce/reproduce.sh", "tools/reproduce/check_gbs_package.py",
                      "tools/runners/demo_v7_delivery_20260907/publish_gbs_build.py",
                      "tools/reproduce/deliverables_manifest.json", "tools/alloc_bench/alloc_bench.c",
@@ -316,11 +316,30 @@ fault = os.environ.get("FIXTURE_GBS_FAULT", "")
 names = ("alloc_bench", "gst_loop_decode", "reclaim_probe")
 if name == "gbs":
     import json
-    proof = json.loads((pathlib.Path(sys.argv[2]).parent / "execution_provenance.json").read_text())
+    proof_path = pathlib.Path(sys.argv[2]).parent / "execution_provenance.json"
+    proof = json.loads(proof_path.read_text())
     assert proof["dirty"] is False and proof["workflow_commit"]
+    if fault == "proof-rewrite":
+        proof["python_version"] = "rewritten"
+        proof_path.write_text(json.dumps(proof))
+    elif fault == "proof-truncate":
+        proof_path.write_bytes(b"{")
+    elif fault == "proof-delete":
+        proof_path.unlink()
+    elif fault == "proof-symlink":
+        replacement = proof_path.with_suffix(".copy")
+        replacement.write_bytes(proof_path.read_bytes())
+        proof_path.unlink()
+        proof_path.symlink_to(replacement)
     if fault == "source-error":
         print("tools/alloc_bench/alloc_bench.c:12:3: error: expected expression")
         sys.exit(1)
+    if fault == "missing-header":
+        print("tools/alloc_bench/alloc_bench.c:12:3: fatal error: 'missing.h' file not found")
+        sys.exit(1)
+    sys.stdout.buffer.write(b"fixture raw stdout\\r\\n")
+    sys.stdout.buffer.flush()
+    sys.stderr.buffer.write(b"fixture raw stderr\\n")
     config = pathlib.Path(sys.argv[2]).read_text()
     buildroot = pathlib.Path(re.search(r"^buildroot=(.+)$", config, re.M).group(1))
     if fault != "missing-rpm":
@@ -357,6 +376,140 @@ elif name == "cpio":
             target.chmod(0o755)
         return repo, {**os.environ, "PATH": str(commands), "GLIBC_MEMOPT_GBS_LOCK": str(root / "lock")}
 
+    def test_build_time_proof_attacks_are_hard_failures(self) -> None:
+        for fault in ("proof-rewrite", "proof-truncate", "proof-delete", "proof-symlink"):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                repo, env = self._gbs_artifact_fixture(root)
+                result = subprocess.run(
+                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo),
+                     "--output-dir", str(root / "bundle")],
+                    env={**env, "FIXTURE_GBS_FAULT": fault}, capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("proof rewritten during build", result.stdout)
+                self.assertNotIn("OVERALL\tPASS", result.stdout)
+                self.assertFalse((root / "bundle/gbs_build_summary.json").exists())
+
+    def test_output_proof_attacks_fail_checker_and_publisher(self) -> None:
+        # Deterministic fault injection at the copy boundary, without timing races.
+        for phase in ("checker", "publisher"):
+            for attack in ("rewrite", "truncate", "delete", "symlink"):
+                with self.subTest(phase=phase, attack=attack), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    repo, env = self._gbs_artifact_fixture(root)
+                    module_path = repo / "tools/reproduce/check_gbs_package.py"
+                    if phase == "publisher":
+                        module_path = repo / "tools/runners/demo_v7_delivery_20260907/publish_gbs_build.py"
+                    spec = importlib.util.spec_from_file_location("copy_fault_fixture", module_path)
+                    module = importlib.util.module_from_spec(spec)
+                    # The publisher imports its own committed fixture checker.
+                    with patch.dict(sys.modules), patch.object(sys, "path", list(sys.path)):
+                        sys.modules.pop("check_gbs_package", None)
+                        spec.loader.exec_module(module)
+                    bundle = root / "bundle"
+                    output = bundle if phase == "checker" else root / "public"
+                    argv = [str(module_path), "--repo-root", str(repo), "--build", "--output-dir", str(output)]
+                    if phase == "publisher":
+                        built = subprocess.run(["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo),
+                                                "--output-dir", str(bundle)], env=env, text=True, capture_output=True)
+                        self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
+                        log = root / "run.log"
+                        log.write_text(built.stdout)
+                        argv = [str(module_path), "--bundle", str(bundle), "--log", str(log), "--output", str(output)]
+                    original = shutil.copyfile
+
+                    def rewrite_copy(source, destination, *args, **kwargs):
+                        result = original(source, destination, *args, **kwargs)
+                        target = Path(destination)
+                        if target == output / "execution_provenance.json":
+                            if attack == "rewrite":
+                                target.write_bytes(target.read_bytes() + b" ")
+                            elif attack == "truncate":
+                                target.write_bytes(b"{")
+                            elif attack == "delete":
+                                target.unlink()
+                            else:
+                                target.unlink()
+                                target.symlink_to(source)
+                        return result
+
+                    with patch.dict(os.environ, env, clear=True), patch.object(sys, "argv", argv), \
+                            patch.object(module.shutil, "copyfile", side_effect=rewrite_copy), patch("builtins.print") as printed:
+                        if phase == "checker":
+                            self.assertEqual(module.main(), 1)
+                            self.assertFalse((output / "gbs_build_summary.json").exists())
+                        else:
+                            with self.assertRaisesRegex(ValueError, "published proof rewritten"):
+                                module.main()
+                        self.assertTrue(any("proof" in str(call) for call in printed.call_args_list) or phase == "publisher")
+
+    def test_skip_worktree_build_input_mutation_is_rejected(self) -> None:
+        for relative in ("config/gbs_llvm.conf", "config/gbs.conf",
+                         "tools/reproduce/deliverables_manifest.json", "packaging/glibc-memopt-tools.spec"):
+            with self.subTest(path=relative), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                repo, env = self._gbs_artifact_fixture(root)
+                subprocess.run(["git", "update-index", "--skip-worktree", relative], cwd=repo, check=True)
+                target = repo / relative
+                target.write_bytes(target.read_bytes() + b"\n")  # Still syntactically valid.
+                self.assertEqual(subprocess.check_output(["git", "status", "--porcelain"], cwd=repo), b"")
+                result = subprocess.run(["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo),
+                                         "--output-dir", str(root / "bundle")], env=env, text=True, capture_output=True)
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("snapshot/commit bytes mismatch: " + relative, result.stdout)
+                self.assertNotIn("INFO\tgbs-command", result.stdout)
+
+    def test_missing_header_needs_manual_judgment_and_priority_is_explicit(self) -> None:
+        spec = importlib.util.spec_from_file_location("classify_fixture", HERE / "check_gbs_package.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        header = "tools/a.c:12:3: fatal error: 'missing.h' file not found"
+        with self.assertRaisesRegex(module.GbsCauseUnknown, "unknown cause: missing header; manual second judgment"):
+            module.classify_gbs_failure(1, header)
+        with self.assertRaisesRegex(module.GbsEnvironmentUnavailable, "environment diagnostic: No space left"):
+            module.classify_gbs_failure(1, header + "\nNo space left on device")
+        with self.assertRaisesRegex(ValueError, "source compilation defect"):
+            module.classify_gbs_failure(1, "tools/a.c:12:3: error: expected expression")
+
+    def test_exported_command_and_target_functions_cannot_bypass_preflight(self) -> None:
+        for target in ("dirname", "python3", "awk"):
+            with self.subTest(target=target):
+                result = subprocess.run(
+                    ["bash", str(HERE / "reproduce.sh"), "verify"],
+                    env={**os.environ, "BASH_FUNC_command%%": '() { printf "/usr/bin/%s\\n" "$2"; }',
+                         "BASH_FUNC_" + target + "%%": "() { :; }"},
+                    text=True, capture_output=True, timeout=10,
+                )
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self.assertIn("BASH_FUNC_command", result.stderr)
+                self.assertIn("BASH_FUNC_" + target, result.stderr)
+                self.assertNotIn("MODE\thost verify", result.stdout)
+
+    def test_recursive_entrypoint_is_refused_before_any_child_command(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            # A nonempty marker must stop even with no commands available.
+            result = subprocess.run(
+                [shutil.which("bash"), str(HERE / "reproduce.sh"), "verify"],
+                env={**os.environ, "PATH": directory, "REPRODUCE_ACTIVE_ENTRYPOINT": "fixture-parent"},
+                capture_output=True, text=True, timeout=5,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("runtime-recursion", result.stderr)
+            self.assertIn("OVERALL\tFAIL", result.stderr)
+            self.assertNotIn("python-runtime", result.stdout)
+            # An accidental python3 -> entrypoint link really re-enters the shell
+            # once; the inherited marker stops it before a second child starts.
+            (Path(directory) / "python3").symlink_to(HERE / "reproduce.sh")
+            env = {**os.environ, "PATH": directory}
+            env.pop("REPRODUCE_ACTIVE_ENTRYPOINT", None)
+            recursive = subprocess.run(
+                [shutil.which("bash"), str(HERE / "reproduce.sh"), "verify"],
+                env=env, capture_output=True, text=True, timeout=5,
+            )
+            self.assertEqual(recursive.returncode, 2)
+            self.assertEqual(recursive.stderr.count("runtime-recursion"), 1)
+
     def test_explicit_gbs_success_persists_rpm_and_all_elf_hashes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -378,6 +531,13 @@ elif name == "cpio":
             provenance = json.loads((output / "execution_provenance.json").read_text())
             self.assertFalse(provenance["dirty"])
             self.assertEqual(provenance["git_status_porcelain"], "")
+            self.assertEqual(provenance["schema"], "glibc-memopt-gbs-execution.v2")
+            self.assertEqual(record["gbs_log_sha256"], hashlib.sha256((output / "gbs.log").read_bytes()).hexdigest())
+            self.assertEqual((output / "gbs.log").read_bytes(), b"fixture raw stdout\r\nfixture raw stderr\n")
+            self.assertEqual(len(provenance["committed_file_sha256"]), 6)
+            for path, expected in provenance["committed_file_sha256"].items():
+                contents = subprocess.check_output(["git", "show", provenance["workflow_commit"] + ":" + path], cwd=repo)
+                self.assertEqual(hashlib.sha256(contents).hexdigest(), expected)
             for field, path in (("entrypoint_sha256", "tools/reproduce/reproduce.sh"),
                                 ("checker_sha256", "tools/reproduce/check_gbs_package.py")):
                 committed = subprocess.check_output(["git", "show", provenance["workflow_commit"] + ":" + path], cwd=repo)
@@ -396,10 +556,11 @@ elif name == "cpio":
             )
             self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
             self.assertIn("dirty execution snapshot", result.stdout)
+            self.assertIn("FAIL\tgbs-dirty-snapshot", result.stdout)
             self.assertNotIn("INFO\tgbs-command", result.stdout)
             self.assertFalse((root / "bundle").exists())
 
-    def test_public_gbs_execution_proof_matches_git_objects_and_delivery_bytes(self) -> None:
+    def test_historical_v8_gbs_execution_proof_matches_its_recorded_git_objects(self) -> None:
         archive = REPO / "data/raw/demo_v7_delivery_20260907/gbs"
         proof_path = archive / "execution_provenance.json"
         proof = json.loads(proof_path.read_text())
@@ -416,8 +577,8 @@ elif name == "cpio":
             digest = hashlib.sha256(committed).hexdigest()
             self.assertEqual(proof[field], digest, field)
             self.assertEqual(record[field], digest, field)
-            self.assertEqual(hashlib.sha256((REPO / relative).read_bytes()).hexdigest(), digest, field)
-            delivery_bytes = subprocess.check_output(["git", "show", "HEAD:" + relative], cwd=REPO)
+            # Immutable v8 execution evidence is not a claim about v9 execution.
+            delivery_bytes = subprocess.check_output(["git", "show", "demo-v8:" + relative], cwd=REPO)
             self.assertEqual(hashlib.sha256(delivery_bytes).hexdigest(), digest, field)
         self.assertLessEqual(record["started_utc"], proof["captured_utc"])
         self.assertLessEqual(proof["captured_utc"], record["finished_utc"])
@@ -425,7 +586,7 @@ elif name == "cpio":
         self.assertIn("superseded", (archive / "README.md").read_text())
 
     def test_publisher_copies_execution_bytes_and_rejects_missing_dirty_or_mismatched_provenance(self) -> None:
-        for fault in ("none", "missing", "hash", "checker-hash", "commit-hash", "dirty-record", "dirty-current", "changed-head"):
+        for fault in ("none", "missing", "hash", "checker-hash", "commit-hash", "dirty-record", "dirty-current", "changed-head", "raw-log", "raw-log-delete", "raw-log-symlink"):
             with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 repo, env = self._gbs_artifact_fixture(root)
@@ -440,6 +601,17 @@ elif name == "cpio":
                 proof_path = bundle / "execution_provenance.json"
                 if fault == "missing":
                     proof_path.unlink()
+                elif fault.startswith("raw-log"):
+                    raw = bundle / "gbs.log"
+                    if fault == "raw-log":
+                        raw.write_bytes(b"tampered")
+                    elif fault == "raw-log-delete":
+                        raw.unlink()
+                    else:
+                        backup = root / "log-copy"
+                        backup.write_bytes(raw.read_bytes())
+                        raw.unlink()
+                        raw.symlink_to(backup)
                 elif fault in ("hash", "checker-hash", "commit-hash", "dirty-record"):
                     proof = json.loads(proof_path.read_text())
                     field = "dirty" if fault == "dirty-record" else "checker_sha256" if fault == "checker-hash" else "entrypoint_sha256"
@@ -472,7 +644,7 @@ elif name == "cpio":
                     self.assertFalse(output.exists())
 
     def test_gbs_environment_errors_differ_from_source_defects(self) -> None:
-        for fault in ("lock-unwritable", "broken-rpm", "broken-rpm2cpio", "broken-cpio", "source-error"):
+        for fault in ("lock-unwritable", "broken-rpm", "broken-rpm2cpio", "broken-cpio", "source-error", "missing-header"):
             with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 repo, env = self._gbs_artifact_fixture(root)
@@ -483,7 +655,10 @@ elif name == "cpio":
                     env={**env, "FIXTURE_GBS_FAULT": fault}, capture_output=True, text=True,
                 )
                 self.assertEqual(result.returncode, 1 if fault == "source-error" else 2, result.stdout + result.stderr)
-                self.assertIn("source compilation defect" if fault == "source-error" else "NOT-EVALUATED\tgbs-build-environment", result.stdout)
+                label = ("source compilation defect" if fault == "source-error" else
+                         "NOT-EVALUATED\tgbs-build-unknown" if fault == "missing-header" else
+                         "NOT-EVALUATED\tgbs-build-environment")
+                self.assertIn(label, result.stdout)
                 self.assertNotIn("OVERALL\tPASS", result.stdout)
 
     def test_whitelist_rejects_shell_functions_and_aliases(self) -> None:
@@ -499,7 +674,7 @@ elif name == "cpio":
                     )
                     self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
                     self.assertIn("not a real executable file", result.stderr)
-                    self.assertIn(command, result.stderr)
+                    self.assertIn("BASH_ENV", result.stderr)
 
     def test_explicit_gbs_missing_command_is_not_evaluated_and_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -937,8 +1112,8 @@ elif name == "cpio":
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v8"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v8"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v9"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v9"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)

@@ -1,14 +1,51 @@
 #!/bin/sh
 set -u
 
+# This guard runs before resolving or invoking any external program. Host-test
+# fixtures explicitly start independent invocations below, not recursive ones.
+if [ -n "${REPRODUCE_ACTIVE_ENTRYPOINT:-}" ]; then
+    printf 'FAIL\truntime-recursion\treproduce.sh already active (pid=%s); recursive invocation refused\nOVERALL\tFAIL\n' "$REPRODUCE_ACTIVE_ENTRYPOINT" >&2
+    exit 2
+fi
+REPRODUCE_ACTIVE_ENTRYPOINT=$$
+export REPRODUCE_ACTIVE_ENTRYPOINT
+
+# Bootstrap Python via filesystem PATH traversal using shell builtins only.
+# Never execute a command/python3 function or trust a command -v override.
+_reproduce_python=
+_reproduce_search=${PATH:-}:
+while [ -n "$_reproduce_search" ]; do
+    _reproduce_dir=${_reproduce_search%%:*}
+    _reproduce_search=${_reproduce_search#*:}
+    _reproduce_candidate=${_reproduce_dir:-.}/python3
+    if [ -f "$_reproduce_candidate" ] && [ -x "$_reproduce_candidate" ]; then
+        _reproduce_python=$_reproduce_candidate
+        break
+    fi
+done
+if [ -z "$_reproduce_python" ]; then
+    printf 'FAIL\truntime-preflight\tpython3 is not available; Python >=3.10 required\nOVERALL\tFAIL\n' >&2
+    exit 2
+fi
+if ! "$_reproduce_python" -c 'import sys; ok = sys.version_info >= (3, 10); print("PASS\tpython-runtime\t" + sys.version.split()[0]) if ok else print("FAIL\tpython-runtime\tPython >=3.10 required (Path.write_text newline support); found " + sys.version.split()[0]); sys.exit(0 if ok else 2)'; then
+    printf 'OVERALL\tFAIL\n'
+    exit 2
+fi
+
 require_executable()
 {
-    resolved=$(command -v "$1" 2>/dev/null) || resolved=
-    case "$resolved" in
-        */*) [ -f "$resolved" ] && [ -x "$resolved" ] && return 0;;
-    esac
-    printf 'FAIL\truntime-preflight\tmissing default-verify command: %s or not a real executable file (resolved=%s; functions/aliases are unsupported)\n' "$1" "$resolved" >&2
-    return 1
+    "$_reproduce_python" -c '
+import os, shutil, sys
+name = sys.argv[1]
+resolved = shutil.which(name)
+injected = sorted(k for k in os.environ if k.startswith("BASH_FUNC_"))
+startup = [k for k in ("BASH_ENV", "ENV") if os.environ.get(k)]
+if injected or startup or not resolved or not os.path.isfile(resolved) or not os.access(resolved, os.X_OK):
+    print("FAIL\truntime-preflight\tmissing default-verify command: " + name +
+          " or not a real executable file (resolved=" + str(resolved) +
+          "; shell functions/startup aliases unsupported: " + ",".join(injected + startup) + ")", file=sys.stderr)
+    sys.exit(1)
+' "$1"
 }
 
 require_executable dirname || {
@@ -38,10 +75,6 @@ EOF
 
 if ! require_executable python3; then
     printf 'FAIL\truntime-preflight\tpython3 is not available; Python >=3.10 required\nOVERALL\tFAIL\n' >&2
-    exit 2
-fi
-if ! python3 -c 'import sys; ok = sys.version_info >= (3, 10); print("PASS\tpython-runtime\t" + sys.version.split()[0]) if ok else print("FAIL\tpython-runtime\tPython >=3.10 required (Path.write_text newline support); found " + sys.version.split()[0]); sys.exit(0 if ok else 2)'; then
-    printf 'OVERALL\tFAIL\n'
     exit 2
 fi
 
@@ -111,8 +144,8 @@ check()
 
 clean_environment()
 {
-    command -v python3 >/dev/null 2>&1 || { printf 'python3 is not available\n' >&2; return 1; }
-    command -v git >/dev/null 2>&1 || { printf 'git is not available\n' >&2; return 1; }
+    require_executable python3 || return 1
+    require_executable git || return 1
     [ -d "$repo/.git" ] || { printf 'not a git clone: ZIP/source export is unsupported\n' >&2; return 1; }
     [ -f "$repo/data/raw/product_cyclic_target_probe_20260814/raw/timeseries.tsv" ] || { printf 'missing public ServiceA input\n' >&2; return 1; }
     [ -f "$repo/tools/reproduce/acceptance_bands.json" ] || { printf 'missing acceptance_bands.json\n' >&2; return 1; }
@@ -295,7 +328,10 @@ link_check()
 }
 
 host_tests()
-{
+(
+    # These are controlled, independent CLI fixtures. All normal child commands
+    # retain the recursion guard; only this host-test boundary resets it.
+    unset REPRODUCE_ACTIVE_ENTRYPOINT
     PYTHONDONTWRITEBYTECODE=1 python3 -m unittest \
       tools/runners/s4_retention_20260901/test_host.py \
       tools/runners/gst_trim_cost_20260901/test_host.py \
@@ -308,7 +344,7 @@ host_tests()
       tools/reproduce/test_host.py \
       tools/reproduce/test_board_workflow_mocked_sdb.py \
       tools/runners/tool_provenance_20260903/test_host.py
-}
+)
 
 cd "$repo" || exit 2
 printf 'MODE\thost verify\n'

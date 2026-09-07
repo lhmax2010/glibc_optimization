@@ -146,3 +146,21 @@ GBS 构建及 publisher 校验均已通过，两个 JSON 搬运前后 cmp 静默
 一致；执行 UTC/耗时/残留路径见 [`归档说明`](../data/raw/demo_v7_delivery_20260907/gbs/README.md)。
 新增公开归档测试把 entrypoint/checker 哈希同时绑定到执行 commit 的文件字节和当前
 交付文件字节；结果提交不得更改这两个脚本，否则必须重新构建、重新归档。
+
+## 第 6 轮终审闭环（demo-v8，2026-09-07）
+
+仅交付工具校验加固与文档，不改测量或结论。批准依据见
+[`PM 第六轮台账`](pm_decisions.md#2026-09-07-第六轮裁决demo-v8-demo-v9)。
+修复提交通过 `demo-v9^` 解析，保留 `demo-v8` 原标签与原构建 JSON/TSV。
+
+| 评审编号 | 修复提交 | 验证方式 |
+|---|---|---|
+| P0 N8-01（1–4） | `demo-v9^` | `test_build_time_proof_attacks_are_hard_failures` 四攻击；`test_output_proof_attacks_fail_checker_and_publisher` 两复制边界 × 四攻击；均无 PASS，checker RC=1 |
+| P0 N8-02（5） | `demo-v9^` | `test_exported_command_and_target_functions_cannot_bypass_preflight`：command 与 dirname/python3/awk 同时导出函数，RC=2 且不进入 verify |
+| P0 N8-02（6） | `demo-v9^` | `test_recursive_entrypoint_is_refused_before_any_child_command`：空 PATH、继承标记即拒绝；受控 host fixture 独立调用仍完成 |
+| P1 CC N8-01（7） | `demo-v9^` | `test_skip_worktree_build_input_mutation_is_rejected`：两 config/manifest/spec 逐项加合法空白、porcelain 为空，仍在 GBS 前 RC=1；成功 proof 集合逐文件对 Git 对象 |
+| P1 N8-03/V8-1（8） | `demo-v9^` | 缺头文件 unknown/manual、明确环境优先、其他源码错误 FAIL 的分类回归；README 表同步 |
+| P1 CC N8-02/N8-03/N8-04（9） | `demo-v9^` | 原始 gbs.log 缺失/篡改/符号链接的 publisher 拒绝测试；脏快照标签测试；双语 README/packaging 能力边界与链接核验 |
+
+根因复现记录：旧 checker 在内容改写、截断、同字节符号链接替换三例均 RC=0；删除例
+RC=2，被误分环境。修复后四例都为 proof integrity RC=1，且不生成成功摘要。
