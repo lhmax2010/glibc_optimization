@@ -162,8 +162,9 @@ A nonzero GBS result is classified in this explicit priority order:
 | Unrecognized GBS failure | `NOT-EVALUATED gbs-build-unknown`, RC=2; manual judgment, no package-defect claim |
 
 Broken RPM inspection/extraction tools remain environment failures (RC=2).
-Missing RPM/ELF or hash/identity drift
-remains hard `FAIL` (RC=1). A successful
+Missing RPM/ELF, ELF hash drift, or RPM NVR/architecture/%files identity drift
+remains hard `FAIL` (RC=1). RPM wrapper metadata SHA drift is `REPORT_ONLY`,
+not an ELF reproducibility gate. A successful
 static check cannot make an unevaluated explicit build pass. `--output-dir` must be
 new; `PASS` requires the RPM and all three ELF files to have been generated,
 inspected, copied there and hash-verified. Without this option, the checker chooses
@@ -207,7 +208,9 @@ local because they may contain host paths. Missing/altered/symlinked logs fail.
 The filtered `workflow_summary.tsv` is not the raw log and cannot substitute for it.
 Delivery host tests compare the current execution record with its recorded Git
 objects and delivery bytes. Older v8 proof stays immutable and is checked against
-its recorded commit and v8 tag, not represented as a v9 execution.
+its recorded commit, not represented as a v9 execution. The
+[v9 real build archive](../../data/raw/demo_v9_delivery_20260907/gbs/README.md)
+binds the current delivery's six files; raw logs stay local and are available on request.
 
 ### Provenance capability boundary
 

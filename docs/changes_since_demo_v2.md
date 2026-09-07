@@ -190,3 +190,7 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 | CC N8-01 | `demo-v9^` | 两份 GBS config、manifest、全部 tracked spec 加入 Git 对象哈希集合；skip-worktree 四输入篡改测试 |
 | N8-03 / V8-1 | `demo-v9^` | 缺头文件单列 unknown/需人工二判；明确环境 → 缺头文件歧义 → 源码错误 → 未知的诊断优先级 |
 | CC N8-02/N8-03 / N8-04 | `demo-v9^` | 自记而非签名级远程证明、入口字节非调用者的边界声明；原始 GBS 日志哈希归档/校验；脏快照独立失败标签 |
+
+实现提交为 `de89a10bb187d0a1576aaf24a45b9586c55ba3c1`；在该 clean HEAD 上实际 GBS
+构建及 publisher 通过，新增 [`v9 构建自证`](../data/raw/demo_v9_delivery_20260907/gbs/README.md)，
+保留 v8 历史记录。这不是板上复测，不改变任何原有实验数据或结论。

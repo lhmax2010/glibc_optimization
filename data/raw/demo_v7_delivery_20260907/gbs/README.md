@@ -33,3 +33,8 @@ sudo rm -rf -- /tmp/glibc-memopt-gbs-2204117-1o6ruhnh
 只有上述已解析出的本次临时目录是清理目标。复跑机制与退出语义见
 [`workflow README`](../../../../tools/reproduce/README.md)，公开摘要生成器见
 [`publish_gbs_build.py`](../../../../tools/runners/demo_v7_delivery_20260907/publish_gbs_build.py)。
+
+2026-09-07 追注（N8-01）：以上“当前交付文件字节”指该次 v8 交付。JSON/TSV 原文
+保留，不补写 v2 字段；它们仍按记录的执行提交复核，不冒充新版 checker 的执行证明。
+v9 已单独使用 clean commit 重构建，新增 proof 读回、六文件与原始日志哈希校验，见
+[`v9 自证归档`](../../demo_v9_delivery_20260907/gbs/README.md)。

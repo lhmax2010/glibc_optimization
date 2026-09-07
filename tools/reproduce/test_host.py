@@ -577,13 +577,46 @@ elif name == "cpio":
             digest = hashlib.sha256(committed).hexdigest()
             self.assertEqual(proof[field], digest, field)
             self.assertEqual(record[field], digest, field)
-            # Immutable v8 execution evidence is not a claim about v9 execution.
-            delivery_bytes = subprocess.check_output(["git", "show", "demo-v8:" + relative], cwd=REPO)
-            self.assertEqual(hashlib.sha256(delivery_bytes).hexdigest(), digest, field)
+            # Immutable v8 evidence binds its execution commit, not v9 bytes.
+            # Do not introduce a dependency on fetching a historical demo tag.
         self.assertLessEqual(record["started_utc"], proof["captured_utc"])
         self.assertLessEqual(proof["captured_utc"], record["finished_utc"])
         self.assertRegex(proof["python_version"], r"^3\.\d+\.\d+$")
         self.assertIn("superseded", (archive / "README.md").read_text())
+
+    def test_v9_public_execution_proof_matches_commit_and_delivery_files(self) -> None:
+        archive = REPO / "data/raw/demo_v9_delivery_20260907/gbs"
+        proof_path = archive / "execution_provenance.json"
+        proof = json.loads(proof_path.read_text())
+        record = json.loads((archive / "build_summary.json").read_text())
+        self.assertEqual(proof["schema"], "glibc-memopt-gbs-execution.v2")
+        self.assertIs(proof["dirty"], False)
+        self.assertEqual(proof["git_status_porcelain"], "")
+        self.assertEqual(record["workflow_commit"], proof["workflow_commit"])
+        self.assertEqual(record["provenance_sha256"], hashlib.sha256(proof_path.read_bytes()).hexdigest())
+        self.assertRegex(record["gbs_log_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(record["verdict"], "PASS")
+        expected_paths = {"tools/reproduce/reproduce.sh", "tools/reproduce/check_gbs_package.py",
+                          "config/gbs_llvm.conf", "config/gbs.conf", "tools/reproduce/deliverables_manifest.json"}
+        specs = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", proof["workflow_commit"],
+                                         "packaging"], cwd=REPO).decode().splitlines()
+        expected_paths.update(path for path in specs if Path(path).parent == Path("packaging") and path.endswith(".spec"))
+        self.assertEqual(set(proof["committed_file_sha256"]), expected_paths)
+        for path, digest in proof["committed_file_sha256"].items():
+            with self.subTest(path=path):
+                for commit in (proof["workflow_commit"], "HEAD"):
+                    committed = subprocess.check_output(["git", "show", commit + ":" + path], cwd=REPO)
+                    self.assertEqual(hashlib.sha256(committed).hexdigest(), digest)
+                self.assertEqual(hashlib.sha256((REPO / path).read_bytes()).hexdigest(), digest)
+        for field, path in (("entrypoint_sha256", "tools/reproduce/reproduce.sh"),
+                            ("checker_sha256", "tools/reproduce/check_gbs_package.py")):
+            self.assertEqual(proof[field], proof["committed_file_sha256"][path])
+            self.assertEqual(record[field], proof[field])
+        manifest = json.loads((HERE / "deliverables_manifest.json").read_text())
+        self.assertEqual(record["elf_sha256"], {item["name"]: item["gbs_build_sha256"]
+                                              for item in manifest["artifacts"] if item["gbs_build_sha256"]})
+        self.assertLessEqual(record["started_utc"], proof["captured_utc"])
+        self.assertLessEqual(proof["captured_utc"], record["finished_utc"])
 
     def test_publisher_copies_execution_bytes_and_rejects_missing_dirty_or_mismatched_provenance(self) -> None:
         for fault in ("none", "missing", "hash", "checker-hash", "commit-hash", "dirty-record", "dirty-current", "changed-head", "raw-log", "raw-log-delete", "raw-log-symlink"):

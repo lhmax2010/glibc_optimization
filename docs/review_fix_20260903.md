@@ -164,3 +164,10 @@ GBS 构建及 publisher 校验均已通过，两个 JSON 搬运前后 cmp 静默
 
 根因复现记录：旧 checker 在内容改写、截断、同字节符号链接替换三例均 RC=0；删除例
 RC=2，被误分环境。修复后四例都为 proof integrity RC=1，且不生成成功摘要。
+
+实现提交 `de89a10bb187d0a1576aaf24a45b9586c55ba3c1` 的干净快照已实际完成 GBS 构建与
+同 HEAD publisher 校验，六文件哈希与 Git 对象一致；公开导入 cmp 静默。执行自证及
+日志哈希见 [`v9 构建归档`](../data/raw/demo_v9_delivery_20260907/gbs/README.md)。
+`test_v9_public_execution_proof_matches_commit_and_delivery_files` 把公开指纹同时绑定到
+执行提交、交付 HEAD 与当前文件。旧 v8 JSON/TSV 不变，仍单独按历史执行提交复核。
+文档另明确 RPM wrapper SHA 漂移为 REPORT_ONLY，避免把它与 ELF/身份硬门混称。

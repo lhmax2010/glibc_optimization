@@ -1,0 +1,38 @@
+{
+  "schema": "glibc-memopt-gbs-end-to-end.v1",
+  "started_utc": "2026-09-07T12:08:15.401214+00:00",
+  "source_commit": "20ab8c80d7b357254542dd841212ed8d7e7085c8",
+  "buildroot_residue": "/tmp/glibc-memopt-gbs-2533297-7mkw722o",
+  "elf_sha256": {
+    "alloc_bench.armv7l": "88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa",
+    "gst_loop_decode.armv7l": "7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034",
+    "reclaim_probe.armv7l": "e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31"
+  },
+  "entrypoint_sha256": "a22a6ed906d1684db46c73891e3dec8d5919883d1e6c18747b3a37ae2df9525f",
+  "checker_sha256": "6cdbb42997069bb8f24cd37aa350b66a1bedba88bf30afff0998e205b2b9da55",
+  "workflow_commit": "de89a10bb187d0a1576aaf24a45b9586c55ba3c1",
+  "provenance_sha256": "31aae42948ba478b7c56c9d53ab147748650825b1397611fd994de38c2ea48a8",
+  "executed_command": [
+    "/usr/bin/gbs",
+    "-c",
+    "/tmp/glibc-memopt-gbs-2533297-7mkw722o/gbs.conf",
+    "build",
+    "-A",
+    "armv7l",
+    "--overwrite",
+    "-c",
+    "20ab8c80d7b357254542dd841212ed8d7e7085c8"
+  ],
+  "gbs_log_sha256": "fbb2e2184c0a9f1d33a61d5fc756f33f01dccf132e54aff5d761bfe8f30399f0",
+  "rpm": {
+    "nvr": "glibc-memopt-tools-1.0.0-1",
+    "arch": "armv7l",
+    "sha256": "725ff8b9d0bcf75a39f80152503fe5145341a595930884ffbcefe5428da2a176",
+    "recorded_sha256": "efad4a0d202785f8c201977fd8aef35752af1bddde163f1063151621e0ac4e0e",
+    "size_bytes": 32956,
+    "sha256_scope": "observed host build record; NVR, %files, and extracted ELF hashes are rebuild gates"
+  },
+  "finished_utc": "2026-09-07T12:14:03.447431+00:00",
+  "elapsed_seconds": 348.046237,
+  "verdict": "PASS"
+}
