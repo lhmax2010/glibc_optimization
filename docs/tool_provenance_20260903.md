@@ -78,24 +78,41 @@ GBS buildroot 记录一致，没有包名或版本分歧。`reference` 列展示
 
 审计器与 host 测试随本轮入库：
 [`tools/runners/tool_provenance_20260903/`](../tools/runners/tool_provenance_20260903/)。
-在真实 clone 根目录执行：
+在真实 clone 根目录执行。2026-09-07 追注（V6-8）：固定快照与移动指针分开，
+不再对会移动的 `reference` 行要求历史字节相等；历史四仓记录保持不变。
+
+### 5.1 固定快照：逐字节核对
 
 ```sh
 audit_tmp=$(mktemp -d /tmp/glibc-memopt-tool-provenance.XXXXXX)
 python3 tools/runners/tool_provenance_20260903/audit_tool_provenance.py \
   --config config/gbs_llvm.conf \
-  --config config/gbs.conf \
   --spec packaging/glibc-memopt-tools.spec \
   --cache-dir "$audit_tmp/cache" \
-  --output "$audit_tmp/output"
-cmp "$audit_tmp/output/repos.tsv" data/raw/tool_provenance_20260903/repos.tsv
-cmp "$audit_tmp/output/tool_hits.tsv" data/raw/tool_provenance_20260903/tool_hits.tsv
-cmp "$audit_tmp/output/buildrequires.tsv" data/raw/tool_provenance_20260903/buildrequires.tsv
-cmp "$audit_tmp/output/summary.json" data/raw/tool_provenance_20260903/summary.json
+  --output "$audit_tmp/fixed"
+for name in repos tool_hits buildrequires; do
+  awk -F '\t' 'NR == 1 || $1 == "config/gbs_llvm.conf"' \
+    "data/raw/tool_provenance_20260903/$name.tsv" > "$audit_tmp/expected-$name.tsv"
+  cmp "$audit_tmp/fixed/$name.tsv" "$audit_tmp/expected-$name.tsv"
+done
+python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["configs"]==["config/gbs_llvm.conf"] and d["repositories"]==2 and d["tool_hits"]==0 and d["outcome"]=="ZERO_HITS"; print("PASS fixed-summary")' "$audit_tmp/fixed/summary.json"
 ```
 
-固定快照的四个 `cmp` 应静默；移动 `reference` 发生更新后，`repos.tsv` 与
-`buildrequires.tsv` 允许有可解释变化，但新输出必须保留并重新审阅。当前审计原文：
+三个固定快照 `cmp` 应静默。summary 的 `configs`/`repositories` 是本次范围（两仓），
+不与原四仓 summary 做 byte-cmp。
+
+### 5.2 移动指针：记录现状，不作历史 byte-cmp
+
+```sh
+python3 tools/runners/tool_provenance_20260903/audit_tool_provenance.py \
+  --config config/gbs.conf \
+  --spec packaging/glibc-memopt-tools.spec \
+  --cache-dir "$audit_tmp/reference-cache" \
+  --output "$audit_tmp/reference-now"
+```
+
+此组必须保留新输出及 revision，按需与旧记录人工对照；移动行更新不是固定快照复现
+失败，不纳入前一组 `cmp`。历史完整四仓审计原文（不是上述每组的两仓输出）：
 
 ```text
 REPOS	4

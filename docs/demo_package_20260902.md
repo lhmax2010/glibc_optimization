@@ -40,7 +40,7 @@
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v7 <url>
+git clone --branch demo-v8 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -50,7 +50,7 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v7
+  --tag demo-v8
 ```
 
 五种 PATH 是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上
@@ -68,6 +68,12 @@ detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REP
 通过身份/哈希门后才算构建通过；将 NVR、三 ELF SHA、实际耗时、残留路径（如有）
 归档 `data/raw/`。构建环境不可用/锁超时/产物缺失均非零退出；root 属主 buildroot 清理
 失败单列 `REPORT_ONLY`，不能掩盖前述失败。纯 host verify 的 PASS 不替代这项构建证据。
+
+2026-09-07 自证规则（N7-01）：真实构建必须在干净、已提交快照执行；checker 取锁后、
+调用 GBS 前写入 HEAD/dirty/入口与 checker SHA/Python/UTC 指纹。publisher 只能在
+相同 clean HEAD 校验并原样搬运，不得事后补哈希；结果后续提交与交付快照中的脚本
+字节必须与执行 commit 一致。旧 demo-v7 工作树构建记录保留为被替代历史，不再作
+交付自证。具体拒绝条件见 [workflow provenance](../tools/reproduce/README.md#gbs-execution-provenance)。
 
 ## 1. 建议演示流程
 

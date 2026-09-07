@@ -160,3 +160,18 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 | V6-2 / GBS-STATUS | `demo-v7^` | 历史构建命令和 checker 复跑命令分清；manifest 命令含固定 source commit；pending 事实订正保留日期 |
 | V6-5 / V6-6 / V6-7 | `demo-v7^` | B/B2 M7 取值差异披露；估算器/产品落点日期订正；INDEX 补齐报告与 PM 台账 |
 | N6-04 / V6-4 | `demo-v7^` | 后续合同 annotated tag + tagger/推送时间 + ≥10 分钟实际审计间隔；历史 tag 不改写 |
+
+## 14. demo-v7 → demo-v8
+
+仅交付工具自证机制与文档修正，不改任何测量、验收带、held-out 独立性或技术结论。
+`demo-v7` 保留，`demo-v8^` 指向本轮最终 main；具体实现与验证见
+[`第 5 轮闭环`](review_fix_20260903.md#第-5-轮终审闭环demo-v72026-09-07) 与
+[`PM 裁决`](pm_decisions.md#2026-09-07-第五轮裁决demo-v7-demo-v8)。
+
+| 发现编号 | 修复提交/引用 | 变化与验证 |
+|---|---|---|
+| N7-01 | `demo-v8^` | 执行时 clean HEAD/dirty/两脚本哈希/Python/UTC 指纹；publisher 拒绝缺失/漂移且只搬运；git 对象与交付字节一致性测试；干净提交真实重构建并保留旧工作树记录 |
+| N7-02 | `demo-v8^` | 锁/RPM 工具/未知 GBS 环境故障 NOT-EVALUATED；可识别源码错误 FAIL；缺产物维持硬 FAIL；桩回归覆盖 |
+| N7-03 | `demo-v8^` | 白名单拒绝函数、别名与非可执行文件；真最小/损坏工具等 15 格复核 |
+| N7-02b / N7-06 | `demo-v8^` | README 标题限定 alloc_bench；packaging 唯一 workflow 操作入口/固定 payload source/唯一 buildroot/默认路径/范围纳入一致性测试 |
+| V6-8 / V6-9 / F12 | `demo-v8^` | 固定 repo 字节比较与移动指针现状分组；导语改为既有带中心两位；同板性依据与缺少唯一硬件序列号证据的局限明确披露 |

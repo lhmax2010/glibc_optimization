@@ -209,8 +209,8 @@ class ReproduceTests(unittest.TestCase):
     def test_explicit_gbs_environment_failure_is_not_evaluated_and_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
+            repo, env = self._gbs_artifact_fixture(root)
             fake_bin = root / "bin"
-            fake_bin.mkdir()
             fake_gbs = fake_bin / "gbs"
             fake_gbs.write_text(
                 "#!/bin/sh\n"
@@ -227,14 +227,13 @@ class ReproduceTests(unittest.TestCase):
                 fake_bin, ("rpm", "rpm2cpio", "cpio"), unexpected_tools,
             )
             env = {
-                **os.environ,
-                "PATH": f"{fake_bin}:{os.environ['PATH']}",
+                **env,
                 "GLIBC_MEMOPT_GBS_LOCK": str(root / "gbs.lock"),
                 "FAKE_GBS_LOG": str(root / "gbs.log"),
             }
             results = [
                 subprocess.run(
-                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--lock-timeout", "1"],
+                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo), "--lock-timeout", "1"],
                     cwd=REPO, env=env, text=True, capture_output=True, check=False,
                 )
                 for _ in range(2)
@@ -287,6 +286,8 @@ class ReproduceTests(unittest.TestCase):
         """Exercise the CLI, extraction and hash gates with no host RPM dependency."""
         repo = root / "repo"
         for name in ("packaging/glibc-memopt-tools.spec", "config/gbs_llvm.conf",
+                     "tools/reproduce/reproduce.sh", "tools/reproduce/check_gbs_package.py",
+                     "tools/runners/demo_v7_delivery_20260907/publish_gbs_build.py",
                      "tools/reproduce/deliverables_manifest.json", "tools/alloc_bench/alloc_bench.c",
                      "tools/gst_loop_decode/gst_loop_decode.c", "tools/reclaim_probe/reclaim_probe.c"):
             target = repo / name
@@ -300,15 +301,26 @@ class ReproduceTests(unittest.TestCase):
                 item["gbs_build_sha256"] = hashlib.sha256(("fixture-" + installed).encode()).hexdigest()
         manifest["gbs_build"]["rpm_sha256"] = hashlib.sha256(b"fixture-rpm").hexdigest()
         manifest_path.write_text(json.dumps(manifest))
+        (repo / ".gitignore").write_text("__pycache__/\n")
+        subprocess.run(["git", "init", "-q", str(repo)], check=True, capture_output=True)
+        subprocess.run(["git", "add", "."], cwd=repo, check=True, capture_output=True)
+        subprocess.run(["git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                        "commit", "-qm", "clean build fixture"], cwd=repo, check=True, capture_output=True)
         commands = root / "bin"
         commands.mkdir()
-        for command in ("bash", "dirname", "python3"):
+        for command in ("bash", "dirname", "python3", "git"):
             (commands / command).symlink_to(shutil.which(command))
         stub = '''import os, pathlib, re, sys
 name = pathlib.Path(sys.argv[0]).name
 fault = os.environ.get("FIXTURE_GBS_FAULT", "")
 names = ("alloc_bench", "gst_loop_decode", "reclaim_probe")
 if name == "gbs":
+    import json
+    proof = json.loads((pathlib.Path(sys.argv[2]).parent / "execution_provenance.json").read_text())
+    assert proof["dirty"] is False and proof["workflow_commit"]
+    if fault == "source-error":
+        print("tools/alloc_bench/alloc_bench.c:12:3: error: expected expression")
+        sys.exit(1)
     config = pathlib.Path(sys.argv[2]).read_text()
     buildroot = pathlib.Path(re.search(r"^buildroot=(.+)$", config, re.M).group(1))
     if fault != "missing-rpm":
@@ -316,14 +328,21 @@ if name == "gbs":
         rpm.parent.mkdir(parents=True)
         rpm.write_bytes(b"fixture-rpm")
 elif name == "rpm":
+    if fault == "broken-rpm":
+        print("rpm shared library unavailable", file=sys.stderr)
+        sys.exit(127)
     if "-qpl" in sys.argv:
         print("\\n".join("/usr/bin/" + n for n in names))
     else:
         print("glibc-memopt-tools-1.0.0-1\\narmv7l")
 elif name == "rpm2cpio":
+    if fault == "broken-rpm2cpio":
+        sys.exit(42)
     sys.stdout.buffer.write(b"fixture-stream")
 elif name == "cpio":
     sys.stdin.buffer.read()
+    if fault == "broken-cpio":
+        sys.exit(42)
     target = pathlib.Path("usr/bin")
     target.mkdir(parents=True)
     for n in names:
@@ -356,6 +375,106 @@ elif name == "cpio":
             self.assertEqual(record["rpm"]["sha256"], record["rpm"]["recorded_sha256"])
             self.assertTrue((output / "glibc-memopt-tools-1.0.0-1.armv7l.rpm").is_file())
             self.assertIsNone(record["buildroot_residue"])
+            provenance = json.loads((output / "execution_provenance.json").read_text())
+            self.assertFalse(provenance["dirty"])
+            self.assertEqual(provenance["git_status_porcelain"], "")
+            for field, path in (("entrypoint_sha256", "tools/reproduce/reproduce.sh"),
+                                ("checker_sha256", "tools/reproduce/check_gbs_package.py")):
+                committed = subprocess.check_output(["git", "show", provenance["workflow_commit"] + ":" + path], cwd=repo)
+                self.assertEqual(hashlib.sha256(committed).hexdigest(), provenance[field])
+                self.assertEqual(record[field], provenance[field])
+            self.assertLessEqual(provenance["captured_utc"], record["finished_utc"])
+
+    def test_gbs_provenance_dirty_execution_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo, env = self._gbs_artifact_fixture(root)
+            (repo / "uncommitted-note").write_text("dirty")
+            result = subprocess.run(
+                ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo), "--output-dir", str(root / "bundle")],
+                env=env, capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn("dirty execution snapshot", result.stdout)
+            self.assertNotIn("INFO\tgbs-command", result.stdout)
+            self.assertFalse((root / "bundle").exists())
+
+    def test_publisher_copies_execution_bytes_and_rejects_missing_dirty_or_mismatched_provenance(self) -> None:
+        for fault in ("none", "missing", "hash", "checker-hash", "commit-hash", "dirty-record", "dirty-current", "changed-head"):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                repo, env = self._gbs_artifact_fixture(root)
+                bundle = root / "bundle"
+                result = subprocess.run(
+                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo), "--output-dir", str(bundle)],
+                    env=env, capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                log = root / "run.log"
+                log.write_text(result.stdout)
+                proof_path = bundle / "execution_provenance.json"
+                if fault == "missing":
+                    proof_path.unlink()
+                elif fault in ("hash", "checker-hash", "commit-hash", "dirty-record"):
+                    proof = json.loads(proof_path.read_text())
+                    field = "dirty" if fault == "dirty-record" else "checker_sha256" if fault == "checker-hash" else "entrypoint_sha256"
+                    proof[field] = True if fault == "dirty-record" else "0" * 64
+                    proof_path.write_text(json.dumps(proof))
+                    if fault == "commit-hash":
+                        # Even an internally consistent forged summary must fail git-object binding.
+                        summary_path = bundle / "gbs_build_summary.json"
+                        summary = json.loads(summary_path.read_text())
+                        summary["entrypoint_sha256"] = proof["entrypoint_sha256"]
+                        summary["provenance_sha256"] = hashlib.sha256(proof_path.read_bytes()).hexdigest()
+                        summary_path.write_text(json.dumps(summary))
+                elif fault == "dirty-current":
+                    (repo / "new-file").write_text("uncommitted")
+                elif fault == "changed-head":
+                    subprocess.run(["git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                                    "commit", "--allow-empty", "-qm", "later HEAD"], cwd=repo, check=True)
+                output = root / "public"
+                published = subprocess.run(
+                    [sys.executable, str(repo / "tools/runners/demo_v7_delivery_20260907/publish_gbs_build.py"),
+                     "--bundle", str(bundle), "--log", str(log), "--output", str(output)],
+                    env=env, capture_output=True, text=True,
+                )
+                if fault == "none":
+                    self.assertEqual(published.returncode, 0, published.stderr)
+                    self.assertEqual((output / "execution_provenance.json").read_bytes(), proof_path.read_bytes())
+                    self.assertEqual((output / "build_summary.json").read_bytes(), (bundle / "gbs_build_summary.json").read_bytes())
+                else:
+                    self.assertNotEqual(published.returncode, 0, published.stdout)
+                    self.assertFalse(output.exists())
+
+    def test_gbs_environment_errors_differ_from_source_defects(self) -> None:
+        for fault in ("lock-unwritable", "broken-rpm", "broken-rpm2cpio", "broken-cpio", "source-error"):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                repo, env = self._gbs_artifact_fixture(root)
+                if fault == "lock-unwritable":
+                    (root / "lock").mkdir()  # Cannot open as a file, even when tests run as root.
+                result = subprocess.run(
+                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo), "--output-dir", str(root / "bundle")],
+                    env={**env, "FIXTURE_GBS_FAULT": fault}, capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, 1 if fault == "source-error" else 2, result.stdout + result.stderr)
+                self.assertIn("source compilation defect" if fault == "source-error" else "NOT-EVALUATED\tgbs-build-environment", result.stdout)
+                self.assertNotIn("OVERALL\tPASS", result.stdout)
+
+    def test_whitelist_rejects_shell_functions_and_aliases(self) -> None:
+        for command in ("awk", "dirname", "python3"):
+            for kind in ("function", "alias"):
+                with self.subTest(command=command, kind=kind), tempfile.TemporaryDirectory() as directory:
+                    init = Path(directory) / "init.sh"
+                    init.write_text(f"{command}() {{ :; }}\n" if kind == "function" else
+                                    f"shopt -s expand_aliases\nalias {command}='echo spoof'\n")
+                    result = subprocess.run(
+                        ["bash", str(HERE / "reproduce.sh"), "verify"],
+                        env={**os.environ, "BASH_ENV": str(init)}, capture_output=True, text=True,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                    self.assertIn("not a real executable file", result.stderr)
+                    self.assertIn(command, result.stderr)
 
     def test_explicit_gbs_missing_command_is_not_evaluated_and_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -793,8 +912,8 @@ elif name == "cpio":
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v7"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v7"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v8"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v8"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)

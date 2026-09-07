@@ -35,7 +35,8 @@ and `sort` exercise archived-file and mocked-workflow integrity; `cat` supplies
 CLI output and fixtures. `cmp`, `cp`, `ln`, `mkdir`, `mktemp`, `find` handle replay
 and temporary trees; `dirname`, `grep`, `sed`, `tr` support the shell entrypoint.
 GNU-compatible `date -Ins/+%s%N` and `stat -c` are required (Ubuntu/Debian coreutils).
-Every whitelist command is checked by preflight; no other PATH executable is
+Every whitelist command is checked by preflight for resolution to a real,
+executable file (not a shell function/alias); no other PATH executable is
 available in the mandatory minimal profile. Git/Python retain their installed
 runtime libraries; this is a command-PATH isolation test, not an OS-container test.
 `gbs`, `rpm`, `rpm2cpio`, `cpio`, `rpmspec`, an ARM compiler, SDB, network access,
@@ -43,9 +44,10 @@ and root are not default-verify prerequisites. Optional syntax/build checks emit
 explicit `SKIPPED` reason when their environment is absent; their real execution is
 reserved for the explicit `gbs` or `board` mode.
 
-Development-only overrides are explicit: `REPRODUCE_ALLOW_DIRTY=1` permits a dirty
+Development-only verify overrides are explicit: `REPRODUCE_ALLOW_DIRTY=1` permits a dirty
 tree, `REPRODUCE_SKIP_TESTS=1` skips the nested host-test row, and
 `REPRODUCE_EXPECTED_SHA=<commit-or-ref>` overrides the recorded delivery reference.
+These overrides do not bypass the explicit GBS clean-execution provenance gate.
 Without an override, `verify` requires `HEAD` to resolve to the delivery ref in
 [`delivery_refs.json`](delivery_refs.json).
 
@@ -58,14 +60,14 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v7
+  --tag demo-v8
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v7 <url>
+git clone --branch demo-v8 <url>
 git clone <url>                 # remote default must be main
 ```
 
@@ -142,14 +144,36 @@ The explicit GBS build entry is
 produces one RPM with all three ELF files. It requires network access to the pinned
 repositories, a root-capable GBS environment, sufficient buildroot disk space, and
 substantially more time than the minutes-scale host verify. Its buildroot is unique
-per run and protected by a cross-process lock. A missing GBS/RPM command, GBS
-execution failure, or lock timeout emits `NOT-EVALUATED` plus `OVERALL FAIL` and a
-nonzero exit code. Missing RPM/ELF or hash/identity drift is `FAIL`. A successful
+per run and protected by a cross-process lock. A missing/broken GBS/RPM command,
+unwritable lock or lock timeout emits `NOT-EVALUATED` plus `OVERALL FAIL` (RC=2).
+A nonzero GBS result with an explicit source-file/line compiler error is `FAIL`
+(RC=1); without that evidence it is `NOT-EVALUATED` with the classification basis,
+not a claim that the package is defective. Missing RPM/ELF or hash/identity drift
+remains hard `FAIL` (RC=1). A successful
 static check cannot make an unevaluated explicit build pass. `--output-dir` must be
 new; `PASS` requires the RPM and all three ELF files to have been generated,
 inspected, copied there and hash-verified. Without this option, the checker chooses
 a new local `board_results/gbs_build_*` output directory. The bundle includes a
 machine-readable `gbs_build_summary.json`.
+
+### GBS execution provenance
+
+Use a **clean, committed clone**. After taking the lock, before invoking GBS, the
+checker creates `execution_provenance.json` in the unique build workspace:
+workflow HEAD, `git status --porcelain --untracked-files=all` and its dirty flag,
+entrypoint/checker SHA-256, Python version, and UTC timestamp. Both file hashes
+must equal their `git show <workflow_commit>:<path>` bytes. Dirty state is rejected
+before GBS; state/bytes are checked again before the bundle is finalized. The
+manifest's `source_commit` remains the separate frozen **payload source** commit.
+
+The [publisher](../runners/demo_v7_delivery_20260907/publish_gbs_build.py) must run
+at the same clean HEAD and only validates/copies the execution proof and summary,
+byte-for-byte. It never fills in hashes after execution. Publish to an external or
+git-ignored directory first, then import the validated records into `data/raw/`
+in a later commit. Missing proof, changed HEAD, dirty state or mismatched hashes
+refuse publication with nonzero exit. Delivery host tests independently compare
+the archived hashes with both the recorded commit objects and delivery file
+bytes. This is an auditable local execution record, not a signed remote attestation.
 
 GBS may leave root-owned files in its unique temporary workspace; an unprivileged
 checker cannot always delete them (EPERM). Cleanup failure alone is

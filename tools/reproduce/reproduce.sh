@@ -1,8 +1,18 @@
 #!/bin/sh
 set -u
 
-command -v dirname >/dev/null 2>&1 || {
-    printf 'FAIL\truntime-preflight\tmissing default-verify command: dirname\nOVERALL\tFAIL\n' >&2
+require_executable()
+{
+    resolved=$(command -v "$1" 2>/dev/null) || resolved=
+    case "$resolved" in
+        */*) [ -f "$resolved" ] && [ -x "$resolved" ] && return 0;;
+    esac
+    printf 'FAIL\truntime-preflight\tmissing default-verify command: %s or not a real executable file (resolved=%s; functions/aliases are unsupported)\n' "$1" "$resolved" >&2
+    return 1
+}
+
+require_executable dirname || {
+    printf 'OVERALL\tFAIL\n' >&2
     exit 2
 }
 repo=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
@@ -26,7 +36,7 @@ independent four-cell held-out validation passed.
 EOF
 }
 
-if ! command -v python3 >/dev/null 2>&1; then
+if ! require_executable python3; then
     printf 'FAIL\truntime-preflight\tpython3 is not available; Python >=3.10 required\nOVERALL\tFAIL\n' >&2
     exit 2
 fi
@@ -62,8 +72,7 @@ fi
 
 missing=0
 while IFS= read -r required; do
-    if ! command -v "$required" >/dev/null 2>&1; then
-        printf 'FAIL\truntime-preflight\tmissing default-verify command: %s\n' "$required" >&2
+    if ! require_executable "$required"; then
         missing=1
     fi
 done < "$repo/tools/reproduce/verify_commands.txt"

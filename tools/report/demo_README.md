@@ -12,7 +12,7 @@ visible automatic reclaim as an anti-signal, confirm allocator-retained free spa
 with M7, require a same-target, same-phase trim probe to meet a precommitted reclaim
 threshold, then call `malloc_trim(0)` only at a known release phase while accepting
 refault, latency, and health evidence together. On the frozen RPI4/Tizen
-glibc-2.40-1.6.armv7l matrix, the calibration centers are 51%–53%, and gated trim reclaimed about
+glibc-2.40-1.6.armv7l matrix, the calibration centers are 50.67% / 52.79% (medium-only / mixed), and gated trim reclaimed about
 80%–85% of released payload; per-profile median calls were mixed 1.233269 ms and
 medium-only 1.218361 ms, and the gst p99
 direction was not visible by the fixed comparison rule. These are mechanism and scale
@@ -60,7 +60,7 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
 Without that internal bundle, board mode cannot start. The media asset has no
 established redistributable provenance and is delivered outside this repository.
 
-### Default HQ L2 path: GBS build (held-out 4/4 validated)
+### Default HQ L2 path: GBS build (alloc_bench held-out 4/4 validated)
 
 For the three ELF files, GBS can be evaluated from a real `git clone` with
 `bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`. This explicit path requires repository

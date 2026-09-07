@@ -17,6 +17,23 @@ AUDITOR = HERE / "audit_tool_provenance.py"
 
 
 class ProvenanceAuditTests(unittest.TestCase):
+    def test_documented_fixed_rows_ignore_reference_pointer_changes(self) -> None:
+        repo = HERE.parents[2]
+        document = (repo / "docs/tool_provenance_20260903.md").read_text()
+        self.assertIn("5.1 固定快照", document)
+        self.assertIn("5.2 移动指针", document)
+        expression = 'NR == 1 || $1 == "config/gbs_llvm.conf"'
+        self.assertIn(expression, document)
+        for name in ("repos", "tool_hits", "buildrequires"):
+            original = (repo / f"data/raw/tool_provenance_20260903/{name}.tsv").read_text()
+            modified = "\n".join(line + "\tchanged-pointer" if line.startswith("config/gbs.conf\t")
+                                 else line for line in original.splitlines()) + "\n"
+            outputs = [subprocess.run(["awk", "-F", "\t", expression], input=text,
+                                     text=True, capture_output=True, check=True).stdout
+                       for text in (original, modified)]
+            self.assertEqual(outputs[0], outputs[1], name)
+            self.assertNotIn("config/gbs.conf\t", outputs[0])
+
     def test_scans_package_provides_and_filelist_dimensions(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

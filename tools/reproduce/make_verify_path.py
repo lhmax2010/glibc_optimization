@@ -15,7 +15,8 @@ COMMANDS = Path(__file__).with_name("verify_commands.txt")
 def create(destination: Path, source_path: str, profile: str) -> None:
     commands = COMMANDS.read_text(encoding="utf-8").split()
     resolved = {name: shutil.which(name, path=source_path) for name in commands}
-    missing = [name for name, executable in resolved.items() if executable is None]
+    missing = [name for name, executable in resolved.items()
+               if executable is None or not Path(executable).is_file() or not os.access(executable, os.X_OK)]
     if missing:
         raise ValueError("missing default-verify commands: " + ", ".join(missing))
     destination.mkdir(parents=True, exist_ok=False)

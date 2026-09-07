@@ -10,7 +10,7 @@
 M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针实测收益达到事前固定阈值，
 最后只在明确释放相位调用 `malloc_trim(0)`，并把再激活、时延和健康证据作为同一合同
 验收。在冻结的 RPI4/Tizen
-`glibc-2.40-1.6.armv7l` 矩阵上，现行校准带中心为 51%–53%，门控 trim 回收已释放 payload 的约
+`glibc-2.40-1.6.armv7l` 矩阵上，现行校准带中心为 50.67% / 52.79%（medium-only / mixed），门控 trim 回收已释放 payload 的约
 80%–85%，调用耗时分档中位为 mixed `1.233269 ms` / medium-only `1.218361 ms`；gst p99
 方向按固定比较规则未检出。
 这些是机制与量级结果，不是产品内存收益承诺。
@@ -52,7 +52,7 @@ M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针
 没有内部 bundle 时 board 模式不可启动。媒体资产尚无可再分发 provenance，随包外内部
 渠道交付，不进入公开仓库。
 
-### HQ 默认 L2 路径：GBS 构建（经 held-out 4/4 验证）
+### HQ 默认 L2 路径：GBS 构建（alloc_bench 经 held-out 4/4 验证）
 
 三项 ELF 的 GBS 默认路径是真实 `git clone` 后执行
 `bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`。该显式模式需要仓库网络访问、可执行 root

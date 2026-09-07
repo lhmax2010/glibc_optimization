@@ -122,3 +122,21 @@ host-only，未连接板端。测量、验收带与技术结论没有变更；�
 | P1-7 / N6-04 / V6-4 | `demo-v7^` | 新合同 annotated tag、tagger/推送时间与 ≥10 分钟审计间隔 | 交付流程/README/PM 台账一致，历史轻量 tag 不改 |
 
 历史 v4/v6 的退出与依赖表述保留在上方旧轮次；现行行为以上表和 workflow README 为准。
+
+## 第 5 轮终审闭环（demo-v7，2026-09-07）
+
+范围：仅 host 交付工具自证与文档；未连接板端，不改测量、验收带或技术结论。
+修复提交用 `demo-v8^` 定位最终 main（避免自写自身 SHA）；旧标签/旧构建记录保留。
+裁决依据见 [`PM 台账`](pm_decisions.md#2026-09-07-第五轮裁决demo-v7-demo-v8)。
+
+| 发现编号 | 修复提交 | 修复 | 验证方式 |
+|---|---|---|---|
+| P0 / N7-01 | `demo-v8^` | checker 取锁后、调用前写指纹；干净提交硬门；publisher 原样搬运、不补写哈希；旧记录另存 | git show 执行 commit 两脚本字节哈希与归档/交付相等；缺失、伪造、dirty、HEAD 变化拒绝测试；真实 GBS 干净快照归档 |
+| P1 / N7-02 | `demo-v8^` | 锁不可写/RPM 工具损坏/未知 GBS 错误 NOT-EVALUATED RC=2；源码编译缺陷与缺产物 FAIL RC=1 | 环境/编译诊断桩；逐个缺 RPM/ELF、SHA 漂移、锁超时测试 |
+| P1 / N7-03 | `demo-v8^` | 白名单逐项检查真实可执行文件 | awk/dirname/python3 函数与别名冒充拒绝；真最小完整 verify |
+| P1 / N7-02b / N7-06 | `demo-v8^` | README 标题限定 alloc_bench；packaging 唯一入口、source commit/buildroot/路径/范围统一 | packaging 纳入跨载体 host 测试 |
+| P1 / V6-8 | `demo-v8^` | 固定 repo 行 cmp；移动 reference 单独记录、不比较历史字节 | 固定行投影测试；保留历史四仓原值，无新扫描结论 |
+| P1 / V6-9 | `demo-v8^` | 导语中心按 medium-only/mixed 写 50.67% / 52.79% | 与现有校准中心对应的跨载体测试 |
+| P1 / F12 | `demo-v8^` | 指南披露同轮连续会话与跨轮指认依据、唯一硬件标识证据缺失 | 文档/链接检查，不增加同板证明 |
+
+交付门保持三克隆 × 五 PATH = 15 次完整 verify；结果与真实构建身份摘要随收尾记录。

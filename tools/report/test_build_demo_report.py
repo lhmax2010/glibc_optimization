@@ -171,6 +171,7 @@ class DemoReportTests(unittest.TestCase):
     def test_gbs_delivery_surfaces_share_status_and_manifest(self) -> None:
         for path in (
             REPO / "README.md",
+            REPO / "packaging/README.md",
             REPO / "docs/demo_reproduction_guide_20260901.md",
             REPO / "tools/report/demo_README.md",
             REPO / "tools/report/demo_README.zh-CN.md",
@@ -187,6 +188,20 @@ class DemoReportTests(unittest.TestCase):
                 path.name,
             )
             self.assertIn("4/4", document, path.name)
+
+    def test_packaging_single_entry_and_customer_anchor_centers(self) -> None:
+        packaging = (REPO / "packaging/README.md").read_text()
+        for value in ("reproduce.sh gbs --output-dir", "unique temporary buildroot",
+                      "source_commit", "alloc_bench-only", "execution_provenance.json"):
+            self.assertIn(value, packaging)
+        self.assertNotIn("gbs -c config/", packaging)
+        self.assertNotIn("pending", packaging)
+        for name in ("demo_README.md", "demo_README.zh-CN.md"):
+            document = (HERE / name).read_text()
+            self.assertIn("50.67% / 52.79%", document)
+            self.assertNotIn("51%–53%", document)
+            heading = next(line for line in document.splitlines() if line.startswith("### ") and "GBS" in line)
+            self.assertIn("alloc_bench", heading)
 
     def test_heldout_scope_is_explicit_across_delivery_surfaces(self) -> None:
         for relative in (
