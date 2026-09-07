@@ -1,0 +1,10 @@
+{
+  "schema": "glibc-memopt-gbs-execution.v1",
+  "workflow_commit": "707920125d6c0af6993f297214242dd4723e6b94",
+  "dirty": false,
+  "git_status_porcelain": "",
+  "python_version": "3.12.3",
+  "captured_utc": "2026-09-07T08:55:01.644319+00:00",
+  "entrypoint_sha256": "6f621a925d1a12dd0fc224e35de2b5b0784acbd57f870cf181fd1aa15fb2b078",
+  "checker_sha256": "ad8f7f01a5e97ddeb212f5b4eb99442861ac67091b8148286f54e3ee440b910e"
+}

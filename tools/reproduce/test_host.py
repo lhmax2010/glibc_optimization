@@ -399,6 +399,31 @@ elif name == "cpio":
             self.assertNotIn("INFO\tgbs-command", result.stdout)
             self.assertFalse((root / "bundle").exists())
 
+    def test_public_gbs_execution_proof_matches_git_objects_and_delivery_bytes(self) -> None:
+        archive = REPO / "data/raw/demo_v7_delivery_20260907/gbs"
+        proof_path = archive / "execution_provenance.json"
+        proof = json.loads(proof_path.read_text())
+        record = json.loads((archive / "build_summary.json").read_text())
+        self.assertEqual(proof["schema"], "glibc-memopt-gbs-execution.v1")
+        self.assertIs(proof["dirty"], False)
+        self.assertEqual(proof["git_status_porcelain"], "")
+        self.assertEqual(record["provenance_sha256"], hashlib.sha256(proof_path.read_bytes()).hexdigest())
+        self.assertEqual(record["workflow_commit"], proof["workflow_commit"])
+        self.assertEqual(record["verdict"], "PASS")
+        for field, relative in (("entrypoint_sha256", "tools/reproduce/reproduce.sh"),
+                                ("checker_sha256", "tools/reproduce/check_gbs_package.py")):
+            committed = subprocess.check_output(["git", "show", proof["workflow_commit"] + ":" + relative], cwd=REPO)
+            digest = hashlib.sha256(committed).hexdigest()
+            self.assertEqual(proof[field], digest, field)
+            self.assertEqual(record[field], digest, field)
+            self.assertEqual(hashlib.sha256((REPO / relative).read_bytes()).hexdigest(), digest, field)
+            delivery_bytes = subprocess.check_output(["git", "show", "HEAD:" + relative], cwd=REPO)
+            self.assertEqual(hashlib.sha256(delivery_bytes).hexdigest(), digest, field)
+        self.assertLessEqual(record["started_utc"], proof["captured_utc"])
+        self.assertLessEqual(proof["captured_utc"], record["finished_utc"])
+        self.assertRegex(proof["python_version"], r"^3\.\d+\.\d+$")
+        self.assertIn("superseded", (archive / "README.md").read_text())
+
     def test_publisher_copies_execution_bytes_and_rejects_missing_dirty_or_mismatched_provenance(self) -> None:
         for fault in ("none", "missing", "hash", "checker-hash", "commit-hash", "dirty-record", "dirty-current", "changed-head"):
             with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
