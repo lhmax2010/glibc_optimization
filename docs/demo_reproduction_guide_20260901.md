@@ -32,8 +32,10 @@ bash tools/reproduce/reproduce.sh board --ip <addr>
 
 入口必须在真实 `git clone` 内运行，GitHub ZIP/source export 不受支持；workflow 会把
 `HEAD` 与 [`delivery_refs.json`](../tools/reproduce/delivery_refs.json) 记录的交付引用比较。
-默认 `verify` 需单独安装的系统依赖只有 Git 与 Python 3，并假定基础 Bash/POSIX
-userland 已随操作系统提供；GBS、RPM 工具链、ARM 工具链、SDB、root 与网络均不是
+默认 `verify` 的依赖是 Git、Python ≥3.10、Bash/POSIX sh 及显式白名单中的系统命令，
+包括 `awk`、`sha256sum`、`cat`、`wc`、`stat`、`sort`。完整清单与逐项 preflight 见
+[`默认 verify 系统依赖`](../tools/reproduce/README.md#default-verify-system-dependencies)。
+基础 userland 也计入依赖；GBS、RPM 工具链、ARM 工具链、SDB、root 与网络均不是
 默认硬门。缺少可选环境时必须输出带理由的 `SKIPPED`，不能由测试 fixture 反向失败；
 逐测试文件审计见 [`workflow README`](../tools/reproduce/README.md#default-host-test-dependency-audit)。
 仅开发调试可显式设置 `REPRODUCE_ALLOW_DIRTY=1`、`REPRODUCE_SKIP_TESTS=1` 或
@@ -501,7 +503,7 @@ scratch root/sysroot 路径。媒体资产的自产/可再分发 provenance 尚�
 git clone <repository-url> glibc_optimization
 cd glibc_optimization
 bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle
-# 等价底层命令：gbs -c <unique-temporary-config> build -A armv7l --overwrite
+# checker 实际执行：gbs -c <unique-temporary-config> build -A armv7l --overwrite -c 20ab8c80d7b357254542dd841212ed8d7e7085c8
 rpm -qpl /path/to/new-gbs-bundle/glibc-memopt-tools-1.0.0-1.armv7l.rpm
 sha256sum /path/to/new-gbs-bundle/*.armv7l
 # Add the separately delivered, SHA-verified small_320x240.mp4 before board mode.
@@ -518,8 +520,11 @@ filelists 的来源排查及五项 BuildRequires 版本复核见
 [`三工具来源声明`](tool_provenance_20260903.md)。`verify` 只做 spec、`%files`、manifest
 一致性等静态硬门，绝不启动真实 GBS 构建。显式 `reproduce.sh gbs` 需要仓库网络、
 可执行 root 构建的 GBS 环境、buildroot 磁盘空间和显著长于分钟级 verify 的时间；它
-使用每次唯一 buildroot 与跨进程锁。环境不可用记 `SKIPPED/REPORT_ONLY`，成功产出的
-RPM/ELF 若身份或哈希漂移仍硬失败。
+使用每次唯一 buildroot 与跨进程锁。环境不可用/锁超时记 `NOT-EVALUATED` 并非零退出，
+RPM 或任一 ELF 缺失/身份哈希门失败记 `FAIL`；`--output-dir` 内没有完整核验产物不能
+判过。root 属主文件导致临时 buildroot 清理失败只记 `REPORT_ONLY gbs-buildroot-residue`，
+人工核验该次具体路径后可用 `sudo rm -rf -- <path>` 清除；不改变产物门判定。
+`build_summary.json` 的 `command` 保留历史调用原文，不是复跑命令；复跑以 checker 为准。
 
 GBS 三项 ELF 参与了
 [`A2 固定合同 H-V 校准`](a_anchor_replication_20260904.md)，故该批本身只用于建带。
@@ -527,9 +532,15 @@ GBS 三项 ELF 参与了
 不回灌建带样本；见
 [`held-out 报告`](gbs_heldout_validation_20260904.md) 与
 [`decision.json`](../data/raw/gbs_heldout_validation_20260904/decision.json)。因此 workflow
-现默认选择 `gbs_build_sha256`；即 GBS 为默认 L2 路径（经 held-out 验证），冻结 bundle 为显式备选
+现默认选择 `gbs_build_sha256`；即 GBS 为默认 L2 路径（alloc_bench 经 held-out 验证），冻结 bundle 为显式备选
 `--artifact-source frozen`。即使三项 ELF 由 GBS 产生，媒体仍须按 manifest 的包外方式
 交付。
+
+**2026-09-07 范围限定：** held-out 四格只验证 `alloc_bench`。GBS `gst_loop_decode` 与
+`reclaim_probe` 有 manifest 身份链，其板上行为依据 2026-09-03 rebaseline retry2；
+该轮因 A 格停止门未同步紧凑件，现已补公开
+[`gst retry2 原有紧凑件与复算命令`](../data/raw/gbs_rebaseline_20260903/gst_retry2/README.md)。
+它们不属于 held-out 四格，也不并入 A 建带样本。
 
 <a id="l2-run"></a>
 ### 完整执行命令

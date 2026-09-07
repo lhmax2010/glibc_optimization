@@ -2,6 +2,9 @@
   "schema": "glibc-memopt-gbs-build.v1",
   "source_commit": "20ab8c80d7b357254542dd841212ed8d7e7085c8",
   "command": "gbs -c config/gbs_llvm.conf build -A armv7l --overwrite",
+  "command_role": "historical invocation record, not the current replay command; replay uses the checker and pins source_commit",
+  "replay_command": "bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>",
+  "normalized_checker_command": "gbs -c <unique-temporary-config> build -A armv7l --overwrite -c 20ab8c80d7b357254542dd841212ed8d7e7085c8",
   "config": "config/gbs_llvm.conf",
   "repositories": {
     "base": "tizen-base-toolchain_20260813.050338",
@@ -30,5 +33,12 @@
     "gst_loop_decode": "7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034",
     "reclaim_probe": "e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31"
   },
-  "board_rebaseline": "pending"
+  "board_rebaseline": "alloc_bench held-out PASS; gst/reclaim_probe behavior from 2026-09-03 retry2",
+  "board_rebaseline_update": {
+    "date": "2026-09-07",
+    "previous_record": "pending",
+    "held_out_report": "docs/gbs_heldout_validation_20260904.md",
+    "held_out_artifact_scope": ["alloc_bench.armv7l"],
+    "gst_retry2_publication": "data/raw/gbs_rebaseline_20260903/gst_retry2/"
+  }
 }

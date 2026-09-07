@@ -35,8 +35,9 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
 
 1. **Read offline — minutes.** Open [`docs/demo_report.html`](docs/demo_report.html).
 2. **Verify on a host — minutes.** Use a real `git clone` (ZIP/source exports are
-   unsupported), then run `bash tools/reproduce/reproduce.sh`. Its separately
-   installed prerequisites are only Git and Python 3; GBS/RPM/ARM toolchains are
+   unsupported), then run `bash tools/reproduce/reproduce.sh`. It needs Git,
+   Python >=3.10, Bash/POSIX sh and the explicit system-command whitelist;
+   GBS/RPM/ARM toolchains are
    optional and never default-verify hard gates. Development-only overrides and
    the dependency audit are documented in
    [`tools/reproduce/README.md`](tools/reproduce/README.md).
@@ -83,6 +84,18 @@ GBS does not provide the media file, which remains an out-of-repository delivery
 prerequisite. See the
 [held-out report](docs/gbs_heldout_validation_20260904.md) and
 [`decision.json`](data/raw/gbs_heldout_validation_20260904/decision.json).
+
+[The four held-out cells cover alloc_bench only](docs/gbs_heldout_validation_20260904.md#7-workflow-发现与结论).
+The GBS gst_loop_decode/reclaim_probe ELF identities match the manifest; their
+board behavior comes from the earlier September 3 rebaseline retry2, whose
+[existing compact gst evidence](data/raw/gbs_rebaseline_20260903/gst_retry2/README.md)
+is now published. It is not an additional held-out validation.
+
+Explicit `gbs` returns nonzero for an unavailable environment, lock timeout or
+missing RPM/ELF; `PASS` requires a verified output bundle. Root-owned temporary
+buildroot cleanup can report `gbs-buildroot-residue` without failing valid
+artifacts. Inspect the exact reported path, then clean it with
+`sudo rm -rf -- <path>`; see [build semantics](tools/reproduce/README.md).
 
 ## Repository map
 

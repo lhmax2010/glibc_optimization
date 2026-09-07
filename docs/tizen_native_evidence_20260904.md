@@ -281,7 +281,8 @@ python3 tools/runners/tizen_native_evidence_20260904/analyze_native_evidence.py 
 
 本节只追加、不改写 §1–§5 的原始观测和结论。机器合同为
 [`fixed_contract.json`](../tools/runners/tizen_native_evidence_b2_20260904/fixed_contract.json)。
-原始纳秒时间戳确认本轮实际发生于 2026-09-04，报告与当前复现路径均按该日期统一。
+按终审裁决订正：原始纳秒时间戳确认本轮实际发生于 2026-09-04，报告与当前复现路径
+均按该日期统一；原先以任务标签写成次日的日期不代表执行日。
 以下规格在同一工作轮的能力侦察通过后、任何正式格执行前写定；因没有独立事前
 commit/tag 凭证，本节只称“固定合同重放”，不称预登记。结果异常只报告，不改参数。
 当前 contract 与 remote runner 使用统一的 `tizen_native_evidence_b2_20260904`
@@ -289,6 +290,15 @@ round/workdir。板上实际执行版本的 contract/runner SHA 仍以
 [`run_record.txt`](../data/raw/tizen_native_evidence_b2_20260904/run_record.txt) 中的
 `executed_*_sha256` 为准；原文件可从提交
 `a35413df78f22d68d9eaac2ea59e807005c7f2c2` 复核，不把当前复现文件误称为板上原字节。
+
+> **2026-09-07 M7 口径追注（V6-5）：** B 轮 `cells_derived.tsv` 的
+> `m7_unsorted_bytes` 读的是每个 heap 的直接 `unsorted` 汇总节点（`size` 字段），该层
+> 节点缺席即求和为 0；代码没有进入 `heap/sizes`。B2 `m7.tsv` 则合计
+> `heap/sizes/unsorted` 直方图的 `total` 字节。前者的 0 是覆盖不足导致的保守低计，
+> 不能解释成 bin 无驻留；两字段不可直接跨轮作数值对照。两轮 `rest` 都来自根级
+> `total type="rest"`，其口径及已发布回收值保持不变。原始解析逻辑见
+> [`B 分析器`](../tools/runners/tizen_native_evidence_20260904/analyze_native_evidence.py) 与
+> [`B2 分析器`](../tools/runners/tizen_native_evidence_b2_20260904/analyze_b2.py)。
 
 ### 6.1 冻结前侦察与选择
 

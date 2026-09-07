@@ -5,7 +5,9 @@
     "config": "config/gbs_llvm.conf",
     "base_snapshot": "tizen-base-toolchain_20260813.050338",
     "unified_snapshot": "tizen-unified-toolchain_20260814.092727",
-    "command": "gbs -c config/gbs_llvm.conf build -A armv7l --include-all --overwrite",
+    "command": "gbs -c <unique-temporary-config> build -A armv7l --overwrite -c 20ab8c80d7b357254542dd841212ed8d7e7085c8",
+    "command_role": "normalized checker execution; unique config derives from config; reproduce.sh gbs is the replay entry",
+    "replay_command": "bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>",
     "source_commit": "20ab8c80d7b357254542dd841212ed8d7e7085c8",
     "rpm_nvr": "glibc-memopt-tools-1.0.0-1",
     "rpm_arch": "armv7l",
@@ -39,6 +41,7 @@
       "passed_cells": 4,
       "total_cells": 4,
       "included_in_calibration_samples": false,
+      "artifact_scope": ["alloc_bench.armv7l"],
       "verdict": "PASS"
     }
   },

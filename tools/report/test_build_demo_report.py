@@ -188,6 +188,16 @@ class DemoReportTests(unittest.TestCase):
             )
             self.assertIn("4/4", document, path.name)
 
+    def test_heldout_scope_is_explicit_across_delivery_surfaces(self) -> None:
+        for relative in (
+            "docs/gbs_heldout_validation_20260904.md", "docs/demo_report.html",
+            "docs/demo_reproduction_guide_20260901.md", "tools/report/demo_README.md",
+            "tools/report/demo_README.zh-CN.md",
+        ):
+            document = (REPO / relative).read_text(encoding="utf-8")
+            self.assertRegex(document, r"(only|只覆盖|只验证)\s*\*?\*?`?alloc_bench|alloc_bench only", relative)
+            self.assertIn("gst_retry2/README.md", document, relative)
+
     def test_checked_in_report_matches_rebuild(self) -> None:
         checked_in = REPO / "docs/demo_report.html"
         marker = REPO / "tools/report/source_commit.txt"

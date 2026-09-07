@@ -100,3 +100,25 @@ spec、源码、配置和文档，再对该精确提交构建；`a6cf8fc` 只登
 | V4-2 | `8e117142211f8a66bef0de56337fb51017dec126` | B2 host 归档与报告日期按原始纳秒时间戳订正为 2026-09-04；无独立事前 tag 的证据称固定合同重放。执行 contract/runner 内保留原 remote 字面量以维持已发布 SHA；新增“先合同+analyzer 提交/tag，后板上运行，再单独结果提交”长期规则。 | contract/runner SHA 与 `run_record.txt` 逐值一致；B/B2 host 测试；旧日期路径与锚点扫描。 |
 | V4-4 | `8e117142211f8a66bef0de56337fb51017dec126` | 新增 PM 裁决台账，覆盖身份/tag waiver、p50/追加重复驳回、S4 n=3 中位、gst 方向、v4 校准降级和 B2 证据等级。 | 本文件与 changes 索引均链接台账；local-link-check。 |
 | A-minor | `8e117142211f8a66bef0de56337fb51017dec126` | 修正 changes 无效 SHA 并增加全 40 位提交可解析测试；v3 异常文案、51%–53% 概述、6 个板端 home 路径、模板入口链接检查和 B2 公开重放缺口全部闭环。 | `git rev-parse` 参数化测试；`INFO template-entry-links`；敏感/旧路径扫描；完整 host verify。 |
+
+## 第 4 轮终审闭环（demo-v6，2026-09-07）
+
+基线 main `43f11a6` / demo-v6 `1c637e1`；修复引用为 `demo-v7^`（最终 main）。本轮
+host-only，未连接板端。测量、验收带与技术结论没有变更；补公开的是已有 retry2 记录。
+[`PM 裁决`](pm_decisions.md) 与 [`版本差异`](changes_since_demo_v2.md#13-demo-v6-demo-v7)
+提供逐编号追溯。
+
+| 发现编号 | 修复提交 | 修复内容 | 验证方式 |
+|---|---|---|---|
+| P0-1 / N6-01 / V6-02 | `demo-v7^` | 显式构建必须生成、提取并落盘完整 RPM/三 ELF；环境不可用/锁超时非零 `NOT-EVALUATED`，缺产物/漂移硬失败；root 属主清理残留单列 REPORT_ONLY | 自包含 GBS/RPM/提取桩覆盖成功、缺 GBS、锁超时、缺 RPM、逐个缺 ELF、SHA 漂移；EPERM 测试；[`真实构建摘要`](../data/raw/demo_v7_delivery_20260907/gbs/build_summary.json) 与 [`输出`](../data/raw/demo_v7_delivery_20260907/gbs/workflow_summary.tsv) |
+| P0-2 / V6-01 | `demo-v7^` | 最小环境只软链显式白名单；确认并披露 22 个命令与 Python ≥3.10；增加损坏工具形态 | 白名单不包含额外 host 命令的正控；真最小完整 verify；三克隆 × 五 PATH 矩阵；旧 Python 前置失败测试 |
+| P0-3 / N6-02 / V6-1 | `demo-v7^` | rpmspec 非零、超时或不可执行只 SKIPPED，静态合同仍硬失败 | 损坏 rpmspec RC=42 完整 verify 通过；缺失 rpmspec 路径通过；静态合同缺陷测试 |
+| P1-1 / N6-03 | `demo-v7^` | 对客载体限定 held-out 只覆盖 alloc_bench；补公开 retry2 gst 紧凑件及三 ELF/媒体身份范围 | 全 pull manifest/大小/资产 SHA 检查；六个派生件与原归档逐字节相同；公开 cycles 三派生 cmp |
+| P1-2 / V6-2 | `demo-v7^` | 历史调用与固定 source commit 的 checker 复跑命令区分，四处一致说明 | manifest/build_summary 命令一致性与实际构建 argv 记录 |
+| P1-3 | `demo-v7^` | pending 按实际 held-out/旧 retry2 分范围订正并保留日期追注 | 记录与范围文档相互链接 |
+| P1-4 / V6-5 | `demo-v7^` | B 直接 unsorted 节点缺席记 0、B2 sizes 直方图求和的差异和低计方向披露 | 对照两个原分析器；原数值未重写 |
+| P1-5 / V6-6 | `demo-v7^` | 估算器/落点追注日期按 B2 实际执行日统一，恢复“按终审裁决订正” | 日期/链接检查；历史路径明确为任务标识 |
+| P1-6 / V6-7 | `demo-v7^` | INDEX 补 GBS rebaseline 与 PM 台账 | 本地链接检查 |
+| P1-7 / N6-04 / V6-4 | `demo-v7^` | 新合同 annotated tag、tagger/推送时间与 ≥10 分钟审计间隔 | 交付流程/README/PM 台账一致，历史轻量 tag 不改 |
+
+历史 v4/v6 的退出与依赖表述保留在上方旧轮次；现行行为以上表和 workflow README 为准。

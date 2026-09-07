@@ -32,7 +32,8 @@ M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针
 
 1. **离线阅读——分钟级。** 打开 [`docs/demo_report.html`](docs/demo_report.html)。
 2. **Host 核验——分钟级。** 必须使用真实 `git clone`（不支持 ZIP/source export），
-   运行 `bash tools/reproduce/reproduce.sh`；需单独安装的依赖只有 Git 与 Python 3，
+   运行 `bash tools/reproduce/reproduce.sh`；依赖 Git、Python ≥3.10、Bash/POSIX sh 与
+   显式列出的系统命令白名单，
    GBS/RPM/ARM 工具链均为可选项且不构成默认硬门。开发专用覆盖变量与依赖审计见
    [`tools/reproduce/README.md`](tools/reproduce/README.md)。
 3. **板上完整复现——小时级。** 满足下列前置与
@@ -69,6 +70,16 @@ GBS 产物参与了固定合同 H-V 校准样本，因此该样本本身不能�
 L2 路径（经 held-out 验证），冻结件和固定目录交叉构建为备选。GBS 不提供媒体文件，媒体仍是仓库外的
 交付前置。见 [`held-out 报告`](docs/gbs_heldout_validation_20260904.md) 与
 [`decision.json`](data/raw/gbs_heldout_validation_20260904/decision.json)。
+
+**held-out 四格只覆盖 alloc_bench。** GBS `gst_loop_decode`、`reclaim_probe` 的 ELF
+身份链与 manifest 一致；其板上行为依据是此前 9 月 3 日 rebaseline retry2，现补公开
+[`原有 gst 紧凑证据`](data/raw/gbs_rebaseline_20260903/gst_retry2/README.md)，不称额外
+held-out 验证。范围详见 [held-out 报告 §7](docs/gbs_heldout_validation_20260904.md#7-workflow-发现与结论)。
+
+显式 `gbs` 在环境不可用、锁超时或 RPM/ELF 缺失时非零退出；必须输出完整核验 bundle
+才能 `PASS`。root 属主临时 buildroot 清理失败单列 `gbs-buildroot-residue`，不影响已过门
+产物；核验该次具体路径后用 `sudo rm -rf -- <path>` 清理，见
+[`构建退出语义`](tools/reproduce/README.md)。
 
 ## 仓库地图
 

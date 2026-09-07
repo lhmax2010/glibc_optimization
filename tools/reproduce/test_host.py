@@ -15,6 +15,8 @@ import unittest
 import zipfile
 import csv
 import fcntl
+import importlib.util
+from unittest.mock import patch
 from pathlib import Path
 
 
@@ -118,7 +120,7 @@ class ReproduceTests(unittest.TestCase):
 
             command_dir = root / "bin"
             command_dir.mkdir()
-            for command in ("bash", "cmp", "cp", "dirname", "find", "git", "grep", "ln", "mkdir", "mktemp", "python3", "sed", "tr"):
+            for command in (HERE / "verify_commands.txt").read_text().split():
                 executable = shutil.which(command)
                 self.assertIsNotNone(executable, command)
                 (command_dir / command).symlink_to(executable)
@@ -152,9 +154,10 @@ class ReproduceTests(unittest.TestCase):
         self.assertIn("git clone --branch demo <url>", result.stdout)
         self.assertIn("git clone --branch <delivery-tag> <url>", result.stdout)
         self.assertIn("git clone <url>  (must check out main)", result.stdout)
-        self.assertIn("3 clone shapes x 4 optional-tool PATH profiles = 12", result.stdout)
+        self.assertIn("3 clone shapes x 5 PATH profiles = 15", result.stdout)
         self.assertIn("present-gbs+absent-rpm", result.stdout)
-        self.assertIn("minimal-git-python", result.stdout)
+        self.assertIn("minimal-whitelist", result.stdout)
+        self.assertIn("broken-tools", result.stdout)
 
     def test_default_host_test_dependency_audit_covers_inventory(self) -> None:
         entrypoint = (HERE / "reproduce.sh").read_text(encoding="utf-8")
@@ -203,7 +206,7 @@ class ReproduceTests(unittest.TestCase):
             self.assertIn("SKIPPED\tgbs-build\treal GBS build is excluded", result.stdout)
             self.assertIn("OVERALL\tPASS", result.stdout)
 
-    def test_explicit_gbs_environment_failure_is_report_only(self) -> None:
+    def test_explicit_gbs_environment_failure_is_not_evaluated_and_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             fake_bin = root / "bin"
@@ -237,10 +240,9 @@ class ReproduceTests(unittest.TestCase):
                 for _ in range(2)
             ]
             for result in results:
-                self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
-                self.assertIn("REPORT_ONLY\tgbs-build-environment\tgbs build returned RC=42", result.stdout)
-                self.assertIn("SKIPPED\tgbs-build\tGBS environment unavailable", result.stdout)
-                self.assertIn("OVERALL\tPASS", result.stdout)
+                self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+                self.assertIn("NOT-EVALUATED\tgbs-build-environment\tgbs build returned RC=42", result.stdout)
+                self.assertIn("OVERALL\tFAIL", result.stdout)
             rows = (root / "gbs.log").read_text(encoding="utf-8").splitlines()
             configs = rows[0::2]
             buildroots = rows[1::2]
@@ -250,7 +252,7 @@ class ReproduceTests(unittest.TestCase):
             self.assertNotEqual(buildroots[0], buildroots[1])
             self.assertFalse(unexpected_tools.exists())
 
-    def test_explicit_gbs_reports_occupied_lock_without_failing_package(self) -> None:
+    def test_explicit_gbs_occupied_lock_is_not_evaluated_and_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             fake_bin = root / "bin"
@@ -271,15 +273,225 @@ class ReproduceTests(unittest.TestCase):
                     "GLIBC_MEMOPT_GBS_LOCK": str(lock_path),
                 }
                 result = subprocess.run(
-                    [sys.executable, str(HERE / "check_gbs_package.py"), "--repo-root", str(REPO),
-                     "--build", "--lock-timeout", "0"],
+                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--lock-timeout", "0"],
                     cwd=REPO, env=env, text=True, capture_output=True, check=False,
                 )
-            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
             self.assertIn("WAITING\tgbs-build-lock", result.stdout)
-            self.assertIn("REPORT_ONLY\tgbs-build-environment", result.stdout)
+            self.assertIn("NOT-EVALUATED\tgbs-build-environment", result.stdout)
+            self.assertIn("OVERALL\tFAIL", result.stdout)
             self.assertIn("remained occupied", result.stdout)
             self.assertFalse(unexpected_tools.exists())
+
+    def _gbs_artifact_fixture(self, root: Path) -> tuple[Path, dict]:
+        """Exercise the CLI, extraction and hash gates with no host RPM dependency."""
+        repo = root / "repo"
+        for name in ("packaging/glibc-memopt-tools.spec", "config/gbs_llvm.conf",
+                     "tools/reproduce/deliverables_manifest.json", "tools/alloc_bench/alloc_bench.c",
+                     "tools/gst_loop_decode/gst_loop_decode.c", "tools/reclaim_probe/reclaim_probe.c"):
+            target = repo / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / name, target)
+        manifest_path = repo / "tools/reproduce/deliverables_manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        for item in manifest["artifacts"]:
+            if item["name"].endswith(".armv7l"):
+                installed = item["name"].removesuffix(".armv7l")
+                item["gbs_build_sha256"] = hashlib.sha256(("fixture-" + installed).encode()).hexdigest()
+        manifest["gbs_build"]["rpm_sha256"] = hashlib.sha256(b"fixture-rpm").hexdigest()
+        manifest_path.write_text(json.dumps(manifest))
+        commands = root / "bin"
+        commands.mkdir()
+        for command in ("bash", "dirname", "python3"):
+            (commands / command).symlink_to(shutil.which(command))
+        stub = '''import os, pathlib, re, sys
+name = pathlib.Path(sys.argv[0]).name
+fault = os.environ.get("FIXTURE_GBS_FAULT", "")
+names = ("alloc_bench", "gst_loop_decode", "reclaim_probe")
+if name == "gbs":
+    config = pathlib.Path(sys.argv[2]).read_text()
+    buildroot = pathlib.Path(re.search(r"^buildroot=(.+)$", config, re.M).group(1))
+    if fault != "missing-rpm":
+        rpm = buildroot / "local/repos/tizen_unified_standard/armv7l/RPMS/glibc-memopt-tools-1.0.0-1.armv7l.rpm"
+        rpm.parent.mkdir(parents=True)
+        rpm.write_bytes(b"fixture-rpm")
+elif name == "rpm":
+    if "-qpl" in sys.argv:
+        print("\\n".join("/usr/bin/" + n for n in names))
+    else:
+        print("glibc-memopt-tools-1.0.0-1\\narmv7l")
+elif name == "rpm2cpio":
+    sys.stdout.buffer.write(b"fixture-stream")
+elif name == "cpio":
+    sys.stdin.buffer.read()
+    target = pathlib.Path("usr/bin")
+    target.mkdir(parents=True)
+    for n in names:
+        if fault == "missing-" + n:
+            continue
+        payload = "drift" if fault == "sha-drift" else "fixture-" + n
+        (target / n).write_bytes(payload.encode())
+'''
+        for name in ("gbs", "rpm", "rpm2cpio", "cpio"):
+            target = commands / name
+            target.write_text(f"#!{sys.executable}\n" + stub)
+            target.chmod(0o755)
+        return repo, {**os.environ, "PATH": str(commands), "GLIBC_MEMOPT_GBS_LOCK": str(root / "lock")}
+
+    def test_explicit_gbs_success_persists_rpm_and_all_elf_hashes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo, env = self._gbs_artifact_fixture(root)
+            output = root / "bundle"
+            result = subprocess.run(
+                ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo), "--output-dir", str(output)],
+                env=env, text=True, capture_output=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("OVERALL\tPASS", result.stdout)
+            record = json.loads((output / "gbs_build_summary.json").read_text())
+            self.assertEqual(len(record["elf_sha256"]), 3)
+            for name, expected in record["elf_sha256"].items():
+                self.assertEqual(hashlib.sha256((output / name).read_bytes()).hexdigest(), expected)
+            self.assertEqual(record["rpm"]["sha256"], record["rpm"]["recorded_sha256"])
+            self.assertTrue((output / "glibc-memopt-tools-1.0.0-1.armv7l.rpm").is_file())
+            self.assertIsNone(record["buildroot_residue"])
+
+    def test_explicit_gbs_missing_command_is_not_evaluated_and_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo, env = self._gbs_artifact_fixture(root)
+            (root / "bin/gbs").unlink()
+            output = root / "bundle"
+            result = subprocess.run(
+                ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo), "--output-dir", str(output)],
+                env=env, text=True, capture_output=True,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("NOT-EVALUATED\tgbs-build-environment\tgbs is not installed", result.stdout)
+            self.assertIn("OVERALL\tFAIL", result.stdout)
+            self.assertFalse(output.exists())
+
+    def test_explicit_gbs_missing_artifacts_or_hash_drift_never_pass(self) -> None:
+        for fault in ("missing-rpm", "missing-alloc_bench", "missing-gst_loop_decode",
+                      "missing-reclaim_probe", "sha-drift"):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                repo, env = self._gbs_artifact_fixture(root)
+                output = root / "bundle"
+                result = subprocess.run(
+                    ["bash", str(HERE / "reproduce.sh"), "gbs", "--repo-root", str(repo), "--output-dir", str(output)],
+                    env={**env, "FIXTURE_GBS_FAULT": fault}, text=True, capture_output=True,
+                )
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn("FAIL\tgbs-package-artifact", result.stdout)
+                self.assertIn("OVERALL\tFAIL", result.stdout)
+                self.assertNotIn("OVERALL\tPASS", result.stdout)
+                self.assertFalse(output.exists())
+
+    def test_gbs_root_owned_cleanup_is_report_only(self) -> None:
+        spec = importlib.util.spec_from_file_location("checker", HERE / "check_gbs_package.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        record = {}
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "generated-buildroot"
+            workspace.mkdir()
+            with patch.object(module.tempfile, "mkdtemp", return_value=str(workspace)), \
+                    patch.object(module.shutil, "rmtree", side_effect=PermissionError("root-owned EPERM")), \
+                    patch("builtins.print") as printed:
+                with module.build_workspace(record):
+                    pass
+                self.assertEqual(record["buildroot_residue"], str(workspace))
+                self.assertIn("REPORT_ONLY\tgbs-buildroot-residue", printed.call_args.args[0])
+
+    def test_verify_whitelist_excludes_unlisted_host_commands(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            rogue = root / "rogue-host-tool"
+            rogue.write_text("#!/bin/sh\nexit 0\n")
+            rogue.chmod(0o755)
+            result = subprocess.run(
+                [sys.executable, str(HERE / "make_verify_path.py"), "--profile", "minimal-whitelist", "--output", str(root / "bin")],
+                env={**os.environ, "PATH": str(root) + os.pathsep + os.environ["PATH"]},
+                text=True, capture_output=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual({p.name for p in (root / "bin").iterdir()},
+                             set((HERE / "verify_commands.txt").read_text().split()))
+
+    def test_static_spec_defect_stays_hard_without_optional_rpmspec(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo, env = self._gbs_artifact_fixture(root)
+            spec = repo / "packaging/glibc-memopt-tools.spec"
+            spec.write_text(spec.read_text().replace("%{_bindir}/reclaim_probe", ""))
+            result = subprocess.run(
+                [sys.executable, str(HERE / "check_gbs_package.py"), "--repo-root", str(repo)],
+                env=env, text=True, capture_output=True,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("FAIL\tgbs-package-contract", result.stdout)
+
+    def test_build_command_records_distinguish_historical_and_replay(self) -> None:
+        manifest = json.loads((HERE / "deliverables_manifest.json").read_text())
+        record = json.loads((REPO / "data/raw/gbs_package_20260903/build_summary.json").read_text())
+        expected = "gbs -c <unique-temporary-config> build -A armv7l --overwrite -c " + manifest["gbs_build"]["source_commit"]
+        self.assertEqual(manifest["gbs_build"]["command"], expected)
+        self.assertEqual(record["normalized_checker_command"], expected)
+        self.assertEqual(record["replay_command"], manifest["gbs_build"]["replay_command"])
+        self.assertIn("not the current replay command", record["command_role"])
+
+    def test_broken_optional_rpmspec_does_not_fail_static_or_verify(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            commands = Path(directory) / "bin"
+            subprocess.run([sys.executable, str(HERE / "make_verify_path.py"),
+                            "--profile", "broken-tools", "--output", str(commands)], check=True, capture_output=True)
+            marker = Path(directory) / "gbs-invoked"
+            result = subprocess.run(
+                ["bash", str(HERE / "reproduce.sh"), "verify"], cwd=REPO,
+                env={**os.environ, "PATH": str(commands), "PREDELIVERY_OPTIONAL_TOOL_MARKER": str(marker),
+                     "REPRODUCE_ALLOW_DIRTY": "1", "REPRODUCE_SKIP_TESTS": "1", "REPRODUCE_EXPECTED_SHA": "HEAD"},
+                text=True, capture_output=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("SKIPPED\tgbs-spec-syntax\trpmspec -P RC=42", result.stdout)
+            self.assertIn("OVERALL\tPASS", result.stdout)
+            self.assertFalse(marker.exists())
+
+    def test_old_python_preflight_fails_with_actionable_version(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            commands = Path(directory)
+            python = commands / "python3"
+            python.write_text(
+                f"#!{sys.executable}\nimport sys\n"
+                "sys.version_info = (3, 9, 0)\nsys.version = '3.9.0 fixture'\n"
+                "assert sys.argv[1] == '-c'\nexec(sys.argv[2])\n"
+            )
+            python.chmod(0o755)
+            result = subprocess.run(
+                ["bash", str(HERE / "reproduce.sh"), "verify"],
+                env={**os.environ, "PATH": str(commands) + os.pathsep + os.environ["PATH"]},
+                text=True, capture_output=True,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("Python >=3.10 required", result.stdout)
+            self.assertIn("OVERALL\tFAIL", result.stdout)
+            self.assertNotIn("MODE\thost verify", result.stdout)
+
+    def test_missing_required_userland_command_is_named_by_preflight(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            commands = Path(directory) / "bin"
+            subprocess.run([sys.executable, str(HERE / "make_verify_path.py"),
+                            "--profile", "minimal-whitelist", "--output", str(commands)], check=True, capture_output=True)
+            (commands / "awk").unlink()
+            result = subprocess.run(
+                ["bash", str(HERE / "reproduce.sh"), "verify"],
+                env={**os.environ, "PATH": str(commands)}, text=True, capture_output=True,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("missing default-verify command: awk", result.stderr)
+            self.assertIn("OVERALL\tFAIL", result.stdout)
 
     def test_stability_snapshot_remote_body_hashes_nonempty_directory(self) -> None:
         workflow = (HERE / "board_workflow.sh").read_text(encoding="utf-8")
@@ -581,8 +793,8 @@ class ReproduceTests(unittest.TestCase):
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v6"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v6"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v7"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v7"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)

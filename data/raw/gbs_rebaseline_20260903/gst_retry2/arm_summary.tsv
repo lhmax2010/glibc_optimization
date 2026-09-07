@@ -1,0 +1,3 @@
+arm	repeats	business_p50_ms_median	business_p50_ms_range	business_p95_ms_median	business_p95_ms_range	business_p99_ms_median	business_p99_ms_range	trim_p50_ms_across_repeats	trim_p95_ms_across_repeats	trim_p99_ms_across_repeats	trim_max_ms_across_repeats	reclaimed_median_kb_across_repeats	reclaim_pct_of_pre_median_across_repeats	primary_minflt_sum_median	primary_majflt_sum_max
+none	3	20007.049951	0.081352	20011.887192	2.74237	20015.886636	3.643907	0.0	0.0	0.0	0.0	0.0	0.0	3207	0
+trim-at-loop-release	3	20008.874247	0.061185	20014.440284	2.08124	20018.623025	3.691851	0.675148	0.865148	1.052759	1.052759	1012.0	36.233951	22486	0

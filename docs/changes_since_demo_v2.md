@@ -144,3 +144,19 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 
 `demo-v5` 保留用于审计。`demo-v6` 相对 `demo-v5` 只改变测试 fixture、依赖声明、交付前
 自检维度与随标签递增所需的入口引用；没有新增或重算板上数据，也没有修改技术判断。
+
+## 13. demo-v6 → demo-v7
+
+本次仅交付工具行为与文档修正，不改任何测量或技术结论。验收带、held-out 独立性不变。
+`demo-v6` 原标签保留；修复先进 main，`demo-v7` 是其完整快照加双语入口，`demo-v7^`
+可解析为本轮最终 main。PM 决策见 [`台账`](pm_decisions.md)。
+
+| 发现编号 | 修复提交/引用 | 闭环内容与验证 |
+|---|---|---|
+| N6-01 / V6-02 | `demo-v7^` | 显式 GBS 的缺环境、锁超时、缺 RPM/任一 ELF 非零退出；成功完整落盘、SHA 校验；清理 EPERM 只报告。覆盖成功/缺工具/锁/缺产物/哈希漂移/清理失败测试，并归档 [`真实构建`](../data/raw/demo_v7_delivery_20260907/gbs/build_summary.json) |
+| V6-01 | `demo-v7^` | PATH 从排除法改为闭合白名单；Python ≥3.10 门与完整系统命令清单；三克隆 × 五 PATH（含真最小与损坏工具）验收 |
+| N6-02 / V6-1 | `demo-v7^` | 坏 rpmspec 带原因 SKIPPED，静态合同硬门保留；损坏工具完整 verify 回归 |
+| N6-03 | `demo-v7^` | held-out 限定 alloc_bench；校验后补公开 [`9/3 retry2 gst 原有紧凑件`](../data/raw/gbs_rebaseline_20260903/gst_retry2/README.md)，纳入公开重放 cmp |
+| V6-2 / GBS-STATUS | `demo-v7^` | 历史构建命令和 checker 复跑命令分清；manifest 命令含固定 source commit；pending 事实订正保留日期 |
+| V6-5 / V6-6 / V6-7 | `demo-v7^` | B/B2 M7 取值差异披露；估算器/产品落点日期订正；INDEX 补齐报告与 PM 台账 |
+| N6-04 / V6-4 | `demo-v7^` | 后续合同 annotated tag + tagger/推送时间 + ≥10 分钟实际审计间隔；历史 tag 不改写 |

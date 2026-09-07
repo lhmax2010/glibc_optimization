@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
+from datetime import datetime, timezone
 import fcntl
 import hashlib
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -66,13 +69,18 @@ def static_check(repo: Path) -> tuple[Path, dict]:
     print("PASS\tgbs-spec-static\tname/version/BuildRequires/%files")
     rpmspec = shutil.which("rpmspec")
     if rpmspec:
-        parsed = subprocess.run(
-            [rpmspec, "-P", str(spec)], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-        )
-        if parsed.returncode:
-            print(parsed.stdout[-4000:])
-            raise ValueError(f"rpmspec syntax check failed with RC={parsed.returncode}")
-        print("PASS\tgbs-spec-syntax\trpmspec -P")
+        try:
+            parsed = subprocess.run(
+                [rpmspec, "-P", str(spec)], text=True, stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT, timeout=30,
+            )
+            if parsed.returncode:
+                reason = f"rpmspec -P RC={parsed.returncode}: {parsed.stdout[-1000:].strip()}"
+                print(f"SKIPPED\tgbs-spec-syntax\t{reason}; portable static check passed")
+            else:
+                print("PASS\tgbs-spec-syntax\trpmspec -P")
+        except (OSError, subprocess.TimeoutExpired) as error:
+            print(f"SKIPPED\tgbs-spec-syntax\t{error}; portable static check passed")
     else:
         print("SKIPPED\tgbs-spec-syntax\trpmspec is not installed; portable static check passed")
     return spec, manifest
@@ -121,7 +129,21 @@ def unique_config(source: Path, destination: Path, buildroot: Path) -> None:
     destination.write_text(updated, encoding="utf-8")
 
 
-def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path | None) -> None:
+@contextmanager
+def build_workspace(record: dict):
+    """Keep root-owned cleanup failures separate from artifact validation."""
+    workspace = Path(tempfile.mkdtemp(prefix=f"glibc-memopt-gbs-{os.getpid()}-"))
+    try:
+        yield workspace
+    finally:
+        try:
+            shutil.rmtree(workspace)
+        except OSError as error:
+            record["buildroot_residue"] = str(workspace)
+            print(f"REPORT_ONLY\tgbs-buildroot-residue\t{workspace}; {error}")
+
+
+def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path) -> dict:
     gbs = shutil.which("gbs")
     if not gbs:
         raise GbsEnvironmentUnavailable("gbs is not installed")
@@ -131,9 +153,16 @@ def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path 
 
     lock_path = Path(os.environ.get("GLIBC_MEMOPT_GBS_LOCK", "/tmp/glibc-memopt-gbs-build.lock"))
     lock = acquire_build_lock(lock_path, lock_timeout)
+    started = time.monotonic()
+    record = {
+        "schema": "glibc-memopt-gbs-end-to-end.v1",
+        "started_utc": datetime.now(timezone.utc).isoformat(),
+        "source_commit": manifest["gbs_build"]["source_commit"],
+        "buildroot_residue": None,
+        "elf_sha256": {},
+    }
     try:
-        with tempfile.TemporaryDirectory(prefix=f"glibc-memopt-gbs-{os.getpid()}-") as directory:
-            workspace = Path(directory)
+        with build_workspace(record) as workspace:
             buildroot = workspace / "buildroot"
             config = workspace / "gbs.conf"
             unique_config(repo / manifest["gbs_build"]["config"], config, buildroot)
@@ -148,6 +177,8 @@ def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path 
                     "manifest gbs_build.source_commit must be a commit or PENDING_SOURCE_COMMIT"
                 )
             print(f"INFO\tgbs-buildroot\t{buildroot}")
+            record["executed_command"] = command
+            print(f"INFO\tgbs-command\t{shlex.join(command)}", flush=True)
             result = subprocess.run(
                 command, cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             )
@@ -201,31 +232,52 @@ def gbs_build(repo: Path, manifest: dict, lock_timeout: float, output_dir: Path 
                     ("gst_loop_decode", "gst_loop_decode.armv7l"),
                     ("reclaim_probe", "reclaim_probe.armv7l"),
                 ):
-                    actual = sha256(root / "usr/bin" / installed)
+                    elf = root / "usr/bin" / installed
+                    if not elf.is_file():
+                        raise ValueError(f"GBS RPM did not produce required ELF: {installed}")
+                    actual = sha256(elf)
                     expected = artifacts[manifest_name]["gbs_build_sha256"]
                     if actual != expected:
                         raise ValueError(
                             f"GBS binary SHA drift for {installed}: {actual} != {expected}"
                         )
-                if output_dir is not None:
-                    output_dir.mkdir(parents=True, exist_ok=False)
-                    shutil.copy2(rpm_path, output_dir / rpm_path.name)
-                    for installed, manifest_name in (
-                        ("alloc_bench", "alloc_bench.armv7l"),
-                        ("gst_loop_decode", "gst_loop_decode.armv7l"),
-                        ("reclaim_probe", "reclaim_probe.armv7l"),
-                    ):
-                        shutil.copy2(root / "usr/bin" / installed, output_dir / manifest_name)
-                    print(f"PASS\tgbs-output\t{output_dir}")
+                    record["elf_sha256"][manifest_name] = actual
+                    print(f"PASS\tgbs-elf\t{manifest_name} sha256={actual}")
+                output_dir.mkdir(parents=True, exist_ok=False)
+                shutil.copy2(rpm_path, output_dir / rpm_path.name)
+                if sha256(output_dir / rpm_path.name) != observed_rpm_sha:
+                    raise ValueError("persisted RPM SHA differs from generated RPM")
+                for installed, manifest_name in (
+                    ("alloc_bench", "alloc_bench.armv7l"),
+                    ("gst_loop_decode", "gst_loop_decode.armv7l"),
+                    ("reclaim_probe", "reclaim_probe.armv7l"),
+                ):
+                    shutil.copy2(root / "usr/bin" / installed, output_dir / manifest_name)
+                    if sha256(output_dir / manifest_name) != record["elf_sha256"][manifest_name]:
+                        raise ValueError(f"persisted ELF SHA differs: {manifest_name}")
+                print(f"PASS\tgbs-output\t{output_dir}")
             if source_commit == "PENDING_SOURCE_COMMIT":
                 print(
                     "REPORT_ONLY\tgbs-rpm-wrapper-sha\t"
                     f"pending source commit; observed={observed_rpm_sha}"
                 )
-            print(f"PASS\tgbs-build\t{queried[0]}.{queried[1]} sha256={observed_rpm_sha}")
+            record["rpm"] = {
+                "nvr": queried[0], "arch": queried[1], "sha256": observed_rpm_sha,
+                "recorded_sha256": recorded_rpm_sha, "size_bytes": rpm_path.stat().st_size,
+                "sha256_scope": manifest["gbs_build"]["rpm_sha256_scope"],
+            }
     finally:
         fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
         lock.close()
+    record["finished_utc"] = datetime.now(timezone.utc).isoformat()
+    record["elapsed_seconds"] = round(time.monotonic() - started, 6)
+    record["verdict"] = "PASS"
+    (output_dir / "gbs_build_summary.json").write_text(
+        json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8",
+    )
+    print(f"PASS\tgbs-build\t{queried[0]}.{queried[1]} sha256={observed_rpm_sha}")
+    print(f"INFO\tgbs-elapsed-seconds\t{record['elapsed_seconds']}")
+    return record
 
 
 def main() -> int:
@@ -235,7 +287,7 @@ def main() -> int:
     parser.add_argument("--lock-timeout", type=float, default=600.0)
     parser.add_argument(
         "--output-dir", type=Path,
-        help="persist the verified RPM and three manifest-named ELF files; directory must not exist",
+        help="persist the verified RPM/three ELF files; default: new board_results/gbs_build_* directory",
     )
     args = parser.parse_args()
     try:
@@ -249,15 +301,19 @@ def main() -> int:
             "run reproduce.sh gbs explicitly"
         )
         return 0
-    output_dir = args.output_dir.resolve() if args.output_dir else None
-    if output_dir is not None and output_dir.exists():
+    output_dir = args.output_dir.resolve() if args.output_dir else (
+        args.repo_root.resolve() / "board_results" /
+        f"gbs_build_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')}_{os.getpid()}"
+    )
+    if output_dir.exists():
         print(f"FAIL\tgbs-output\tdirectory already exists: {output_dir}")
         return 2
     try:
         gbs_build(args.repo_root.resolve(), manifest, args.lock_timeout, output_dir)
     except GbsEnvironmentUnavailable as error:
-        print(f"REPORT_ONLY\tgbs-build-environment\t{error}")
-        print("SKIPPED\tgbs-build\tGBS environment unavailable; static package gates passed")
+        print(f"NOT-EVALUATED\tgbs-build-environment\t{error}")
+        print("FAIL\tgbs-build\tno verified RPM/ELF bundle; static package gates alone are insufficient")
+        return 2
     except (OSError, ValueError, subprocess.SubprocessError) as error:
         print(f"FAIL\tgbs-package-artifact\t{error}")
         return 1

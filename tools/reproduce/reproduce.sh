@@ -1,6 +1,10 @@
 #!/bin/sh
 set -u
 
+command -v dirname >/dev/null 2>&1 || {
+    printf 'FAIL\truntime-preflight\tmissing default-verify command: dirname\nOVERALL\tFAIL\n' >&2
+    exit 2
+}
 repo=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 mode=${1:-verify}
 
@@ -21,6 +25,15 @@ complete S4 + gst L2 workflow; GBS is the default artifact source after its
 independent four-cell held-out validation passed.
 EOF
 }
+
+if ! command -v python3 >/dev/null 2>&1; then
+    printf 'FAIL\truntime-preflight\tpython3 is not available; Python >=3.10 required\nOVERALL\tFAIL\n' >&2
+    exit 2
+fi
+if ! python3 -c 'import sys; ok = sys.version_info >= (3, 10); print("PASS\tpython-runtime\t" + sys.version.split()[0]) if ok else print("FAIL\tpython-runtime\tPython >=3.10 required (Path.write_text newline support); found " + sys.version.split()[0]); sys.exit(0 if ok else 2)'; then
+    printf 'OVERALL\tFAIL\n'
+    exit 2
+fi
 
 if [ "$mode" = board ]; then
     shift
@@ -44,6 +57,18 @@ if [ "$mode" != verify ]; then
 fi
 if [ "$#" -gt 1 ]; then
     usage >&2
+    exit 2
+fi
+
+missing=0
+while IFS= read -r required; do
+    if ! command -v "$required" >/dev/null 2>&1; then
+        printf 'FAIL\truntime-preflight\tmissing default-verify command: %s\n' "$required" >&2
+        missing=1
+    fi
+done < "$repo/tools/reproduce/verify_commands.txt"
+if [ "$missing" -ne 0 ]; then
+    printf 'OVERALL\tFAIL\n'
     exit 2
 fi
 
@@ -192,6 +217,12 @@ gst_replay()
     cp "$repo/data/raw/gst_trim_cost_20260901/health.json" "$out/health.json" || return 1
     for name in repetitions.tsv arm_summary.tsv comparison.json; do
         cmp "$out/$name" "$repo/data/raw/gst_trim_cost_20260901/$name" || return 1
+    done
+    retry2="$repo/data/raw/gbs_rebaseline_20260903/gst_retry2"
+    python3 "$repo/tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py" \
+      --replay-cycles "$retry2/cycles.tsv" --output "$tmp/gst-retry2" || return 1
+    for name in repetitions.tsv arm_summary.tsv comparison.json; do
+        cmp "$tmp/gst-retry2/$name" "$retry2/$name" || return 1
     done
 }
 

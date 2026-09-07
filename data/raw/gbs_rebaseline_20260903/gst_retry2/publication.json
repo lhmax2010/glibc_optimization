@@ -1,0 +1,24 @@
+{
+  "schema": "glibc-memopt-gst-retry2-publication.v1",
+  "measured_date": "2026-09-03",
+  "publication_date": "2026-09-07",
+  "source_archive": "board_results/gbs_rebaseline_20260903/workflow_retry2/",
+  "source_archive_availability": "complete raw files retained locally; available on request",
+  "raw_manifest_sha256": "5ce8548f9c3209f28048e58c8364bba464f66c81b439c41dd0e7a3df21ecd059",
+  "raw_sizes_sha256": "544ff497b20ddd68c108c3b2071e834eb952180e21739c2ba9622a37d557b990",
+  "asset_sha256": {
+    "gst_loop_decode.armv7l": "7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034",
+    "reclaim_probe.armv7l": "e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31",
+    "small_320x240.mp4": "3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d"
+  },
+  "compact_sha256": {
+    "cycles.tsv": "7e1f635ec55b11b8e2f9fa8058b535051b1394953d8ab104a7c3cf0be1ab0574",
+    "repetitions.tsv": "979fc33f524e39950eec4baad39af49a55c7240baa6d4ebf35b99b962fb8212f",
+    "arm_summary.tsv": "a2a4d508dd1ffd83b4ad2d6d42204eec453e95297e7439e36de92f97506abe38",
+    "comparison.json": "795632a9f8e3d9c60e1f2024732e375013852f763e6a6d3bf65094c2e6ac64dc",
+    "health.json": "582845917a0bd61aae05191c2c00f61d4edf74d83fc1a7f6d1b0e112d4a01fc1",
+    "external_summary.tsv": "d9f5535bc87d58b07a7887cee7499ff1b9f9a701e99b39e193634b4b7dbba976"
+  },
+  "checks": "full pull manifest/size verification; all six derivatives byte-identical to archived output",
+  "scope": "existing retry2 gst cells only; no new measurement and no held-out claim for gst/reclaim_probe"
+}

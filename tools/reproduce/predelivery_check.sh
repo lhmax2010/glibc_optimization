@@ -18,10 +18,12 @@ complete host verify (nested host tests are never skipped):
   tag       git clone --branch <delivery-tag> <url>
   default   git clone <url>  (must check out main)
 
-Each clone shape is checked under four controlled optional-tool PATH profiles:
+Each clone shape is checked under five closed-whitelist PATH profiles:
   present-gbs+present-rpm, absent-gbs+present-rpm,
-  present-gbs+absent-rpm, minimal-git-python
-The 3 clone shapes x 4 optional-tool PATH profiles = 12 required verifies.
+  present-gbs+absent-rpm, minimal-whitelist, broken-tools
+The 3 clone shapes x 5 PATH profiles = 15 required verifies.
+Only commands explicitly listed in verify_commands.txt are symlinked. No host
+PATH directory is copied or included. broken-tools has failing rpmspec/gbs stubs.
 Presence profiles use fail-if-invoked stubs, proving default verify only detects
 optional tools where specified and never executes GBS/RPM payload commands.
 
@@ -71,85 +73,19 @@ cleanup()
 }
 trap cleanup EXIT HUP INT TERM
 
-original_path=$PATH
-
 make_path_profile()
 {
     profile=$1
-    include_gbs=$2
-    include_rpm=$3
     destination="$tmp/path-$profile"
-    mkdir "$destination" || return 1
-    python3 - "$destination" "$original_path" "$include_gbs" "$include_rpm" <<'PY'
-import os
-import stat
-import sys
-from pathlib import Path
-
-destination = Path(sys.argv[1])
-source_path = sys.argv[2]
-include_gbs = sys.argv[3] == "yes"
-include_rpm = sys.argv[4] == "yes"
-
-
-def optional(name: str) -> bool:
-    return name == "gbs" or name == "cpio" or name.startswith("rpm")
-
-
-for directory_name in source_path.split(os.pathsep):
-    directory = Path(directory_name or ".")
-    if not directory.is_dir():
-        continue
-    try:
-        entries = list(directory.iterdir())
-    except OSError:
-        continue
-    for source in entries:
-        name = source.name
-        target = destination / name
-        if target.exists() or target.is_symlink() or optional(name):
-            continue
-        try:
-            mode = source.stat().st_mode
-        except OSError:
-            continue
-        if not stat.S_ISREG(mode) or not os.access(source, os.X_OK):
-            continue
-        try:
-            target.symlink_to(source.resolve(strict=True))
-        except OSError:
-            continue
-
-
-def executable(name: str, body: str) -> None:
-    target = destination / name
-    target.write_text("#!/bin/sh\n" + body, encoding="utf-8")
-    target.chmod(0o755)
-
-
-poison = (
-    'printf "%s\\n" "$0" >> "${PREDELIVERY_OPTIONAL_TOOL_MARKER:?}"\n'
-    "exit 97\n"
-)
-if include_gbs:
-    executable("gbs", poison)
-if include_rpm:
-    for command in ("rpm", "rpm2cpio", "cpio"):
-        executable(command, poison)
-    # static_check deliberately exercises rpmspec when discoverable. This
-    # portable parser fixture only expands the already hard-gated source text.
-    executable(
-        "rpmspec",
-        '[ "$#" -eq 2 ] && [ "$1" = "-P" ] || exit 97\ncat "$2"\n',
-    )
-PY
-    printf '%s\n' "$destination"
+    python3 "$repo_root/tools/reproduce/make_verify_path.py" \
+        --output "$destination" --profile "$profile"
 }
 
-profile_full=$(make_path_profile present-gbs+present-rpm yes yes) || exit 2
-profile_no_gbs=$(make_path_profile absent-gbs+present-rpm no yes) || exit 2
-profile_no_rpm=$(make_path_profile present-gbs+absent-rpm yes no) || exit 2
-profile_minimal=$(make_path_profile minimal-git-python no no) || exit 2
+profile_full=$(make_path_profile present-gbs+present-rpm) || exit 2
+profile_no_gbs=$(make_path_profile absent-gbs+present-rpm) || exit 2
+profile_no_rpm=$(make_path_profile present-gbs+absent-rpm) || exit 2
+profile_minimal=$(make_path_profile minimal-whitelist) || exit 2
+profile_broken=$(make_path_profile broken-tools) || exit 2
 
 failures=0
 check_profile()
@@ -250,6 +186,11 @@ run_shape()
         failures=$((failures + 1))
         return
     fi
+    if [ "$profile" = broken-tools ] && ! grep -q '^SKIPPED[[:space:]]gbs-spec-syntax[[:space:]].*RC=42' "$log"; then
+        printf 'FAIL\tprofile=%s shape=%s\tbroken rpmspec did not emit a reasoned SKIPPED row\n' "$profile" "$shape"
+        failures=$((failures + 1))
+        return
+    fi
     if ! grep -q '^PASS[[:space:]]host-tests$' "$log" || ! grep -q '^OVERALL[[:space:]]PASS$' "$log"; then
         printf 'FAIL\tprofile=%s shape=%s\tref=%s missing host-tests/OVERALL PASS\n' "$profile" "$shape" "$ref"
         sed -n '1,200p' "$log"
@@ -276,7 +217,8 @@ for profile_record in \
     "present-gbs+present-rpm|$profile_full|yes|yes" \
     "absent-gbs+present-rpm|$profile_no_gbs|no|yes" \
     "present-gbs+absent-rpm|$profile_no_rpm|yes|no" \
-    "minimal-git-python|$profile_minimal|no|no"
+    "minimal-whitelist|$profile_minimal|no|no" \
+    "broken-tools|$profile_broken|yes|no"
 do
     old_ifs=$IFS
     IFS='|'
@@ -299,4 +241,4 @@ if [ "$failures" -ne 0 ]; then
     printf 'OVERALL\tFAIL\tchecks_failed=%s\n' "$failures"
     exit 1
 fi
-printf 'OVERALL\tPASS\tchecks=12 clone_shapes=3 path_profiles=4\n'
+printf 'OVERALL\tPASS\tchecks=15 clone_shapes=3 path_profiles=5\n'

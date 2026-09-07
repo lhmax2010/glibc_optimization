@@ -26,18 +26,21 @@
 
 ### 0.1 板上轮次证据顺序（长期规则）
 
-每个新板上轮次必须先把不可变 contract 与 analyzer 提交到 `main` 并打轻量事前标签，
-再开始板端执行；原始结果、紧凑证据和结论必须放在后续独立提交。缺少该事前提交/tag
+每个新板上轮次必须先把不可变 contract 与 analyzer 提交到 `main`，打 annotated 事前
+标签（保留 tagger 时间戳），推送 commit/tag 并记录 UTC 推送完成时间；距首次板端操作
+至少 10 分钟后才能开跑，结果记录实际间隔。少于 10 分钟须有开跑前 PM 书面裁决。
+历史轻量标签按原身份保留，不能补造时间戳。原始结果、紧凑证据和结论放在后续独立提交。
+缺少该事前提交/tag
 凭证的历史轮次只称“固定合同重放”，不得称“预登记”。
 
 ### 0.2 交付快照强制自检
 
-自 `demo-v6` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三次全新克隆，并把
-每个克隆放进四种受控 PATH 环境执行不跳过 host tests 的完整 `verify`：
+自 `demo-v7` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三次全新克隆，并把
+每个克隆放进五种白名单 PATH 环境执行不跳过 host tests 的完整 `verify`：
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v6 <url>
+git clone --branch demo-v7 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -47,17 +50,24 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v6
+  --tag demo-v7
 ```
 
-四种 PATH 是 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}`；其中二者都不可
-发现的 `minimal-git-python` 是强制形态。可发现项由 fail-if-invoked 桩提供，确保默认
-verify 不会偷偷执行可选工具；需单独安装的系统依赖固定为 Git 与 Python 3（另假定基础
-Bash/POSIX userland）。`3 × 2 × 2 = 12` 次都必须出现 `host-tests=PASS
-OVERALL=PASS`，最终汇总必须为 `OVERALL PASS checks=12` 才能宣告交付就绪。`demo` 与
+五种 PATH 是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上
+`broken-tools`（rpmspec/gbs 执行返回非零）。所有形态只软链
+[`verify_commands.txt`](../tools/reproduce/verify_commands.txt) 显式列出的命令；二者都不可
+发现的 `minimal-whitelist` 不再以排除法继承 host 命令。依赖含 Python ≥3.10、Git、
+Bash/POSIX sh 和白名单中的系统工具，详见依赖审计。
+`3 × 5 = 15` 次都必须出现 `host-tests=PASS OVERALL=PASS`，最终汇总必须为
+`OVERALL PASS checks=15` 才能宣告交付就绪。`demo` 与
 detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REPORT_ONLY` 身份语义，
 但其完整 verify 同样是硬门。脚本、逐模块依赖审计及后续标签递增规则见
 [`tools/reproduce/README`](../tools/reproduce/README.md#mandatory-pre-delivery-clone-matrix)。
+
+还必须实际跑一次 `reproduce.sh gbs --output-dir <new-dir>`，RPM 与三 ELF 完整生成且
+通过身份/哈希门后才算构建通过；将 NVR、三 ELF SHA、实际耗时、残留路径（如有）
+归档 `data/raw/`。构建环境不可用/锁超时/产物缺失均非零退出；root 属主 buildroot 清理
+失败单列 `REPORT_ONLY`，不能掩盖前述失败。纯 host verify 的 PASS 不替代这项构建证据。
 
 ## 1. 建议演示流程
 

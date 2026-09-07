@@ -14,10 +14,30 @@ v4 acceptance check, local-link check, report rebuild, static GBS package contra
 and host test. It never starts a real GBS build. Any failed row makes the process
 exit nonzero.
 
-The default mode has only two separately installed system prerequisites: **Git and
-Python 3**. The `bash` entrypoint and ordinary base-image shell utilities
-(`sh`, `cmp`, `cp`, `dirname`, `find`, `grep`, `ln`, `mkdir`, `mktemp`, `sed`,
-and `tr`) are treated as the operating-system userland, not project toolchains.
+## Default verify system dependencies
+
+Default verify requires Linux, **Python >=3.10**, Git, Bash/POSIX sh, and the
+following explicit commands. Base-image utilities are dependencies too; the old
+“only Git + Python” wording was incomplete. The Python floor follows the report
+builder's `Path.write_text(..., newline=...)` (3.10); code also uses 3.9 string
+prefix/suffix methods. Runtime preflight rejects an older interpreter with its
+observed version before any replay.
+
+The executable whitelist is [`verify_commands.txt`](verify_commands.txt):
+
+```text
+awk bash cat cmp cp date dirname find git grep ln mkdir mktemp python3
+sed sh sha256sum sleep sort stat tr wc
+```
+
+`awk`, `date`, `sleep` exercise the local sampler tests; `sha256sum`, `wc`, `stat`,
+and `sort` exercise archived-file and mocked-workflow integrity; `cat` supplies
+CLI output and fixtures. `cmp`, `cp`, `ln`, `mkdir`, `mktemp`, `find` handle replay
+and temporary trees; `dirname`, `grep`, `sed`, `tr` support the shell entrypoint.
+GNU-compatible `date -Ins/+%s%N` and `stat -c` are required (Ubuntu/Debian coreutils).
+Every whitelist command is checked by preflight; no other PATH executable is
+available in the mandatory minimal profile. Git/Python retain their installed
+runtime libraries; this is a command-PATH isolation test, not an OS-container test.
 `gbs`, `rpm`, `rpm2cpio`, `cpio`, `rpmspec`, an ARM compiler, SDB, network access,
 and root are not default-verify prerequisites. Optional syntax/build checks emit an
 explicit `SKIPPED` reason when their environment is absent; their real execution is
@@ -38,29 +58,38 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v6
+  --tag demo-v7
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v6 <url>
+git clone --branch demo-v7 <url>
 git clone <url>                 # remote default must be main
 ```
 
-Each clone is verified under four controlled PATH profiles: GBS/RPM both
+Each clone is verified under five whitelist PATH profiles: GBS/RPM both
 discoverable, only RPM discoverable, only GBS discoverable, and neither
-discoverable (`minimal-git-python`). Discoverable optional tools are deterministic
+discoverable (`minimal-whitelist`), plus `broken-tools` (rpmspec and gbs return
+nonzero if invoked). [`make_verify_path.py`](make_verify_path.py) symlinks only
+the explicit command list above; it does not enumerate or append the host PATH.
+Discoverable optional tools are deterministic
 fail-if-invoked stubs, so this gate proves that default verify does not execute them;
 `rpmspec -P` alone uses a local parser fixture because that optional syntax branch is
-intentionally exercised. This is `3 × 2 × 2 = 12` complete verifies with nested host
+intentionally exercised, while a broken rpmspec must emit a reasoned `SKIPPED`.
+This is `3 × 5 = 15` complete verifies with nested host
 tests enabled. The demo branch and detached tag must pass required delivery identity;
 main keeps its recorded `REPORT_ONLY` identity semantics. Every check must print
 `host-tests=PASS OVERALL=PASS`, and the final row must be
-`OVERALL PASS checks=12`, or the snapshot is not delivery-ready. Future snapshots
+`OVERALL PASS checks=15`, or the snapshot is not delivery-ready. Future snapshots
 pass their new annotated tag with `--tag demo-vN`; the script also defaults that
 value from [`delivery_refs.json`](delivery_refs.json).
+
+Delivery also requires one actual `reproduce.sh gbs --output-dir <new-dir>` pass,
+separate from the PATH fixtures. Archive its summary in `data/raw/`, including RPM
+NVR/SHA, all three ELF hashes, elapsed time, and any buildroot residue. A verify
+matrix pass by itself does not establish the actual GBS build path.
 
 ## Default host-test dependency audit
 
@@ -82,7 +111,9 @@ plus the mocked board-workflow group). Their external-command boundary is:
 | `tools/runners/tool_provenance_20260903/test_host.py` | `python3`; local XML fixtures | No network or repository download |
 
 The top-level static GBS check parses the spec and manifest in Python. `rpmspec -P`
-is optional and reports `SKIPPED` when absent. The path-reproducibility check requires
+is optional and reports `SKIPPED` when absent, non-executable, timed out, or returning
+nonzero; the reason includes its error/exit status. Python spec/%files/manifest
+checks remain hard gates. The path-reproducibility check requires
 `DEMO_TOOLCHAIN_ROOT` and `DEMO_GST_SYSROOT`; without both it reports a reasoned
 `SKIPPED`. No test may use `assertIsNotNone(shutil.which(...))` to promote an
 optional RPM/GBS/ARM command into a default dependency.
@@ -111,9 +142,22 @@ The explicit GBS build entry is
 produces one RPM with all three ELF files. It requires network access to the pinned
 repositories, a root-capable GBS environment, sufficient buildroot disk space, and
 substantially more time than the minutes-scale host verify. Its buildroot is unique
-per run and protected by a cross-process lock. A GBS command/environment failure is
-`SKIPPED/REPORT_ONLY`; a static contract defect or drift in a successfully produced
-RPM/ELF remains a hard failure.
+per run and protected by a cross-process lock. A missing GBS/RPM command, GBS
+execution failure, or lock timeout emits `NOT-EVALUATED` plus `OVERALL FAIL` and a
+nonzero exit code. Missing RPM/ELF or hash/identity drift is `FAIL`. A successful
+static check cannot make an unevaluated explicit build pass. `--output-dir` must be
+new; `PASS` requires the RPM and all three ELF files to have been generated,
+inspected, copied there and hash-verified. Without this option, the checker chooses
+a new local `board_results/gbs_build_*` output directory. The bundle includes a
+machine-readable `gbs_build_summary.json`.
+
+GBS may leave root-owned files in its unique temporary workspace; an unprivileged
+checker cannot always delete them (EPERM). Cleanup failure alone is
+`REPORT_ONLY gbs-buildroot-residue <path>` and is included in the summary, even when
+artifact gates passed. Inspect the exact generated path from that row and clean it
+with `sudo rm -rf -- <path>` (only that run's `/tmp/glibc-memopt-gbs-*` workspace).
+The checker never attempts an automatic sudo deletion. A residue cannot turn an
+artifact/environment failure into a pass.
 
 The GBS artifacts participated in the fixed-contract H-V calibration sample, so
 that sample alone is not independent evidence. A separately tagged four-cell
@@ -122,6 +166,10 @@ the L2 default; select the archived fallback explicitly with
 `--artifact-source frozen`. The media file is never built by either path and must
 come from the delivery location supplied with the package. See the
 [held-out report](../../docs/gbs_heldout_validation_20260904.md).
+The four held-out cells cover **alloc_bench only**. GBS gst_loop_decode/reclaim_probe
+have the manifest identity chain; their board behavior comes from the earlier
+September 3 retry2, not those held-out cells. Its existing gst compact evidence is
+now [publicly replayable](../../data/raw/gbs_rebaseline_20260903/gst_retry2/README.md).
 
 Both modes read [`acceptance_bands.json`](acceptance_bands.json). `PASS` means a
 deterministic item, validity gate, or tolerance band passed. `EXPECTED` means an
@@ -146,7 +194,12 @@ without modifying them.
 ## Board-round evidence ordering
 
 For every new board round, commit the immutable contract and its analyzer first and
-create a lightweight pre-run tag. Only then may the board run start. Board results,
+create an **annotated** pre-run tag, retaining the tagger timestamp. Push the
+contract commit and tag, record push completion in UTC, and wait at least ten
+minutes from that recorded push to the first board operation. Record both times
+and their actual interval with the results. A shorter interval needs an explicit
+PM decision recorded before execution. Historical lightweight tags remain intact
+and are identified as such; do not fabricate retrospective timestamps. Board results,
 compact evidence, and conclusions land in a separate later commit. Without the
 pre-run commit/tag, historical wording is “fixed-contract replay”, not
 “preregistered”.

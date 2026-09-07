@@ -255,6 +255,13 @@ PASS，§4–§6 已通过项保持不变，结构化结果为 `OVERALL PASS`。
 独立落入现行 v4 闭区间，健康与清理门全过。
 
 因此按事前规则，**GBS 重基线通过，GBS 恢复为 HQ 默认 L2 路径，冻结件为备选**。
+
+> **2026-09-07 范围/公开性追注（N6-03）：** 上述独立 held-out 依据只覆盖
+> `alloc_bench` A 锚点四格。GBS `gst_loop_decode`、`reclaim_probe` 的板上行为依据仍是
+> 本报告 retry2 原有 gst 格，不能外推为 held-out 覆盖。现已对本地完整 pull 重验
+> manifest/大小、三个资产 SHA 及派生件逐字节一致性后补公开
+> [`gst retry2 紧凑件`](../data/raw/gbs_rebaseline_20260903/gst_retry2/README.md)。
+> 原停止门及历史数值保留，补档不产生新测量。
 校准带的中心、半宽、分类与 `n=8/profile` 建带样本均不变。完整证据与边界见
 [`gbs_heldout_validation_20260904.md`](gbs_heldout_validation_20260904.md)。
 现行机器合同见

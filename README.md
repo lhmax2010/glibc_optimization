@@ -2,7 +2,7 @@
 
 This repository is the long-term, sanitized workspace for source audits, controlled benchmarks, board measurements, and implementation evidence related to reducing glibc runtime memory and image footprint on 32-bit ARM Tizen systems.
 
-Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v6` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v6).
+Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v7` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v7).
 
 The HQ packaging path is [`packaging/glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec):
 `bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>` uses
@@ -16,6 +16,9 @@ before board execution; its held-out run passed 4/4 without changing the v4 band
 GBS is the default HQ L2 path after that held-out validation, and the frozen bundle
 is the auditable fallback. See the
 [held-out report](docs/gbs_heldout_validation_20260904.md).
+Those four held-out cells cover alloc_bench only. GBS gst_loop_decode and
+reclaim_probe have the manifest identity chain; their board behavior comes from
+the earlier September 3 retry2, now [publicly replayable](data/raw/gbs_rebaseline_20260903/gst_retry2/README.md).
 
 文中应用/进程名为代号；host 侧路径已脱敏，板端运行路径保留。冻结测试镜像 BUILD_ID 为复现需要有意公开。报告引用的大块原始证据（完整 dlog、dmesg、smaps 快照和 malloc_info XML 全集）在 host 本地留存，可按请求提供；直接支撑结论的小型时间序列和执行记录收录在 `data/raw/`。
 

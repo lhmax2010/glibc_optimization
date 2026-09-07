@@ -117,7 +117,15 @@ livedump 数为 0；四格各出现 1 个 `alloc_bench cpu.relative`，总数 4�
 
 结论：**GBS 重基线通过，GBS `git clone → gbs build → 提取三项 ELF → board workflow`
 恢复为 HQ 首选 L2 路径。** 冻结件仍是可审计备选。该结论仅覆盖指定镜像、glibc 2.40、
-本轮 GBS ELF 与现行验收合同；不把 held-out 四格写回 v4 校准带，也不外推产品内存收益。
+本轮 `alloc_bench` GBS ELF 与现行 A 锚点合同；不把 held-out 四格写回 v4 校准带，也不
+外推产品内存收益。
+
+> **2026-09-07 范围限定（N6-03）：** held-out 四格只覆盖 `alloc_bench`，不能据此声称
+> `gst_loop_decode` 或 `reclaim_probe` 也获得独立 held-out 板上验证。后二者的 GBS ELF
+> 身份链与 manifest 一致，其板上行为依据是 2026-09-03 rebaseline retry2。该轮曾因
+> A/mixed 停止门未公开紧凑件，现从本地完整件校验后补公开
+> [`gst retry2 紧凑证据`](../data/raw/gbs_rebaseline_20260903/gst_retry2/README.md)，并提供
+> `cycles.tsv → 三派生件` 的逐字节复算入口。此补档不新增测量，不改变原判定。
 
 ## 8. 复现
 

@@ -14,11 +14,14 @@ This is the review entry point for the project. Start with the consolidated stat
 6. [`cyclic_fall_mechanism_attribution_v2_20260901.md`](cyclic_fall_mechanism_attribution_v2_20260901.md): final cyclic-fall attribution, timing-artifact correction, and product phenotype census.
 7. [`cyclic_s2_board_replication_20260831.md`](cyclic_s2_board_replication_20260831.md): frozen S2 board replication and its retained-bin baseline evidence.
 8. [`s4_reference_and_retention_trim_20260901.md`](s4_reference_and_retention_trim_20260901.md): new-image instantaneous-release anchors and retained-bin trim effect/refault cost.
+9. [`gbs_rebaseline_20260903.md`](gbs_rebaseline_20260903.md): original GBS stop-gate result, subsequent alloc_bench held-out scope, and the September 3 gst retry2 compact archive.
+10. [`pm_decisions.md`](pm_decisions.md): dated PM decisions, evidence scope, delivery exceptions, and current pre-run tag rules.
 
 ## Experiment Timeline
 
 | Date | Target | Activity | One-line result | Report |
 |---|---|---|---|---|
+| 2026-09-07 | Host delivery | Fourth-review tooling closure and demo-v7 | Explicit GBS artifact gates, real build archive, closed-whitelist/broken-tool verify matrix; documentary corrections and old gst retry2 publication only | [`review closure`](review_fix_20260903.md#第-4-轮终审闭环demo-v62026-09-07), [`PM decisions`](pm_decisions.md), [`GBS retry2`](../data/raw/gbs_rebaseline_20260903/gst_retry2/README.md) |
 | 2026-07-07 | Host/source | Audited Tizen glibc memory proposals and packaging | Established version-gated feasibility and rejected already-default or unavailable mechanisms | [`glibc_memopt_feasibility_report.md`](glibc_memopt_feasibility_report.md) |
 | 2026-07-07 | Host/source | Independently traced Tizen-only dlconf retention paths | Confirmed steady-state mapping cleanup with corrections to the retained-state accounting | [`review_dlconf_rss_spotcheck_codex.md`](review_dlconf_rss_spotcheck_codex.md) |
 | 2026-07-07 | Host | Three independent design-v1 reviews | Exposed missing version gates, performance risks, and measurement gaps | [`review_glibc_memopt_codex_gpt5.md`](review_glibc_memopt_codex_gpt5.md), [`review_glibc_memopt_claude-opus-4.8.md`](review_glibc_memopt_claude-opus-4.8.md), [`review_glibc_memopt_kimi.md`](review_glibc_memopt_kimi.md) |
