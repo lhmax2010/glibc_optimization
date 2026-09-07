@@ -21,8 +21,8 @@ The repository is the GBS source tree; no Gerrit import or separate source archi
 is required. The resulting RPM identity, RPM SHA-256, buildroot versions, and ELF
 SHA-256 values are recorded in
 [`deliverables_manifest.json`](../tools/reproduce/deliverables_manifest.json) and
-the [`host build record`](../data/raw/gbs_package_20260903/README.md). These ELF
-files participated in the fixed-contract H-V calibration sample, which is not
+the [`host build record`](../data/raw/gbs_package_20260903/README.md). The alloc_bench
+ELF participated in the fixed-contract H-V calibration sample, which is not
 independent validation. GBS is the default L2 path after a separate **alloc_bench-only**
 held-out run passed 4/4; the frozen bundle is the fallback. See the
 [`held-out report`](../docs/gbs_heldout_validation_20260904.md) and
