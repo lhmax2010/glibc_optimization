@@ -8,6 +8,7 @@ import hashlib
 import os
 import re
 import shutil
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -154,10 +155,11 @@ class ReproduceTests(unittest.TestCase):
         self.assertIn("git clone --branch demo <url>", result.stdout)
         self.assertIn("git clone --branch <delivery-tag> <url>", result.stdout)
         self.assertIn("git clone <url>  (must check out main)", result.stdout)
-        self.assertIn("3 clone shapes x 5 PATH profiles = 15", result.stdout)
+        self.assertIn("3 clone shapes x 6 environment profiles = 18", result.stdout)
         self.assertIn("present-gbs+absent-rpm", result.stdout)
         self.assertIn("minimal-whitelist", result.stdout)
         self.assertIn("broken-tools", result.stdout)
+        self.assertIn("startup-injection", result.stdout)
 
     def test_default_host_test_dependency_audit_covers_inventory(self) -> None:
         entrypoint = (HERE / "reproduce.sh").read_text(encoding="utf-8")
@@ -486,6 +488,64 @@ elif name == "cpio":
                 self.assertIn("BASH_FUNC_" + target, result.stderr)
                 self.assertNotIn("MODE\thost verify", result.stdout)
 
+    def test_startup_self_clearing_unexported_functions_fail_before_mode(self) -> None:
+        for variant in ("self-clear", "unexported-only", "self-delete", "preset-marker", "preset-empty-marker"):
+            with self.subTest(variant=variant), tempfile.TemporaryDirectory() as directory:
+                init = Path(directory) / "init.sh"
+                body = ("python3() { if [ \"$1\" = -c ]; then " + shlex.quote(sys.executable) +
+                        ' "$@"; else while [ "$#" -gt 0 ]; do if [ "$1" = --output ]; then shift; mkdir -p "$1"; : > "$1/acceptance_input.json"; break; fi; shift; done; fi; }\ncmp() { :; }\n')
+                if variant == "self-delete":
+                    body += shlex.quote(sys.executable) + " -c 'import os; os.unlink(os.environ[\"BASH_ENV\"])'\n"
+                body += "unset BASH_ENV ENV\n"
+                init.write_text(body)
+                env = {**os.environ, "REPRODUCE_ALLOW_DIRTY": "1", "REPRODUCE_SKIP_TESTS": "1"}
+                argv = ["bash", str(HERE / "reproduce.sh"), "verify"]
+                if variant == "unexported-only":
+                    argv = ["bash", "--noprofile", "--norc", "-c", body + '\n. "$0" verify', str(HERE / "reproduce.sh")]
+                elif variant.startswith("preset-"):
+                    env["REPRODUCE_SANITIZED_ENTRYPOINT"] = "fixture" if variant == "preset-marker" else ""
+                else:
+                    env["BASH_ENV"] = str(init)
+                result = subprocess.run(argv, env=env, text=True, capture_output=True, timeout=30)
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self.assertIn("runtime-injection", result.stderr)
+                self.assertNotIn("missing default-verify command", result.stderr)
+                self.assertNotIn("MODE\thost verify", result.stdout)
+                self.assertNotIn("OVERALL\tPASS", result.stdout)
+                if variant == "self-delete":
+                    self.assertFalse(init.exists())
+
+    def test_bootstrap_cannot_fall_through_to_unclean_workflow_body(self) -> None:
+        for functions in ("exit() { :; }", "exec() { :; }", "exec() { :; }; exit() { :; }"):
+            with self.subTest(functions=functions):
+                result = subprocess.run(
+                    ["bash", "--noprofile", "--norc", "-c",
+                     functions + '; python3() { :; }; cmp() { :; }; . "$0" verify', str(HERE / "reproduce.sh")],
+                    env={**os.environ, "REPRODUCE_ALLOW_DIRTY": "1", "REPRODUCE_SKIP_TESTS": "1"},
+                    text=True, capture_output=True, timeout=10,
+                )
+                self.assertNotIn("MODE\thost verify", result.stdout)
+                self.assertNotIn("OVERALL\tPASS", result.stdout)
+                if "exec()" not in functions or "exit()" not in functions:
+                    self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+
+    def test_unrelated_module_function_has_actionable_clean_process_workaround(self) -> None:
+        env = {**os.environ, "BASH_FUNC_module%%": "() { :; }", "REPRODUCE_ALLOW_DIRTY": "1", "REPRODUCE_SKIP_TESTS": "1"}
+        rejected = subprocess.run(["bash", str(HERE / "reproduce.sh"), "verify"], env=env,
+                                  text=True, capture_output=True, timeout=10)
+        self.assertEqual(rejected.returncode, 2)
+        self.assertIn("runtime-injection", rejected.stderr)
+        self.assertIn("module", rejected.stderr)
+        self.assertNotIn("missing default-verify command", rejected.stderr)
+        # Same environment semantics as the documented env -i command. Using a
+        # subprocess environment avoids making env an extra verify prerequisite.
+        clean = {name: env[name] for name in ("PATH", "HOME", "REPRODUCE_ALLOW_DIRTY", "REPRODUCE_SKIP_TESTS") if name in env}
+        accepted = subprocess.run(["bash", "--noprofile", "--norc", "-p", str(HERE / "reproduce.sh"), "verify"],
+                                  env=clean, text=True, capture_output=True, timeout=30)
+        self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
+        self.assertIn("MODE\thost verify", accepted.stdout)
+        self.assertIn("OVERALL\tPASS", accepted.stdout)
+
     def test_recursive_entrypoint_is_refused_before_any_child_command(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             # A nonempty marker must stop even with no commands available.
@@ -584,7 +644,7 @@ elif name == "cpio":
         self.assertRegex(proof["python_version"], r"^3\.\d+\.\d+$")
         self.assertIn("superseded", (archive / "README.md").read_text())
 
-    def test_v9_public_execution_proof_matches_commit_and_delivery_files(self) -> None:
+    def test_historical_v9_public_execution_proof_matches_execution_commit(self) -> None:
         archive = REPO / "data/raw/demo_v9_delivery_20260907/gbs"
         proof_path = archive / "execution_provenance.json"
         proof = json.loads(proof_path.read_text())
@@ -604,10 +664,9 @@ elif name == "cpio":
         self.assertEqual(set(proof["committed_file_sha256"]), expected_paths)
         for path, digest in proof["committed_file_sha256"].items():
             with self.subTest(path=path):
-                for commit in (proof["workflow_commit"], "HEAD"):
+                for commit in (proof["workflow_commit"],):
                     committed = subprocess.check_output(["git", "show", commit + ":" + path], cwd=REPO)
                     self.assertEqual(hashlib.sha256(committed).hexdigest(), digest)
-                self.assertEqual(hashlib.sha256((REPO / path).read_bytes()).hexdigest(), digest)
         for field, path in (("entrypoint_sha256", "tools/reproduce/reproduce.sh"),
                             ("checker_sha256", "tools/reproduce/check_gbs_package.py")):
             self.assertEqual(proof[field], proof["committed_file_sha256"][path])
@@ -706,8 +765,10 @@ elif name == "cpio":
                         env={**os.environ, "BASH_ENV": str(init)}, capture_output=True, text=True,
                     )
                     self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-                    self.assertIn("not a real executable file", result.stderr)
+                    self.assertIn("runtime-injection", result.stderr)
                     self.assertIn("BASH_ENV", result.stderr)
+                    self.assertNotIn("missing default-verify command", result.stderr)
+                    self.assertNotIn("MODE\thost verify", result.stdout)
 
     def test_explicit_gbs_missing_command_is_not_evaluated_and_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -1145,8 +1206,8 @@ elif name == "cpio":
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v9"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v9"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v10"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v10"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)

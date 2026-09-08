@@ -18,10 +18,12 @@ complete host verify (nested host tests are never skipped):
   tag       git clone --branch <delivery-tag> <url>
   default   git clone <url>  (must check out main)
 
-Each clone shape is checked under five closed-whitelist PATH profiles:
+Each clone shape is checked under six closed-whitelist environment profiles:
   present-gbs+present-rpm, absent-gbs+present-rpm,
-  present-gbs+absent-rpm, minimal-whitelist, broken-tools
-The 3 clone shapes x 5 PATH profiles = 15 required verifies.
+  present-gbs+absent-rpm, minimal-whitelist, broken-tools, startup-injection
+The 3 clone shapes x 6 environment profiles = 18 complete verifies.
+startup-injection first requires all startup/marker variants to fail before MODE,
+then runs the complete verify in a clean environment (not a synthetic PASS).
 Only commands explicitly listed in verify_commands.txt are symlinked. No host
 PATH directory is copied or included. broken-tools has failing rpmspec/gbs stubs.
 Presence profiles use fail-if-invoked stubs, proving default verify only detects
@@ -165,6 +167,22 @@ run_shape()
         return
     fi
 
+    if [ "$profile" = startup-injection ]; then
+        if ! (
+            cd "$destination" || exit 2
+            PATH=$verify_path
+            export PATH
+            PYTHONDONTWRITEBYTECODE=1 python3 -m unittest \
+                tools.reproduce.test_host.ReproduceTests.test_startup_self_clearing_unexported_functions_fail_before_mode
+        ) >"$log" 2>&1; then
+            printf 'FAIL\tprofile=%s shape=%s\tstartup rejection regression failed\n' "$profile" "$shape"
+            sed -n '1,200p' "$log"
+            failures=$((failures + 1))
+            return
+        fi
+        printf 'PASS\tstartup-rejection shape=%s\t5 variants RC=2; no MODE host verify; clean verify follows\n' "$shape"
+    fi
+
     if ! (
         cd "$destination" || exit 2
         PATH=$verify_path
@@ -218,7 +236,8 @@ for profile_record in \
     "absent-gbs+present-rpm|$profile_no_gbs|no|yes" \
     "present-gbs+absent-rpm|$profile_no_rpm|yes|no" \
     "minimal-whitelist|$profile_minimal|no|no" \
-    "broken-tools|$profile_broken|yes|no"
+    "broken-tools|$profile_broken|yes|no" \
+    "startup-injection|$profile_minimal|no|no"
 do
     old_ifs=$IFS
     IFS='|'
@@ -241,4 +260,4 @@ if [ "$failures" -ne 0 ]; then
     printf 'OVERALL\tFAIL\tchecks_failed=%s\n' "$failures"
     exit 1
 fi
-printf 'OVERALL\tPASS\tchecks=15 clone_shapes=3 path_profiles=5\n'
+printf 'OVERALL\tPASS\tchecks=18 clone_shapes=3 environment_profiles=6 startup_rejection_checks=15\n'

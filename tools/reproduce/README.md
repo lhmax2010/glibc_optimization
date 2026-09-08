@@ -37,11 +37,37 @@ and temporary trees; `dirname`, `grep`, `sed`, `tr` support the shell entrypoint
 GNU-compatible `date -Ins/+%s%N` and `stat -c` are required (Ubuntu/Debian coreutils).
 Every whitelist command is checked by preflight for resolution to a real,
 executable file using Python `shutil.which`, not shell `command -v`. Python is
-bootstrapped by filesystem PATH traversal, never by invoking an exported function.
-Exported `BASH_FUNC_*` functions and `BASH_ENV`/`ENV` startup injection are rejected;
-run from an ordinary clean shell (functions/aliases are unsupported). The exported
-`REPRODUCE_ACTIVE_ENTRYPOINT` marker rejects self-recursion before any child command.
-Only the controlled host-test boundary resets it for independent CLI fixtures.
+bootstrapped by filesystem PATH traversal, never by invoking a shell function.
+Before ordinary commands run, Bash builtins inspect the current function/alias
+tables, including **unexported** entries left by a startup file that unset its own
+`BASH_ENV`/`ENV` markers or deleted itself. Any such state or exported `BASH_FUNC_*`
+marker is `FAIL runtime-injection`, not a misleading missing-command diagnostic.
+An actually absent/non-executable command is separately `FAIL runtime-preflight`
+with `missing default-verify command: <name>`.
+
+The resolved real Python then uses `os.execve` to start a new Bash with
+`--noprofile --norc -p`, stripping `BASH_ENV`, `ENV`, and every `BASH_FUNC_*` entry.
+Only the workflow body from the same entrypoint file is passed to that shell;
+there is no trusted-boolean shortcut back through the public launcher. A pre-set
+`REPRODUCE_SANITIZED_ENTRYPOINT` (even empty) fails closed before any ordinary
+command; `REPRODUCE_ACTIVE_ENTRYPOINT` also rejects self-recursion. Only controlled
+host-test fixtures clear these internal markers for independent CLI invocations.
+This relies on the installed shell/Python and their builtins, not a hostile-host
+sandbox or proof of code executed before entrypoint control.
+
+**Environment Modules:** rejection intentionally includes unrelated exported
+functions such as `module`, not just whitelist command names. Do not source this
+workflow into an interactive session. For a normal host that exports such helpers,
+start a clean process (substitute the actual installed absolute paths if needed):
+
+```sh
+/usr/bin/env -i PATH="$PATH" HOME="$HOME" /bin/bash --noprofile --norc -p \
+  tools/reproduce/reproduce.sh verify
+```
+
+This removes startup/function markers before Bash loads them; it does not edit
+shell configuration. Explicit GBS/board modes may need additional documented
+environment variables; pass only the required trusted ones, not startup hooks.
 No other PATH executable is
 available in the mandatory minimal profile. Git/Python retain their installed
 runtime libraries; this is a command-PATH isolation test, not an OS-container test.
@@ -66,31 +92,35 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v9
+  --tag demo-v10
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v9 <url>
+git clone --branch demo-v10 <url>
 git clone <url>                 # remote default must be main
 ```
 
-Each clone is verified under five whitelist PATH profiles: GBS/RPM both
+Each clone is verified under six environment profiles: GBS/RPM both
 discoverable, only RPM discoverable, only GBS discoverable, and neither
 discoverable (`minimal-whitelist`), plus `broken-tools` (rpmspec and gbs return
-nonzero if invoked). [`make_verify_path.py`](make_verify_path.py) symlinks only
+nonzero if invoked), plus `startup-injection` using the minimal whitelist.
+The latter first runs the five startup/marker regression variants and requires
+RC=2, no `MODE host verify`, and no `OVERALL PASS` for each injected invocation;
+it then runs a **real, clean, complete verify**. Rejection is not counted as a
+successful replay. [`make_verify_path.py`](make_verify_path.py) symlinks only
 the explicit command list above; it does not enumerate or append the host PATH.
 Discoverable optional tools are deterministic
 fail-if-invoked stubs, so this gate proves that default verify does not execute them;
 `rpmspec -P` alone uses a local parser fixture because that optional syntax branch is
 intentionally exercised, while a broken rpmspec must emit a reasoned `SKIPPED`.
-This is `3 × 5 = 15` complete verifies with nested host
+This is `3 × 6 = 18` complete verifies, plus 15 expected-rejection probes, with nested host
 tests enabled. The demo branch and detached tag must pass required delivery identity;
 main keeps its recorded `REPORT_ONLY` identity semantics. Every check must print
 `host-tests=PASS OVERALL=PASS`, and the final row must be
-`OVERALL PASS checks=15`, or the snapshot is not delivery-ready. Future snapshots
+`OVERALL PASS checks=18`, or the snapshot is not delivery-ready. Future snapshots
 pass their new annotated tag with `--tag demo-vN`; the script also defaults that
 value from [`delivery_refs.json`](delivery_refs.json).
 
@@ -207,10 +237,10 @@ match before publishing the unchanged summary containing its hash; raw logs rema
 local because they may contain host paths. Missing/altered/symlinked logs fail.
 The filtered `workflow_summary.tsv` is not the raw log and cannot substitute for it.
 Delivery host tests compare the current execution record with its recorded Git
-objects and delivery bytes. Older v8 proof stays immutable and is checked against
-its recorded commit, not represented as a v9 execution. The
+objects and delivery bytes. Older v8/v9 proof stays immutable and is checked against
+its recorded commit, not represented as a v10 execution. The historical
 [v9 real build archive](../../data/raw/demo_v9_delivery_20260907/gbs/README.md)
-binds the current delivery's six files; raw logs stay local and are available on request.
+binds that execution's six files; raw logs stay local and are available on request.
 
 ### Provenance capability boundary
 

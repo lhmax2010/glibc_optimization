@@ -41,6 +41,9 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
    optional and never default-verify hard gates. Development-only overrides and
    the dependency audit are documented in
    [`tools/reproduce/README.md`](tools/reproduce/README.md).
+   Run from a clean shell: startup hooks and even unexported functions/aliases
+   are rejected before verify; Environment Modules users can use the documented
+   [clean-process invocation](tools/reproduce/README.md#default-verify-system-dependencies).
 3. **Repeat on a board — hours.** Run
    `bash tools/reproduce/reproduce.sh board --ip <addr>` only after the prerequisites
    below and the [L2 guide](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)

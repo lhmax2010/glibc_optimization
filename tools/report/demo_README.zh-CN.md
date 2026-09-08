@@ -36,6 +36,8 @@ M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针
    显式列出的系统命令白名单，
    GBS/RPM/ARM 工具链均为可选项且不构成默认硬门。开发专用覆盖变量与依赖审计见
    [`tools/reproduce/README.md`](tools/reproduce/README.md)。
+   须从干净 shell 运行：启动钩子及未导出的函数/别名会在 verify 前被拒绝；
+   Environment Modules 用户可按[净化进程命令](tools/reproduce/README.md#default-verify-system-dependencies)运行。
 3. **板上完整复现——小时级。** 满足下列前置与
    [L2 指南](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)后，运行
    `bash tools/reproduce/reproduce.sh board --ip <addr>`。

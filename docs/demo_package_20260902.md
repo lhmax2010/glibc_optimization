@@ -35,12 +35,12 @@
 
 ### 0.2 交付快照强制自检
 
-自 `demo-v7` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三次全新克隆，并把
-每个克隆放进五种白名单 PATH 环境执行不跳过 host tests 的完整 `verify`：
+自 `demo-v10` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三种全新克隆，并把
+每种克隆放进六种环境执行不跳过 host tests 的完整 `verify`（旧 v7–v9 为五种）：
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v9 <url>
+git clone --branch demo-v10 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -50,16 +50,19 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v9
+  --tag demo-v10
 ```
 
-五种 PATH 是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上
-`broken-tools`（rpmspec/gbs 执行返回非零）。所有形态只软链
+六种环境是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上
+`broken-tools`（rpmspec/gbs 执行返回非零）与 `startup-injection`。
+注入形态使用最小 PATH，先核验启动文件自清标记、未导出函数单独存在、启动文件
+自删除、预置净化标记（非空/空值）五种调用均 RC=2，且未进入 `MODE host verify`；
+随后在干净环境真正运行完整 verify。拒绝攻击不冒充复算成功。所有形态只软链
 [`verify_commands.txt`](../tools/reproduce/verify_commands.txt) 显式列出的命令；二者都不可
 发现的 `minimal-whitelist` 不再以排除法继承 host 命令。依赖含 Python ≥3.10、Git、
 Bash/POSIX sh 和白名单中的系统工具，详见依赖审计。
-`3 × 5 = 15` 次都必须出现 `host-tests=PASS OVERALL=PASS`，最终汇总必须为
-`OVERALL PASS checks=15` 才能宣告交付就绪。`demo` 与
+`3 × 6 = 18` 次都必须出现 `host-tests=PASS OVERALL=PASS`，另有 15 次预期拒绝探针，最终汇总必须为
+`OVERALL PASS checks=18` 才能宣告交付就绪。`demo` 与
 detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REPORT_ONLY` 身份语义，
 但其完整 verify 同样是硬门。脚本、逐模块依赖审计及后续标签递增规则见
 [`tools/reproduce/README`](../tools/reproduce/README.md#mandatory-pre-delivery-clone-matrix)。

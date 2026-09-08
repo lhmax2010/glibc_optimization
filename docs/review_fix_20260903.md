@@ -171,3 +171,22 @@ RC=2，被误分环境。修复后四例都为 proof integrity RC=1，且不生�
 `test_v9_public_execution_proof_matches_commit_and_delivery_files` 把公开指纹同时绑定到
 执行提交、交付 HEAD 与当前文件。旧 v8 JSON/TSV 不变，仍单独按历史执行提交复核。
 文档另明确 RPM wrapper SHA 漂移为 REPORT_ONLY，避免把它与 ELF/身份硬门混称。
+
+## 第 7 轮终审闭环（demo-v9，2026-09-08）
+
+仅 host 入口执行环境净化与文档；没有板端连接，不改测量、验收带或结论。
+修复提交用 `demo-v10^` 定位最终 main；历史 demo-v9 与既有构建 JSON/TSV 保留。
+批准依据见 [`第七轮 PM 台账`](pm_decisions.md#2026-09-08-第七轮裁决demo-v9-demo-v10)。
+
+| 评审编号 | 修复提交 | 闭环与验证方式 |
+|---|---|---|
+| P0 Codex N9-01（1–2） | `demo-v10^` | 在真实 Python 前只用 shell 内建采集当前函数/别名；拒绝自清/自删标记后遗留的未导出函数；Python execve 新的 `bash --noprofile --norc -p` 并删除全部启动/导出函数字段；预置净化标记（含空值）拒绝。`test_startup_self_clearing_unexported_functions_fail_before_mode` 五变体均 RC=2、无 MODE/成功输出 |
+| P0 N9-01（3） | `demo-v10^` | `predelivery_check.sh` 增 startup-injection 环境；三种克隆各做五变体拒绝，再真跑完整 verify，共 18 次完整验收，不把拒绝计作复算成功 |
+| P1 Kimi V9-1（4） | `demo-v10^` | `runtime-injection` 与 `runtime-preflight missing default-verify command` 分开；旧 exported command+target、函数/别名和缺 awk 回归保持 |
+| P1 CC N9-02（5） | `demo-v10^` | 明示包括 module 在内的全量函数拒绝，提供 env -i + 无启动文件 shell 的规避命令；双语模板同步 |
+| 台账（6） | `demo-v10^` | CC N9-01 整体 proof 伪造、F01/F05 包外交付不做实现改动，记录正式 release 待处理与三家正常使用判断 |
+
+根因复现：旧入口在“自清标记”“未导出函数单独存在”“启动文件自删除”三个场景
+均实际输出 RC=0 / OVERALL PASS，公开分析器与 cmp 被函数截获。新增回归在修复前
+五个子例均失败；修复后全部在 MODE 之前拒绝。真实 shell 工作流正文仍在同一
+`reproduce.sh` 内，未把执行逻辑移出已有 provenance 文件字节覆盖集合。

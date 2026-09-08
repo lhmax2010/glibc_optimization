@@ -194,3 +194,17 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 实现提交为 `de89a10bb187d0a1576aaf24a45b9586c55ba3c1`；在该 clean HEAD 上实际 GBS
 构建及 publisher 通过，新增 [`v9 构建自证`](../data/raw/demo_v9_delivery_20260907/gbs/README.md)，
 保留 v8 历史记录。这不是板上复测，不改变任何原有实验数据或结论。
+
+## 16. demo-v9 → demo-v10
+
+仅入口执行环境净化与文档，不改测量、验收带、held-out 独立性或技术结论。
+`demo-v9` 保留；`demo-v10^` 指向本轮最终 main。依据见
+[`第七轮 PM 裁决`](pm_decisions.md#2026-09-08-第七轮裁决demo-v9-demo-v10)，
+实现与验证见 [`修复记录`](review_fix_20260903.md#第-7-轮终审闭环demo-v92026-09-08)。
+
+| 发现编号 | 修复提交/引用 | 变化与验证 |
+|---|---|---|
+| Codex N9-01 | `demo-v10^` | 在 shell 普通命令前检查未导出函数/别名；真实 Python execve 无启动文件的新 shell；净化标记预置拒绝；五变体 RC=2 且未进入 MODE |
+| Kimi V9-1 / CC N9-02 | `demo-v10^` | 缺依赖与环境注入分开诊断；全量函数拒绝的 Modules 提示与干净进程命令；双语入口同步 |
+| V10-DELIVERY-MATRIX | `demo-v10^` | 15 格扩为 18 格：注入环境先预期拒绝，再真跑全量 verify；main REPORT_ONLY、demo/tag required 身份口径不变 |
+| CC N9-01 / F01 / F05 | `demo-v10^` | 仅 PM 台账记录：整体 proof 伪造、媒体与完整件包外交付在当前门槛之外；正式 release 处理，不改变现行证据强度 |
