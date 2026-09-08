@@ -1,5 +1,10 @@
 # 系统级前后对照补测（2026-09-08）
 
+当日续跑最终状态：**STOP_G4_M7_ASSIGNMENT**。G1/G2/G3 共 18 格通过，G4 首格在
+M7 的 GDB 赋值处失败，后续两格未执行。第 2、3 段不执行，不切 demo-v12，当前有效
+交付仍为 demo-v11。目录/包登记/辅助进程/governor 清理检查通过，但目标内部可能的
+FILE*/FD 残留未获排除；不能称现场内部状态完全恢复。完整时间线与边界见 §6。
+
 2026-09-08 续跑追注（执行前）：PM 确认 `<TEST_BOARD_IP>` 当前专供本 glibc 项目，
 无其他人在用；PID 26799（pts/0）与 27105（pts/1）为残留登录会话，批准清除。
 此裁决闭合 §3 的归属未知项，不覆盖身份/环境及其他健康门。清除前后原文分别留存，
@@ -211,3 +216,114 @@ host 编排区分内外 RC 标志，拉取 tar 与逐件 SHA 均核验，工作�
 [host 编排测试](../tools/runners/system_level_before_after_20260908/test_executor_host.py)、
 [冻结字节测试](../tools/runners/system_level_before_after_20260908/test_stopped_round.py)。
 这些不替代板上健康或效果证据；运行一次完整矩阵前，先提交该实现与测试，不重打合同 tag。
+
+## 6. 当日续跑结果：G4 首格停止，不进入 Demo 集成
+
+### 6.1 实际时间线与覆盖
+
+执行器使用已提交的干净快照 `06799668543c014b0552a23720ca7e79304f4346`；安全闭合提交
+为 `d0c4247`，随后补入 host 检查原文。合同和冻结 analyzer 与原 tag 的字节均未改变。
+以下时间均为 host UTC，来自 [执行回执](../data/raw/system_level_before_after_20260908/execution/execution.json)
+和 [逐命令时间线](../data/raw/system_level_before_after_20260908/execution/commands.json)，不与板端日历混算。
+
+| 事件 | UTC / 结果 |
+|---|---|
+| 原合同推送确认 | 2026-09-08 04:55:52.140217；原 annotated tag 不重打 |
+| 续跑执行器启动 | 06:05:53.362393；距原推送 4201.242326624 s，超过事前下限 |
+| G1/G2 完成 | 12/12；首格开始与逐格收尾见命令记录 |
+| G3 开始 | 06:26:06.042705；按 none1/trim1/trim2/none2/none3/trim3 顺序 |
+| G3 最后格拉取 | 08:15:59.047309；随后完成校验，6/6，未重跑任何格 |
+| G4 首格 | 08:15:59.773103 启动；首次 M7 命令失败，08:16:02.496803 已进入整轮健康与恢复路径 |
+| 终态记录 | 08:16:11.304636；verdict=STOP，已检查范围 cleanup=PASS |
+
+| 合同组 | 完成 / 计划 | 已完成释放点 | 状态 |
+|---|---:|---:|---|
+| G1 mixed：trim/none ×3 | 6/6 | 12 | 退出码、源件完整性及冻结有效性门通过 |
+| G2 medium-only：trim/none ×3 | 6/6 | 12 | 同上 |
+| G3 gst：trim/none ×3 | 6/6 | 306 | 同上；冷启动/暖周期口径保持合同原定义 |
+| G4 enlightenment | 0/3 | 0 | r1 尝试在 M7 失败；r2/r3 不执行 |
+
+已完成 **330 个释放点**的逐点转录、原件/归档 SHA 与
+[逐周期派生 TSV](../data/raw/system_level_before_after_20260908/completed_prefix/completed_cycles.tsv)
+以 **STOP_INCOMPLETE_MATRIX** 归档，见
+[公开输入及覆盖声明](../data/raw/system_level_before_after_20260908/completed_prefix/completed_points.json)。
+这是完整 G1/G2/G3 前缀，不是完整 21 格合同；不补 G4，不生成整轮三重复头条表，
+不将部分测量集成进 HTML、叙事、双语 README 或验收带。
+
+### 6.2 G4 失败证据与覆盖缺口
+
+[GDB stderr 原文](../data/raw/system_level_before_after_20260908/execution/raw/G4_trim_r1/gdb_m7.txt.stderr)：
+
+```text
+/opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r1/m7.gdb:1: Error in sourced command file:
+Left operand of assignment is not an lvalue.
+```
+
+[生成命令](../data/raw/system_level_before_after_20260908/execution/raw/G4_trim_r1/m7.gdb)首行为
+`set $fp=(void*)fopen(...)`；[控制器原文](../data/raw/system_level_before_after_20260908/execution/CELL_G4_trim_r1.txt)
+记录 `FAIL_GDB RC=1` → `FAIL_M7` → `WRAPPER_RC_CELL_G4_trim_r1=1`。
+[GDB stdout](../data/raw/system_level_before_after_20260908/execution/raw/G4_trim_r1/gdb_m7.txt)
+记录 PID 505 已 detach。未进入后续 malloc_info、显式 fclose、trim 或正式 pre/post 采集。
+
+这是执行器遗漏既有兼容性约束的回归，不是板身份漂移或测得收益不理想：
+[旧原生实证 §3.1](tizen_native_evidence_20260904.md#31-workflow-缺陷与数据采用规则)
+已记录 ARM `$fp` 帧指针名赋值问题，并改用 `$stream`；
+[旧回归测试](../tools/runners/tizen_native_evidence_20260904/test_host.py)也禁止 `set $fp`。
+本轮直接观测确定的是第 1 行的 lvalue 错误，与旧问题同型；没有追加板端诊断来重新验证
+寄存器实现细节。新 [安全测试](../tools/runners/system_level_before_after_20260908/test_executor_safety.py)
+只检查生成文本和 stub GDB 的 NULL/返回码/超时分支，未执行真实 ARM GDB 的赋值语义，
+还把 `$fp` 文本当成正控。因此 host 测试通过不能表述为 G4 执行链已验证。
+
+停止后不修改运行器补跑、不改合同、不把失败格移除后宣布整体成功。后续若恢复，须先
+处理这一兼容性测试缺口及下节的目标内部状态；原 G4 数据保持缺失，不倒填。
+
+### 6.3 健康、归档和现场恢复边界
+
+| 核验项 | 实际结果 / 限定 | 原文 |
+|---|---|---|
+| 18 个完成格 | 退出码均 0，逐格 OOM/LMK、新增归属告警均 0，zram 三项前后相同 | [逐格原文选集](../data/raw/system_level_before_after_20260908/execution/manifest.json)、[逐格 health](../data/raw/system_level_before_after_20260908/completed_prefix/completed_points.json) |
+| 整轮健康 | OOM/LMK 0，stability 0→0，新增归属告警 0；zram 三项 Δ=[0,0,0] | [回执](../data/raw/system_level_before_after_20260908/execution/execution.json)、[before](../data/raw/system_level_before_after_20260908/execution/ROUND_BEFORE_ZRAM.txt)、[after](../data/raw/system_level_before_after_20260908/execution/ROUND_AFTER_ZRAM.txt) |
+| 原始拉取 | 完成格与失败 G4 原件均拉回；19 个归档及逐文件 SHA 通过；公开字段保留这些清单 | [完成/失败清单](../data/raw/system_level_before_after_20260908/completed_prefix/completed_points.json) |
+| governor | 四核 schedutil | [恢复](../data/raw/system_level_before_after_20260908/execution/RESTORE_GOVERNORS.txt)、[最终复核](../data/raw/system_level_before_after_20260908/execution/FINAL_REVIEW.txt) |
+| 我方辅助进程 | 已检查 executable 路径、脚本及记录的 PID/start tick 均无残留；扫描中瞬态 /proc 消失警告保留 | [进程](../data/raw/system_level_before_after_20260908/execution/OWN_PROCESS_ABSENT.txt)、[辅助进程](../data/raw/system_level_before_after_20260908/execution/OWN_HELPER_ABSENT.txt) |
+| 工作目录 | 本轮精确目录删除并复核，空父目录一并 rmdir | [清理](../data/raw/system_level_before_after_20260908/execution/WORKDIR_REMOVE.txt) |
+| 本轮安装包 | 六包安装后按逆序卸载，rpm 查询均已缺席；卸载命令包含 msm/ldconfig 警告，不能据 RC=0 声称全系统缓存/标签已复核 | [安装](../data/raw/system_level_before_after_20260908/execution/GDB_INSTALL.txt)、[卸载及警告](../data/raw/system_level_before_after_20260908/execution/GDB_REMOVE.txt) |
+| 根分区 / opt 分区 | 最终可用 1789104 / 115421376 KiB | [df 原文](../data/raw/system_level_before_after_20260908/execution/FINAL_REVIEW.txt) |
+| 守护进程 | GDB 报 detach；最终 ps 仍为 PID 505、Aug28 启动的 enlightenment；未杀/重启该目标 | [最终 ps](../data/raw/system_level_before_after_20260908/execution/FINAL_REVIEW.txt) |
+
+新增六包为 libgmp-4.2.1-1.6、gdbm-1.8.3-1.7、libpython3_141_0-3.14.2-1.6、
+python3-base-3.14.2-1.6、python3-3.14.2-1.5、gdb-16.3-1.1（均 armv7l），大小预算、
+逐件 SHA 与安装/卸载命令见 [命令记录](../data/raw/system_level_before_after_20260908/execution/commands.json)
+及 [预算原文](../data/raw/system_level_before_after_20260908/execution/GDB_SPACE.txt)。
+
+**内部状态不确定项**：`malloc_info_pre.xml` 实际为 0 B，其原件 SHA 是空文件 SHA，
+收录在 completed_points.json 的 failed_cell_files。新目录内出现该文件说明首行 fopen
+至少发生过文件创建/打开尝试；返回指针未成功保存，后续 fclose 未执行。没有目标 FD
+前后清单，不能排除 enlightenment 内 FILE*/FD 残留。detach、unlink 和删除目录都不能
+证明目标内部流已关闭。因此回执 cleanup PASS 仅指上表已检查项，不代表目标内部状态
+完全恢复；这项不确定性只发生在 G1/G2/G3 完成之后，不反向改写它们的原始值。
+停止后未再次 attach、猜测指针关闭流或重启守护进程，留待 PM 裁决恢复方案。
+回执 round_health 的 after 快照采于测量停止后、卸包/目录清理前；未另采清理后的
+dmesg/zram/stability 快照，不能把该健康记录外推为卸包警告已被独立排除。
+
+### 6.4 停止件复核与下一步
+
+完整原始件位于本地 `board_results/system_level_before_after_20260908/resume/measurement/`，
+可按请求提供。公开内容是未舍入的逐点字段、原始日志选集及哈希引用，不冒充全部原件。
+原文编辑仅 CR 换行规范化、路由 IP 与 host home 映射；板端路径保留。
+
+```sh
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py'
+python3 tools/runners/system_level_before_after_20260908/publish_stopped_measurement.py \
+  --run /path/to/verified-stopped-run --output-dir /path/to/new-completed-prefix
+python3 tools/runners/system_level_before_after_20260908/publish_execution_log.py \
+  --run /path/to/verified-stopped-run --output-dir /path/to/new-log-publication \
+  --board-address <TEST_BOARD_IP> --host-home /path/to/host-home
+```
+
+这些是 host 归档命令，不是重跑授权；完整矩阵发布器仍拒绝 STOP。
+本轮 host 测试 88 项通过、既有 verify OVERALL PASS（提交前显式 dirty override），
+相关链接与哈希核验通过，见 [收尾检查](../data/raw/system_level_before_after_20260908/closing_checks.tsv)。
+这些检查不覆盖尚未修复的 ARM GDB 赋值语义，不将 host PASS 写成 G4 可用。
+G4 必须待执行器兼容性与目标内状态恢复方案明确后再议，不采用当前不完整数据生成
+新的三重复 Demo 头条。第 2、3 段均停止，当前有效交付保持 demo-v11。

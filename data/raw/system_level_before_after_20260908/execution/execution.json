@@ -1,0 +1,50 @@
+{
+  "start_utc": "2026-09-08T06:05:53.362393+00:00",
+  "verdict": "STOP",
+  "contract_tag": "system-before-after-contract-20260908",
+  "tag_object": "0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3",
+  "executor_commit": "06799668543c014b0552a23720ca7e79304f4346",
+  "completed_cells": [
+    "G1_none_r1",
+    "G1_trim_r1",
+    "G2_none_r1",
+    "G2_trim_r1",
+    "G1_trim_r2",
+    "G1_none_r2",
+    "G2_trim_r2",
+    "G2_none_r2",
+    "G1_none_r3",
+    "G1_trim_r3",
+    "G2_none_r3",
+    "G2_trim_r3",
+    "G3_none_r1",
+    "G3_trim_r1",
+    "G3_trim_r2",
+    "G3_none_r2",
+    "G3_none_r3",
+    "G3_trim_r3"
+  ],
+  "cleanup": "PASS",
+  "contract_push_utc": "2026-09-08T04:55:52.140217+00:00",
+  "push_to_run_seconds": 4201.242326624,
+  "preflight": {
+    "enlightenment_pid": 505,
+    "verdict": "PASS_READONLY_AVAILABILITY"
+  },
+  "target_starttime": 1468,
+  "active_cell": "G4_trim_r1",
+  "reason": "remote RC/DONE gate failed: CELL_G4_trim_r1",
+  "round_health": {
+    "oom_lmk_new": 0,
+    "zram_three_delta": [
+      0,
+      0,
+      0
+    ],
+    "stability_before": 0,
+    "stability_after": 0,
+    "attributable_alerts_new": 0
+  },
+  "cleanup_problems": [],
+  "end_utc": "2026-09-08T08:16:11.304636+00:00"
+}

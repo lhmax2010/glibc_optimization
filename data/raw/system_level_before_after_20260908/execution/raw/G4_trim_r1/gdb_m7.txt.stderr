@@ -1,0 +1,4 @@
+
+warning: 29	../sysdeps/unix/sysv/linux/poll.c: No such file or directory
+/opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r1/m7.gdb:1: Error in sourced command file:
+Left operand of assignment is not an lvalue.

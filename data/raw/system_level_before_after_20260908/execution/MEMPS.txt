@@ -1,0 +1,4 @@
+/usr/bin/memps
+
+WRAPPER_RC_MEMPS=0
+DONE_REMOTE_MEMPS

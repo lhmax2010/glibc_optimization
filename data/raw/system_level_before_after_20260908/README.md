@@ -1,5 +1,10 @@
 # 系统级前后对照：只读停止证据
 
+2026-09-08 续跑追注：下文只描述首次只读停止子集，历史不改。
+PM 占用处置见 [resume](resume/README.md)；续跑后 G1/G2/G3 18 格完成、G4 首格 M7
+赋值失败，终态仍 STOP，见 [原文选集](execution/README.md) 与
+[18 格已完成前缀](completed_prefix/README.md)。未生成完整矩阵/Demo 头条，demo-v11 不变。
+
 [报告](../../../docs/system_level_before_after_20260908.md) / [晨间汇总](../../../docs/overnight_summary_20260908.md)。
 
 本轮 0/21 格执行，无新 Demo 测量。合同已事前推送并 tagged，等待超过 600 s 后的

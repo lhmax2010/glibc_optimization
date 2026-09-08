@@ -1,5 +1,11 @@
 # 系统级前后对照：事前合同与派生入口
 
+**2026-09-08 续跑停止：执行器当前不可作为已验证的完整复跑入口。**
+G1/G2/G3 共 18 格通过；G4 首格 M7 使用 `$fp` 赋值报错，未 trim。未修复/重跑，
+不改变合同，demo-v11 保持有效。目录/包/辅助进程/governor 检查通过不代表目标内可能的
+FILE*/FD 状态已恢复；见 [失败与恢复边界](../../../docs/system_level_before_after_20260908.md#62-g4-失败证据与覆盖缺口)。
+后文命令保留执行出处，不是再次运行授权；先闭合 G4 兼容性和目标内部状态再议续跑。
+
 [合同/报告](../../../docs/system_level_before_after_20260908.md) / [机器合同](contract.json)。
 首次状态（历史）：**只读占用门 STOP，零个实验格执行**。当时两个已有 `sh -l` 交互会话归属未明，
 不清理、不抢占；第 2、3 段不执行，当前交付保持 demo-v11。详见
@@ -58,3 +64,14 @@ python3 tools/runners/system_level_before_after_20260908/execute_contract.py \
 且 cleanup PASS 才能进入 Demo 集成。失败保留 execution.json、原始输出与已校验归档，
 停止后续；不能用部分样本补全三重复中位。占用处置脚本只适用于本次 PM 批准的精确 PID/start tick，
 不是通用清理命令，未来不可照搬这两个 PID。gdb 原已存在则不获取卸载权；本轮新增六包在退出路径卸载。
+
+## Host 归档工具与未使用的完整发布入口
+
+`publish_stopped_measurement.py` 仅接受本次 STOP、已完整通过的 G1/G2/G3 前缀和终态清理
+回执；重验原件/归档哈希后调用冻结 analyzer，输出 330 点及逐周期派生，不生成汇总头条。
+`publish_execution_log.py` 保留身份、命令、健康、G4 报错和清理原文选集，可归档 STOP，
+编辑仅 CR/路由地址/host home 映射，逐件记录编辑前后 SHA。原始件仍本地留存，可按请求提供。
+
+`publish_measurement.py` / `replay_compact.py` 是完整 21 格的 host 发布/复算准备件，
+仅在合成 fixture 上通过五派生件 cmp；本次 STOP 被完整发布门拒绝，未对真实矩阵发布
+完整结果，也未进入 HQ 的 Demo L1 入口。它们的 host 测试通过不构成 G4 板上可用性证据。

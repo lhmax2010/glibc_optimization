@@ -1,0 +1,4 @@
+package gdb is not installed
+
+WRAPPER_RC_GDB_STATE=0
+DONE_REMOTE_GDB_STATE

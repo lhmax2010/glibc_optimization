@@ -1,0 +1,5 @@
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/mmcblk0p2         3021464   1202676   1789104  41% /
+
+WRAPPER_RC_GDB_SPACE=0
+DONE_REMOTE_GDB_SPACE

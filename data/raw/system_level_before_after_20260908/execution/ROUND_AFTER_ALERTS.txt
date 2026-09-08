@@ -1,0 +1,4 @@
+remote_path	size	mtime_epoch	sha256
+
+WRAPPER_RC_ROUND_AFTER_ALERTS=0
+DONE_REMOTE_ROUND_AFTER_ALERTS

@@ -1,0 +1,2119 @@
+[
+  {
+    "label": "sdb_version",
+    "start_utc": "2026-09-08T06:05:53.382634+00:00",
+    "end_utc": "2026-09-08T06:05:53.385744+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "connect",
+    "start_utc": "2026-09-08T06:05:53.385936+00:00",
+    "end_utc": "2026-09-08T06:05:53.389777+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "devices",
+    "start_utc": "2026-09-08T06:05:53.390010+00:00",
+    "end_utc": "2026-09-08T06:05:53.392655+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "devices"
+    ]
+  },
+  {
+    "label": "UNAME_R",
+    "start_utc": "2026-09-08T06:05:53.392903+00:00",
+    "end_utc": "2026-09-08T06:05:53.517184+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nWRAPPER_RC_UNAME_R=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UNAME_R; else echo FAIL_REMOTE_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "UNAME_M",
+    "start_utc": "2026-09-08T06:05:53.517472+00:00",
+    "end_utc": "2026-09-08T06:05:53.645146+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nWRAPPER_RC_UNAME_M=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UNAME_M; else echo FAIL_REMOTE_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "OS_RELEASE",
+    "start_utc": "2026-09-08T06:05:53.645553+00:00",
+    "end_utc": "2026-09-08T06:05:53.778193+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nWRAPPER_RC_OS_RELEASE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_OS_RELEASE; else echo FAIL_REMOTE_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "GLIBC",
+    "start_utc": "2026-09-08T06:05:53.779288+00:00",
+    "end_utc": "2026-09-08T06:05:53.946068+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q glibc ); rc=$?; printf '\\nWRAPPER_RC_GLIBC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GLIBC; else echo FAIL_REMOTE_GLIBC; fi"
+    ]
+  },
+  {
+    "label": "MEMINFO",
+    "start_utc": "2026-09-08T06:05:53.946347+00:00",
+    "end_utc": "2026-09-08T06:05:54.077194+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/meminfo ); rc=$?; printf '\\nWRAPPER_RC_MEMINFO=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MEMINFO; else echo FAIL_REMOTE_MEMINFO; fi"
+    ]
+  },
+  {
+    "label": "UID",
+    "start_utc": "2026-09-08T06:05:54.077642+00:00",
+    "end_utc": "2026-09-08T06:05:54.208399+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id -u ); rc=$?; printf '\\nWRAPPER_RC_UID=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UID; else echo FAIL_REMOTE_UID; fi"
+    ]
+  },
+  {
+    "label": "GOVERNORS",
+    "start_utc": "2026-09-08T06:05:54.229826+00:00",
+    "end_utc": "2026-09-08T06:05:54.373227+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; test -w \"$p\" || exit 1; cat \"$p\" || exit 1; done ); rc=$?; printf '\\nWRAPPER_RC_GOVERNORS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GOVERNORS; else echo FAIL_REMOTE_GOVERNORS; fi"
+    ]
+  },
+  {
+    "label": "WORKDIR",
+    "start_utc": "2026-09-08T06:05:54.373654+00:00",
+    "end_utc": "2026-09-08T06:05:54.503010+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test -d /opt/usr && test -w /opt/usr && if [ -d /opt/usr/glibc_memopt ]; then ls -la /opt/usr/glibc_memopt; test -z \"$(ls -A /opt/usr/glibc_memopt)\"; else echo ABSENT; fi ); rc=$?; printf '\\nWRAPPER_RC_WORKDIR=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_WORKDIR; else echo FAIL_REMOTE_WORKDIR; fi"
+    ]
+  },
+  {
+    "label": "PROCESSES",
+    "start_utc": "2026-09-08T06:05:54.503364+00:00",
+    "end_utc": "2026-09-08T06:05:56.935862+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do test -r \"$p/comm\" || continue; printf '%s\\t' \"${p##*/}\"; tr '\\n' ' ' <\"$p/comm\"; printf '\\t'; tr '\\000' ' ' <\"$p/cmdline\" 2>/dev/null; printf '\\n'; done ); rc=$?; printf '\\nWRAPPER_RC_PROCESSES=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PROCESSES; else echo FAIL_REMOTE_PROCESSES; fi"
+    ]
+  },
+  {
+    "label": "TCP",
+    "start_utc": "2026-09-08T06:05:56.936896+00:00",
+    "end_utc": "2026-09-08T06:05:57.069789+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/net/tcp /proc/net/tcp6 ); rc=$?; printf '\\nWRAPPER_RC_TCP=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TCP; else echo FAIL_REMOTE_TCP; fi"
+    ]
+  },
+  {
+    "label": "SPACE",
+    "start_utc": "2026-09-08T06:05:57.070210+00:00",
+    "end_utc": "2026-09-08T06:05:57.201296+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( df -k / /opt/usr ); rc=$?; printf '\\nWRAPPER_RC_SPACE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SPACE; else echo FAIL_REMOTE_SPACE; fi"
+    ]
+  },
+  {
+    "label": "MEMPS",
+    "start_utc": "2026-09-08T06:05:57.201685+00:00",
+    "end_utc": "2026-09-08T06:05:57.329100+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( command -v memps ); rc=$?; printf '\\nWRAPPER_RC_MEMPS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MEMPS; else echo FAIL_REMOTE_MEMPS; fi"
+    ]
+  },
+  {
+    "label": "GDB_STATE",
+    "start_utc": "2026-09-08T06:05:57.330078+00:00",
+    "end_utc": "2026-09-08T06:05:57.489478+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q gdb; command -v gdb; true ); rc=$?; printf '\\nWRAPPER_RC_GDB_STATE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_STATE; else echo FAIL_REMOTE_GDB_STATE; fi"
+    ]
+  },
+  {
+    "label": "UPTIME",
+    "start_utc": "2026-09-08T06:05:57.489826+00:00",
+    "end_utc": "2026-09-08T06:05:57.636901+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( date -u; uptime; cat /proc/loadavg ); rc=$?; printf '\\nWRAPPER_RC_UPTIME=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UPTIME; else echo FAIL_REMOTE_UPTIME; fi"
+    ]
+  },
+  {
+    "label": "HEALTH_READONLY",
+    "start_utc": "2026-09-08T06:05:57.637253+00:00",
+    "end_utc": "2026-09-08T06:05:57.810455+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat; cat /proc/swaps; dmesg ); rc=$?; printf '\\nWRAPPER_RC_HEALTH_READONLY=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_HEALTH_READONLY; else echo FAIL_REMOTE_HEALTH_READONLY; fi"
+    ]
+  },
+  {
+    "label": "TARGET_STAT",
+    "start_utc": "2026-09-08T06:05:57.811018+00:00",
+    "end_utc": "2026-09-08T06:05:57.943327+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/505/stat ); rc=$?; printf '\\nWRAPPER_RC_TARGET_STAT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TARGET_STAT; else echo FAIL_REMOTE_TARGET_STAT; fi"
+    ]
+  },
+  {
+    "label": "ROUND_BEFORE_DMESG",
+    "start_utc": "2026-09-08T06:05:57.943819+00:00",
+    "end_utc": "2026-09-08T06:05:58.100089+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( dmesg ); rc=$?; printf '\\nWRAPPER_RC_ROUND_BEFORE_DMESG=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_BEFORE_DMESG; else echo FAIL_REMOTE_ROUND_BEFORE_DMESG; fi"
+    ]
+  },
+  {
+    "label": "ROUND_BEFORE_ZRAM",
+    "start_utc": "2026-09-08T06:05:58.100726+00:00",
+    "end_utc": "2026-09-08T06:05:58.229078+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat ); rc=$?; printf '\\nWRAPPER_RC_ROUND_BEFORE_ZRAM=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_BEFORE_ZRAM; else echo FAIL_REMOTE_ROUND_BEFORE_ZRAM; fi"
+    ]
+  },
+  {
+    "label": "ROUND_BEFORE_ALERTS",
+    "start_utc": "2026-09-08T06:05:58.229571+00:00",
+    "end_utc": "2026-09-08T06:05:58.358488+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf 'remote_path\tsize\tmtime_epoch\tsha256\n'\nfor f in /opt/usr/share/crash/livedump/*.zip; do\n[ -f \"$f\" ] || continue\nsize=$(stat -c %s \"$f\") || exit 1\nstamp=$(stat -c %Y \"$f\") || exit 1\nhash=$(sha256sum \"$f\") || exit 1\nprintf '%s\t%s\t%s\t%s\n' \"$f\" \"$size\" \"$stamp\" \"${hash%% *}\" || exit 1\ndone ); rc=$?; printf '\\nWRAPPER_RC_ROUND_BEFORE_ALERTS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_BEFORE_ALERTS; else echo FAIL_REMOTE_ROUND_BEFORE_ALERTS; fi"
+    ]
+  },
+  {
+    "label": "PREPARE_WORK",
+    "start_utc": "2026-09-08T06:05:58.358948+00:00",
+    "end_utc": "2026-09-08T06:05:58.490218+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test ! -e /opt/usr/glibc_memopt/system_level_before_after_20260908 && mkdir -p /opt/usr/glibc_memopt/system_level_before_after_20260908 && printf \"%s\\n\" 4811c558c74b8c7de1cde0517f7950dc >/opt/usr/glibc_memopt/system_level_before_after_20260908/owner_token.txt ); rc=$?; printf '\\nWRAPPER_RC_PREPARE_WORK=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PREPARE_WORK; else echo FAIL_REMOTE_PREPARE_WORK; fi"
+    ]
+  },
+  {
+    "label": "PUSH_alloc_bench_observer.armv7l",
+    "start_utc": "2026-09-08T06:05:58.491152+00:00",
+    "end_utc": "2026-09-08T06:05:58.673915+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/system_level_before_after_20260908/build/alloc_bench_observer.armv7l",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/alloc_bench_observer.armv7l"
+    ]
+  },
+  {
+    "label": "SHA_alloc_bench_observer.armv7l",
+    "start_utc": "2026-09-08T06:05:58.674515+00:00",
+    "end_utc": "2026-09-08T06:05:58.809408+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/alloc_bench_observer.armv7l ); rc=$?; printf '\\nWRAPPER_RC_SHA_alloc_bench_observer.armv7l=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_alloc_bench_observer.armv7l; else echo FAIL_REMOTE_SHA_alloc_bench_observer.armv7l; fi"
+    ]
+  },
+  {
+    "label": "PUSH_gst_loop_decode.armv7l",
+    "start_utc": "2026-09-08T06:05:58.810569+00:00",
+    "end_utc": "2026-09-08T06:05:59.045895+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/demo_v11_delivery_20260908/gbs_bundle/gst_loop_decode.armv7l",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/gst_loop_decode.armv7l"
+    ]
+  },
+  {
+    "label": "SHA_gst_loop_decode.armv7l",
+    "start_utc": "2026-09-08T06:05:59.046539+00:00",
+    "end_utc": "2026-09-08T06:05:59.182604+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/gst_loop_decode.armv7l ); rc=$?; printf '\\nWRAPPER_RC_SHA_gst_loop_decode.armv7l=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_gst_loop_decode.armv7l; else echo FAIL_REMOTE_SHA_gst_loop_decode.armv7l; fi"
+    ]
+  },
+  {
+    "label": "PUSH_reclaim_probe.armv7l",
+    "start_utc": "2026-09-08T06:05:59.183688+00:00",
+    "end_utc": "2026-09-08T06:05:59.418608+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/demo_v11_delivery_20260908/gbs_bundle/reclaim_probe.armv7l",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/reclaim_probe.armv7l"
+    ]
+  },
+  {
+    "label": "SHA_reclaim_probe.armv7l",
+    "start_utc": "2026-09-08T06:05:59.419252+00:00",
+    "end_utc": "2026-09-08T06:05:59.548668+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/reclaim_probe.armv7l ); rc=$?; printf '\\nWRAPPER_RC_SHA_reclaim_probe.armv7l=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_reclaim_probe.armv7l; else echo FAIL_REMOTE_SHA_reclaim_probe.armv7l; fi"
+    ]
+  },
+  {
+    "label": "PUSH_small_320x240.mp4",
+    "start_utc": "2026-09-08T06:05:59.552146+00:00",
+    "end_utc": "2026-09-08T06:05:59.901546+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/gst_trim_cost_20260901/board_pull/small_320x240.mp4",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/small_320x240.mp4"
+    ]
+  },
+  {
+    "label": "SHA_small_320x240.mp4",
+    "start_utc": "2026-09-08T06:05:59.902227+00:00",
+    "end_utc": "2026-09-08T06:06:00.063210+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/small_320x240.mp4 ); rc=$?; printf '\\nWRAPPER_RC_SHA_small_320x240.mp4=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_small_320x240.mp4; else echo FAIL_REMOTE_SHA_small_320x240.mp4; fi"
+    ]
+  },
+  {
+    "label": "PUSH_run_cell_remote.sh",
+    "start_utc": "2026-09-08T06:06:00.064085+00:00",
+    "end_utc": "2026-09-08T06:06:00.283994+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "<USER_HOME>/Toolchain/development/glibc_optimization/tools/runners/system_level_before_after_20260908/run_cell_remote.sh",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh"
+    ]
+  },
+  {
+    "label": "SHA_run_cell_remote.sh",
+    "start_utc": "2026-09-08T06:06:00.284557+00:00",
+    "end_utc": "2026-09-08T06:06:00.416645+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh ); rc=$?; printf '\\nWRAPPER_RC_SHA_run_cell_remote.sh=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_run_cell_remote.sh; else echo FAIL_REMOTE_SHA_run_cell_remote.sh; fi"
+    ]
+  },
+  {
+    "label": "PUSH_capture_point.sh",
+    "start_utc": "2026-09-08T06:06:00.418024+00:00",
+    "end_utc": "2026-09-08T06:06:00.630345+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "<USER_HOME>/Toolchain/development/glibc_optimization/tools/runners/system_level_before_after_20260908/capture_point.sh",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/capture_point.sh"
+    ]
+  },
+  {
+    "label": "SHA_capture_point.sh",
+    "start_utc": "2026-09-08T06:06:00.630860+00:00",
+    "end_utc": "2026-09-08T06:06:00.760959+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/capture_point.sh ); rc=$?; printf '\\nWRAPPER_RC_SHA_capture_point.sh=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_capture_point.sh; else echo FAIL_REMOTE_SHA_capture_point.sh; fi"
+    ]
+  },
+  {
+    "label": "PUSH_sample_smaps_1s.sh",
+    "start_utc": "2026-09-08T06:06:00.762017+00:00",
+    "end_utc": "2026-09-08T06:06:00.979420+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "<USER_HOME>/Toolchain/development/glibc_optimization/tools/runners/s4_retention_20260901/sample_smaps_1s.sh",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/sample_smaps_1s.sh"
+    ]
+  },
+  {
+    "label": "SHA_sample_smaps_1s.sh",
+    "start_utc": "2026-09-08T06:06:00.980133+00:00",
+    "end_utc": "2026-09-08T06:06:01.111775+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/sample_smaps_1s.sh ); rc=$?; printf '\\nWRAPPER_RC_SHA_sample_smaps_1s.sh=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_sample_smaps_1s.sh; else echo FAIL_REMOTE_SHA_sample_smaps_1s.sh; fi"
+    ]
+  },
+  {
+    "label": "EXECUTABLE_MODE",
+    "start_utc": "2026-09-08T06:06:01.112554+00:00",
+    "end_utc": "2026-09-08T06:06:01.242741+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( chmod 755 /opt/usr/glibc_memopt/system_level_before_after_20260908/alloc_bench_observer.armv7l /opt/usr/glibc_memopt/system_level_before_after_20260908/gst_loop_decode.armv7l /opt/usr/glibc_memopt/system_level_before_after_20260908/reclaim_probe.armv7l ); rc=$?; printf '\\nWRAPPER_RC_EXECUTABLE_MODE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_EXECUTABLE_MODE; else echo FAIL_REMOTE_EXECUTABLE_MODE; fi"
+    ]
+  },
+  {
+    "label": "PACKAGES_BEFORE",
+    "start_utc": "2026-09-08T06:06:01.243273+00:00",
+    "end_utc": "2026-09-08T06:06:01.591863+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in libgmp gdbm libpython3_141_0 python3-base python3 gdb; do rpm -q --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH} %{SIZE}\\n' \"$p\"; done; true ); rc=$?; printf '\\nWRAPPER_RC_PACKAGES_BEFORE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGES_BEFORE; else echo FAIL_REMOTE_PACKAGES_BEFORE; fi"
+    ]
+  },
+  {
+    "label": "GDB_SPACE",
+    "start_utc": "2026-09-08T06:06:01.592665+00:00",
+    "end_utc": "2026-09-08T06:06:01.725306+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( df -k / ); rc=$?; printf '\\nWRAPPER_RC_GDB_SPACE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_SPACE; else echo FAIL_REMOTE_GDB_SPACE; fi"
+    ]
+  },
+  {
+    "label": "PUSH_libgmp-4.2.1-1.6.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:01.727380+00:00",
+    "end_utc": "2026-09-08T06:06:01.910296+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/libgmp-4.2.1-1.6.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_libgmp-4.2.1-1.6.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:01.911073+00:00",
+    "end_utc": "2026-09-08T06:06:02.042380+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_libgmp-4.2.1-1.6.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_libgmp-4.2.1-1.6.armv7l.rpm; else echo FAIL_REMOTE_SHA_libgmp-4.2.1-1.6.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_gdbm-1.8.3-1.7.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:02.057030+00:00",
+    "end_utc": "2026-09-08T06:06:02.275475+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/gdbm-1.8.3-1.7.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_gdbm-1.8.3-1.7.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:02.276228+00:00",
+    "end_utc": "2026-09-08T06:06:02.411828+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_gdbm-1.8.3-1.7.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_gdbm-1.8.3-1.7.armv7l.rpm; else echo FAIL_REMOTE_SHA_gdbm-1.8.3-1.7.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_libpython3_141_0-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:02.432866+00:00",
+    "end_utc": "2026-09-08T06:06:02.741556+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/libpython3_141_0-3.14.2-1.6.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:02.743051+00:00",
+    "end_utc": "2026-09-08T06:06:02.896011+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm; else echo FAIL_REMOTE_SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_python3-base-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:02.952006+00:00",
+    "end_utc": "2026-09-08T06:06:03.845407+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/python3-base-3.14.2-1.6.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_python3-base-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:03.845951+00:00",
+    "end_utc": "2026-09-08T06:06:04.083055+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_python3-base-3.14.2-1.6.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_python3-base-3.14.2-1.6.armv7l.rpm; else echo FAIL_REMOTE_SHA_python3-base-3.14.2-1.6.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_python3-3.14.2-1.5.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:04.106395+00:00",
+    "end_utc": "2026-09-08T06:06:04.490203+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/python3-3.14.2-1.5.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_python3-3.14.2-1.5.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:04.490769+00:00",
+    "end_utc": "2026-09-08T06:06:04.661836+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_python3-3.14.2-1.5.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_python3-3.14.2-1.5.armv7l.rpm; else echo FAIL_REMOTE_SHA_python3-3.14.2-1.5.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_gdb-16.3-1.1.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:04.700063+00:00",
+    "end_utc": "2026-09-08T06:06:05.139464+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/gdb-16.3-1.1.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_gdb-16.3-1.1.armv7l.rpm",
+    "start_utc": "2026-09-08T06:06:05.140147+00:00",
+    "end_utc": "2026-09-08T06:06:05.314884+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_gdb-16.3-1.1.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_gdb-16.3-1.1.armv7l.rpm; else echo FAIL_REMOTE_SHA_gdb-16.3-1.1.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "GDB_INSTALL_TEST",
+    "start_utc": "2026-09-08T06:06:05.315502+00:00",
+    "end_utc": "2026-09-08T06:06:05.697214+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -Uvh --test /opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_GDB_INSTALL_TEST=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_INSTALL_TEST; else echo FAIL_REMOTE_GDB_INSTALL_TEST; fi"
+    ]
+  },
+  {
+    "label": "GDB_INSTALL",
+    "start_utc": "2026-09-08T06:06:05.698112+00:00",
+    "end_utc": "2026-09-08T06:06:18.181273+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -Uvh /opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_GDB_INSTALL=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_INSTALL; else echo FAIL_REMOTE_GDB_INSTALL; fi"
+    ]
+  },
+  {
+    "label": "GDB_VERIFY",
+    "start_utc": "2026-09-08T06:06:18.182250+00:00",
+    "end_utc": "2026-09-08T06:06:18.628315+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test \"$(rpm -q gdb)\" = gdb-16.3-1.1.armv7l && gdb --version && df -k / ); rc=$?; printf '\\nWRAPPER_RC_GDB_VERIFY=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_VERIFY; else echo FAIL_REMOTE_GDB_VERIFY; fi"
+    ]
+  },
+  {
+    "label": "CELL_G1_none_r1",
+    "start_utc": "2026-09-08T06:06:18.629481+00:00",
+    "end_utc": "2026-09-08T06:07:56.306485+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G1_none_r1 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G1_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G1_none_r1; else echo FAIL_REMOTE_CELL_G1_none_r1; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G1_none_r1",
+    "start_utc": "2026-09-08T06:07:56.307152+00:00",
+    "end_utc": "2026-09-08T06:07:57.070874+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G1_none_r1 -type f >G1_none_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G1_none_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G1_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G1_none_r1; else echo FAIL_REMOTE_MANIFEST_G1_none_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G1_none_r1",
+    "start_utc": "2026-09-08T06:07:57.071534+00:00",
+    "end_utc": "2026-09-08T06:07:57.236700+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G1_none_r1.tar.gz G1_none_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G1_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G1_none_r1; else echo FAIL_REMOTE_TAR_G1_none_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G1_none_r1",
+    "start_utc": "2026-09-08T06:07:57.237617+00:00",
+    "end_utc": "2026-09-08T06:07:57.368979+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G1_none_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G1_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G1_none_r1; else echo FAIL_REMOTE_TAR_SHA_G1_none_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G1_none_r1",
+    "start_utc": "2026-09-08T06:07:57.369386+00:00",
+    "end_utc": "2026-09-08T06:07:57.545962+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G1_none_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G1_none_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G1_trim_r1",
+    "start_utc": "2026-09-08T06:07:57.582389+00:00",
+    "end_utc": "2026-09-08T06:09:35.351542+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G1_trim_r1 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G1_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G1_trim_r1; else echo FAIL_REMOTE_CELL_G1_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G1_trim_r1",
+    "start_utc": "2026-09-08T06:09:35.352615+00:00",
+    "end_utc": "2026-09-08T06:09:36.072901+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G1_trim_r1 -type f >G1_trim_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G1_trim_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G1_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G1_trim_r1; else echo FAIL_REMOTE_MANIFEST_G1_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G1_trim_r1",
+    "start_utc": "2026-09-08T06:09:36.073970+00:00",
+    "end_utc": "2026-09-08T06:09:36.246835+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G1_trim_r1.tar.gz G1_trim_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G1_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G1_trim_r1; else echo FAIL_REMOTE_TAR_G1_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G1_trim_r1",
+    "start_utc": "2026-09-08T06:09:36.247815+00:00",
+    "end_utc": "2026-09-08T06:09:36.383615+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G1_trim_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G1_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G1_trim_r1; else echo FAIL_REMOTE_TAR_SHA_G1_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G1_trim_r1",
+    "start_utc": "2026-09-08T06:09:36.384330+00:00",
+    "end_utc": "2026-09-08T06:09:36.559273+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G1_trim_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G1_trim_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G2_none_r1",
+    "start_utc": "2026-09-08T06:09:36.583643+00:00",
+    "end_utc": "2026-09-08T06:11:14.261551+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G2_none_r1 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G2_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G2_none_r1; else echo FAIL_REMOTE_CELL_G2_none_r1; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G2_none_r1",
+    "start_utc": "2026-09-08T06:11:14.262268+00:00",
+    "end_utc": "2026-09-08T06:11:14.999654+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G2_none_r1 -type f >G2_none_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G2_none_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G2_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G2_none_r1; else echo FAIL_REMOTE_MANIFEST_G2_none_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G2_none_r1",
+    "start_utc": "2026-09-08T06:11:15.000751+00:00",
+    "end_utc": "2026-09-08T06:11:15.160054+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G2_none_r1.tar.gz G2_none_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G2_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G2_none_r1; else echo FAIL_REMOTE_TAR_G2_none_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G2_none_r1",
+    "start_utc": "2026-09-08T06:11:15.161063+00:00",
+    "end_utc": "2026-09-08T06:11:15.292757+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G2_none_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G2_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G2_none_r1; else echo FAIL_REMOTE_TAR_SHA_G2_none_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G2_none_r1",
+    "start_utc": "2026-09-08T06:11:15.293524+00:00",
+    "end_utc": "2026-09-08T06:11:15.461040+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G2_none_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G2_none_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G2_trim_r1",
+    "start_utc": "2026-09-08T06:11:15.502194+00:00",
+    "end_utc": "2026-09-08T06:12:53.228459+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G2_trim_r1 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G2_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G2_trim_r1; else echo FAIL_REMOTE_CELL_G2_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G2_trim_r1",
+    "start_utc": "2026-09-08T06:12:53.229098+00:00",
+    "end_utc": "2026-09-08T06:12:53.909247+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G2_trim_r1 -type f >G2_trim_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G2_trim_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G2_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G2_trim_r1; else echo FAIL_REMOTE_MANIFEST_G2_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G2_trim_r1",
+    "start_utc": "2026-09-08T06:12:53.910230+00:00",
+    "end_utc": "2026-09-08T06:12:54.073984+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G2_trim_r1.tar.gz G2_trim_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G2_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G2_trim_r1; else echo FAIL_REMOTE_TAR_G2_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G2_trim_r1",
+    "start_utc": "2026-09-08T06:12:54.074392+00:00",
+    "end_utc": "2026-09-08T06:12:54.204091+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G2_trim_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G2_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G2_trim_r1; else echo FAIL_REMOTE_TAR_SHA_G2_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G2_trim_r1",
+    "start_utc": "2026-09-08T06:12:54.204501+00:00",
+    "end_utc": "2026-09-08T06:12:54.371765+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G2_trim_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G2_trim_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G1_trim_r2",
+    "start_utc": "2026-09-08T06:12:54.406251+00:00",
+    "end_utc": "2026-09-08T06:14:32.082484+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G1_trim_r2 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G1_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G1_trim_r2; else echo FAIL_REMOTE_CELL_G1_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G1_trim_r2",
+    "start_utc": "2026-09-08T06:14:32.083269+00:00",
+    "end_utc": "2026-09-08T06:14:32.831873+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G1_trim_r2 -type f >G1_trim_r2.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G1_trim_r2.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G1_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G1_trim_r2; else echo FAIL_REMOTE_MANIFEST_G1_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_G1_trim_r2",
+    "start_utc": "2026-09-08T06:14:32.832698+00:00",
+    "end_utc": "2026-09-08T06:14:33.000134+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G1_trim_r2.tar.gz G1_trim_r2 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G1_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G1_trim_r2; else echo FAIL_REMOTE_TAR_G1_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G1_trim_r2",
+    "start_utc": "2026-09-08T06:14:33.000890+00:00",
+    "end_utc": "2026-09-08T06:14:33.135464+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G1_trim_r2.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G1_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G1_trim_r2; else echo FAIL_REMOTE_TAR_SHA_G1_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "PULL_G1_trim_r2",
+    "start_utc": "2026-09-08T06:14:33.136637+00:00",
+    "end_utc": "2026-09-08T06:14:33.304315+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G1_trim_r2.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G1_trim_r2.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G1_none_r2",
+    "start_utc": "2026-09-08T06:14:33.342722+00:00",
+    "end_utc": "2026-09-08T06:16:11.022232+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G1_none_r2 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G1_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G1_none_r2; else echo FAIL_REMOTE_CELL_G1_none_r2; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G1_none_r2",
+    "start_utc": "2026-09-08T06:16:11.023341+00:00",
+    "end_utc": "2026-09-08T06:16:11.737136+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G1_none_r2 -type f >G1_none_r2.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G1_none_r2.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G1_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G1_none_r2; else echo FAIL_REMOTE_MANIFEST_G1_none_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_G1_none_r2",
+    "start_utc": "2026-09-08T06:16:11.737998+00:00",
+    "end_utc": "2026-09-08T06:16:11.901961+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G1_none_r2.tar.gz G1_none_r2 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G1_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G1_none_r2; else echo FAIL_REMOTE_TAR_G1_none_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G1_none_r2",
+    "start_utc": "2026-09-08T06:16:11.902776+00:00",
+    "end_utc": "2026-09-08T06:16:12.034799+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G1_none_r2.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G1_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G1_none_r2; else echo FAIL_REMOTE_TAR_SHA_G1_none_r2; fi"
+    ]
+  },
+  {
+    "label": "PULL_G1_none_r2",
+    "start_utc": "2026-09-08T06:16:12.035664+00:00",
+    "end_utc": "2026-09-08T06:16:12.205484+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G1_none_r2.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G1_none_r2.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G2_trim_r2",
+    "start_utc": "2026-09-08T06:16:12.246049+00:00",
+    "end_utc": "2026-09-08T06:17:50.032867+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G2_trim_r2 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G2_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G2_trim_r2; else echo FAIL_REMOTE_CELL_G2_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G2_trim_r2",
+    "start_utc": "2026-09-08T06:17:50.033700+00:00",
+    "end_utc": "2026-09-08T06:17:50.785071+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G2_trim_r2 -type f >G2_trim_r2.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G2_trim_r2.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G2_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G2_trim_r2; else echo FAIL_REMOTE_MANIFEST_G2_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_G2_trim_r2",
+    "start_utc": "2026-09-08T06:17:50.785923+00:00",
+    "end_utc": "2026-09-08T06:17:50.946213+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G2_trim_r2.tar.gz G2_trim_r2 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G2_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G2_trim_r2; else echo FAIL_REMOTE_TAR_G2_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G2_trim_r2",
+    "start_utc": "2026-09-08T06:17:50.947128+00:00",
+    "end_utc": "2026-09-08T06:17:51.078463+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G2_trim_r2.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G2_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G2_trim_r2; else echo FAIL_REMOTE_TAR_SHA_G2_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "PULL_G2_trim_r2",
+    "start_utc": "2026-09-08T06:17:51.079351+00:00",
+    "end_utc": "2026-09-08T06:17:51.246133+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G2_trim_r2.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G2_trim_r2.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G2_none_r2",
+    "start_utc": "2026-09-08T06:17:51.287580+00:00",
+    "end_utc": "2026-09-08T06:19:29.017003+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G2_none_r2 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G2_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G2_none_r2; else echo FAIL_REMOTE_CELL_G2_none_r2; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G2_none_r2",
+    "start_utc": "2026-09-08T06:19:29.017926+00:00",
+    "end_utc": "2026-09-08T06:19:29.746785+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G2_none_r2 -type f >G2_none_r2.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G2_none_r2.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G2_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G2_none_r2; else echo FAIL_REMOTE_MANIFEST_G2_none_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_G2_none_r2",
+    "start_utc": "2026-09-08T06:19:29.747374+00:00",
+    "end_utc": "2026-09-08T06:19:29.914198+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G2_none_r2.tar.gz G2_none_r2 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G2_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G2_none_r2; else echo FAIL_REMOTE_TAR_G2_none_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G2_none_r2",
+    "start_utc": "2026-09-08T06:19:29.915105+00:00",
+    "end_utc": "2026-09-08T06:19:30.047223+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G2_none_r2.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G2_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G2_none_r2; else echo FAIL_REMOTE_TAR_SHA_G2_none_r2; fi"
+    ]
+  },
+  {
+    "label": "PULL_G2_none_r2",
+    "start_utc": "2026-09-08T06:19:30.048134+00:00",
+    "end_utc": "2026-09-08T06:19:30.223673+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G2_none_r2.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G2_none_r2.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G1_none_r3",
+    "start_utc": "2026-09-08T06:19:30.266837+00:00",
+    "end_utc": "2026-09-08T06:21:07.979482+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G1_none_r3 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G1_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G1_none_r3; else echo FAIL_REMOTE_CELL_G1_none_r3; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G1_none_r3",
+    "start_utc": "2026-09-08T06:21:07.980428+00:00",
+    "end_utc": "2026-09-08T06:21:08.683551+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G1_none_r3 -type f >G1_none_r3.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G1_none_r3.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G1_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G1_none_r3; else echo FAIL_REMOTE_MANIFEST_G1_none_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_G1_none_r3",
+    "start_utc": "2026-09-08T06:21:08.684467+00:00",
+    "end_utc": "2026-09-08T06:21:08.847877+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G1_none_r3.tar.gz G1_none_r3 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G1_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G1_none_r3; else echo FAIL_REMOTE_TAR_G1_none_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G1_none_r3",
+    "start_utc": "2026-09-08T06:21:08.848822+00:00",
+    "end_utc": "2026-09-08T06:21:08.994812+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G1_none_r3.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G1_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G1_none_r3; else echo FAIL_REMOTE_TAR_SHA_G1_none_r3; fi"
+    ]
+  },
+  {
+    "label": "PULL_G1_none_r3",
+    "start_utc": "2026-09-08T06:21:08.995750+00:00",
+    "end_utc": "2026-09-08T06:21:09.160219+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G1_none_r3.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G1_none_r3.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G1_trim_r3",
+    "start_utc": "2026-09-08T06:21:09.209853+00:00",
+    "end_utc": "2026-09-08T06:22:46.916533+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G1_trim_r3 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G1_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G1_trim_r3; else echo FAIL_REMOTE_CELL_G1_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G1_trim_r3",
+    "start_utc": "2026-09-08T06:22:46.917490+00:00",
+    "end_utc": "2026-09-08T06:22:47.647561+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G1_trim_r3 -type f >G1_trim_r3.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G1_trim_r3.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G1_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G1_trim_r3; else echo FAIL_REMOTE_MANIFEST_G1_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_G1_trim_r3",
+    "start_utc": "2026-09-08T06:22:47.649016+00:00",
+    "end_utc": "2026-09-08T06:22:47.813026+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G1_trim_r3.tar.gz G1_trim_r3 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G1_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G1_trim_r3; else echo FAIL_REMOTE_TAR_G1_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G1_trim_r3",
+    "start_utc": "2026-09-08T06:22:47.814349+00:00",
+    "end_utc": "2026-09-08T06:22:47.946491+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G1_trim_r3.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G1_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G1_trim_r3; else echo FAIL_REMOTE_TAR_SHA_G1_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "PULL_G1_trim_r3",
+    "start_utc": "2026-09-08T06:22:47.947431+00:00",
+    "end_utc": "2026-09-08T06:22:48.114295+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G1_trim_r3.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G1_trim_r3.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G2_none_r3",
+    "start_utc": "2026-09-08T06:22:48.177014+00:00",
+    "end_utc": "2026-09-08T06:24:25.858293+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G2_none_r3 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G2_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G2_none_r3; else echo FAIL_REMOTE_CELL_G2_none_r3; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G2_none_r3",
+    "start_utc": "2026-09-08T06:24:25.859351+00:00",
+    "end_utc": "2026-09-08T06:24:26.591755+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G2_none_r3 -type f >G2_none_r3.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G2_none_r3.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G2_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G2_none_r3; else echo FAIL_REMOTE_MANIFEST_G2_none_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_G2_none_r3",
+    "start_utc": "2026-09-08T06:24:26.592769+00:00",
+    "end_utc": "2026-09-08T06:24:26.753178+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G2_none_r3.tar.gz G2_none_r3 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G2_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G2_none_r3; else echo FAIL_REMOTE_TAR_G2_none_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G2_none_r3",
+    "start_utc": "2026-09-08T06:24:26.754194+00:00",
+    "end_utc": "2026-09-08T06:24:26.888097+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G2_none_r3.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G2_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G2_none_r3; else echo FAIL_REMOTE_TAR_SHA_G2_none_r3; fi"
+    ]
+  },
+  {
+    "label": "PULL_G2_none_r3",
+    "start_utc": "2026-09-08T06:24:26.889092+00:00",
+    "end_utc": "2026-09-08T06:24:27.057574+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G2_none_r3.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G2_none_r3.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G2_trim_r3",
+    "start_utc": "2026-09-08T06:24:27.113548+00:00",
+    "end_utc": "2026-09-08T06:26:04.760438+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G2_trim_r3 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G2_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G2_trim_r3; else echo FAIL_REMOTE_CELL_G2_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G2_trim_r3",
+    "start_utc": "2026-09-08T06:26:04.761531+00:00",
+    "end_utc": "2026-09-08T06:26:05.517245+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G2_trim_r3 -type f >G2_trim_r3.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G2_trim_r3.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G2_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G2_trim_r3; else echo FAIL_REMOTE_MANIFEST_G2_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_G2_trim_r3",
+    "start_utc": "2026-09-08T06:26:05.518322+00:00",
+    "end_utc": "2026-09-08T06:26:05.679248+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G2_trim_r3.tar.gz G2_trim_r3 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G2_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G2_trim_r3; else echo FAIL_REMOTE_TAR_G2_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G2_trim_r3",
+    "start_utc": "2026-09-08T06:26:05.679825+00:00",
+    "end_utc": "2026-09-08T06:26:05.811994+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G2_trim_r3.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G2_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G2_trim_r3; else echo FAIL_REMOTE_TAR_SHA_G2_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "PULL_G2_trim_r3",
+    "start_utc": "2026-09-08T06:26:05.813058+00:00",
+    "end_utc": "2026-09-08T06:26:05.982768+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G2_trim_r3.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G2_trim_r3.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G3_none_r1",
+    "start_utc": "2026-09-08T06:26:06.042720+00:00",
+    "end_utc": "2026-09-08T06:44:14.755620+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G3_none_r1 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G3_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G3_none_r1; else echo FAIL_REMOTE_CELL_G3_none_r1; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G3_none_r1",
+    "start_utc": "2026-09-08T06:44:14.756673+00:00",
+    "end_utc": "2026-09-08T06:44:23.843203+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G3_none_r1 -type f >G3_none_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G3_none_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G3_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G3_none_r1; else echo FAIL_REMOTE_MANIFEST_G3_none_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G3_none_r1",
+    "start_utc": "2026-09-08T06:44:23.844668+00:00",
+    "end_utc": "2026-09-08T06:44:24.076028+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G3_none_r1.tar.gz G3_none_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G3_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G3_none_r1; else echo FAIL_REMOTE_TAR_G3_none_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G3_none_r1",
+    "start_utc": "2026-09-08T06:44:24.077560+00:00",
+    "end_utc": "2026-09-08T06:44:24.208929+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G3_none_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G3_none_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G3_none_r1; else echo FAIL_REMOTE_TAR_SHA_G3_none_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G3_none_r1",
+    "start_utc": "2026-09-08T06:44:24.210458+00:00",
+    "end_utc": "2026-09-08T06:44:24.387786+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G3_none_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G3_none_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G3_trim_r1",
+    "start_utc": "2026-09-08T06:44:24.628721+00:00",
+    "end_utc": "2026-09-08T07:02:33.363690+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G3_trim_r1 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G3_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G3_trim_r1; else echo FAIL_REMOTE_CELL_G3_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G3_trim_r1",
+    "start_utc": "2026-09-08T07:02:33.365372+00:00",
+    "end_utc": "2026-09-08T07:02:42.614744+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G3_trim_r1 -type f >G3_trim_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G3_trim_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G3_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G3_trim_r1; else echo FAIL_REMOTE_MANIFEST_G3_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G3_trim_r1",
+    "start_utc": "2026-09-08T07:02:42.617303+00:00",
+    "end_utc": "2026-09-08T07:02:42.854908+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G3_trim_r1.tar.gz G3_trim_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G3_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G3_trim_r1; else echo FAIL_REMOTE_TAR_G3_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G3_trim_r1",
+    "start_utc": "2026-09-08T07:02:42.856033+00:00",
+    "end_utc": "2026-09-08T07:02:42.988764+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G3_trim_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G3_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G3_trim_r1; else echo FAIL_REMOTE_TAR_SHA_G3_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G3_trim_r1",
+    "start_utc": "2026-09-08T07:02:42.989974+00:00",
+    "end_utc": "2026-09-08T07:02:43.168283+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G3_trim_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G3_trim_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G3_trim_r2",
+    "start_utc": "2026-09-08T07:02:43.471309+00:00",
+    "end_utc": "2026-09-08T07:20:52.226249+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G3_trim_r2 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G3_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G3_trim_r2; else echo FAIL_REMOTE_CELL_G3_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G3_trim_r2",
+    "start_utc": "2026-09-08T07:20:52.227875+00:00",
+    "end_utc": "2026-09-08T07:21:01.669572+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G3_trim_r2 -type f >G3_trim_r2.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G3_trim_r2.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G3_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G3_trim_r2; else echo FAIL_REMOTE_MANIFEST_G3_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_G3_trim_r2",
+    "start_utc": "2026-09-08T07:21:01.671176+00:00",
+    "end_utc": "2026-09-08T07:21:01.906875+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G3_trim_r2.tar.gz G3_trim_r2 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G3_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G3_trim_r2; else echo FAIL_REMOTE_TAR_G3_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G3_trim_r2",
+    "start_utc": "2026-09-08T07:21:01.907971+00:00",
+    "end_utc": "2026-09-08T07:21:02.043711+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G3_trim_r2.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G3_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G3_trim_r2; else echo FAIL_REMOTE_TAR_SHA_G3_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "PULL_G3_trim_r2",
+    "start_utc": "2026-09-08T07:21:02.045345+00:00",
+    "end_utc": "2026-09-08T07:21:02.224809+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G3_trim_r2.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G3_trim_r2.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G3_none_r2",
+    "start_utc": "2026-09-08T07:21:02.548488+00:00",
+    "end_utc": "2026-09-08T07:39:11.296478+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G3_none_r2 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G3_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G3_none_r2; else echo FAIL_REMOTE_CELL_G3_none_r2; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G3_none_r2",
+    "start_utc": "2026-09-08T07:39:11.298186+00:00",
+    "end_utc": "2026-09-08T07:39:20.672227+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G3_none_r2 -type f >G3_none_r2.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G3_none_r2.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G3_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G3_none_r2; else echo FAIL_REMOTE_MANIFEST_G3_none_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_G3_none_r2",
+    "start_utc": "2026-09-08T07:39:20.673818+00:00",
+    "end_utc": "2026-09-08T07:39:20.901111+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G3_none_r2.tar.gz G3_none_r2 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G3_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G3_none_r2; else echo FAIL_REMOTE_TAR_G3_none_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G3_none_r2",
+    "start_utc": "2026-09-08T07:39:20.902754+00:00",
+    "end_utc": "2026-09-08T07:39:21.036405+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G3_none_r2.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G3_none_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G3_none_r2; else echo FAIL_REMOTE_TAR_SHA_G3_none_r2; fi"
+    ]
+  },
+  {
+    "label": "PULL_G3_none_r2",
+    "start_utc": "2026-09-08T07:39:21.038098+00:00",
+    "end_utc": "2026-09-08T07:39:21.209915+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G3_none_r2.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G3_none_r2.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G3_none_r3",
+    "start_utc": "2026-09-08T07:39:21.769039+00:00",
+    "end_utc": "2026-09-08T07:57:30.478424+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G3_none_r3 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G3_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G3_none_r3; else echo FAIL_REMOTE_CELL_G3_none_r3; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G3_none_r3",
+    "start_utc": "2026-09-08T07:57:30.480145+00:00",
+    "end_utc": "2026-09-08T07:57:39.569884+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G3_none_r3 -type f >G3_none_r3.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G3_none_r3.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G3_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G3_none_r3; else echo FAIL_REMOTE_MANIFEST_G3_none_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_G3_none_r3",
+    "start_utc": "2026-09-08T07:57:39.571493+00:00",
+    "end_utc": "2026-09-08T07:57:39.807122+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G3_none_r3.tar.gz G3_none_r3 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G3_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G3_none_r3; else echo FAIL_REMOTE_TAR_G3_none_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G3_none_r3",
+    "start_utc": "2026-09-08T07:57:39.807848+00:00",
+    "end_utc": "2026-09-08T07:57:39.938026+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G3_none_r3.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G3_none_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G3_none_r3; else echo FAIL_REMOTE_TAR_SHA_G3_none_r3; fi"
+    ]
+  },
+  {
+    "label": "PULL_G3_none_r3",
+    "start_utc": "2026-09-08T07:57:39.939754+00:00",
+    "end_utc": "2026-09-08T07:57:40.117478+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G3_none_r3.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G3_none_r3.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G3_trim_r3",
+    "start_utc": "2026-09-08T07:57:40.625509+00:00",
+    "end_utc": "2026-09-08T08:15:49.406899+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G3_trim_r3 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G3_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G3_trim_r3; else echo FAIL_REMOTE_CELL_G3_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G3_trim_r3",
+    "start_utc": "2026-09-08T08:15:49.408657+00:00",
+    "end_utc": "2026-09-08T08:15:58.658105+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G3_trim_r3 -type f >G3_trim_r3.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G3_trim_r3.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G3_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G3_trim_r3; else echo FAIL_REMOTE_MANIFEST_G3_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_G3_trim_r3",
+    "start_utc": "2026-09-08T08:15:58.659853+00:00",
+    "end_utc": "2026-09-08T08:15:58.900403+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G3_trim_r3.tar.gz G3_trim_r3 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G3_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G3_trim_r3; else echo FAIL_REMOTE_TAR_G3_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G3_trim_r3",
+    "start_utc": "2026-09-08T08:15:58.902024+00:00",
+    "end_utc": "2026-09-08T08:15:59.046070+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G3_trim_r3.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G3_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G3_trim_r3; else echo FAIL_REMOTE_TAR_SHA_G3_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "PULL_G3_trim_r3",
+    "start_utc": "2026-09-08T08:15:59.047330+00:00",
+    "end_utc": "2026-09-08T08:15:59.225605+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G3_trim_r3.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G3_trim_r3.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G4_trim_r1",
+    "start_utc": "2026-09-08T08:15:59.773135+00:00",
+    "end_utc": "2026-09-08T08:16:02.495493+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G4_trim_r1 505 1468 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G4_trim_r1; else echo FAIL_REMOTE_CELL_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AFTER_DMESG",
+    "start_utc": "2026-09-08T08:16:02.496818+00:00",
+    "end_utc": "2026-09-08T08:16:02.661920+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( dmesg ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AFTER_DMESG=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AFTER_DMESG; else echo FAIL_REMOTE_ROUND_AFTER_DMESG; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AFTER_ZRAM",
+    "start_utc": "2026-09-08T08:16:02.662769+00:00",
+    "end_utc": "2026-09-08T08:16:02.793751+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AFTER_ZRAM=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AFTER_ZRAM; else echo FAIL_REMOTE_ROUND_AFTER_ZRAM; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AFTER_ALERTS",
+    "start_utc": "2026-09-08T08:16:02.794510+00:00",
+    "end_utc": "2026-09-08T08:16:02.920519+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf 'remote_path\tsize\tmtime_epoch\tsha256\n'\nfor f in /opt/usr/share/crash/livedump/*.zip; do\n[ -f \"$f\" ] || continue\nsize=$(stat -c %s \"$f\") || exit 1\nstamp=$(stat -c %Y \"$f\") || exit 1\nhash=$(sha256sum \"$f\") || exit 1\nprintf '%s\t%s\t%s\t%s\n' \"$f\" \"$size\" \"$stamp\" \"${hash%% *}\" || exit 1\ndone ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AFTER_ALERTS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AFTER_ALERTS; else echo FAIL_REMOTE_ROUND_AFTER_ALERTS; fi"
+    ]
+  },
+  {
+    "label": "WORK_OWNER",
+    "start_utc": "2026-09-08T08:16:02.931475+00:00",
+    "end_utc": "2026-09-08T08:16:03.065132+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( if [ ! -e /opt/usr/glibc_memopt/system_level_before_after_20260908 ]; then echo ABSENT; else test ! -L /opt/usr/glibc_memopt/system_level_before_after_20260908 && test \"$(cat /opt/usr/glibc_memopt/system_level_before_after_20260908/owner_token.txt)\" = 4811c558c74b8c7de1cde0517f7950dc && echo OWNED; fi ); rc=$?; printf '\\nWRAPPER_RC_WORK_OWNER=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_WORK_OWNER; else echo FAIL_REMOTE_WORK_OWNER; fi"
+    ]
+  },
+  {
+    "label": "RECOVER_CONTROLLER",
+    "start_utc": "2026-09-08T08:16:03.066868+00:00",
+    "end_utc": "2026-09-08T08:16:03.197332+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( pfile=/opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r1/controller_identity.txt\nif [ -f \"$pfile\" ]; then\nread p tick <\"$pfile\" || exit 1\ncase \"$p:$tick\" in *[!0-9:]*) exit 1;; esac\nif [ -d /proc/$p ]; then\ns=$(cat /proc/$p/stat) || exit 1; s=${s##*) }; set -- $s\n[ \"${20}\" = \"$tick\" ] || exit 1\ntr '\\000' ' ' </proc/$p/cmdline | grep -F '/opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G4_trim_r1' >/dev/null || exit 1\nkill -TERM \"$p\" || exit 1\nn=0; while [ -d /proc/$p ] && [ \"$n\" -lt 100 ]; do sleep 0.1; n=$((n+1)); done\ntest ! -d /proc/$p || exit 1\nfi\nfi ); rc=$?; printf '\\nWRAPPER_RC_RECOVER_CONTROLLER=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_RECOVER_CONTROLLER; else echo FAIL_REMOTE_RECOVER_CONTROLLER; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G4_trim_r1",
+    "start_utc": "2026-09-08T08:16:03.198658+00:00",
+    "end_utc": "2026-09-08T08:16:03.540253+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G4_trim_r1 -type f >G4_trim_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G4_trim_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G4_trim_r1; else echo FAIL_REMOTE_MANIFEST_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G4_trim_r1",
+    "start_utc": "2026-09-08T08:16:03.541741+00:00",
+    "end_utc": "2026-09-08T08:16:03.698392+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G4_trim_r1.tar.gz G4_trim_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G4_trim_r1; else echo FAIL_REMOTE_TAR_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G4_trim_r1",
+    "start_utc": "2026-09-08T08:16:03.699791+00:00",
+    "end_utc": "2026-09-08T08:16:03.830323+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G4_trim_r1; else echo FAIL_REMOTE_TAR_SHA_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G4_trim_r1",
+    "start_utc": "2026-09-08T08:16:03.831676+00:00",
+    "end_utc": "2026-09-08T08:16:04.001105+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/resume/measurement/G4_trim_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "RESTORE_GOVERNORS",
+    "start_utc": "2026-09-08T08:16:04.009924+00:00",
+    "end_utc": "2026-09-08T08:16:04.180908+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; printf \"%s\\n\" schedutil >\"$p\" || exit 1; test \"$(cat \"$p\")\" = schedutil || exit 1; echo \"$n schedutil\"; done ); rc=$?; printf '\\nWRAPPER_RC_RESTORE_GOVERNORS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_RESTORE_GOVERNORS; else echo FAIL_REMOTE_RESTORE_GOVERNORS; fi"
+    ]
+  },
+  {
+    "label": "OWN_PROCESS_ABSENT",
+    "start_utc": "2026-09-08T08:16:04.182640+00:00",
+    "end_utc": "2026-09-08T08:16:05.876401+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do e=$(readlink \"$p/exe\" 2>/dev/null) || continue; case \"$e\" in /opt/usr/glibc_memopt/system_level_before_after_20260908/*) echo FAIL_OWN_PROCESS_$p; exit 1;; esac; done ); rc=$?; printf '\\nWRAPPER_RC_OWN_PROCESS_ABSENT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_OWN_PROCESS_ABSENT; else echo FAIL_REMOTE_OWN_PROCESS_ABSENT; fi"
+    ]
+  },
+  {
+    "label": "OWN_HELPER_ABSENT",
+    "start_utc": "2026-09-08T08:16:05.877630+00:00",
+    "end_utc": "2026-09-08T08:16:07.753136+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do\na=$(tr '\\000' '\\n' <\"$p/cmdline\" 2>/dev/null | sed -n '2p')\ncase \"$a\" in /opt/usr/glibc_memopt/system_level_before_after_20260908/*.sh) echo FAIL_OWN_SCRIPT_$p; exit 1;; esac\ndone\nfor f in /opt/usr/glibc_memopt/system_level_before_after_20260908/G*/debugger_identity.txt /opt/usr/glibc_memopt/system_level_before_after_20260908/G*/sampler_identity.txt; do\ntest -f \"$f\" || continue\nread p tick <\"$f\" || exit 1\ncase \"$p:$tick\" in *[!0-9:]*) exit 1;; esac\nif [ -d /proc/$p ]; then\ns=$(cat /proc/$p/stat) || exit 1; s=${s##*) }; set -- $s\nif [ \"${20}\" = \"$tick\" ]; then echo FAIL_OWN_HELPER_$p; exit 1; fi\nfi\ndone ); rc=$?; printf '\\nWRAPPER_RC_OWN_HELPER_ABSENT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_OWN_HELPER_ABSENT; else echo FAIL_REMOTE_OWN_HELPER_ABSENT; fi"
+    ]
+  },
+  {
+    "label": "GDB_REMOVE",
+    "start_utc": "2026-09-08T08:16:07.753995+00:00",
+    "end_utc": "2026-09-08T08:16:09.983164+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( names=; for p in gdb python3 python3-base libpython3_141_0 gdbm libgmp; do if rpm -q \"$p\" >/dev/null 2>&1; then names=\"$names $p\"; fi; done; if [ -n \"$names\" ]; then rpm -e --test $names && rpm -e $names || exit 1; fi; for p in libgmp gdbm libpython3_141_0 python3-base python3 gdb; do if rpm -q \"$p\" >/dev/null 2>&1; then exit 1; fi; done ); rc=$?; printf '\\nWRAPPER_RC_GDB_REMOVE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_REMOVE; else echo FAIL_REMOTE_GDB_REMOVE; fi"
+    ]
+  },
+  {
+    "label": "WORKDIR_REMOVE",
+    "start_utc": "2026-09-08T08:16:09.984494+00:00",
+    "end_utc": "2026-09-08T08:16:11.097240+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test -d /opt/usr/glibc_memopt/system_level_before_after_20260908 && test ! -L /opt/usr/glibc_memopt/system_level_before_after_20260908 && test \"$(cat /opt/usr/glibc_memopt/system_level_before_after_20260908/owner_token.txt)\" = 4811c558c74b8c7de1cde0517f7950dc && rm -r -- /opt/usr/glibc_memopt/system_level_before_after_20260908 && test ! -e /opt/usr/glibc_memopt/system_level_before_after_20260908 && rmdir /opt/usr/glibc_memopt ); rc=$?; printf '\\nWRAPPER_RC_WORKDIR_REMOVE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_WORKDIR_REMOVE; else echo FAIL_REMOTE_WORKDIR_REMOVE; fi"
+    ]
+  },
+  {
+    "label": "FINAL_REVIEW",
+    "start_utc": "2026-09-08T08:16:11.097957+00:00",
+    "end_utc": "2026-09-08T08:16:11.303871+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do cat /sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor || exit 1; done; df -k / /opt/usr; ps -ef ); rc=$?; printf '\\nWRAPPER_RC_FINAL_REVIEW=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_FINAL_REVIEW; else echo FAIL_REMOTE_FINAL_REVIEW; fi"
+    ]
+  }
+]

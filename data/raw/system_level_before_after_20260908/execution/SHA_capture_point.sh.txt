@@ -1,0 +1,4 @@
+d039d8bf6fcf6e2710b89699a9d7da71dbeafb697327e866a14a2dc03aa1608f  /opt/usr/glibc_memopt/system_level_before_after_20260908/capture_point.sh
+
+WRAPPER_RC_SHA_capture_point.sh=0
+DONE_REMOTE_SHA_capture_point.sh

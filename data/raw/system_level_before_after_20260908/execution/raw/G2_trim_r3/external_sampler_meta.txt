@@ -1,0 +1,9 @@
+start_iso=2026-09-08T15:24:51,963348052+0900
+end_iso=2026-09-08T15:26:28,977096124+0900
+start_ns=1788848691958542589
+end_ns=1788848788972353735
+samples=97
+deadline_overruns=0
+failure_reason=none
+RC=0
+DONE_EXTERNAL_SAMPLER

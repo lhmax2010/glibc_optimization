@@ -19,7 +19,7 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
-- 2026-09-08: [系统级补测续跑](system_level_before_after_20260908.md#5-pm-裁决后续跑占用处置与执行器闭合)：PM 专供板/残留会话裁决落实、精确 PID 清理与占用复核；冻结合同不改，执行器安全测试闭合后续跑，状态见 [当日汇总](overnight_summary_20260908.md)。
+- 2026-09-08: [系统级补测续跑](system_level_before_after_20260908.md#6-当日续跑结果g4-首格停止不进入-demo-集成)：PM 占用裁决已落实，G1/G2/G3 18 格通过；G4 首格 M7 赋值失败而停止，可能的目标内 FILE*/FD 状态未排除；不做 Demo 集成、不切 v12，见 [当日汇总](overnight_summary_20260908.md)。
 
 | Date | Target | Activity | One-line result | Report |
 |---|---|---|---|---|
@@ -77,6 +77,11 @@ This is the review entry point for the project. Start with the consolidated stat
 | 2026-09-05 | Host | Tested the `malloc_info` whole-page estimator against the existing native/S2/S4/gst evidence | All 15 paired estimator cases missed the measured reclaim, so it remains diagnostic only and cannot replace the measured trim-probe gate | [`trimmable_estimator_20260905.md`](trimmable_estimator_20260905.md), [`validation.tsv`](../data/raw/trimmable_estimator_20260905/validation.tsv) |
 | 2026-09-05 | Host | Finalized the four-gate product contract and prepared the demo-v3 review delta | Added measured same-target trim benefit as an independent hard gate, mapped GBS/v4/native evidence into the Demo contract, and indexed every substantive commit since demo-v2 without adding measurements | [`changes_since_demo_v2.md`](changes_since_demo_v2.md), [`product_landing_recommendation_20260901.md#1-启用门清单`](product_landing_recommendation_20260901.md#1-启用门清单), [`demo_report.html#decision-gate`](demo_report.html#decision-gate) |
 | 2026-09-08 | TEST_BOARD / Host | Froze an annotated system before-after contract, waited the prospective interval, then stopped at the read-only occupancy gate | Identity/environment checks passed, but two pre-existing interactive shell sessions had unresolved ownership; zero experiment cells, no board writes or new Demo measurements, stages 2/3 not executed, demo-v11 retained | [`system_level_before_after_20260908.md`](system_level_before_after_20260908.md), [`overnight_summary_20260908.md`](overnight_summary_20260908.md), [`read-only STOP evidence`](../data/raw/system_level_before_after_20260908/README.md) |
+
+2026-09-08 续跑结果补录：PM 占用裁决落实后，原合同 G1/G2/G3 18 格通过、G4 首格
+M7 赋值失败而停止；[停止与恢复边界](system_level_before_after_20260908.md#6-当日续跑结果g4-首格停止不进入-demo-集成)、
+[已完成前缀](../data/raw/system_level_before_after_20260908/completed_prefix/README.md)、
+[当日汇总](overnight_summary_20260908.md)。未集成 Demo，未切 demo-v12。
 
 ## Specifications And Designs
 

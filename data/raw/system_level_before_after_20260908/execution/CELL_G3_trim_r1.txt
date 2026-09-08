@@ -1,0 +1,23 @@
+CMD=uname -r RC=0
+DONE_uname_r.txt
+CMD=uname -m RC=0
+DONE_uname_m.txt
+CMD=cat /etc/os-release RC=0
+DONE_os_release.txt
+CMD=rpm -q glibc RC=0
+DONE_glibc.txt
+CMD=cat /proc/meminfo RC=0
+DONE_meminfo_gate.txt
+CMD=dmesg RC=0
+DONE_dmesg_before.txt
+CMD=cat /sys/block/zram0/mm_stat RC=0
+DONE_zram_before.txt
+CMD=dmesg RC=0
+DONE_dmesg_after.txt
+CMD=cat /sys/block/zram0/mm_stat RC=0
+DONE_zram_after.txt
+RC=0
+DONE_CELL_G3_trim_r1
+
+WRAPPER_RC_CELL_G3_trim_r1=0
+DONE_REMOTE_CELL_G3_trim_r1
