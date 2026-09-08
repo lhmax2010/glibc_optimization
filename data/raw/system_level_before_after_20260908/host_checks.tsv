@@ -1,5 +1,6 @@
 check	verdict	detail
 existing_reproduce_verify	PASS	OVERALL PASS; pre-commit check used REPRODUCE_ALLOW_DIRTY=1; no board mode invoked
+clean_committed_verify	PASS	OVERALL PASS without dirty override at 027bbc0b0e44dfd60edaee24598601eee3ec344b
 round_host_tests	PASS	13 tests across analysis, observer transport, stopped-draft guards and contract immutability
 round_and_index_links	PASS	155 local links checked
 contract_analyzer_immutability	PASS	byte equality with annotated system-before-after-contract-20260908

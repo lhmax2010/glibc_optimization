@@ -16,7 +16,7 @@
 - origin 确认完成时间：`2026-09-08T04:55:52.140217+00:00`；最早允许连接时间 `2026-09-08T05:05:52.140217+00:00`。以 host UTC 和 monotonic 两种时钟检查至少 600 s 间隔。
 - 合同提交前既有 verify `OVERALL PASS`；新分析器 10 项测试通过。等待期间的观测握手 host smoke test 通过，非板上性能证据。
 - 首次检查实际 host UTC `05:06:11.703742`；距推送确认 `619.572023306 s`，满足事前间隔，见 [停止证据](../data/raw/system_level_before_after_20260908/stop_evidence.json)。
-- 收尾提交会保存只读原文、单次追加核查、停止判定与准备件状态；该提交 SHA 以本文所属 main 提交及最终回执为准（不制造自引用 SHA）。
+- 只读原文、单次追加核查、停止判定与准备件状态收尾提交：`027bbc0b0e44dfd60edaee24598601eee3ec344b`；该干净提交上普通 `bash tools/reproduce/reproduce.sh verify`（无 dirty override）亦为 `OVERALL PASS`。本条 SHA 回执更新不改代码/证据；回执自身所属最终提交以 Git 与最终响应为准，避免自引用 SHA。
 - [收尾检查](../data/raw/system_level_before_after_20260908/host_checks.tsv)：既有 verify PASS，新轮次 13 项 host 测试通过，相关链接 155 项通过，脱敏零命中。没有执行第 3 段新交付矩阵，不把第 0 段的通过记录冒充 v12 验收。
 
 ## 关键数字
