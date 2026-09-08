@@ -1,0 +1,82 @@
+{
+  "schema": "system-before-after.contract.v1",
+  "date": "2026-09-08",
+  "contract_tag": "system-before-after-contract-20260908",
+  "minimum_push_to_connect_seconds": 600,
+  "retry_limit": 1,
+  "workdir": "/opt/usr/glibc_memopt/system_level_before_after_20260908",
+  "identity": {
+    "kernel_contains": "rpi4", "arch": "armv7l",
+    "build_id": "tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l",
+    "glibc": "glibc-2.40-1.6.armv7l", "memtotal_kb_range": [8036234, 8198582], "uid": 0
+  },
+  "assets": {
+    "alloc_bench_observer.armv7l": "a9a93336dbb1f69482bf2ac9a634407d947cd676c35a1e24934b712ab66c9677",
+    "gst_loop_decode.armv7l": "7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034",
+    "reclaim_probe.armv7l": "e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31",
+    "small_320x240.mp4": "3df34a234c69d51d543aed8d379aa0e18fe01839e20ac213a1b3061acb67f72d"
+  },
+  "alloc_common_argv": ["--threads", "4", "--seed", "20260814", "--live-set", "512", "--idle-release", "50", "--release-order", "high", "--touch-full", "--cycles", "2", "--cycle-rise", "3.4", "--cycle-peak", "4.7", "--release-duration", "19.7", "--cycle-valley", "20", "--warmup", "0"],
+  "alloc_arm_argv": {"trim": ["--trim-at", "valley"], "none": ["--trim-at", "none"]},
+  "gst_argv": ["small_320x240.mp4", "51", "20", "1", "{arm}", "control-stdin"],
+  "gst_arm": {"trim": "trim-at-loop-release", "none": "none"},
+  "cells": [
+    {"id": "G1_none_r1", "group": "G1", "profile": "mixed", "arm": "none", "rep": 1, "cycles": 2},
+    {"id": "G1_trim_r1", "group": "G1", "profile": "mixed", "arm": "trim", "rep": 1, "cycles": 2},
+    {"id": "G2_none_r1", "group": "G2", "profile": "medium-only", "arm": "none", "rep": 1, "cycles": 2},
+    {"id": "G2_trim_r1", "group": "G2", "profile": "medium-only", "arm": "trim", "rep": 1, "cycles": 2},
+    {"id": "G1_trim_r2", "group": "G1", "profile": "mixed", "arm": "trim", "rep": 2, "cycles": 2},
+    {"id": "G1_none_r2", "group": "G1", "profile": "mixed", "arm": "none", "rep": 2, "cycles": 2},
+    {"id": "G2_trim_r2", "group": "G2", "profile": "medium-only", "arm": "trim", "rep": 2, "cycles": 2},
+    {"id": "G2_none_r2", "group": "G2", "profile": "medium-only", "arm": "none", "rep": 2, "cycles": 2},
+    {"id": "G1_none_r3", "group": "G1", "profile": "mixed", "arm": "none", "rep": 3, "cycles": 2},
+    {"id": "G1_trim_r3", "group": "G1", "profile": "mixed", "arm": "trim", "rep": 3, "cycles": 2},
+    {"id": "G2_none_r3", "group": "G2", "profile": "medium-only", "arm": "none", "rep": 3, "cycles": 2},
+    {"id": "G2_trim_r3", "group": "G2", "profile": "medium-only", "arm": "trim", "rep": 3, "cycles": 2},
+    {"id": "G3_none_r1", "group": "G3", "profile": "gst", "arm": "none", "rep": 1, "cycles": 51},
+    {"id": "G3_trim_r1", "group": "G3", "profile": "gst", "arm": "trim", "rep": 1, "cycles": 51},
+    {"id": "G3_trim_r2", "group": "G3", "profile": "gst", "arm": "trim", "rep": 2, "cycles": 51},
+    {"id": "G3_none_r2", "group": "G3", "profile": "gst", "arm": "none", "rep": 2, "cycles": 51},
+    {"id": "G3_none_r3", "group": "G3", "profile": "gst", "arm": "none", "rep": 3, "cycles": 51},
+    {"id": "G3_trim_r3", "group": "G3", "profile": "gst", "arm": "trim", "rep": 3, "cycles": 51},
+    {"id": "G4_trim_r1", "group": "G4", "profile": "enlightenment", "arm": "trim", "rep": 1, "cycles": 1},
+    {"id": "G4_trim_r2", "group": "G4", "profile": "enlightenment", "arm": "trim", "rep": 2, "cycles": 1},
+    {"id": "G4_trim_r3", "group": "G4", "profile": "enlightenment", "arm": "trim", "rep": 3, "cycles": 1}
+  ],
+  "sampling": {
+    "alloc": "PRE after valley XML / before trim branch; POST after trim+posttrim XML, before valley sleep; same phase for none; measurement handshake outside trim timing",
+    "gst": "existing RELEASE_READY/PRE_CAPTURED and RELEASE_DONE/POST_CAPTURED; all 51 cycles",
+    "g4": "malloc_info first, then pre capture, one gdb malloc_trim(0), post capture; no restart or UI stimulus; >=120.000 s between injections; faults in ensuing 120 s idle window",
+    "capture_order": ["timestamp_start", "proc_stat", "proc_status", "reclaim_probe_profile", "meminfo", "zram_mm_stat", "memps_pid", "proc_stat_check", "timestamp_end"],
+    "external_smaps_period_seconds": 1,
+    "primary_summary_cycle": 1,
+    "next_cycle_faults": "G1/G2 next rise, G3 next CYCLE_METRIC, last cycle NA; G4 separate 120 s daemon window (not a cycle)",
+    "memps": "retain full original output and PID, compare RSS/heap Private_Dirty labels as independent observation, not identical classifier assumption",
+    "units": "proc kB interpreted as KiB; MiB=KiB/1024; decimal MB=KiB*1024/1000000; retain both, never label MiB as MB"
+  },
+  "derivation": {
+    "rss_drop": "pre VmRSS - post VmRSS; pct=100*drop/pre",
+    "heap_drop": "pre glibc heap PD - post glibc heap PD; pct=100*drop/pre",
+    "memavailable_delta": "post - pre",
+    "memavailable_net": "trim delta - none delta, paired by group/rep/cycle; matched phase NOT simultaneous global-time control; G4 NA",
+    "summary": "median and max-min over the three cycle-1 repetitions of each group/arm, preserve signed deltas; all other cycles retained separately",
+    "business": "reuse gst nearest-rank implementation, cycles 2..51; p99 direction REPORT_ONLY, do not promise no cost"
+  },
+  "availability": {
+    "forbid_server_restart_root_on_reboot": true,
+    "governors_before": "all four schedutil; otherwise occupied/unknown STOP",
+    "foreign_work": "any alloc_bench/gst_loop_decode/gst-launch/gdb/sampler process, nonempty glibc_memopt directory, other established sdb client, or observed foreground test workload => occupied/unknown STOP; no exclusive ownership inferred from IP",
+    "headroom_opt_usr_kib": 524288,
+    "root_after_gdb_install_min_bytes": 1288490189,
+    "gdb": "existing compatible gdb or exact six-package B2 official snapshot install if absent and budget permits; record ownership; uninstall only this-round additions"
+  },
+  "health": {
+    "zero_oom_lmk": true, "zram_three_deltas_zero": true,
+    "majflt_zero_windows": "all pre/post captures, alloc rise/reactivation, gst warm cycles 2..51 and next-cycle costs, G4 120 s idle; gst cold cycle 1 faults retained/report-only as existing contract",
+    "attributable_new_alert": "STOP, archive then clean attributable files only; no injection waiver",
+    "known_alerts": "existing S4 A cpu.relative waiver is registered but NOT APPLICABLE to this B-cycle/G3/G4 matrix",
+    "incomplete_or_inconsistent_cell": "STOP all later stages, no repeat for favorable numbers",
+    "cleanup": "restore all four governors schedutil, verify no own process/workdir/package/archive residue; never delete other users' artifacts"
+  },
+  "claim_boundary": "测试板合成/官方工具负载量级，不等于产品收益；G4 常驻同一 PID 三次非独立重启；采样握手增加相位间观测间隙，不计入 trim 调用或 gst 业务计时。"
+}
