@@ -1,0 +1,24 @@
+PASS	python-runtime	3.12.3
+MODE	host verify
+SOURCE	1673b55291d453e26be65d1d51c5d9216d8952d1
+PASS	clean-environment
+REPORT_ONLY	delivery-identity	this is not the delivery snapshot; checkout demo-v11 (HEAD=1673b55291d453e26be65d1d51c5d9216d8952d1, delivery=0e8a2f731b13690009badf1ca2acbd57018e7bc8)
+PASS	servicea-cyclic-cmp
+PASS	f2-f3-attribution-cmp
+PASS	phenotype-cmp
+PASS	batch-release-output
+PASS	s4-public-replay
+PASS	a-anchor-public-replay-cmp
+PASS	gbs-heldout-public-replay-cmp
+PASS	gst-public-replay-cmp
+PASS	trimmable-estimator-cmp
+PASS	acceptance-v4
+REPORT_ONLY              | gst fixed-contract p99 direction                     | visible=false delta=6.228611 dispersion=6.784167                                                                                               | report outcome; never an acceptance failure                                
+PASS	offline-report-byte-cmp
+PASS	local-link-check
+INFO	template-entry-links	templates rendered at repository root and all links checked
+SKIPPED	reproducible-build-paths	missing DEMO_TOOLCHAIN_ROOT,DEMO_GST_SYSROOT
+SKIPPED	gbs-build	real GBS build is excluded from default verify; run reproduce.sh gbs explicitly
+PASS	host-tests
+REGISTERED/NOT-EVALUATED	stability-monitor s4-a-alloc-bench-cpu-relative	known-alert waiver max=2; no observation in host verify
+OVERALL	PASS
