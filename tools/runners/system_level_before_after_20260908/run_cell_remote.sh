@@ -1,14 +1,17 @@
 #!/bin/sh
-printf '%s\n' 'NOT-EVALUATED: unexecuted controller draft; shared-board occupancy STOP. Not a runnable reproduction entry.' >&2
-exit 2
-# Preserved preparation only. Before any future execution, independently close
-# the snapshot pipeline-status, G4 NULL FILE*/identity and cleanup-failure tests.
 # Run precisely one contract cell. Host must validate/pull/health-check before the next.
 set -u
 work=/opt/usr/glibc_memopt/system_level_before_after_20260908
 cell=${1:?cell required}
 case "$cell" in G[12]_none_r[123]|G[12]_trim_r[123]|G3_none_r[123]|G3_trim_r[123]|G4_trim_r[123]) ;; *) echo FAIL_CELL_ID; exit 2;; esac
 out="$work/$cell"
+ancestor=$out
+while [ "$ancestor" != / ]; do
+    [ ! -L "$ancestor" ] || { echo FAIL_WORK_SYMLINK; exit 2; }
+    ancestor=${ancestor%/*}
+    [ -n "$ancestor" ] || break
+done
+[ -d "$work" ] || { echo FAIL_WORK_NOT_PREPARED; exit 2; }
 [ ! -e "$out" ] || { echo FAIL_CELL_ALREADY_EXISTS; exit 2; }
 mkdir -p "$out" || exit 3
 log="$out/controller.log"
@@ -16,6 +19,8 @@ bench_pid=
 bench_start=
 sampler_pid=
 sampler_start=
+debugger_pid=
+debugger_start=
 changed=0
 mark() { printf '%s\n' "$*" | tee -a "$log"; }
 record()
@@ -33,13 +38,15 @@ snapshot()
     printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$target" || return 1
     d=/opt/usr/share/crash/livedump
     [ -d "$d" ] || return 0
-    find "$d" -maxdepth 1 -type f -name '*.zip' | LC_ALL=C sort |
+    find "$d" -maxdepth 1 -type f -name '*.zip' >"$target.unsorted" || return 1
+    LC_ALL=C sort "$target.unsorted" >"$target.sorted" || return 1
     while IFS= read -r file; do
-        size=$(stat -c %s "$file") || exit 1
-        stamp=$(stat -c %Y "$file") || exit 1
-        hash=$(sha256sum "$file") || exit 1
-        printf '%s\t%s\t%s\t%s\n' "$file" "$size" "$stamp" "${hash%% *}"
-    done >>"$target"
+        size=$(stat -c %s "$file") || return 1
+        stamp=$(stat -c %Y "$file") || return 1
+        hash=$(sha256sum "$file") || return 1
+        printf '%s\t%s\t%s\t%s\n' "$file" "$size" "$stamp" "${hash%% *}" || return 1
+    done <"$target.sorted" >>"$target"
+    rm "$target.unsorted" "$target.sorted"
 }
 identity_of() { sed 's/^[^)]*) //' "/proc/$1/stat" | awk '{print $20}'; }
 stop_owned()
@@ -82,6 +89,9 @@ finish()
     if [ "$changed" -eq 1 ]; then
         for n in 0 1 2 3; do printf '%s\n' schedutil >"/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor" || finish_rc=84; done
     fi
+    if [ -n "$debugger_pid" ]; then
+        stop_owned "$debugger_pid" "$debugger_start" || finish_rc=87
+    fi
     if [ -n "$bench_pid" ] && [ "${cell%%_*}" != G4 ] && kill -0 "$bench_pid" 2>/dev/null; then
         stop_owned "$bench_pid" "$bench_start" || finish_rc=86
     fi
@@ -102,6 +112,54 @@ trap 'exit 129' HUP
 trap 'exit 130' INT
 trap 'exit 143' TERM
 fail() { mark "FAIL_$1"; exit 1; }
+wait_child()
+{
+    child=$1
+    child_start=$2
+    child_deadline=$(( $(date +%s) + $3 ))
+    while kill -0 "$child" 2>/dev/null; do
+        [ "$(identity_of "$child")" = "$child_start" ] || return 1
+        [ "$(date +%s)" -lt "$child_deadline" ] || return 1
+        sleep 0.1
+    done
+    wait "$child"
+}
+assert_target()
+{
+    [ "$(cat "/proc/$bench_pid/comm")" = enlightenment ] &&
+    [ -n "$bench_start" ] && [ "$(identity_of "$bench_pid")" = "$bench_start" ]
+}
+run_gdb()
+{
+    debugger_name=$1
+    shift
+    assert_target || return 1
+    gdb -p "$bench_pid" -batch "$@" >"$out/$debugger_name" 2>"$out/$debugger_name.stderr" &
+    debugger_pid=$!
+    debugger_start=$(identity_of "$debugger_pid")
+    printf '%s %s\n' "$debugger_pid" "$debugger_start" >"$out/debugger_identity.txt" || return 1
+    wait_child "$debugger_pid" "$debugger_start" 30
+    debugger_rc=$?
+    if [ "$debugger_rc" -ne 0 ]; then
+        mark "FAIL_GDB RC=$debugger_rc"
+        return 1
+    fi
+    debugger_pid=
+    mark "DONE_GDB RC=0"
+    assert_target
+}
+cover_post()
+{
+    coverage_end=$(cat "$out/points/$(printf '%02d' "$cycle")_post/meta.json") || return 1
+    coverage_end=$(printf '%s\n' "$coverage_end" | sed 's/.*"end_ns":\([0-9]*\).*/\1/')
+    coverage_deadline=$(( $(date +%s) + 5 ))
+    while :; do
+        if awk -F '\t' -v endpoint="$coverage_end" 'NR>1 && $3+0>=endpoint+0 {ok=1} END {exit !ok}' "$out/external_1s.tsv"; then return 0; fi
+        kill -0 "$sampler_pid" 2>/dev/null || return 1
+        [ "$(date +%s)" -lt "$coverage_deadline" ] || return 1
+        sleep 0.05
+    done
+}
 wait_marker()
 {
     file=$1
@@ -120,6 +178,7 @@ start_sampler()
     PROC_ROOT="$out/proc" sh "$work/sample_smaps_1s.sh" "$bench_pid" "$out/external_1s.tsv" "$out/external_sampler_meta.txt" >"$out/sampler_stdout.txt" 2>"$out/sampler_stderr.txt" &
     sampler_pid=$!
     sampler_start=$(identity_of "$sampler_pid")
+    printf '%s %s\n' "$sampler_pid" "$sampler_start" >"$out/sampler_identity.txt" || return 1
 }
 point()
 {
@@ -127,6 +186,7 @@ point()
     directory="$out/points/$(printf '%02d' "$cycle")_$phase"
     sh "$work/capture_point.sh" "$bench_pid" "$directory" >>"$log" 2>&1 || return 1
 }
+printf '%s %s\n' "$$" "$(identity_of "$$")" >"$out/controller_identity.txt" || fail CONTROLLER_ID
 record uname_r.txt uname -r || fail IDENTITY
 grep -q rpi4 "$out/uname_r.txt" || fail IDENTITY
 record uname_m.txt uname -m || fail IDENTITY
@@ -135,6 +195,8 @@ record os_release.txt cat /etc/os-release || fail IDENTITY
 grep -Fx 'BUILD_ID=tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l' "$out/os_release.txt" >/dev/null || fail IDENTITY
 record glibc.txt rpm -q glibc || fail GLIBC
 grep -Fx glibc-2.40-1.6.armv7l "$out/glibc.txt" >/dev/null || fail GLIBC
+record meminfo_gate.txt cat /proc/meminfo || fail MEMTOTAL
+awk '/^MemTotal:/ {ok=($2>=8036234 && $2<=8198582)} END {exit !ok}' "$out/meminfo_gate.txt" || fail MEMTOTAL
 for n in 0 1 2 3; do
     p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor
     [ "$(cat "$p")" = schedutil ] || fail OCCUPIED_GOVERNOR
@@ -165,10 +227,11 @@ case "$cell" in
             printf K >&6 || fail PRE_ACK
             wait_marker "$out/events.txt" "POST $(printf '%02d' "$cycle")" || fail POST_WAIT
             point post || fail POST_CAPTURE
+            [ "$cycle" -ne 2 ] || cover_post || fail SAMPLER_COVERAGE
             printf K >&6 || fail POST_ACK
             cycle=$((cycle+1))
         done
-        wait "$bench_pid"; bench_rc=$?
+        wait_child "$bench_pid" "$bench_start" 40; bench_rc=$?
         [ "$bench_rc" -eq 0 ] || fail BENCH
         ;;
     G3_*)
@@ -187,10 +250,11 @@ case "$cell" in
             printf 'PRE_CAPTURED\n' >&6 || fail PRE_ACK
             wait_marker "$out/program_stdout.txt" "cycle=$cycle state=RELEASE_DONE" || fail POST_WAIT
             point post || fail POST_CAPTURE
+            [ "$cycle" -ne 51 ] || cover_post || fail SAMPLER_COVERAGE
             printf 'POST_CAPTURED\n' >&6 || fail POST_ACK
             cycle=$((cycle+1))
         done
-        wait "$bench_pid"; bench_rc=$?
+        wait_child "$bench_pid" "$bench_start" 40; bench_rc=$?
         [ "$bench_rc" -eq 0 ] || fail BENCH
         ;;
     G4_*)
@@ -198,14 +262,21 @@ case "$cell" in
         case "$bench_pid" in ''|*[!0-9]*) fail PID;; esac
         [ "$(cat "/proc/$bench_pid/comm")" = enlightenment ] || fail TARGET
         bench_start=$(identity_of "$bench_pid")
+        [ "$bench_start" = "${3:?approved enlightenment start tick required}" ] || fail TARGET_RESTARTED
         printf '%s\n' "$bench_pid" >"$out/pid.txt"
         start_sampler || fail SAMPLER
-        record gdb_m7.txt gdb -p "$bench_pid" -batch -ex "set \$fp=(void*)fopen(\"$out/malloc_info_pre.xml\",\"w\")" -ex 'call (int)malloc_info(0,$fp)' -ex 'call (int)fclose($fp)' -ex detach || fail M7
+        printf '%s\n' "set \$fp=(void*)fopen(\"$out/malloc_info_pre.xml\",\"w\")" \
+          'if $fp == 0' 'echo FAIL_NULL_FILE\n' 'detach' 'quit 1' 'end' \
+          'set $mrc=(int)malloc_info(0,$fp)' 'set $crc=(int)fclose($fp)' \
+          'if $mrc != 0 || $crc != 0' 'echo FAIL_M7_RETURN\n' 'detach' 'quit 1' 'end' \
+          'detach' 'quit 0' >"$out/m7.gdb" || fail M7_COMMAND_FILE
+        run_gdb gdb_m7.txt -x "$out/m7.gdb" || fail M7
         [ -s "$out/malloc_info_pre.xml" ] || fail M7
+        record m7_xml_check.txt python3 -c 'import sys,xml.etree.ElementTree as E; assert E.parse(sys.argv[1]).getroot().tag == "malloc"; print("VALID_MALLOC_XML")' "$out/malloc_info_pre.xml" || fail M7_XML
         cycle=1
         point pre || fail PRE_CAPTURE
         date +%s%N >"$out/injection_start_ns.txt"
-        record gdb_trim.txt sh "$work/trim_via_gdb.sh" "$bench_pid" || fail TRIM
+        run_gdb gdb_trim.txt -ex 'call (int)malloc_trim(0)' -ex detach || fail TRIM
         date +%s%N >"$out/injection_end_ns.txt"
         point post || fail POST_CAPTURE
         record idle_stat_start.txt cat "/proc/$bench_pid/stat" || fail IDLE

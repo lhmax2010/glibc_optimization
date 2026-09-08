@@ -1,0 +1,28 @@
+[
+  {
+    "label": "VERIFY_APPROVED_ABSENT",
+    "start_utc": "2026-09-08T05:43:44.843075+00:00",
+    "end_utc": "2026-09-08T05:43:44.968585+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test ! -d /proc/26799 && test ! -d /proc/27105 ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_VERIFY_APPROVED_ABSENT; else echo FAIL_VERIFY_APPROVED_ABSENT; fi"
+    ]
+  },
+  {
+    "label": "PS_RECHECK",
+    "start_utc": "2026-09-08T05:43:44.968751+00:00",
+    "end_utc": "2026-09-08T05:43:45.146910+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf 'COLLECTOR_PID=%s\\n' \"$$\"; ps -ww -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_PS_RECHECK; else echo FAIL_PS_RECHECK; fi"
+    ]
+  }
+]

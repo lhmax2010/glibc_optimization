@@ -31,6 +31,8 @@ def collect(path, cell):
     (path / "dmesg_increment.txt").write_text("\n".join(lines) + "\n")
     zpre = [int(x) for x in (path / "zram_before.txt").read_text().split()[:3]]
     zpost = [int(x) for x in (path / "zram_after.txt").read_text().split()[:3]]
+    ANALYSIS.require(len(zpre) == len(zpost) == 3 and min(zpre + zpost) >= 0,
+                     "zram snapshots require three nonnegative counters")
     start, end = snapshots(path / "stability_before.tsv"), snapshots(path / "stability_after.tsv")
     changed = [name for name in end if name not in start or end[name] != start[name]]
     # Classifications must be produced from pulled archives by the executor. No

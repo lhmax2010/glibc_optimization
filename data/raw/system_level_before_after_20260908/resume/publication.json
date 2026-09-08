@@ -1,0 +1,125 @@
+{
+  "edits": "CR normalization; board routing IP and host home mapped; board runtime paths retained",
+  "files": [
+    {
+      "file": "host_tests_before_run.log",
+      "original_sha256": "179850811e9753f17a9b17918c27bd4bf4f7db585a7f69c3c829af75ce8f2121",
+      "public_sha256": "179850811e9753f17a9b17918c27bd4bf4f7db585a7f69c3c829af75ce8f2121"
+    },
+    {
+      "file": "occupancy/CLOSE_26799.txt",
+      "original_sha256": "9cac0cd8dc40bbbf322b29bf1ddd03ae704f4b189035e612ec6e6f8840a4957d",
+      "public_sha256": "9cac0cd8dc40bbbf322b29bf1ddd03ae704f4b189035e612ec6e6f8840a4957d"
+    },
+    {
+      "file": "occupancy/CLOSE_27105.txt",
+      "original_sha256": "b152c5c67b35bc1ead2c9d5326571def573c6d9d708b2ebde3e3c676e08caae8",
+      "public_sha256": "b152c5c67b35bc1ead2c9d5326571def573c6d9d708b2ebde3e3c676e08caae8"
+    },
+    {
+      "file": "occupancy/PID_26799_SNAPSHOT.txt",
+      "original_sha256": "53374e50242408d0c283c9060f27f90506263dc384bd81749e87f66dab4ea9e8",
+      "public_sha256": "53374e50242408d0c283c9060f27f90506263dc384bd81749e87f66dab4ea9e8"
+    },
+    {
+      "file": "occupancy/PID_27105_SNAPSHOT.txt",
+      "original_sha256": "1d9546ca5e8449e3e086f07b1349ea57e88afb27924cd21777b47f421991d9d7",
+      "public_sha256": "1d9546ca5e8449e3e086f07b1349ea57e88afb27924cd21777b47f421991d9d7"
+    },
+    {
+      "file": "occupancy/PS_AFTER.txt",
+      "original_sha256": "d7c05814588ccff6789e91a512832dd0f2596d5949f9d0b9eda6d09714012014",
+      "public_sha256": "d7c05814588ccff6789e91a512832dd0f2596d5949f9d0b9eda6d09714012014"
+    },
+    {
+      "file": "occupancy/PS_BEFORE.txt",
+      "original_sha256": "3c0ac26592a8f4ea32debaaba965e412ea61f0238aa2f721320875afbb5bc11a",
+      "public_sha256": "3c0ac26592a8f4ea32debaaba965e412ea61f0238aa2f721320875afbb5bc11a"
+    },
+    {
+      "file": "occupancy/VERIFY_ABSENT.txt",
+      "original_sha256": "0d5dd029040ded2c4d40a2f72a75fa87525c5db82fb2e84841bb1daf341c6f04",
+      "public_sha256": "0d5dd029040ded2c4d40a2f72a75fa87525c5db82fb2e84841bb1daf341c6f04"
+    },
+    {
+      "file": "occupancy/closure.json",
+      "original_sha256": "9cf31e2e8c8c1bebac898c77d1c112d04846b287d0f4d66750a7af1e1492108b",
+      "public_sha256": "9cf31e2e8c8c1bebac898c77d1c112d04846b287d0f4d66750a7af1e1492108b"
+    },
+    {
+      "file": "occupancy/commands.json",
+      "original_sha256": "c94887d87dcb12795238e7977113f1da6fb59865c383008bf2f66a4efe446515",
+      "public_sha256": "c94887d87dcb12795238e7977113f1da6fb59865c383008bf2f66a4efe446515"
+    },
+    {
+      "file": "occupancy_recheck/PS_RECHECK.txt",
+      "original_sha256": "aeb0ba379bba33d846eb6c33ec1b503787e7a28a3f6ee47ce18704dd55347b9c",
+      "public_sha256": "aeb0ba379bba33d846eb6c33ec1b503787e7a28a3f6ee47ce18704dd55347b9c"
+    },
+    {
+      "file": "occupancy_recheck/VERIFY_APPROVED_ABSENT.txt",
+      "original_sha256": "c7578f50418735ec9bfca9b050638dd039a26ae4d7cbf4c1c05f68d5ad095d67",
+      "public_sha256": "c7578f50418735ec9bfca9b050638dd039a26ae4d7cbf4c1c05f68d5ad095d67"
+    },
+    {
+      "file": "occupancy_recheck/closure.json",
+      "original_sha256": "b28885ab7aec271bf5464ba6c7663faa93d72160f00d20e089b80d71e616e03b",
+      "public_sha256": "b28885ab7aec271bf5464ba6c7663faa93d72160f00d20e089b80d71e616e03b"
+    },
+    {
+      "file": "occupancy_recheck/closure_corrected.json",
+      "original_sha256": "b82935b45c0672c2216d646bc0d4a9ce061390f7e7299fa89d9bfe366b0985d3",
+      "public_sha256": "b82935b45c0672c2216d646bc0d4a9ce061390f7e7299fa89d9bfe366b0985d3"
+    },
+    {
+      "file": "occupancy_recheck/commands.json",
+      "original_sha256": "b94bb4b23fcfefbd3c62c3e9617229722e0bdb8b4ace0f0587513c181d394967",
+      "public_sha256": "b94bb4b23fcfefbd3c62c3e9617229722e0bdb8b4ace0f0587513c181d394967"
+    },
+    {
+      "file": "preflight/GLIBC.txt",
+      "original_sha256": "34ff84bee62dd4ba6f45cca3cbe8f316b7f235ffb1acecb34b94f357e6196ff2",
+      "public_sha256": "34ff84bee62dd4ba6f45cca3cbe8f316b7f235ffb1acecb34b94f357e6196ff2"
+    },
+    {
+      "file": "preflight/GOVERNORS.txt",
+      "original_sha256": "baddb6447a2c65b78632da17dc75b41704fa2d062c410fb5cf1d8a375b6ed8b0",
+      "public_sha256": "baddb6447a2c65b78632da17dc75b41704fa2d062c410fb5cf1d8a375b6ed8b0"
+    },
+    {
+      "file": "preflight/MEMINFO.txt",
+      "original_sha256": "d8c1f5cffde1ac7cedafcaab63347e9e058311ef4c473f708dcf288929e3bbe9",
+      "public_sha256": "d8c1f5cffde1ac7cedafcaab63347e9e058311ef4c473f708dcf288929e3bbe9"
+    },
+    {
+      "file": "preflight/OS_RELEASE.txt",
+      "original_sha256": "2c7fe42bd19c677c42f10321766e44e7a7e50d5729cee8a62b429706787889e7",
+      "public_sha256": "2c7fe42bd19c677c42f10321766e44e7a7e50d5729cee8a62b429706787889e7"
+    },
+    {
+      "file": "preflight/UNAME_M.txt",
+      "original_sha256": "6c9494381fbf31bdab8a343a453a73817e1ffea88768461d20e3b6b74ab33b42",
+      "public_sha256": "6c9494381fbf31bdab8a343a453a73817e1ffea88768461d20e3b6b74ab33b42"
+    },
+    {
+      "file": "preflight/UNAME_R.txt",
+      "original_sha256": "b175c7d7bb42f20286dde1c203b56d1e48de5354e4ed663917628671c46594c2",
+      "public_sha256": "b175c7d7bb42f20286dde1c203b56d1e48de5354e4ed663917628671c46594c2"
+    },
+    {
+      "file": "preflight/commands.json",
+      "original_sha256": "37f0140746a8e7ac23b18cae0851a87ccd5ec4a53e8a481f0c4c61394a0741d9",
+      "public_sha256": "37f0140746a8e7ac23b18cae0851a87ccd5ec4a53e8a481f0c4c61394a0741d9"
+    },
+    {
+      "file": "preflight/verdict.json",
+      "original_sha256": "55ac563491b89ad076fb77253045305b31e7378fcdd7bd6453dd9694c85dab77",
+      "public_sha256": "55ac563491b89ad076fb77253045305b31e7378fcdd7bd6453dd9694c85dab77"
+    },
+    {
+      "file": "verify_before_run.log",
+      "original_sha256": "94478acd82d936f82b7b18dae819ae38cc37bf7d48c1c88e6cfeb1e46cb47214",
+      "public_sha256": "94478acd82d936f82b7b18dae819ae38cc37bf7d48c1c88e6cfeb1e46cb47214"
+    }
+  ]
+}

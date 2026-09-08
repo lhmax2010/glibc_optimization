@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-08: [系统级补测续跑](system_level_before_after_20260908.md#5-pm-裁决后续跑占用处置与执行器闭合)：PM 专供板/残留会话裁决落实、精确 PID 清理与占用复核；冻结合同不改，执行器安全测试闭合后续跑，状态见 [当日汇总](overnight_summary_20260908.md)。
+
 | Date | Target | Activity | One-line result | Report |
 |---|---|---|---|---|
 | 2026-09-07 | Host delivery | Fourth-review tooling closure and demo-v7 | Explicit GBS artifact gates, real build archive, closed-whitelist/broken-tool verify matrix; documentary corrections and old gst retry2 publication only | [`review closure`](review_fix_20260903.md#第-4-轮终审闭环demo-v62026-09-07), [`PM decisions`](pm_decisions.md), [`GBS retry2`](../data/raw/gbs_rebaseline_20260903/gst_retry2/README.md) |

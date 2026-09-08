@@ -7,14 +7,13 @@ HERE = pathlib.Path(__file__).resolve().parent
 
 
 class StoppedRound(unittest.TestCase):
-    def test_board_drafts_are_unconditionally_disabled(self):
+    def test_execution_without_required_parameters_is_rejected(self):
         for name in ("capture_point.sh", "run_cell_remote.sh"):
             with self.subTest(name=name):
                 p = subprocess.run(["sh", str(HERE / name)], text=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=5)
                 self.assertEqual(p.returncode, 2)
-                self.assertIn("NOT-EVALUATED", p.stdout)
-                self.assertIn("occupancy STOP", p.stdout)
+                self.assertIn("required", p.stdout)
                 self.assertNotIn("DONE_CELL", p.stdout)
 
     def test_contract_and_analyzer_remain_frozen(self):

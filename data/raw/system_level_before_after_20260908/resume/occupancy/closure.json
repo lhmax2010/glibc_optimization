@@ -1,0 +1,17 @@
+{
+  "decision_by": "PM",
+  "decision_date": "2026-09-08",
+  "basis": "board dedicated to project; two authorized stale login sessions",
+  "start_utc": "2026-09-08T05:40:58.091063+00:00",
+  "verdict": "STOP",
+  "terminated": [
+    26799,
+    27105
+  ],
+  "preflight": {
+    "enlightenment_pid": 505,
+    "verdict": "PASS_READONLY_AVAILABILITY"
+  },
+  "reason": "remaining interactive PTY sessions: ['13777     1 pts/0    Tue Sep  8 14:41:38 2026       00:00 /bin/sh -c ( ps -eo pi', '13779 13777 pts/0    Tue Sep  8 14:41:38 2026       00:00 ps -eo pid,ppid,tty,ls']",
+  "end_utc": "2026-09-08T05:41:14.647555+00:00"
+}

@@ -1,0 +1,429 @@
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 Aug28 ?        00:02:05 /sbin/init
+root         2     0  0 Aug28 ?        00:00:01 [kthreadd]
+root         3     2  0 Aug28 ?        00:00:00 [pool_workqueue_release]
+root         4     2  0 Aug28 ?        00:00:00 [kworker/R-kvfree_rcu_reclaim]
+root         5     2  0 Aug28 ?        00:00:00 [kworker/R-rcu_gp]
+root         6     2  0 Aug28 ?        00:00:00 [kworker/R-sync_wq]
+root         7     2  0 Aug28 ?        00:00:00 [kworker/R-slub_flushwq]
+root         8     2  0 Aug28 ?        00:00:00 [kworker/R-netns]
+root        13     2  0 Aug28 ?        00:00:00 [kworker/R-mm_percpu_wq]
+root        14     2  0 Aug28 ?        00:00:00 [rcu_tasks_rude_kthread]
+root        15     2  0 Aug28 ?        00:00:00 [rcu_tasks_trace_kthread]
+root        16     2  0 Aug28 ?        00:00:25 [ksoftirqd/0]
+root        17     2  0 Aug28 ?        00:05:27 [rcu_sched]
+root        18     2  0 Aug28 ?        00:00:00 [rcu_exp_par_gp_kthread_worker/0
+root        19     2  0 Aug28 ?        00:00:00 [rcu_exp_gp_kthread_worker]
+root        20     2  0 Aug28 ?        00:00:00 [migration/0]
+root        21     2  0 Aug28 ?        00:00:00 [cpuhp/0]
+root        22     2  0 Aug28 ?        00:00:00 [cpuhp/1]
+root        23     2  0 Aug28 ?        00:00:00 [migration/1]
+root        24     2  0 Aug28 ?        00:00:21 [ksoftirqd/1]
+root        27     2  0 Aug28 ?        00:00:00 [cpuhp/2]
+root        28     2  0 Aug28 ?        00:00:00 [migration/2]
+root        29     2  0 Aug28 ?        00:00:22 [ksoftirqd/2]
+root        32     2  0 Aug28 ?        00:00:00 [cpuhp/3]
+root        33     2  0 Aug28 ?        00:00:00 [migration/3]
+root        34     2  0 Aug28 ?        00:00:26 [ksoftirqd/3]
+root        41     2  0 Aug28 ?        00:00:00 [kdevtmpfs]
+root        42     2  0 Aug28 ?        00:00:00 [kworker/R-inet_frag_wq]
+root        43     2  0 Aug28 ?        00:00:00 [kauditd]
+root        44     2  0 Aug28 ?        00:00:01 [khungtaskd]
+root        45     2  0 Aug28 ?        00:00:00 [oom_reaper]
+root        47     2  0 Aug28 ?        00:00:00 [kworker/R-writeback]
+root        48     2  0 Aug28 ?        00:00:50 [kcompactd0]
+root        49     2  0 Aug28 ?        00:00:00 [kworker/R-cryptd]
+root        50     2  0 Aug28 ?        00:00:00 [kworker/R-kblockd]
+root        51     2  0 Aug28 ?        00:00:00 [kworker/R-blkcg_punt_bio]
+root        54     2  0 Aug28 ?        00:00:00 [watchdogd]
+root        57     2  0 Aug28 ?        00:00:00 [kworker/R-rpciod]
+root        58     2  0 Aug28 ?        00:00:00 [kworker/R-xprtiod]
+root        59     2  0 Aug28 ?        00:00:00 [kworker/R-cfg80211]
+root        61     2  0 Aug28 ?        00:00:00 [kswapd0]
+root        62     2  0 Aug28 ?        00:00:00 [kworker/R-nfsiod]
+root        63     2  0 Aug28 ?        00:00:00 [kworker/u21:0-hci0]
+root        64     2  0 Aug28 ?        00:00:00 [kworker/u22:0]
+root        65     2  0 Aug28 ?        00:00:00 [kworker/u23:0]
+root        66     2  0 Aug28 ?        00:00:00 [kworker/u24:0]
+root        67     2  0 Aug28 ?        00:00:00 [kworker/u25:0]
+root        68     2  0 Aug28 ?        00:00:00 [kworker/R-kthrotld]
+root        77     2  0 Aug28 ?        00:00:00 [hwrng]
+root        78     2  0 Aug28 ?        00:00:00 [kworker/R-iscsi_conn_cleanup]
+root        80     2  0 Aug28 ?        00:00:00 [kworker/R-uas]
+root        82     2  0 Aug28 ?        00:00:00 [kworker/R-dm_bufio_cache]
+root        84     2  0 Aug28 ?        00:00:00 [vchiq-slot/0]
+root        85     2  0 Aug28 ?        00:00:00 [vchiq-recy/0]
+root        86     2  0 Aug28 ?        00:00:00 [vchiq-sync/0]
+root        87     2  0 Aug28 ?        00:00:00 [vchiq-keep/0]
+root        91     2  0 Aug28 ?        00:00:00 [SMIO]
+root        92     2  0 Aug28 ?        00:00:00 [kworker/R-mmal-vchiq]
+root        93     2  0 Aug28 ?        00:00:00 [kworker/R-mmal-vchiq]
+root        94     2  0 Aug28 ?        00:00:00 [kworker/R-mmal-vchiq]
+root        95     2  0 Aug28 ?        00:00:00 [kworker/R-mmal-vchiq]
+root        96     2  0 Aug28 ?        00:00:00 [kworker/R-mmal-vchiq]
+root        97     2  0 Aug28 ?        00:00:00 [kworker/R-mmal-vchiq]
+root        98     2  0 Aug28 ?        00:00:00 [kworker/R-mmal-vchiq]
+root        99     2  0 Aug28 ?        00:00:00 [kworker/R-mld]
+root       100     2  0 Aug28 ?        00:00:00 [kworker/R-ipv6_addrconf]
+root       102     2  0 Aug28 ?        00:00:00 [krfcommd]
+root       105     2  0 Aug28 ?        00:00:00 [irq/54-vc4 hdmi hpd connected]
+root       106     2  0 Aug28 ?        00:00:00 [irq/55-vc4 hdmi hpd disconnecte
+root       107     2  0 Aug28 ?        00:00:00 [cec-vc4-hdmi-0]
+root       108     2  0 Aug28 ?        00:00:00 [irq/56-vc4 hdmi cec rx]
+root       109     2  0 Aug28 ?        00:00:00 [irq/57-vc4 hdmi cec tx]
+root       110     2  0 Aug28 ?        00:00:00 [irq/58-vc4 hdmi hpd connected]
+root       111     2  0 Aug28 ?        00:00:00 [irq/59-vc4 hdmi hpd disconnecte
+root       112     2  0 Aug28 ?        00:00:00 [cec-vc4-hdmi-1]
+root       113     2  0 Aug28 ?        00:00:00 [irq/60-vc4 hdmi cec rx]
+root       114     2  0 Aug28 ?        00:00:00 [irq/61-vc4 hdmi cec tx]
+root       115     2  0 Aug28 ?        00:00:00 [card0-crtc0]
+root       116     2  0 Aug28 ?        00:00:00 [card0-crtc1]
+root       117     2  0 Aug28 ?        00:00:00 [card0-crtc2]
+root       118     2  0 Aug28 ?        00:00:00 [card0-crtc3]
+root       119     2  0 Aug28 ?        00:00:00 [card0-crtc4]
+root       120     2  0 Aug28 ?        00:00:00 [card0-crtc5]
+root       121     2  0 Aug28 ?        00:00:00 [kworker/R-sdhci]
+root       122     2  0 Aug28 ?        00:00:00 [irq/68-mmc0]
+root       125     2  0 Aug28 ?        00:00:00 [kworker/R-v3d_bin]
+root       126     2  0 Aug28 ?        00:00:00 [kworker/R-v3d_render]
+root       127     2  0 Aug28 ?        00:00:00 [kworker/R-v3d_tfu]
+root       128     2  0 Aug28 ?        00:00:00 [kworker/R-v3d_csd]
+root       129     2  0 Aug28 ?        00:00:00 [kworker/R-v3d_cache_clean]
+root       130     2  0 Aug28 ?        00:00:00 [kworker/R-v3d_cpu]
+root       147     2  0 Aug28 ?        00:00:01 [kworker/3:1H-kblockd]
+root       148     2  0 Aug28 ?        00:00:00 [kworker/R-mmc_complete]
+root       190     2  0 Aug28 ?        00:00:00 [jbd2/mmcblk0p6-8]
+root       191     2  0 Aug28 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+root       233     2  0 Aug28 ?        00:00:00 [jbd2/mmcblk0p2-8]
+root       234     2  0 Aug28 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+root       238     2  0 Aug28 ?        00:00:42 [jbd2/mmcblk0p3-8]
+root       239     2  0 Aug28 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+root       241     2  0 Aug28 ?        00:00:00 [jbd2/mmcblk0p10-8]
+root       242     2  0 Aug28 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+root       280     2  0 Aug28 ?        00:00:00 [jbd2/mmcblk0p9-8]
+root       281     2  0 Aug28 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+root       284     1  0 Aug28 ?        00:00:02 /usr/lib/systemd/systemd-journal
+root       289     2  0 Aug28 ?        00:00:00 [f2fs_ckpt-179:5]
+root       290     2  0 Aug28 ?        00:00:00 [f2fs_flush-179:5]
+root       291     2  0 Aug28 ?        00:00:02 [f2fs_discard-179:5]
+root       307     2  0 Aug28 ?        00:00:00 [f2fs_gc-179:5]
+root       328     1  0 Aug28 ?        00:00:02 /usr/lib/systemd/systemd-udevd
+root       389     2  0 Aug28 ?        00:00:00 [kworker/u21:2-hci0]
+root       393     1  0 Aug28 ?        00:00:00 /usr/bin/hal/hal-backend-service
+root       407     1  0 Aug28 ?        00:00:00 /usr/sbin/actd
+buxton     408     1  0 Aug28 ?        00:13:31 /usr/sbin/buxton2d -f
+key-man+   409     1  0 Aug28 ?        00:00:18 /usr/bin/key-manager
+app_fw     412     1  0 Aug28 ?        00:01:34 /usr/bin/esd
+app_fw     413     1  0 Aug28 ?        00:00:00 /usr/bin/pkginfo-server
+root       414     1  0 Aug28 ?        00:00:17 /usr/bin/resourced
+log        415     1  0 Aug28 ?        00:20:34 /usr/bin/dlog_logger
+sensor     439     1  0 Aug28 ?        00:00:00 /usr/bin/sensord
+app_fw     440     1  0 Aug28 ?        00:03:58 /usr/bin/amd
+cynara     442     1  0 Aug28 ?        00:00:34 /usr/bin/cynara
+dbus       443     1  0 Aug28 ?        00:11:54 /usr/bin/dbus-daemon --system --
+root       446     1  0 Aug28 ?        00:01:15 /usr/bin/deviced
+securit+   451     1  0 Aug28 ?        00:00:00 /usr/bin/license-manager-agent
+multime+   455     1  0 Aug28 ?        00:00:00 /usr/bin/media-server
+service+   462     1  0 Aug28 ?        00:02:37 /usr/bin/pushd
+root       476     1  0 Aug28 ?        00:00:00 login -- root
+stabili+   478     1  0 Aug28 ?        00:08:08 /usr/sbin/stability-monitor
+network+   484     1  0 Aug28 ?        00:04:52 /usr/bin/net-config
+root       505     1  0 Aug28 ?        00:41:12 /usr/bin/enlightenment
+pulse      517     1  0 Aug28 ?        00:00:44 /usr/bin/pulseaudio
+root       518     1  0 Aug28 ?        00:00:02 /usr/lib/systemd/systemd-logind
+network+   520     1  0 Aug28 ?        00:00:01 /usr/bin/connmand -n --nobacktra
+multime+   521     1  0 Aug28 ?        00:00:00 /usr/bin/rscmgr-service
+root       532     1  0 Aug28 ?        00:00:00 /usr/bin/update-manager
+root       571     2  0 Aug28 ?        00:07:10 [psimon]
+service+   583     1  0 Aug28 ?        00:00:00 /usr/bin/contextd
+root       587     2  0 Aug28 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+root       600     1  0 Aug28 ?        00:00:53 /usr/bin/storaged
+root       620     2  0 Aug28 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+root       625     1  0 Aug28 ?        00:00:00 /usr/bin/tlm
+root       639   625  0 Aug28 ?        00:00:00 /usr/bin/tlm-sessiond
+multime+   650     1  0 Aug28 ?        00:00:00 /usr/bin/focus_server -S
+owner      661     1  0 Aug28 ?        00:00:00 /usr/lib/systemd/systemd --user
+owner      667   661  0 Aug28 ?        00:00:00 (sd-pam)
+owner      676   639  0 Aug28 tty7     00:00:00 /bin/bash
+owner      739   661  0 Aug28 ?        00:00:00 /usr/bin/launchpad-process-pool
+owner      761   739  0 Aug28 ?        00:07:07 /usr/apps/ise-default/bin/ise-de
+owner      766   661  0 Aug28 ?        00:00:00 /usr/bin/isf
+graphic+   768     1  0 Aug28 ?        00:18:35 bash /usr/bin/enlightenment_mon.
+multime+   783     1  0 Aug28 ?        00:00:30 /usr/bin/muse-server -D
+location   808     1  0 Aug28 ?        00:00:01 /usr/bin/lbs-server
+root       813     1  0 Aug28 ?        00:33:44 /usr/bin/pass
+owner      845   661  0 Aug28 ?        00:00:00 /usr/bin/dbus-daemon --session -
+securit+   848     1  0 Aug28 ?        00:00:00 /usr/bin/security-manager
+securit+   853   848  0 Aug28 ?        00:00:00 /usr/bin/security-manager
+owner      860   661  0 Aug28 ?        00:00:00 /usr/bin/starter
+owner      872   739  0 Aug28 ?        00:00:01 /usr/bin/dotnet-hydra-loader 1 0
+owner      890   739  0 Aug28 ?        00:06:05 /usr/apps/org.tizen.multi-assist
+ui_fw      931     1  0 Aug28 ?        00:00:00 /usr/bin/ise-engine-loader
+owner      948   661  0 Aug28 ?        00:00:00 /usr/libexec/at-spi-bus-launcher
+network+   967     1  0 Aug28 ?        00:05:40 /usr/bin/mtp-responder
+sdk        968     1  0 Aug28 ?        00:00:45 /usr/sbin/sdbd
+owner      978   739  2 Aug28 ?        05:24:22 /usr/apps/org.tizen.homescreen/b
+owner     1022   872  0 Aug28 ?        00:00:08 /usr/bin/dotnet-hydra-loader can
+owner     1023   872  0 Aug28 ?        00:06:02 /usr/apps/org.tizen.systemui/bin
+owner     1042   872  0 Aug28 ?        00:00:00 /usr/bin/process-pool <hydra-loa
+app_fw    1047     1  0 Aug28 ?        00:00:00 /usr/bin/theme-provider
+root      1133   476  0 Aug28 ttyS0    00:00:00 -bash
+root      2158     2  0 04:27 ?        00:00:01 [kworker/u19:1-events_unbound]
+root      2600     2  0 Sep07 ?        00:00:03 [kworker/u19:0-events_unbound]
+root      2925     2  0 14:06 ?        00:00:00 [kworker/1:2H]
+root      4021     2  0 02:38 ?        00:00:01 [kworker/u20:2-kvfree_rcu_reclai
+root      4414     2  0 14:12 ?        00:00:00 [kworker/2:1-events]
+root      4735     2  0 Sep07 ?        00:00:01 [kworker/u20:1-events_unbound]
+root      5401     2  0 14:15 ?        00:00:00 [kworker/3:2-mm_percpu_wq]
+root      5839     2  0 14:17 ?        00:00:00 [kworker/1:2-events]
+root      6721     2  0 14:20 ?        00:00:00 [kworker/2:3-events]
+root      6875     2  0 14:21 ?        00:00:00 [kworker/u16:1-v3d_render]
+root      7525     2  0 14:23 ?        00:00:00 [kworker/2:0H]
+root      8105     2  0 14:25 ?        00:00:00 [kworker/0:0-events]
+root      9012     2  0 Sep07 ?        00:00:02 [kworker/u20:0-events_unbound]
+root      9110     2  0 14:29 ?        00:00:00 [kworker/1:0-events_power_effici
+root      9507     2  0 14:30 ?        00:00:00 [kworker/0:1-events]
+root      9787     2  0 14:31 ?        00:00:00 [kworker/u16:2-v3d_render]
+root      9844     2  0 08:46 ?        00:00:01 [kworker/u17:0-events_unbound]
+root     10227     2  0 14:33 ?        00:00:00 [kworker/3:0-events]
+root     10567     2  0 14:34 ?        00:00:00 [kworker/1:3-events]
+root     10946     2  0 14:35 ?        00:00:00 [kworker/0:2-events]
+root     11062     2  0 Sep07 ?        00:00:02 [kworker/u17:2-events_unbound]
+root     11272     2  0 14:36 ?        00:00:00 [kworker/u16:0-v3d_bin]
+root     11935     2  0 14:39 ?        00:00:00 [kworker/3:1-rcu_gp]
+root     11964     2  0 14:39 ?        00:00:00 [kworker/2:0-events_power_effici
+root     12063     2  0 14:39 ?        00:00:00 [kworker/0:3-rcu_gp]
+root     12136     2  0 Sep05 ?        00:00:00 [kworker/2:1H-kblockd]
+root     12734     2  0 14:40 ?        00:00:00 [kworker/1:1-mm_percpu_wq]
+root     12924     2  0 12:48 ?        00:00:00 [kworker/u17:3-events_unbound]
+graphic+ 13235   768  0 14:41 ?        00:00:00 sleep 3
+root     13438     2  0 Sep04 ?        00:00:01 [kworker/1:1H-kblockd]
+root     13549     1  0 14:41 pts/2    00:00:00 /bin/sh -c ( ps -ef; ps -eo pid,
+root     13551 13549  0 14:41 pts/2    00:00:00 /bin/sh -c ( ps -ef; ps -eo pid,
+root     13552 13551 99 14:41 pts/2    00:00:00 ps -ef
+root     14447     2  0 10:58 ?        00:00:00 [kworker/u18:3-events_unbound]
+root     17783     2  0 13:06 ?        00:00:00 [kworker/u18:2-events_unbound]
+root     18858     2  0 Sep04 ?        00:17:52 [sugov:0]
+root     26799     1  0 Sep04 pts/0    00:00:00 /bin/sh -l
+root     27105     1  0 Sep04 pts/1    00:00:00 /bin/sh -l
+root     30139     2  0 11:55 ?        00:00:00 [kworker/3:0H]
+root     31315     2  0 11:59 ?        00:00:00 [kworker/u18:0-flush-179:0]
+root     31429     2  0 06:12 ?        00:00:00 [kworker/u19:2]
+root     31638     2  0 12:00 ?        00:00:00 [kworker/0:0H]
+root     31673     2  0 Sep04 ?        00:00:08 [kworker/0:2H-mmc_complete]
+  PID  PPID TT                        STARTED     ELAPSED COMMAND
+    1     0 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 /sbin/init
+    2     0 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kthreadd]
+    3     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [pool_workqueue_releas
+    4     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-kvfree_rcu_
+    5     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-rcu_gp]
+    6     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-sync_wq]
+    7     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-slub_flushw
+    8     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-netns]
+   13     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-mm_percpu_w
+   14     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [rcu_tasks_rude_kthrea
+   15     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [rcu_tasks_trace_kthre
+   16     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [ksoftirqd/0]
+   17     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [rcu_sched]
+   18     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [rcu_exp_par_gp_kthrea
+   19     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [rcu_exp_gp_kthread_wo
+   20     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [migration/0]
+   21     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [cpuhp/0]
+   22     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [cpuhp/1]
+   23     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [migration/1]
+   24     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [ksoftirqd/1]
+   27     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [cpuhp/2]
+   28     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [migration/2]
+   29     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [ksoftirqd/2]
+   32     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [cpuhp/3]
+   33     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [migration/3]
+   34     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [ksoftirqd/3]
+   41     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kdevtmpfs]
+   42     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-inet_frag_w
+   43     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kauditd]
+   44     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [khungtaskd]
+   45     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [oom_reaper]
+   47     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-writeback]
+   48     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kcompactd0]
+   49     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-cryptd]
+   50     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-kblockd]
+   51     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-blkcg_punt_
+   54     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [watchdogd]
+   57     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-rpciod]
+   58     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-xprtiod]
+   59     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:49 [kworker/R-cfg80211]
+   61     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kswapd0]
+   62     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/R-nfsiod]
+   63     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/u21:0-hci0]
+   64     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/u22:0]
+   65     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/u23:0]
+   66     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/u24:0]
+   67     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/u25:0]
+   68     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/R-kthrotld]
+   77     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [hwrng]
+   78     2 ?        Fri Aug 28 15:50:37 2026 10-22:50:48 [kworker/R-iscsi_conn_
+   80     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-uas]
+   82     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-dm_bufio_ca
+   84     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [vchiq-slot/0]
+   85     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [vchiq-recy/0]
+   86     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [vchiq-sync/0]
+   87     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [vchiq-keep/0]
+   91     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [SMIO]
+   92     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mmal-vchiq]
+   93     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mmal-vchiq]
+   94     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mmal-vchiq]
+   95     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mmal-vchiq]
+   96     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mmal-vchiq]
+   97     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mmal-vchiq]
+   98     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mmal-vchiq]
+   99     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-mld]
+  100     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [kworker/R-ipv6_addrco
+  102     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [krfcommd]
+  105     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/54-vc4 hdmi hpd c
+  106     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/55-vc4 hdmi hpd d
+  107     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [cec-vc4-hdmi-0]
+  108     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/56-vc4 hdmi cec r
+  109     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/57-vc4 hdmi cec t
+  110     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/58-vc4 hdmi hpd c
+  111     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/59-vc4 hdmi hpd d
+  112     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [cec-vc4-hdmi-1]
+  113     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/60-vc4 hdmi cec r
+  114     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [irq/61-vc4 hdmi cec t
+  115     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [card0-crtc0]
+  116     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [card0-crtc1]
+  117     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [card0-crtc2]
+  118     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [card0-crtc3]
+  119     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [card0-crtc4]
+  120     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:48 [card0-crtc5]
+  121     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-sdhci]
+  122     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [irq/68-mmc0]
+  125     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-v3d_bin]
+  126     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-v3d_render]
+  127     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-v3d_tfu]
+  128     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-v3d_csd]
+  129     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-v3d_cache_c
+  130     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-v3d_cpu]
+  147     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/3:1H-kblockd]
+  148     2 ?        Fri Aug 28 15:50:38 2026 10-22:50:47 [kworker/R-mmc_complet
+  190     2 ?        Fri Aug 28 15:50:39 2026 10-22:50:46 [jbd2/mmcblk0p6-8]
+  191     2 ?        Fri Aug 28 15:50:39 2026 10-22:50:46 [kworker/R-ext4-rsv-co
+  233     2 ?        Fri Aug 28 15:50:40 2026 10-22:50:46 [jbd2/mmcblk0p2-8]
+  234     2 ?        Fri Aug 28 15:50:40 2026 10-22:50:46 [kworker/R-ext4-rsv-co
+  238     2 ?        Fri Aug 28 15:50:40 2026 10-22:50:46 [jbd2/mmcblk0p3-8]
+  239     2 ?        Fri Aug 28 15:50:40 2026 10-22:50:46 [kworker/R-ext4-rsv-co
+  241     2 ?        Fri Aug 28 15:50:40 2026 10-22:50:45 [jbd2/mmcblk0p10-8]
+  242     2 ?        Fri Aug 28 15:50:40 2026 10-22:50:45 [kworker/R-ext4-rsv-co
+  280     2 ?        Fri Aug 28 15:50:47 2026 10-22:50:38 [jbd2/mmcblk0p9-8]
+  281     2 ?        Fri Aug 28 15:50:47 2026 10-22:50:38 [kworker/R-ext4-rsv-co
+  284     1 ?        Fri Aug 28 15:50:47 2026 10-22:50:38 /usr/lib/systemd/syste
+  289     2 ?        Fri Aug 28 15:50:47 2026 10-22:50:38 [f2fs_ckpt-179:5]
+  290     2 ?        Fri Aug 28 15:50:47 2026 10-22:50:38 [f2fs_flush-179:5]
+  291     2 ?        Fri Aug 28 15:50:47 2026 10-22:50:38 [f2fs_discard-179:5]
+  307     2 ?        Fri Aug 28 15:50:48 2026 10-22:50:38 [f2fs_gc-179:5]
+  328     1 ?        Fri Aug 28 15:50:48 2026 10-22:50:37 /usr/lib/systemd/syste
+  389     2 ?        Fri Aug 28 15:50:49 2026 10-22:50:37 [kworker/u21:2-hci0]
+  393     1 ?        Fri Aug 28 15:50:49 2026 10-22:50:36 /usr/bin/hal/hal-backe
+  407     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/sbin/actd
+  408     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/sbin/buxton2d -f
+  409     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/bin/key-manager
+  412     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/bin/esd
+  413     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/bin/pkginfo-serve
+  414     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/bin/resourced
+  415     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/bin/dlog_logger
+  439     1 ?        Fri Aug 28 15:50:50 2026 10-22:50:35 /usr/bin/sensord
+  440     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:35 /usr/bin/amd
+  442     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:35 /usr/bin/cynara
+  443     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:35 /usr/bin/dbus-daemon -
+  446     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:35 /usr/bin/deviced
+  451     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:35 /usr/bin/license-manag
+  455     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:35 /usr/bin/media-server
+  462     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:35 /usr/bin/pushd
+  476     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 login -- root
+  478     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/sbin/stability-mo
+  484     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/bin/net-config
+  505     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/bin/enlightenment
+  517     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/bin/pulseaudio
+  518     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/lib/systemd/syste
+  520     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/bin/connmand -n -
+  521     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/bin/rscmgr-servic
+  532     1 ?        Fri Aug 28 15:50:51 2026 10-22:50:34 /usr/bin/update-manage
+  571     2 ?        Fri Aug 28 15:50:52 2026 10-22:50:34 [psimon]
+  583     1 ?        Fri Aug 28 15:50:52 2026 10-22:50:34 /usr/bin/contextd
+  587     2 ?        Fri Aug 28 15:50:52 2026 10-22:50:33 [kworker/R-ext4-rsv-co
+  600     1 ?        Fri Aug 28 15:50:52 2026 10-22:50:33 /usr/bin/storaged
+  620     2 ?        Fri Aug 28 15:50:52 2026 10-22:50:33 [kworker/R-ext4-rsv-co
+  625     1 ?        Fri Aug 28 15:50:52 2026 10-22:50:33 /usr/bin/tlm
+  639   625 ?        Fri Aug 28 15:50:52 2026 10-22:50:33 /usr/bin/tlm-sessiond
+  650     1 ?        Fri Aug 28 15:50:53 2026 10-22:50:33 /usr/bin/focus_server 
+  661     1 ?        Fri Aug 28 15:50:53 2026 10-22:50:32 /usr/lib/systemd/syste
+  667   661 ?        Fri Aug 28 15:50:53 2026 10-22:50:32 (sd-pam)
+  676   639 tty7     Fri Aug 28 15:50:53 2026 10-22:50:32 /bin/bash
+  739   661 ?        Fri Aug 28 15:50:53 2026 10-22:50:32 /usr/bin/launchpad-pro
+  761   739 ?        Fri Aug 28 15:50:54 2026 10-22:50:32 /usr/apps/ise-default/
+  766   661 ?        Fri Aug 28 15:50:54 2026 10-22:50:32 /usr/bin/isf
+  768     1 ?        Fri Aug 28 15:50:54 2026 10-22:50:32 bash /usr/bin/enlighte
+  783     1 ?        Fri Aug 28 15:50:54 2026 10-22:50:31 /usr/bin/muse-server -
+  808     1 ?        Fri Aug 28 15:50:54 2026 10-22:50:31 /usr/bin/lbs-server
+  813     1 ?        Fri Aug 28 15:50:54 2026 10-22:50:31 /usr/bin/pass
+  845   661 ?        Fri Aug 28 15:50:54 2026 10-22:50:31 /usr/bin/dbus-daemon -
+  848     1 ?        Fri Aug 28 15:50:54 2026 10-22:50:31 /usr/bin/security-mana
+  853   848 ?        Fri Aug 28 15:50:55 2026 10-22:50:31 /usr/bin/security-mana
+  860   661 ?        Fri Aug 28 15:50:55 2026 10-22:50:31 /usr/bin/starter
+  872   739 ?        Fri Aug 28 15:50:55 2026 10-22:50:31 /usr/bin/dotnet-hydra-
+  890   739 ?        Fri Aug 28 15:50:55 2026 10-22:50:30 /usr/apps/org.tizen.mu
+  931     1 ?        Fri Aug 28 15:50:55 2026 10-22:50:30 /usr/bin/ise-engine-lo
+  948   661 ?        Fri Aug 28 15:50:56 2026 10-22:50:30 /usr/libexec/at-spi-bu
+  967     1 ?        Fri Aug 28 15:50:56 2026 10-22:50:29 /usr/bin/mtp-responder
+  968     1 ?        Fri Aug 28 15:50:56 2026 10-22:50:29 /usr/sbin/sdbd
+  978   739 ?        Fri Aug 28 15:50:56 2026 10-22:50:29 /usr/apps/org.tizen.ho
+ 1022   872 ?        Fri Aug 28 15:50:57 2026 10-22:50:28 /usr/bin/dotnet-hydra-
+ 1023   872 ?        Fri Aug 28 15:50:57 2026 10-22:50:28 /usr/apps/org.tizen.sy
+ 1042   872 ?        Fri Aug 28 15:50:58 2026 10-22:50:27 /usr/bin/process-pool 
+ 1047     1 ?        Fri Aug 28 15:50:58 2026 10-22:50:27 /usr/bin/theme-provide
+ 1133   476 ttyS0    Fri Aug 28 15:51:07 2026 10-22:50:18 -bash
+ 2158     2 ?        Tue Sep  8 04:27:23 2026    10:14:03 [kworker/u19:1-events_
+ 2600     2 ?        Mon Sep  7 09:11:44 2026  1-05:29:42 [kworker/u19:0-events_
+ 2925     2 ?        Tue Sep  8 14:06:55 2026       34:31 [kworker/1:2H]
+ 4021     2 ?        Tue Sep  8 02:38:22 2026    12:03:03 [kworker/u20:2-kvfree_
+ 4414     2 ?        Tue Sep  8 14:12:12 2026       29:13 [kworker/2:1-events]
+ 4735     2 ?        Mon Sep  7 15:06:32 2026    23:34:53 [kworker/u20:1-events_
+ 5401     2 ?        Tue Sep  8 14:15:47 2026       25:39 [kworker/3:2-mm_percpu
+ 5839     2 ?        Tue Sep  8 14:17:20 2026       24:05 [kworker/1:2-events]
+ 6721     2 ?        Tue Sep  8 14:20:30 2026       20:56 [kworker/2:3-events]
+ 6875     2 ?        Tue Sep  8 14:21:02 2026       20:23 [kworker/u16:1-v3d_ren
+ 7525     2 ?        Tue Sep  8 14:23:23 2026       18:03 [kworker/2:0H]
+ 8105     2 ?        Tue Sep  8 14:25:30 2026       15:55 [kworker/0:0-events]
+ 9012     2 ?        Mon Sep  7 19:13:17 2026    19:28:08 [kworker/u20:0-events_
+ 9110     2 ?        Tue Sep  8 14:29:05 2026       12:20 [kworker/1:0-events]
+ 9507     2 ?        Tue Sep  8 14:30:33 2026       10:53 [kworker/0:1-events]
+ 9787     2 ?        Tue Sep  8 14:31:32 2026       09:53 [kworker/u16:2-v3d_ren
+ 9844     2 ?        Tue Sep  8 08:46:22 2026    05:55:03 [kworker/u17:0-events_
+10227     2 ?        Tue Sep  8 14:33:07 2026       08:19 [kworker/3:0-events]
+10567     2 ?        Tue Sep  8 14:34:22 2026       07:04 [kworker/1:3-events]
+10946     2 ?        Tue Sep  8 14:35:43 2026       05:43 [kworker/0:2-events]
+11062     2 ?        Mon Sep  7 21:16:22 2026    17:25:03 [kworker/u17:2-events_
+11272     2 ?        Tue Sep  8 14:36:52 2026       04:33 [kworker/u16:0-v3d_bin
+11935     2 ?        Tue Sep  8 14:39:17 2026       02:08 [kworker/3:1-events_po
+11964     2 ?        Tue Sep  8 14:39:23 2026       02:02 [kworker/2:0-events_po
+12063     2 ?        Tue Sep  8 14:39:44 2026       01:41 [kworker/0:3-rcu_gp]
+12136     2 ?        Sat Sep  5 03:46:12 2026  3-10:55:13 [kworker/2:1H-kblockd]
+12734     2 ?        Tue Sep  8 14:40:21 2026       01:04 [kworker/1:1-mm_percpu
+12924     2 ?        Tue Sep  8 12:48:52 2026    01:52:33 [kworker/u17:3-events_
+13235   768 ?        Tue Sep  8 14:41:23 2026       00:02 sleep 3
+13438     2 ?        Fri Sep  4 11:23:42 2026  4-03:17:43 [kworker/1:1H-kblockd]
+13549     1 pts/2    Tue Sep  8 14:41:26 2026       00:00 /bin/sh -c ( ps -ef; p
+13551 13549 pts/2    Tue Sep  8 14:41:26 2026       00:00 /bin/sh -c ( ps -ef; p
+13553 13551 pts/2    Tue Sep  8 14:41:26 2026       00:00 ps -eo pid,ppid,tty,ls
+14447     2 ?        Tue Sep  8 10:58:42 2026    03:42:43 [kworker/u18:3-events_
+17783     2 ?        Tue Sep  8 13:06:22 2026    01:35:03 [kworker/u18:2-events_
+18858     2 ?        Fri Sep  4 22:24:22 2026  3-16:17:03 [sugov:0]
+26799     1 pts/0    Fri Sep  4 15:25:49 2026  3-23:15:36 /bin/sh -l
+27105     1 pts/1    Fri Sep  4 15:26:52 2026  3-23:14:33 /bin/sh -l
+30139     2 ?        Tue Sep  8 11:55:08 2026    02:46:18 [kworker/3:0H]
+31315     2 ?        Tue Sep  8 11:59:22 2026    02:42:03 [kworker/u18:0-flush-1
+31429     2 ?        Tue Sep  8 06:12:33 2026    08:28:53 [kworker/u19:2]
+31638     2 ?        Tue Sep  8 12:00:31 2026    02:40:55 [kworker/0:0H]
+31673     2 ?        Fri Sep  4 15:40:50 2026  3-23:00:36 [kworker/0:2H-mmc_comp
+
+RC=0
+DONE_PS_BEFORE

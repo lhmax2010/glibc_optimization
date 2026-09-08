@@ -1,0 +1,319 @@
+[
+  {
+    "label": "sdb_version",
+    "start_utc": "2026-09-08T05:40:58.091076+00:00",
+    "end_utc": "2026-09-08T05:40:58.094321+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "connect",
+    "start_utc": "2026-09-08T05:40:58.094507+00:00",
+    "end_utc": "2026-09-08T05:40:58.098759+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "devices",
+    "start_utc": "2026-09-08T05:40:58.099226+00:00",
+    "end_utc": "2026-09-08T05:40:58.101352+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "devices"
+    ]
+  },
+  {
+    "label": "UNAME_R",
+    "start_utc": "2026-09-08T05:40:58.101593+00:00",
+    "end_utc": "2026-09-08T05:40:58.229256+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UNAME_R; else echo FAIL_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "UNAME_M",
+    "start_utc": "2026-09-08T05:40:58.229532+00:00",
+    "end_utc": "2026-09-08T05:40:58.363957+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UNAME_M; else echo FAIL_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "OS_RELEASE",
+    "start_utc": "2026-09-08T05:40:58.364257+00:00",
+    "end_utc": "2026-09-08T05:40:58.497145+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_OS_RELEASE; else echo FAIL_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "GLIBC",
+    "start_utc": "2026-09-08T05:40:58.497446+00:00",
+    "end_utc": "2026-09-08T05:40:58.659509+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q glibc ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_GLIBC; else echo FAIL_GLIBC; fi"
+    ]
+  },
+  {
+    "label": "MEMINFO",
+    "start_utc": "2026-09-08T05:40:58.659766+00:00",
+    "end_utc": "2026-09-08T05:40:58.795168+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/meminfo ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_MEMINFO; else echo FAIL_MEMINFO; fi"
+    ]
+  },
+  {
+    "label": "UID",
+    "start_utc": "2026-09-08T05:40:58.795621+00:00",
+    "end_utc": "2026-09-08T05:40:58.917450+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id -u ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UID; else echo FAIL_UID; fi"
+    ]
+  },
+  {
+    "label": "GOVERNORS",
+    "start_utc": "2026-09-08T05:40:58.917745+00:00",
+    "end_utc": "2026-09-08T05:40:59.071957+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; test -w \"$p\" || exit 1; cat \"$p\" || exit 1; done ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_GOVERNORS; else echo FAIL_GOVERNORS; fi"
+    ]
+  },
+  {
+    "label": "WORKDIR",
+    "start_utc": "2026-09-08T05:40:59.072134+00:00",
+    "end_utc": "2026-09-08T05:40:59.193564+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test -d /opt/usr && test -w /opt/usr && if [ -d /opt/usr/glibc_memopt ]; then ls -la /opt/usr/glibc_memopt; test -z \"$(ls -A /opt/usr/glibc_memopt)\"; else echo ABSENT; fi ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_WORKDIR; else echo FAIL_WORKDIR; fi"
+    ]
+  },
+  {
+    "label": "PROCESSES",
+    "start_utc": "2026-09-08T05:40:59.194076+00:00",
+    "end_utc": "2026-09-08T05:41:01.725069+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do test -r \"$p/comm\" || continue; printf '%s\\t' \"${p##*/}\"; tr '\\n' ' ' <\"$p/comm\"; printf '\\t'; tr '\\000' ' ' <\"$p/cmdline\" 2>/dev/null; printf '\\n'; done ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_PROCESSES; else echo FAIL_PROCESSES; fi"
+    ]
+  },
+  {
+    "label": "TCP",
+    "start_utc": "2026-09-08T05:41:01.726106+00:00",
+    "end_utc": "2026-09-08T05:41:01.860758+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/net/tcp /proc/net/tcp6 ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_TCP; else echo FAIL_TCP; fi"
+    ]
+  },
+  {
+    "label": "SPACE",
+    "start_utc": "2026-09-08T05:41:01.861092+00:00",
+    "end_utc": "2026-09-08T05:41:01.989029+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( df -k / /opt/usr ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_SPACE; else echo FAIL_SPACE; fi"
+    ]
+  },
+  {
+    "label": "MEMPS",
+    "start_utc": "2026-09-08T05:41:01.989395+00:00",
+    "end_utc": "2026-09-08T05:41:02.115022+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( command -v memps ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_MEMPS; else echo FAIL_MEMPS; fi"
+    ]
+  },
+  {
+    "label": "GDB_STATE",
+    "start_utc": "2026-09-08T05:41:02.115247+00:00",
+    "end_utc": "2026-09-08T05:41:02.279213+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q gdb; command -v gdb; true ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_GDB_STATE; else echo FAIL_GDB_STATE; fi"
+    ]
+  },
+  {
+    "label": "UPTIME",
+    "start_utc": "2026-09-08T05:41:02.279535+00:00",
+    "end_utc": "2026-09-08T05:41:02.424122+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( date -u; uptime; cat /proc/loadavg ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UPTIME; else echo FAIL_UPTIME; fi"
+    ]
+  },
+  {
+    "label": "HEALTH_READONLY",
+    "start_utc": "2026-09-08T05:41:02.424463+00:00",
+    "end_utc": "2026-09-08T05:41:02.598494+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat; cat /proc/swaps; dmesg ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_HEALTH_READONLY; else echo FAIL_HEALTH_READONLY; fi"
+    ]
+  },
+  {
+    "label": "PS_BEFORE",
+    "start_utc": "2026-09-08T05:41:02.599274+00:00",
+    "end_utc": "2026-09-08T05:41:02.833889+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( ps -ef; ps -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_PS_BEFORE; else echo FAIL_PS_BEFORE; fi"
+    ]
+  },
+  {
+    "label": "PID_26799_SNAPSHOT",
+    "start_utc": "2026-09-08T05:41:02.834405+00:00",
+    "end_utc": "2026-09-08T05:41:03.005740+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( if [ -d /proc/26799 ]; then\nps -p 26799 -o pid,ppid,tty,lstart,etime,args || exit 1\ncat /proc/26799/stat || exit 1\nprintf 'CMDLINE='; tr '\\000' ' ' </proc/26799/cmdline || exit 1; printf '\\n'\nprintf 'CWD='; readlink /proc/26799/cwd || echo UNREADABLE\nprintf 'STDIN='; readlink /proc/26799/fd/0 || echo UNREADABLE\nsed -n '/^btime /p' /proc/stat || exit 1\ngetconf CLK_TCK\nelse echo ALREADY_ABSENT; fi ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_PID_26799_SNAPSHOT; else echo FAIL_PID_26799_SNAPSHOT; fi"
+    ]
+  },
+  {
+    "label": "PID_27105_SNAPSHOT",
+    "start_utc": "2026-09-08T05:41:03.006293+00:00",
+    "end_utc": "2026-09-08T05:41:03.180889+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( if [ -d /proc/27105 ]; then\nps -p 27105 -o pid,ppid,tty,lstart,etime,args || exit 1\ncat /proc/27105/stat || exit 1\nprintf 'CMDLINE='; tr '\\000' ' ' </proc/27105/cmdline || exit 1; printf '\\n'\nprintf 'CWD='; readlink /proc/27105/cwd || echo UNREADABLE\nprintf 'STDIN='; readlink /proc/27105/fd/0 || echo UNREADABLE\nsed -n '/^btime /p' /proc/stat || exit 1\ngetconf CLK_TCK\nelse echo ALREADY_ABSENT; fi ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_PID_27105_SNAPSHOT; else echo FAIL_PID_27105_SNAPSHOT; fi"
+    ]
+  },
+  {
+    "label": "CLOSE_26799",
+    "start_utc": "2026-09-08T05:41:03.181295+00:00",
+    "end_utc": "2026-09-08T05:41:08.747725+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( p=26799\nif [ ! -d /proc/$p ]; then echo ALREADY_ABSENT_PID_$p; exit 0; fi\ncheck_target() {\ns=$(cat /proc/$p/stat) || exit 1\ns=${s##*) }\nset -- $s\n[ \"${20}\" = 60331272 ] || { echo FAIL_PID_REUSED; exit 1; }\n[ \"$(tr '\\000' ' ' </proc/$p/cmdline)\" = '/bin/sh -l ' ] || { echo FAIL_CMDLINE; exit 1; }\n[ \"$(readlink /proc/$p/fd/0)\" = /dev/pts/0 ] || { echo FAIL_TTY; exit 1; }\n}\nfor signal in TERM KILL; do\ncheck_target\nkill -\"$signal\" \"$p\" || exit 1\necho ${signal}_SENT_PID_$p\nn=0\nwhile [ -d /proc/$p ] && [ \"$n\" -lt 50 ]; do sleep 0.1; n=$((n+1)); done\n[ ! -d /proc/$p ] && break\ndone\n[ ! -d /proc/$p ] || { echo FAIL_PID_STILL_PRESENT; exit 1; }\necho VERIFIED_ABSENT_PID_$p ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_CLOSE_26799; else echo FAIL_CLOSE_26799; fi"
+    ]
+  },
+  {
+    "label": "CLOSE_27105",
+    "start_utc": "2026-09-08T05:41:08.748178+00:00",
+    "end_utc": "2026-09-08T05:41:14.332992+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( p=27105\nif [ ! -d /proc/$p ]; then echo ALREADY_ABSENT_PID_$p; exit 0; fi\ncheck_target() {\ns=$(cat /proc/$p/stat) || exit 1\ns=${s##*) }\nset -- $s\n[ \"${20}\" = 60337550 ] || { echo FAIL_PID_REUSED; exit 1; }\n[ \"$(tr '\\000' ' ' </proc/$p/cmdline)\" = '/bin/sh -l ' ] || { echo FAIL_CMDLINE; exit 1; }\n[ \"$(readlink /proc/$p/fd/0)\" = /dev/pts/1 ] || { echo FAIL_TTY; exit 1; }\n}\nfor signal in TERM KILL; do\ncheck_target\nkill -\"$signal\" \"$p\" || exit 1\necho ${signal}_SENT_PID_$p\nn=0\nwhile [ -d /proc/$p ] && [ \"$n\" -lt 50 ]; do sleep 0.1; n=$((n+1)); done\n[ ! -d /proc/$p ] && break\ndone\n[ ! -d /proc/$p ] || { echo FAIL_PID_STILL_PRESENT; exit 1; }\necho VERIFIED_ABSENT_PID_$p ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_CLOSE_27105; else echo FAIL_CLOSE_27105; fi"
+    ]
+  },
+  {
+    "label": "VERIFY_ABSENT",
+    "start_utc": "2026-09-08T05:41:14.333451+00:00",
+    "end_utc": "2026-09-08T05:41:14.463353+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test ! -d /proc/26799 && test ! -d /proc/27105 ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_VERIFY_ABSENT; else echo FAIL_VERIFY_ABSENT; fi"
+    ]
+  },
+  {
+    "label": "PS_AFTER",
+    "start_utc": "2026-09-08T05:41:14.463762+00:00",
+    "end_utc": "2026-09-08T05:41:14.646999+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( ps -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_PS_AFTER; else echo FAIL_PS_AFTER; fi"
+    ]
+  }
+]

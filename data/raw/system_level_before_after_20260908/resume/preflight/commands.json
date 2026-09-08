@@ -1,0 +1,228 @@
+[
+  {
+    "label": "sdb_version",
+    "start_utc": "2026-09-08T05:39:53.777406+00:00",
+    "end_utc": "2026-09-08T05:39:53.778787+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "connect",
+    "start_utc": "2026-09-08T05:39:53.778862+00:00",
+    "end_utc": "2026-09-08T05:39:53.783049+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "devices",
+    "start_utc": "2026-09-08T05:39:53.783382+00:00",
+    "end_utc": "2026-09-08T05:39:53.785065+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "devices"
+    ]
+  },
+  {
+    "label": "UNAME_R",
+    "start_utc": "2026-09-08T05:39:53.785342+00:00",
+    "end_utc": "2026-09-08T05:39:53.918553+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UNAME_R; else echo FAIL_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "UNAME_M",
+    "start_utc": "2026-09-08T05:39:53.918865+00:00",
+    "end_utc": "2026-09-08T05:39:54.049415+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UNAME_M; else echo FAIL_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "OS_RELEASE",
+    "start_utc": "2026-09-08T05:39:54.049785+00:00",
+    "end_utc": "2026-09-08T05:39:54.181752+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_OS_RELEASE; else echo FAIL_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "GLIBC",
+    "start_utc": "2026-09-08T05:39:54.189597+00:00",
+    "end_utc": "2026-09-08T05:39:54.364046+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q glibc ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_GLIBC; else echo FAIL_GLIBC; fi"
+    ]
+  },
+  {
+    "label": "MEMINFO",
+    "start_utc": "2026-09-08T05:39:54.364435+00:00",
+    "end_utc": "2026-09-08T05:39:54.494079+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/meminfo ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_MEMINFO; else echo FAIL_MEMINFO; fi"
+    ]
+  },
+  {
+    "label": "UID",
+    "start_utc": "2026-09-08T05:39:54.494695+00:00",
+    "end_utc": "2026-09-08T05:39:54.625148+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id -u ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UID; else echo FAIL_UID; fi"
+    ]
+  },
+  {
+    "label": "GOVERNORS",
+    "start_utc": "2026-09-08T05:39:54.625550+00:00",
+    "end_utc": "2026-09-08T05:39:54.774681+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; test -w \"$p\" || exit 1; cat \"$p\" || exit 1; done ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_GOVERNORS; else echo FAIL_GOVERNORS; fi"
+    ]
+  },
+  {
+    "label": "WORKDIR",
+    "start_utc": "2026-09-08T05:39:54.775102+00:00",
+    "end_utc": "2026-09-08T05:39:54.905896+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test -d /opt/usr && test -w /opt/usr && if [ -d /opt/usr/glibc_memopt ]; then ls -la /opt/usr/glibc_memopt; test -z \"$(ls -A /opt/usr/glibc_memopt)\"; else echo ABSENT; fi ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_WORKDIR; else echo FAIL_WORKDIR; fi"
+    ]
+  },
+  {
+    "label": "PROCESSES",
+    "start_utc": "2026-09-08T05:39:54.906206+00:00",
+    "end_utc": "2026-09-08T05:39:57.472674+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do test -r \"$p/comm\" || continue; printf '%s\\t' \"${p##*/}\"; tr '\\n' ' ' <\"$p/comm\"; printf '\\t'; tr '\\000' ' ' <\"$p/cmdline\" 2>/dev/null; printf '\\n'; done ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_PROCESSES; else echo FAIL_PROCESSES; fi"
+    ]
+  },
+  {
+    "label": "TCP",
+    "start_utc": "2026-09-08T05:39:57.473433+00:00",
+    "end_utc": "2026-09-08T05:39:57.604721+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/net/tcp /proc/net/tcp6 ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_TCP; else echo FAIL_TCP; fi"
+    ]
+  },
+  {
+    "label": "SPACE",
+    "start_utc": "2026-09-08T05:39:57.605047+00:00",
+    "end_utc": "2026-09-08T05:39:57.737019+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( df -k / /opt/usr ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_SPACE; else echo FAIL_SPACE; fi"
+    ]
+  },
+  {
+    "label": "MEMPS",
+    "start_utc": "2026-09-08T05:39:57.752048+00:00",
+    "end_utc": "2026-09-08T05:39:57.881592+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( command -v memps ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_MEMPS; else echo FAIL_MEMPS; fi"
+    ]
+  },
+  {
+    "label": "GDB_STATE",
+    "start_utc": "2026-09-08T05:39:57.881916+00:00",
+    "end_utc": "2026-09-08T05:39:58.045952+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q gdb; command -v gdb; true ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_GDB_STATE; else echo FAIL_GDB_STATE; fi"
+    ]
+  },
+  {
+    "label": "UPTIME",
+    "start_utc": "2026-09-08T05:39:58.046299+00:00",
+    "end_utc": "2026-09-08T05:39:58.189293+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( date -u; uptime; cat /proc/loadavg ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_UPTIME; else echo FAIL_UPTIME; fi"
+    ]
+  },
+  {
+    "label": "HEALTH_READONLY",
+    "start_utc": "2026-09-08T05:39:58.189799+00:00",
+    "end_utc": "2026-09-08T05:39:58.355795+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat; cat /proc/swaps; dmesg ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_HEALTH_READONLY; else echo FAIL_HEALTH_READONLY; fi"
+    ]
+  }
+]

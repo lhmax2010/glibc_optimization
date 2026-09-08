@@ -1,0 +1,8 @@
+{
+  "start_utc": "2026-09-08T05:39:53.769147+00:00",
+  "verdict": "PASS_READONLY_AVAILABILITY",
+  "board_mutations": false,
+  "push_to_gate_seconds": 2641.637125787,
+  "enlightenment_pid": 505,
+  "end_utc": "2026-09-08T05:39:58.356788+00:00"
+}

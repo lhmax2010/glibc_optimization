@@ -1,0 +1,215 @@
+COLLECTOR_PID=14494
+  PID  PPID TT                        STARTED     ELAPSED COMMAND
+    1     0 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 /sbin/init
+    2     0 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kthreadd]
+    3     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [pool_workqueue_release]
+    4     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-kvfree_rcu_reclaim]
+    5     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-rcu_gp]
+    6     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-sync_wq]
+    7     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-slub_flushwq]
+    8     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-netns]
+   13     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-mm_percpu_wq]
+   14     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [rcu_tasks_rude_kthread]
+   15     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [rcu_tasks_trace_kthread]
+   16     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [ksoftirqd/0]
+   17     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [rcu_sched]
+   18     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [rcu_exp_par_gp_kthread_worker/0]
+   19     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [rcu_exp_gp_kthread_worker]
+   20     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [migration/0]
+   21     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [cpuhp/0]
+   22     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [cpuhp/1]
+   23     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [migration/1]
+   24     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [ksoftirqd/1]
+   27     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [cpuhp/2]
+   28     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [migration/2]
+   29     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [ksoftirqd/2]
+   32     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [cpuhp/3]
+   33     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [migration/3]
+   34     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [ksoftirqd/3]
+   41     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kdevtmpfs]
+   42     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-inet_frag_wq]
+   43     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kauditd]
+   44     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [khungtaskd]
+   45     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [oom_reaper]
+   47     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-writeback]
+   48     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kcompactd0]
+   49     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-cryptd]
+   50     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-kblockd]
+   51     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-blkcg_punt_bio]
+   54     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [watchdogd]
+   57     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-rpciod]
+   58     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-xprtiod]
+   59     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-cfg80211]
+   61     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kswapd0]
+   62     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-nfsiod]
+   63     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/u21:0-hci0]
+   64     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/u22:0]
+   65     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/u23:0]
+   66     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/u24:0]
+   67     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/u25:0]
+   68     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [kworker/R-kthrotld]
+   77     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:31 [hwrng]
+   78     2 ?        Fri Aug 28 15:50:37 2026 10-22:53:30 [kworker/R-iscsi_conn_cleanup]
+   80     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-uas]
+   82     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-dm_bufio_cache]
+   84     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [vchiq-slot/0]
+   85     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [vchiq-recy/0]
+   86     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [vchiq-sync/0]
+   87     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [vchiq-keep/0]
+   91     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [SMIO]
+   92     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mmal-vchiq]
+   93     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mmal-vchiq]
+   94     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mmal-vchiq]
+   95     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mmal-vchiq]
+   96     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mmal-vchiq]
+   97     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mmal-vchiq]
+   98     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mmal-vchiq]
+   99     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-mld]
+  100     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-ipv6_addrconf]
+  102     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [krfcommd]
+  105     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/54-vc4 hdmi hpd connected]
+  106     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/55-vc4 hdmi hpd disconnected]
+  107     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [cec-vc4-hdmi-0]
+  108     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/56-vc4 hdmi cec rx]
+  109     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/57-vc4 hdmi cec tx]
+  110     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/58-vc4 hdmi hpd connected]
+  111     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/59-vc4 hdmi hpd disconnected]
+  112     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [cec-vc4-hdmi-1]
+  113     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/60-vc4 hdmi cec rx]
+  114     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/61-vc4 hdmi cec tx]
+  115     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [card0-crtc0]
+  116     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [card0-crtc1]
+  117     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [card0-crtc2]
+  118     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [card0-crtc3]
+  119     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [card0-crtc4]
+  120     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [card0-crtc5]
+  121     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-sdhci]
+  122     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [irq/68-mmc0]
+  125     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-v3d_bin]
+  126     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-v3d_render]
+  127     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-v3d_tfu]
+  128     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-v3d_csd]
+  129     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-v3d_cache_clean]
+  130     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:30 [kworker/R-v3d_cpu]
+  147     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:29 [kworker/3:1H-kblockd]
+  148     2 ?        Fri Aug 28 15:50:38 2026 10-22:53:29 [kworker/R-mmc_complete]
+  190     2 ?        Fri Aug 28 15:50:39 2026 10-22:53:28 [jbd2/mmcblk0p6-8]
+  191     2 ?        Fri Aug 28 15:50:39 2026 10-22:53:28 [kworker/R-ext4-rsv-conversion]
+  233     2 ?        Fri Aug 28 15:50:40 2026 10-22:53:28 [jbd2/mmcblk0p2-8]
+  234     2 ?        Fri Aug 28 15:50:40 2026 10-22:53:28 [kworker/R-ext4-rsv-conversion]
+  238     2 ?        Fri Aug 28 15:50:40 2026 10-22:53:28 [jbd2/mmcblk0p3-8]
+  239     2 ?        Fri Aug 28 15:50:40 2026 10-22:53:28 [kworker/R-ext4-rsv-conversion]
+  241     2 ?        Fri Aug 28 15:50:40 2026 10-22:53:28 [jbd2/mmcblk0p10-8]
+  242     2 ?        Fri Aug 28 15:50:40 2026 10-22:53:28 [kworker/R-ext4-rsv-conversion]
+  280     2 ?        Fri Aug 28 15:50:47 2026 10-22:53:20 [jbd2/mmcblk0p9-8]
+  281     2 ?        Fri Aug 28 15:50:47 2026 10-22:53:20 [kworker/R-ext4-rsv-conversion]
+  284     1 ?        Fri Aug 28 15:50:47 2026 10-22:53:20 /usr/lib/systemd/systemd-journald
+  289     2 ?        Fri Aug 28 15:50:47 2026 10-22:53:20 [f2fs_ckpt-179:5]
+  290     2 ?        Fri Aug 28 15:50:47 2026 10-22:53:20 [f2fs_flush-179:5]
+  291     2 ?        Fri Aug 28 15:50:47 2026 10-22:53:20 [f2fs_discard-179:5]
+  307     2 ?        Fri Aug 28 15:50:48 2026 10-22:53:20 [f2fs_gc-179:5]
+  328     1 ?        Fri Aug 28 15:50:48 2026 10-22:53:20 /usr/lib/systemd/systemd-udevd
+  389     2 ?        Fri Aug 28 15:50:49 2026 10-22:53:19 [kworker/u21:2-hci0]
+  393     1 ?        Fri Aug 28 15:50:49 2026 10-22:53:18 /usr/bin/hal/hal-backend-service --stub-proc-name d::hal-backend-service device-display device-led device-battery device-bezel device-external-connection
+  407     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:18 /usr/sbin/actd
+  408     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:18 /usr/sbin/buxton2d -f
+  409     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:18 /usr/bin/key-manager
+  412     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:18 /usr/bin/esd
+  413     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:18 /usr/bin/pkginfo-server
+  414     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:18 /usr/bin/resourced
+  415     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:18 /usr/bin/dlog_logger
+  439     1 ?        Fri Aug 28 15:50:50 2026 10-22:53:17 /usr/bin/sensord
+  440     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/amd
+  442     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/cynara
+  443     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  446     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/deviced
+  451     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/license-manager-agent
+  455     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/media-server
+  462     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/pushd
+  476     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 login -- root
+  478     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/sbin/stability-monitor
+  484     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/net-config
+  505     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:17 /usr/bin/enlightenment
+  517     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:16 /usr/bin/pulseaudio
+  518     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:16 /usr/lib/systemd/systemd-logind
+  520     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:16 /usr/bin/connmand -n --nobacktrace --noplugin vpn
+  521     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:16 /usr/bin/rscmgr-service
+  532     1 ?        Fri Aug 28 15:50:51 2026 10-22:53:16 /usr/bin/update-manager
+  571     2 ?        Fri Aug 28 15:50:52 2026 10-22:53:16 [psimon]
+  583     1 ?        Fri Aug 28 15:50:52 2026 10-22:53:16 /usr/bin/contextd
+  587     2 ?        Fri Aug 28 15:50:52 2026 10-22:53:16 [kworker/R-ext4-rsv-conversion]
+  600     1 ?        Fri Aug 28 15:50:52 2026 10-22:53:16 /usr/bin/storaged
+  620     2 ?        Fri Aug 28 15:50:52 2026 10-22:53:15 [kworker/R-ext4-rsv-conversion]
+  625     1 ?        Fri Aug 28 15:50:52 2026 10-22:53:15 /usr/bin/tlm
+  639   625 ?        Fri Aug 28 15:50:52 2026 10-22:53:15 /usr/bin/tlm-sessiond
+  650     1 ?        Fri Aug 28 15:50:53 2026 10-22:53:15 /usr/bin/focus_server -S
+  661     1 ?        Fri Aug 28 15:50:53 2026 10-22:53:15 /usr/lib/systemd/systemd --user
+  667   661 ?        Fri Aug 28 15:50:53 2026 10-22:53:15 (sd-pam)
+  676   639 tty7     Fri Aug 28 15:50:53 2026 10-22:53:15 /bin/bash
+  739   661 ?        Fri Aug 28 15:50:53 2026 10-22:53:14 /usr/bin/launchpad-process-pool
+  761   739 ?        Fri Aug 28 15:50:54 2026 10-22:53:14 /usr/apps/ise-default/bin/ise-default `zaybxcwdveuftgsh` __APP_SVC_OP_TYPE__ UgAAAAEEAAAUAAAAX19BUFBfU1ZDX09QX1RZUEVfXwAuAAAAaHR0cDovL3RpemVuLm9yZy9hcHBjb250cm9sL29wZXJhdGlvbi9kZWZhdWx0AA== __AUL_TARGET_UID__ KAAAAAEEAAATAAAAX19BVUxfVEFSR0VUX1VJRF9fAAUAAAA1MDAxAA== __AUL_APPID__ KgAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAMAAAAaXNlLWRlZmF1bHQA __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADE3LzQzOTMzOTcxMQA= __AUL_SOCKET_TIMEOUT__ LQAAAAEEAAAXAAAAX19BVUxfU09DS0VUX1RJTUVPVVRfXwAGAAAAMTAwMDAA __APP_SVC_PKG_NAME__ MQAAAAEEAAAVAAAAX19BUFBfU1ZDX1BLR19OQU1FX18ADAAAAGlzZS1kZWZhdWx0AA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA3NjYA __AUL_CALLER_UID__ KAAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAUAAAA1MDAxAA== __AUL_ALLOWED_BG__ LgAAAAEEAAATAAAAX19BVUxfQUxMT1dFRF9CR19fAAsAAABBTExPV0VEX0JHAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAU1lTAA== __AUL_ROOT_PATH__ OAAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18AFgAAAC91c3IvYXBwcy9pc2UtZGVmYXVsdAA= __AUL_EXEC__ QwAAAAEEAAANAAAAX19BVUxfRVhFQ19fACYAAAAvdXNyL2FwcHMvaXNlLWRlZmF1bHQvYmluL2lzZS1kZWZhdWx0AA== __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAcnBtAA== __AUL_PKGID_ KQAAAAEEAAANAAAAX19BVUxfUEtHSURfAAwAAABpc2UtZGVmYXVsdAA= __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KAAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABgAAAHVpYXBwAA== __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KAAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAEAAAANC4wAA== __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+  766   661 ?        Fri Aug 28 15:50:54 2026 10-22:53:14 /usr/bin/isf
+  768     1 ?        Fri Aug 28 15:50:54 2026 10-22:53:14 bash /usr/bin/enlightenment_mon.sh
+  783     1 ?        Fri Aug 28 15:50:54 2026 10-22:53:14 /usr/bin/muse-server -D
+  808     1 ?        Fri Aug 28 15:50:54 2026 10-22:53:14 /usr/bin/lbs-server
+  813     1 ?        Fri Aug 28 15:50:54 2026 10-22:53:14 /usr/bin/pass
+  845   661 ?        Fri Aug 28 15:50:54 2026 10-22:53:13 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  848     1 ?        Fri Aug 28 15:50:54 2026 10-22:53:13 /usr/bin/security-manager
+  853   848 ?        Fri Aug 28 15:50:55 2026 10-22:53:13 /usr/bin/security-manager
+  860   661 ?        Fri Aug 28 15:50:55 2026 10-22:53:13 /usr/bin/starter
+  872   739 ?        Fri Aug 28 15:50:55 2026 10-22:53:13 /usr/bin/dotnet-hydra-loader 1 0 1 NDA2NWIwMGMxODg2NTIxYWM3MDRlNWZlZDM5ODYyNzAhAAAAAQQAAAoAAAAtLWFwcFR5cGUABwAAAGRvdG5ldAAfAAAAAQQAAAsAAABUSVpFTl9VSUZXAAQAAABOVUkAHwAAAAEEAAAKAAAALS1wcm9maWxlAAUAAAB0cnVlAB8AAAABBAAACgAAAC0tcHJlZm9yawAFAAAAdHJ1ZQAhAAAAAQQAAA8AAABTQ0hFRF9QUklPUklUWQACAAAAMAA=                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+  890   739 ?        Fri Aug 28 15:50:55 2026 10-22:53:13 /usr/apps/org.tizen.multi-assistant-service/bin/org.tizen.multi-assistant-service `zaybxcwdveuftgsh` __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADE4LzY3OTc5NTgyMgA= __AUL_APPID__ QAAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAiAAAAb3JnLnRpemVuLm11bHRpLWFzc2lzdGFudC1zZXJ2aWNlAA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA0NDAA __AUL_CALLER_UID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAQAAAAzMDEA __AUL_ALLOWED_BG__ LgAAAAEEAAATAAAAX19BVUxfQUxMT1dFRF9CR19fAAsAAABBTExPV0VEX0JHAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAU1lTAA== __AUL_ROOT_PATH__ TgAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18ALAAAAC91c3IvYXBwcy9vcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_EXEC__ bwAAAAEEAAANAAAAX19BVUxfRVhFQ19fAFIAAAAvdXNyL2FwcHMvb3JnLnRpemVuLm11bHRpLWFzc2lzdGFudC1zZXJ2aWNlL2Jpbi9vcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAcnBtAA== __AUL_PKGID_ PwAAAAEEAAANAAAAX19BVUxfUEtHSURfACIAAABvcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KQAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABwAAAHN2Y2FwcAA= __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KAAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAEAAAANS4wAA== __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+  931     1 ?        Fri Aug 28 15:50:55 2026 10-22:53:12 /usr/bin/ise-engine-loader
+  948   661 ?        Fri Aug 28 15:50:56 2026 10-22:53:12 /usr/libexec/at-spi-bus-launcher
+  967     1 ?        Fri Aug 28 15:50:56 2026 10-22:53:12 /usr/bin/mtp-responder
+  968     1 ?        Fri Aug 28 15:50:56 2026 10-22:53:12 /usr/sbin/sdbd
+  978   739 ?        Fri Aug 28 15:50:56 2026 10-22:53:12 /usr/apps/org.tizen.homescreen/bin/runner `zaybxcwdveuftgsh` __APP_SVC_OP_TYPE__ UgAAAAEEAAAUAAAAX19BUFBfU1ZDX09QX1RZUEVfXwAuAAAAaHR0cDovL3RpemVuLm9yZy9hcHBjb250cm9sL29wZXJhdGlvbi9kZWZhdWx0AA== __AUL_TARGET_UID__ KAAAAAEEAAATAAAAX19BVUxfVEFSR0VUX1VJRF9fAAUAAAA1MDAxAA== __AUL_APPID__ MwAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAVAAAAb3JnLnRpemVuLmhvbWVzY3JlZW4A __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADIyLzk3NDk4NTM5MwA= __AUL_SOCKET_TIMEOUT__ LQAAAAEEAAAXAAAAX19BVUxfU09DS0VUX1RJTUVPVVRfXwAGAAAAMTAwMDAA __APP_SVC_PKG_NAME__ OgAAAAEEAAAVAAAAX19BUFBfU1ZDX1BLR19OQU1FX18AFQAAAG9yZy50aXplbi5ob21lc2NyZWVuAA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA4NjAA __AUL_CALLER_UID__ KAAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAUAAAA1MDAxAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAVVNFAA== __AUL_ROOT_PATH__ QQAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18AHwAAAC91c3IvYXBwcy9vcmcudGl6ZW4uaG9tZXNjcmVlbgA= __AUL_EXEC__ RwAAAAEEAAANAAAAX19BVUxfRVhFQ19fACoAAAAvdXNyL2FwcHMvb3JnLnRpemVuLmhvbWVzY3JlZW4vYmluL3J1bm5lcgA= __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAdHBrAA== __AUL_PKGID_ MgAAAAEEAAANAAAAX19BVUxfUEtHSURfABUAAABvcmcudGl6ZW4uaG9tZXNjcmVlbgA= __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KAAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABgAAAHVpYXBwAA== __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KQAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAFAAAAMTAuMAA= __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+ 1022   872 ?        Fri Aug 28 15:50:57 2026 10-22:53:11 /usr/bin/dotnet-hydra-loader candidate                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+ 1023   872 ?        Fri Aug 28 15:50:57 2026 10-22:53:11 /usr/apps/org.tizen.systemui/bin/SystemUI.dll                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+ 1042   872 ?        Fri Aug 28 15:50:58 2026 10-22:53:09 /usr/bin/process-pool <hydra-loader>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+ 1047     1 ?        Fri Aug 28 15:50:58 2026 10-22:53:09 /usr/bin/theme-provider
+ 1133   476 ttyS0    Fri Aug 28 15:51:07 2026 10-22:53:01 -bash
+ 2158     2 ?        Tue Sep  8 04:27:23 2026    10:16:45 [kworker/u19:1-events_unbound]
+ 2600     2 ?        Mon Sep  7 09:11:44 2026  1-05:32:24 [kworker/u19:0-events_unbound]
+ 2925     2 ?        Tue Sep  8 14:06:55 2026       37:13 [kworker/1:2H]
+ 4021     2 ?        Tue Sep  8 02:38:22 2026    12:05:45 [kworker/u20:2-events_unbound]
+ 4414     2 ?        Tue Sep  8 14:12:12 2026       31:55 [kworker/2:1-events]
+ 4735     2 ?        Mon Sep  7 15:06:32 2026    23:37:35 [kworker/u20:1-events_unbound]
+ 5401     2 ?        Tue Sep  8 14:15:47 2026       28:21 [kworker/3:2-events_power_efficient]
+ 5839     2 ?        Tue Sep  8 14:17:20 2026       26:47 [kworker/1:2-mm_percpu_wq]
+ 6721     2 ?        Tue Sep  8 14:20:30 2026       23:38 [kworker/2:3-events]
+ 7525     2 ?        Tue Sep  8 14:23:23 2026       20:45 [kworker/2:0H]
+ 8105     2 ?        Tue Sep  8 14:25:30 2026       18:38 [kworker/0:0-events]
+ 9012     2 ?        Mon Sep  7 19:13:17 2026    19:30:51 [kworker/u20:0-events_unbound]
+ 9110     2 ?        Tue Sep  8 14:29:05 2026       15:02 [kworker/1:0-events_power_efficient]
+ 9507     2 ?        Tue Sep  8 14:30:33 2026       13:35 [kworker/0:1-events]
+ 9787     2 ?        Tue Sep  8 14:31:32 2026       12:36 [kworker/u16:2-v3d_render]
+ 9844     2 ?        Tue Sep  8 08:46:22 2026    05:57:46 [kworker/u17:0-events_unbound]
+10227     2 ?        Tue Sep  8 14:33:07 2026       11:01 [kworker/3:0-events]
+10567     2 ?        Tue Sep  8 14:34:22 2026       09:46 [kworker/1:3-events]
+10946     2 ?        Tue Sep  8 14:35:43 2026       08:25 [kworker/0:2-events]
+11062     2 ?        Mon Sep  7 21:16:22 2026    17:27:46 [kworker/u17:2-events_unbound]
+11272     2 ?        Tue Sep  8 14:36:52 2026       07:15 [kworker/u16:0-v3d_render]
+11935     2 ?        Tue Sep  8 14:39:17 2026       04:51 [kworker/3:1-rcu_gp]
+11964     2 ?        Tue Sep  8 14:39:23 2026       04:45 [kworker/2:0-mm_percpu_wq]
+12063     2 ?        Tue Sep  8 14:39:44 2026       04:24 [kworker/0:3-rcu_gp]
+12136     2 ?        Sat Sep  5 03:46:12 2026  3-10:57:56 [kworker/2:1H-kblockd]
+12734     2 ?        Tue Sep  8 14:40:21 2026       03:46 [kworker/1:1-events_freezable_pwr_efficient]
+12924     2 ?        Tue Sep  8 12:48:52 2026    01:55:15 [kworker/u17:3-events_unbound]
+13438     2 ?        Fri Sep  4 11:23:42 2026  4-03:20:26 [kworker/1:1H-kblockd]
+13893     2 ?        Tue Sep  8 14:42:02 2026       02:06 [kworker/u16:1-v3d_bin]
+14447     2 ?        Tue Sep  8 10:58:42 2026    03:45:25 [kworker/u18:3-kvfree_rcu_reclaim]
+14492   768 ?        Tue Sep  8 14:44:08 2026       00:00 sleep 3
+14494     1 pts/0    Tue Sep  8 14:44:08 2026       00:00 /bin/sh -c ( printf 'COLLECTOR_PID=%s\n' "$$"; ps -ww -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\nRC=%s\n' "$rc"; if [ "$rc" -eq 0 ]; then echo DONE_PS_RECHECK; else echo FAIL_PS_RECHECK; fi
+14496 14494 pts/0    Tue Sep  8 14:44:08 2026       00:00 /bin/sh -c ( printf 'COLLECTOR_PID=%s\n' "$$"; ps -ww -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\nRC=%s\n' "$rc"; if [ "$rc" -eq 0 ]; then echo DONE_PS_RECHECK; else echo FAIL_PS_RECHECK; fi
+14497 14496 pts/0    Tue Sep  8 14:44:08 2026       00:00 ps -ww -eo pid,ppid,tty,lstart,etime,args
+17783     2 ?        Tue Sep  8 13:06:22 2026    01:37:45 [kworker/u18:2-events_unbound]
+18858     2 ?        Fri Sep  4 22:24:22 2026  3-16:19:46 [sugov:0]
+30139     2 ?        Tue Sep  8 11:55:08 2026    02:49:00 [kworker/3:0H]
+31315     2 ?        Tue Sep  8 11:59:22 2026    02:44:45 [kworker/u18:0-flush-179:0]
+31429     2 ?        Tue Sep  8 06:12:33 2026    08:31:35 [kworker/u19:2]
+31638     2 ?        Tue Sep  8 12:00:31 2026    02:43:37 [kworker/0:0H]
+31673     2 ?        Fri Sep  4 15:40:50 2026  3-23:03:18 [kworker/0:2H-mmc_complete]
+
+RC=0
+DONE_PS_RECHECK

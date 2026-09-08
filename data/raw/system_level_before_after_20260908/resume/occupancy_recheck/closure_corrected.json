@@ -1,0 +1,12 @@
+{
+  "verdict": "PASS_PM_OCCUPANCY_CLOSED",
+  "method": "offline reclassification of already-recorded PS_RECHECK; no further board probe",
+  "collector_pid": 14494,
+  "collector_descendants": [
+    14496,
+    14497
+  ],
+  "remaining_foreign_sessions": [],
+  "previous_parser_verdict_preserved": "closure.json",
+  "both_approved_pids_absent": "VERIFY_APPROVED_ABSENT.txt"
+}

@@ -1,6 +1,13 @@
 # 系统级前后对照补测（2026-09-08）
 
-最终状态：**STOP_OCCUPANCY_UNRESOLVED**。身份/环境自动检查通过，但两个已有交互会话归属未明，不能排除共享占用；实验格执行 **0/21**，未产生新的前后对照测量。第 2、3 段不执行，不切 demo-v12。既有数据、验收带与技术结论不变，当前有效交付快照仍为 `demo-v11`。事前规格保留如下，实际执行记录见 §3。
+2026-09-08 续跑追注（执行前）：PM 确认 `<TEST_BOARD_IP>` 当前专供本 glibc 项目，
+无其他人在用；PID 26799（pts/0）与 27105（pts/1）为残留登录会话，批准清除。
+此裁决闭合 §3 的归属未知项，不覆盖身份/环境及其他健康门。清除前后原文分别留存，
+只在 PID、启动 tick、cmdline、TTY 与获批对象一致时发送 TERM；如有出入停止。
+沿用原 annotated tag `system-before-after-contract-20260908`，合同与 analyzer 不改字节，
+不重新打 tag。下文原停止记录保留；执行器安全测试闭合前不启动任何正式格。
+
+首次执行状态（历史保留）：**STOP_OCCUPANCY_UNRESOLVED**。身份/环境自动检查通过，但两个已有交互会话归属未明，不能排除共享占用；当时实验格执行 **0/21**，未产生新的前后对照测量，第 2、3 段未执行。既有数据、验收带与技术结论不变。续跑占用处置见 §5；完整矩阵与交付门通过前，当前有效交付快照仍为 `demo-v11`。
 
 ## 1. 事前合同
 
@@ -167,3 +174,40 @@ PPID=1 可能是历史/孤儿会话，但不证明失去交互终端或归属本
 需要后续明确的是两条已有会话的归属/是否可用的实验时段；本轮不向 PM 临时索取许可继续，
 不自行清理、不另换负载或板。本次无人值守任务在此终止，完整汇总见
 [晨间汇总](overnight_summary_20260908.md)。
+
+## 5. PM 裁决后续跑：占用处置与执行器闭合
+
+### 5.1 授权与逐项处置
+
+裁决人 PM，日期 2026-09-08；依据为板当前专供本项目、无其他用户，两条登录会话已确认为残留。
+这解决的是外部归属信息，未修改 §1 合同或改变任何测量参数。原停止记录与 tag 均保留。
+
+| 核验/动作 | 原文结论 | 证据 |
+|---|---|---|
+| 新一轮身份/环境门 | PASS；仍为 rpi4 / armv7l / 既定 BUILD_ID，glibc-2.40-1.6.armv7l，MemTotal 8117408 KiB | [检查回执](../data/raw/system_level_before_after_20260908/resume/preflight/verdict.json)、[命令](../data/raw/system_level_before_after_20260908/resume/preflight/commands.json) |
+| PID 26799 清除前 | `/bin/sh -l`，start tick 60331272，pts/0，cwd `/root`；启动时间板端原文 `Fri Sep 4 15:25:49 2026` | [完整 PID 快照](../data/raw/system_level_before_after_20260908/resume/occupancy/PID_26799_SNAPSHOT.txt) |
+| PID 27105 清除前 | `/bin/sh -l`，start tick 60337550，pts/1，cwd `/root`；启动时间板端原文 `Fri Sep 4 15:26:52 2026` | [完整 PID 快照](../data/raw/system_level_before_after_20260908/resume/occupancy/PID_27105_SNAPSHOT.txt) |
+| 清除 | 两者均先 TERM、等待未退出，再复核 start tick/cmdline/TTY 后各一次 KILL；均 `VERIFIED_ABSENT` | [26799 动作](../data/raw/system_level_before_after_20260908/resume/occupancy/CLOSE_26799.txt)、[27105 动作](../data/raw/system_level_before_after_20260908/resume/occupancy/CLOSE_27105.txt)、[二次确认](../data/raw/system_level_before_after_20260908/resume/occupancy_recheck/VERIFY_APPROVED_ABSENT.txt) |
+| 清除后占用复核 | 没有其他非系统交互会话；明确排除采集器 PID 14494 及其子孙 14496/14497，不按“相同 PTY”整体排除 | [ps 全行](../data/raw/system_level_before_after_20260908/resume/occupancy_recheck/PS_RECHECK.txt)、[最终重判](../data/raw/system_level_before_after_20260908/resume/occupancy_recheck/closure_corrected.json) |
+
+清理使两条残留会话不可恢复，但未删除其文件；完整快照已归档。首次 parser 只按 `pts/` 搜索，
+把采集命令自身误报为占用；一次只读复核后发现 sdb RC 包装还产生嵌套子 shell。最终按已采集
+PID/PPID 树离线重判，未再探测或清除新增 PID。两份原 `STOP` parser 回执不覆写，
+[修正器与回归测试](../tools/runners/system_level_before_after_20260908/test_session_cleanup.py)明确覆盖此形态。
+
+时间线（host UTC）：续跑身份检查 `05:39:53.769147`–`05:39:58.356788`；清理过程
+`05:40:58.091063`–`05:41:14.647555`；只读复核 `05:43:44.843060`–`05:43:45.147751`。
+板端 ps 日历原文独立保留，不把板/host 时钟混用。合同原推送完成时间与 tag 对象仍以 §3.1 为准。
+
+### 5.2 执行器安全闭合（host，不是测量数字）
+
+解除旧草稿阻断的必要实现包括：逐段传播快照失败、严格 cell/phase 与父目录 symlink 检查、
+PID/starttime 所有权、限时 bench/sampler/gdb 清理、信号退出先恢复 governor、G4 NULL FILE*
+与有效 XML/身份复核、末点外部采样覆盖、跨格复用冻结 analyzer 的完整有效性检查。
+host 编排区分内外 RC 标志，拉取 tar 与逐件 SHA 均核验，工作目录以本轮 owner token 保护；
+仅卸载本轮新增六包，拉取/归属/清理失败均不删除未证实归档完整的工作目录。
+
+对应 [shell 安全测试](../tools/runners/system_level_before_after_20260908/test_executor_safety.py)、
+[host 编排测试](../tools/runners/system_level_before_after_20260908/test_executor_host.py)、
+[冻结字节测试](../tools/runners/system_level_before_after_20260908/test_stopped_round.py)。
+这些不替代板上健康或效果证据；运行一次完整矩阵前，先提交该实现与测试，不重打合同 tag。

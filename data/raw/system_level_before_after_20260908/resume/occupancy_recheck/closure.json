@@ -1,0 +1,10 @@
+{
+  "start_utc": "2026-09-08T05:43:44.843060+00:00",
+  "correction": "exclude only explicitly identified collector PID and direct children",
+  "verdict": "STOP",
+  "remaining_sessions": [
+    "14497 14496 pts/0    Tue Sep  8 14:44:08 2026       00:00 ps -ww -eo pid,ppid,tty,lstart,etime,args"
+  ],
+  "reason": "remaining interactive sessions",
+  "end_utc": "2026-09-08T05:43:45.147751+00:00"
+}
