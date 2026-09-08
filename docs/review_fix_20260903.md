@@ -197,3 +197,7 @@ RC=2，被误分环境。修复后四例都为 proof integrity RC=1，且不生�
 `test_v10_public_execution_proof_matches_commit_and_delivery_files` 把新归档同时绑定到
 执行 commit、交付 HEAD 与当前六文件字节。另有 exec/exit 异常返回不落入未净化正文
 的回归，以及 Modules 拒绝与干净进程规避命令的正反测试。
+
+切库前检查另发现 Modules 正向 fixture 清空环境时丢弃临时 identity override；已把该
+环境测试的身份固定为自身 HEAD，避免依赖尚未创建的交付标签。独立的 required /
+REPORT_ONLY 身份测试与最终远端克隆门保持原语义。

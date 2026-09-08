@@ -540,6 +540,9 @@ elif name == "cpio":
         # Same environment semantics as the documented env -i command. Using a
         # subprocess environment avoids making env an extra verify prerequisite.
         clean = {name: env[name] for name in ("PATH", "HOME", "REPRODUCE_ALLOW_DIRTY", "REPRODUCE_SKIP_TESTS") if name in env}
+        # This is an environment-cleaning test, not the separate delivery-ref
+        # test. It must also run before a future delivery tag has been created.
+        clean["REPRODUCE_EXPECTED_SHA"] = "HEAD"
         accepted = subprocess.run(["bash", "--noprofile", "--norc", "-p", str(HERE / "reproduce.sh"), "verify"],
                                   env=clean, text=True, capture_output=True, timeout=30)
         self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
