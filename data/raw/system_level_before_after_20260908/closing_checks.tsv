@@ -1,6 +1,7 @@
 check	status	detail	local_log_sha256
 system_round_host_tests	PASS	88 tests; host-only; does not certify ARM GDB compatibility	4127e86718eebd96f0944ac44575bdaa406802c51233931e836eaded3b83b585
 existing_verify_precommit	PASS	REPRODUCE_ALLOW_DIRTY=1; OVERALL PASS; not a new delivery matrix	86bd39a627e6196f3d82711b4b0fb8667f768aad564b1fdaefcc826d4ba6f7cc
+existing_verify_clean_result_commit	PASS	60bea7c63ca2c603351e0ef25df15546e78db05c; no dirty override; OVERALL PASS; not a new delivery matrix	7ac208ea591b636308e087b80ac21fe5ce10b82fbf144c3c2a8ac39f8e0e9769
 related_local_links	PASS	223 references checked before closing-receipt links were added	NA
 completed_prefix_publication	PASS	18 cells/330 release pairs; raw/archive SHA rechecked; matrix remains STOP	NA
 full_matrix_publication	NOT_EXECUTED	G4 incomplete; no full-matrix summaries or Demo integration	NA
