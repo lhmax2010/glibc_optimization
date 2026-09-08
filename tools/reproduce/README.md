@@ -241,6 +241,9 @@ objects and delivery bytes. Older v8/v9 proof stays immutable and is checked aga
 its recorded commit, not represented as a v10 execution. The historical
 [v9 real build archive](../../data/raw/demo_v9_delivery_20260907/gbs/README.md)
 binds that execution's six files; raw logs stay local and are available on request.
+The [v10 real build archive](../../data/raw/demo_v10_delivery_20260908/gbs/README.md)
+binds the sanitized entrypoint and the other five committed files to the current
+delivery bytes; publication copied the execution proof unchanged.
 
 ### Provenance capability boundary
 

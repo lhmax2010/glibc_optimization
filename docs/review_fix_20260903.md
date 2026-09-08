@@ -190,3 +190,10 @@ RC=2，被误分环境。修复后四例都为 proof integrity RC=1，且不生�
 均实际输出 RC=0 / OVERALL PASS，公开分析器与 cmp 被函数截获。新增回归在修复前
 五个子例均失败；修复后全部在 MODE 之前拒绝。真实 shell 工作流正文仍在同一
 `reproduce.sh` 内，未把执行逻辑移出已有 provenance 文件字节覆盖集合。
+
+实现提交 `6a10812848f31170bacb70022b1b35fe9d161892` 的干净快照已完成真实 GBS 构建
+与同 HEAD publisher 校验；新记录见 [v10 构建归档](../data/raw/demo_v10_delivery_20260908/gbs/README.md)。
+三 ELF 与 manifest 相同，原始日志/proof 均由 checker 校验；旧 v9 JSON/TSV 不变。
+`test_v10_public_execution_proof_matches_commit_and_delivery_files` 把新归档同时绑定到
+执行 commit、交付 HEAD 与当前六文件字节。另有 exec/exit 异常返回不落入未净化正文
+的回归，以及 Modules 拒绝与干净进程规避命令的正反测试。

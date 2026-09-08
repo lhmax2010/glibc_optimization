@@ -645,7 +645,13 @@ elif name == "cpio":
         self.assertIn("superseded", (archive / "README.md").read_text())
 
     def test_historical_v9_public_execution_proof_matches_execution_commit(self) -> None:
-        archive = REPO / "data/raw/demo_v9_delivery_20260907/gbs"
+        self._check_public_execution_proof("demo_v9_delivery_20260907", current=False)
+
+    def test_v10_public_execution_proof_matches_commit_and_delivery_files(self) -> None:
+        self._check_public_execution_proof("demo_v10_delivery_20260908", current=True)
+
+    def _check_public_execution_proof(self, directory: str, *, current: bool) -> None:
+        archive = REPO / "data/raw" / directory / "gbs"
         proof_path = archive / "execution_provenance.json"
         proof = json.loads(proof_path.read_text())
         record = json.loads((archive / "build_summary.json").read_text())
@@ -664,9 +670,12 @@ elif name == "cpio":
         self.assertEqual(set(proof["committed_file_sha256"]), expected_paths)
         for path, digest in proof["committed_file_sha256"].items():
             with self.subTest(path=path):
-                for commit in (proof["workflow_commit"],):
+                commits = (proof["workflow_commit"], "HEAD") if current else (proof["workflow_commit"],)
+                for commit in commits:
                     committed = subprocess.check_output(["git", "show", commit + ":" + path], cwd=REPO)
                     self.assertEqual(hashlib.sha256(committed).hexdigest(), digest)
+                if current:
+                    self.assertEqual(hashlib.sha256((REPO / path).read_bytes()).hexdigest(), digest)
         for field, path in (("entrypoint_sha256", "tools/reproduce/reproduce.sh"),
                             ("checker_sha256", "tools/reproduce/check_gbs_package.py")):
             self.assertEqual(proof[field], proof["committed_file_sha256"][path])

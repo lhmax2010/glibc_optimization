@@ -208,3 +208,7 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 | Kimi V9-1 / CC N9-02 | `demo-v10^` | 缺依赖与环境注入分开诊断；全量函数拒绝的 Modules 提示与干净进程命令；双语入口同步 |
 | V10-DELIVERY-MATRIX | `demo-v10^` | 15 格扩为 18 格：注入环境先预期拒绝，再真跑全量 verify；main REPORT_ONLY、demo/tag required 身份口径不变 |
 | CC N9-01 / F01 / F05 | `demo-v10^` | 仅 PM 台账记录：整体 proof 伪造、媒体与完整件包外交付在当前门槛之外；正式 release 处理，不改变现行证据强度 |
+
+实现提交 `6a10812848f31170bacb70022b1b35fe9d161892`；其 clean HEAD 的真实 GBS
+构建与 publisher 校验已通过，[v10 执行归档](../data/raw/demo_v10_delivery_20260908/gbs/README.md)
+绑定新入口。v9 原始 JSON/TSV 保留为历史；这不是新的板上测量。

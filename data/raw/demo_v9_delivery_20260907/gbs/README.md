@@ -34,3 +34,7 @@ sudo rm -rf -- /tmp/glibc-memopt-gbs-2533297-7mkw722o
 调用者身份。方法与边界见 [`workflow README`](../../../../tools/reproduce/README.md#gbs-execution-provenance)。
 [`v8 真实构建记录`](../../demo_v7_delivery_20260907/gbs/README.md) 原样保留为历史，
 其 schema v1 没有本轮新增的日志与扩大文件集合，不作为 v9 执行证明。
+
+2026-09-08 追注：本记录现为 v9 历史执行证据，JSON/TSV 不变。v10 净化入口已在新
+干净提交实际构建，由 [v10 归档](../../demo_v10_delivery_20260908/gbs/README.md) 绑定；
+不能用本记录中的旧入口字节声称 v10 已执行。
