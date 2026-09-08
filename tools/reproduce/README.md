@@ -257,12 +257,13 @@ match before publishing the unchanged summary containing its hash; raw logs rema
 local because they may contain host paths. Missing/altered/symlinked logs fail.
 The filtered `workflow_summary.tsv` is not the raw log and cannot substitute for it.
 Delivery host tests compare the current execution record with its recorded Git
-objects and delivery bytes. Older v8/v9 proof stays immutable and is checked against
-its recorded commit, not represented as a v10 execution. The historical
+objects and delivery bytes. Older v8/v9/v10 proof stays immutable and is checked against
+its recorded commit, not represented as a v11 execution. The historical
 [v9 real build archive](../../data/raw/demo_v9_delivery_20260907/gbs/README.md)
 binds that execution's six files; raw logs stay local and are available on request.
 The [v10 real build archive](../../data/raw/demo_v10_delivery_20260908/gbs/README.md)
-binds the sanitized entrypoint and the other five committed files to the current
+remains historical. The [v11 real build archive](../../data/raw/demo_v11_delivery_20260908/gbs/README.md)
+binds the final-Python entrypoint and the other five committed files to the current
 delivery bytes; publication copied the execution proof unchanged.
 
 ### Provenance capability boundary

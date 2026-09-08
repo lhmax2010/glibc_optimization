@@ -221,3 +221,9 @@ REPORT_ONLY 身份测试与最终远端克隆门保持原语义。
 代码仍在 provenance 覆盖的单个入口文件内。普通环境的递归/缺依赖/旧 Python、
 Modules 净化命令、required 与 REPORT_ONLY 交付身份、GBS proof 完整性回归均保留。
 旧 Python 诊断统一到 stderr；递归自链接改为执行前文件身份识别，不启动递归子脚本。
+
+实现提交 `3fe95c18a52e86ef45ad97ab0b6323737eecd311` 的 clean HEAD 已实际完成 GBS 与
+同状态 publisher 校验，入口/两配置/manifest/spec/checker 六文件身份一致，公开导入
+cmp 静默；[v11 构建归档](../data/raw/demo_v11_delivery_20260908/gbs/README.md)
+由 `test_v11_public_execution_proof_matches_commit_and_delivery_files` 同时校验执行
+commit、交付 HEAD 与当前文件字节。旧 v10 JSON/TSV 保留为历史，不冒充 v11 证据。

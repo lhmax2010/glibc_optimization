@@ -695,6 +695,9 @@ elif name == "cpio":
     def test_historical_v10_public_execution_proof_matches_execution_commit(self) -> None:
         self._check_public_execution_proof("demo_v10_delivery_20260908", current=False)
 
+    def test_v11_public_execution_proof_matches_commit_and_delivery_files(self) -> None:
+        self._check_public_execution_proof("demo_v11_delivery_20260908", current=True)
+
     def _check_public_execution_proof(self, directory: str, *, current: bool) -> None:
         archive = REPO / "data/raw" / directory / "gbs"
         proof_path = archive / "execution_provenance.json"

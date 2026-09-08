@@ -1,5 +1,9 @@
 # demo-v10 显式 GBS 构建自证
 
+2026-09-08 追注：本归档为 v10 历史执行记录，JSON/TSV 不变；当前交付入口已由
+[v11 干净提交构建](../../demo_v11_delivery_20260908/gbs/README.md) superseded。
+下文的交付 HEAD 同时核验描述对应 v10 当时状态，不用旧 proof 证明 v11 入口。
+
 2026-09-08，host-only；干净提交 `6a10812848f31170bacb70022b1b35fe9d161892`
 实际执行 `bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>`。本轮只验证
 净化后的入口与交付工具，不连板，不新增或改变实验测量、验收带、held-out 或结论。
