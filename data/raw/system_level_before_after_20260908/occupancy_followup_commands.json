@@ -1,0 +1,15 @@
+[
+  {
+    "label": "INTERACTIVE_SESSIONS",
+    "start_utc": "2026-09-08T05:07:32.309232+00:00",
+    "end_utc": "2026-09-08T05:07:32.547207+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 26799 27105; do echo PID=$n; test -d /proc/$n || continue; cat /proc/$n/stat; cat /proc/$n/status; printf \"wchan=\"; cat /proc/$n/wchan; echo; ls -l /proc/$n/fd/0 /proc/$n/fd/1 /proc/$n/fd/2; done; ps -ef ); rc=$?; printf '\\nRC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_INTERACTIVE_SESSIONS; else echo FAIL_INTERACTIVE_SESSIONS; fi"
+    ]
+  }
+]

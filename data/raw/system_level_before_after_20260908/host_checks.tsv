@@ -1,0 +1,11 @@
+check	verdict	detail
+existing_reproduce_verify	PASS	OVERALL PASS; pre-commit check used REPRODUCE_ALLOW_DIRTY=1; no board mode invoked
+round_host_tests	PASS	13 tests across analysis, observer transport, stopped-draft guards and contract immutability
+round_and_index_links	PASS	155 local links checked
+contract_analyzer_immutability	PASS	byte equality with annotated system-before-after-contract-20260908
+mutating_drafts_disabled	PASS	both scripts RC=2 with NOT-EVALUATED diagnosis, before any board action
+redaction_scan	PASS	zero private board-address/host-home/CI-host/invalid-placeholder hits
+delivery_refs	PASS	demo and demo-v11 peeled commit remain 0e8a2f731b13690009badf1ca2acbd57018e7bc8; no demo-v12
+stage_1_experiment_matrix	NOT-EVALUATED	0/21 cells; STOP_OCCUPANCY_UNRESOLVED
+stage_2_integration	NOT-EVALUATED	stopped by stage 1 gate
+stage_3_delivery_matrix	NOT-EVALUATED	no new snapshot; stage 0 completed matrix retained, not represented as a new v12 run

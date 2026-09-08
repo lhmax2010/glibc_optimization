@@ -1,0 +1,134 @@
+PID=26799
+26799 (sh) S 1 26799 26799 34816 26799 4194560 553 1298 0 0 0 2 1 0 20 0 1 0 60331272 2539520 288 4294967295 4415488 4837024 3196104336 0 0 0 0 3686404 1266761467 1 0 0 17 3 0 0 0 0 0 4837376 4861424 18321408 3196104572 3196104583 3196104583 3196104692 0
+Name:	sh
+Umask:	0022
+State:	S (sleeping)
+Tgid:	26799
+Ngid:	0
+Pid:	26799
+PPid:	1
+TracerPid:	0
+Uid:	0	0	0	0
+Gid:	0	0	0	0
+FDSize:	256
+Groups:	0 29 44 201 1901 6505 6506 6525 10001 10013 10014 10212 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201 
+NStgid:	26799
+NSpid:	26799
+NSpgid:	26799
+NSsid:	26799
+Kthread:	0
+VmPeak:	    2552 kB
+VmSize:	    2480 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	    1296 kB
+VmRSS:	    1296 kB
+RssAnon:	     220 kB
+RssFile:	    1076 kB
+RssShmem:	       0 kB
+VmData:	     212 kB
+VmStk:	     132 kB
+VmExe:	     412 kB
+VmLib:	    1692 kB
+VmPTE:	      32 kB
+VmSwap:	       0 kB
+CoreDumping:	0
+THP_enabled:	0
+untag_mask:	0xffffffff
+Threads:	1
+SigQ:	0/60724
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000384004
+SigCgt:	000000004b813efb
+CapInh:	00000000002000e2
+CapPrm:	000001ffffffffff
+CapEff:	000001ffffffffff
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	unknown
+SpeculationIndirectBranch:	unsupported
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	1
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	19
+nonvoluntary_ctxt_switches:	0
+wchan=wait_woken
+lrwx------ 1 root root 64 Sep  8 14:07 /proc/26799/fd/0 -> /dev/pts/0
+lrwx------ 1 root root 64 Sep  8 14:07 /proc/26799/fd/1 -> /dev/pts/0
+lrwx------ 1 root root 64 Sep  8 14:07 /proc/26799/fd/2 -> /dev/pts/0
+PID=27105
+27105 (sh) S 1 27105 27105 34817 27105 4194560 6397 121201 0 0 5 25 310 183 20 0 1 0 60337550 2539520 288 4294967295 4780032 5201568 3200593552 0 0 0 0 3686404 1266761467 1 0 0 17 3 0 0 0 0 0 5201920 5225968 18137088 3200593788 3200593799 3200593799 3200593908 0
+Name:	sh
+Umask:	0022
+State:	S (sleeping)
+Tgid:	27105
+Ngid:	0
+Pid:	27105
+PPid:	1
+TracerPid:	0
+Uid:	0	0	0	0
+Gid:	0	0	0	0
+FDSize:	256
+Groups:	0 29 44 201 1901 6505 6506 6525 10001 10013 10014 10212 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201 
+NStgid:	27105
+NSpid:	27105
+NSpgid:	27105
+NSsid:	27105
+Kthread:	0
+VmPeak:	    2552 kB
+VmSize:	    2480 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	    1356 kB
+VmRSS:	    1356 kB
+RssAnon:	     244 kB
+RssFile:	    1112 kB
+RssShmem:	       0 kB
+VmData:	     212 kB
+VmStk:	     132 kB
+VmExe:	     412 kB
+VmLib:	    1692 kB
+VmPTE:	      32 kB
+VmSwap:	       0 kB
+CoreDumping:	0
+THP_enabled:	0
+untag_mask:	0xffffffff
+Threads:	1
+SigQ:	0/60724
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000384004
+SigCgt:	000000004b813efb
+CapInh:	00000000002000e2
+CapPrm:	000001ffffffffff
+CapEff:	000001ffffffffff
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	unknown
+SpeculationIndirectBranch:	unsupported
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	1
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	443
+nonvoluntary_ctxt_switches:	421
+wchan=wait_woken
+lrwx------ 1 root root 64 Sep  8 14:07 /proc/27105/fd/0 -> /dev/pts/1
+lrwx------ 1 root root 64 Sep  8 14:07 /proc/27105/fd/1 -> /dev/pts/1
+lrwx------ 1 root root 64 Sep  8 14:07 /proc/27105/fd/2 -> /dev/pts/1
+
+=== ps -ef: two relevant original rows ===
+root     26799     1  0 Sep04 pts/0    00:00:00 /bin/sh -l
+root     27105     1  0 Sep04 pts/1    00:00:00 /bin/sh -l
+RC=0
+DONE_INTERACTIVE_SESSIONS

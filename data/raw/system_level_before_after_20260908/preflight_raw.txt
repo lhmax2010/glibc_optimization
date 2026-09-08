@@ -1,0 +1,137 @@
+=== sdb_version ===
+Smart Development Bridge version 4.2.25
+
+=== connect ===
+<TEST_BOARD_IP>:26101 is already connected
+
+=== devices ===
+List of devices attached 
+<TEST_BOARD_IP>:26101	device    	rpi4
+
+=== UNAME_R ===
+6.12.80-arm-rpi4-v7l
+
+RC=0
+DONE_UNAME_R
+
+=== UNAME_M ===
+armv7l
+
+RC=0
+DONE_UNAME_M
+
+=== OS_RELEASE ===
+NAME=Tizen
+VERSION="11.0.0 (Tizen11.0/Unified)"
+ID=tizen
+VERSION_ID=11.0.0
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+ANSI_COLOR="0;36"
+CPE_NAME="cpe:/o:tizen:tizen:11.0.0"
+BUILD_ID=tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l
+
+RC=0
+DONE_OS_RELEASE
+
+=== GLIBC ===
+glibc-2.40-1.6.armv7l
+
+RC=0
+DONE_GLIBC
+
+=== MEMINFO ===
+MemTotal:        8117408 kB
+MemFree:         6560680 kB
+MemAvailable:    6794572 kB
+Buffers:           41640 kB
+Cached:           896588 kB
+SwapCached:            0 kB
+Active:           440996 kB
+Inactive:         128608 kB
+Active(anon):     220416 kB
+Inactive(anon):    56748 kB
+Active(file):     220580 kB
+Inactive(file):    71860 kB
+Unevictable:      641960 kB
+Mlocked:              12 kB
+HighTotal:       7458816 kB
+HighFree:        6251272 kB
+LowTotal:         658592 kB
+LowFree:          309408 kB
+SwapTotal:       3246960 kB
+SwapFree:        3246960 kB
+Dirty:                20 kB
+Writeback:             0 kB
+AnonPages:        273348 kB
+Mapped:            25880 kB
+Shmem:            645788 kB
+KReclaimable:      16880 kB
+Slab:              59004 kB
+SReclaimable:      16880 kB
+SUnreclaim:        42124 kB
+KernelStack:        3544 kB
+PageTables:         6752 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     7305664 kB
+Committed_AS:    3265392 kB
+VmallocTotal:     245760 kB
+VmallocUsed:       26600 kB
+VmallocChunk:          0 kB
+Percpu:             1120 kB
+CmaTotal:         327680 kB
+CmaFree:           90860 kB
+
+RC=0
+DONE_MEMINFO
+
+=== UID ===
+0
+
+RC=0
+DONE_UID
+
+=== GOVERNORS ===
+schedutil
+schedutil
+schedutil
+schedutil
+
+RC=0
+DONE_GOVERNORS
+
+=== WORKDIR ===
+ABSENT
+
+RC=0
+DONE_WORKDIR
+
+=== SPACE ===
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/mmcblk0p2         3021464   1202676   1789104  41% /
+/dev/mmcblk0p5       116404224    982828 115421396   1% /opt/usr
+
+RC=0
+DONE_SPACE
+
+=== MEMPS ===
+/usr/bin/memps
+
+RC=0
+DONE_MEMPS
+
+=== GDB_STATE ===
+package gdb is not installed
+
+RC=0
+DONE_GDB_STATE
+
+=== UPTIME ===
+Tue Sep  8 05:06:40 UTC 2026
+ 14:06:40 up 10 days, 22:16,  1 user,  load average: 0.19, 0.07, 0.07
+0.19 0.07 0.07 1/437 2845
+
+RC=0
+DONE_UPTIME

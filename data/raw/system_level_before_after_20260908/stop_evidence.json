@@ -1,0 +1,55 @@
+{
+  "contract_push": {
+    "schema": "contract-push-receipt.v1",
+    "tag": "system-before-after-contract-20260908",
+    "tag_object": "0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3",
+    "commit": "54ee2ba8d2819014f3e5656de023ffaf283b4a4a",
+    "origin_verified_utc": "2026-09-08T04:55:52.140217+00:00",
+    "epoch_ns": 1788843352140241340,
+    "monotonic_ns": 687710180262442
+  },
+  "automatic_checks_original": {
+    "start_utc": "2026-09-08T05:06:11.703742+00:00",
+    "verdict": "PASS_READONLY_AVAILABILITY",
+    "board_mutations": false,
+    "push_to_gate_seconds": 619.572023306,
+    "enlightenment_pid": 505,
+    "end_utc": "2026-09-08T05:06:16.326055+00:00"
+  },
+  "manual_occupancy_review": {
+    "verdict": "STOP_OCCUPANCY_UNRESOLVED",
+    "reason": "two pre-existing interactive sh -l sessions on pts/0 and pts/1; ownership unresolved; idle is not exclusive-use proof",
+    "pids": [
+      26799,
+      27105
+    ],
+    "no_active_test_workload_observed": true,
+    "not_a_claim_of_confirmed_third_party_activity": true
+  },
+  "executed_experiment_cells": 0,
+  "board_files_pushed": 0,
+  "packages_installed": 0,
+  "governor_changes": 0,
+  "trim_injections": 0,
+  "stages_2_and_3": "NOT_EXECUTED_STOP_GATE",
+  "effective_delivery_tag": "demo-v11",
+  "source_raw_sha256": {
+    "preflight/sdb_version.txt": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+    "preflight/connect.txt": "a012d6e9a6151d87d8db3c8626781bed96b60068037f8dac0f22528263341400",
+    "preflight/devices.txt": "41e128d1606715e567ef0d4a39335789df196da34f92531c6c6a9a3b9dc6a0c6",
+    "preflight/UNAME_R.txt": "b175c7d7bb42f20286dde1c203b56d1e48de5354e4ed663917628671c46594c2",
+    "preflight/UNAME_M.txt": "6c9494381fbf31bdab8a343a453a73817e1ffea88768461d20e3b6b74ab33b42",
+    "preflight/OS_RELEASE.txt": "2c7fe42bd19c677c42f10321766e44e7a7e50d5729cee8a62b429706787889e7",
+    "preflight/GLIBC.txt": "34ff84bee62dd4ba6f45cca3cbe8f316b7f235ffb1acecb34b94f357e6196ff2",
+    "preflight/MEMINFO.txt": "d28e5d290a4f4348cd567636b0592cd3da0c74dc74ed4fe232800c1b036f8ace",
+    "preflight/UID.txt": "d083933e692510d61990ee9c54fb58613fd56c4f8fa4c23cc4ef926b13978a74",
+    "preflight/GOVERNORS.txt": "baddb6447a2c65b78632da17dc75b41704fa2d062c410fb5cf1d8a375b6ed8b0",
+    "preflight/WORKDIR.txt": "dacda333870c913463e5abd508bece3c59e028e19528d4768b5b4490145c073a",
+    "preflight/SPACE.txt": "bb65a04c121c0b379717d7649b4cac2e9fa308294867c36592e1a5f8e2a4b15f",
+    "preflight/MEMPS.txt": "06438c3aec0ef2c756cfb6a2b2f929ceec23b925d350ff183a72f67db41e708c",
+    "preflight/GDB_STATE.txt": "cb1df6b1f6720364499c05d3eb6042b10c7386355741c201c76f53e7c48c386b",
+    "preflight/UPTIME.txt": "a9501aa3f827b79fdc59e290314b9d8c0dcdbf942173d96329981fdc245c432b",
+    "occupancy_followup/INTERACTIVE_SESSIONS.txt": "d6353403c6cf601e7e7018ab30aacf4385949c98e46f301935e40bbc580fc7cc"
+  },
+  "editing_note": "address mapped; CRLF normalized; proc evidence exact excerpts; public receipt omits ephemeral boot_id; full originals retained locally"
+}

@@ -1,6 +1,6 @@
 # 系统级前后对照补测（2026-09-08）
 
-状态：合同冻结，尚未连接板、尚无测量结果。既有数据、验收带与技术结论不变。当前有效交付快照仍为 `demo-v11`。
+最终状态：**STOP_OCCUPANCY_UNRESOLVED**。身份/环境自动检查通过，但两个已有交互会话归属未明，不能排除共享占用；实验格执行 **0/21**，未产生新的前后对照测量。第 2、3 段不执行，不切 demo-v12。既有数据、验收带与技术结论不变，当前有效交付快照仍为 `demo-v11`。事前规格保留如下，实际执行记录见 §3。
 
 ## 1. 事前合同
 
@@ -68,3 +68,102 @@ python3 tools/runners/system_level_before_after_20260908/analyze_system_level.py
 ```
 
 确定性项沿用 payload 字节；有效性门为页对齐、majflt、zram、OOM/LMK 与告警归因。旧 S4/gst 容差带仅作上下文对照，不为本轮绝对 RSS 或整机内存差预造验收区间，不改原带。新的 before/after 数字必须来自完整矩阵，部分数据不进入 Demo 头条。运行结果、推送时间与实际间隔待执行后追加，不提前填写。
+
+## 3. 实际执行：只读前置门后停止
+
+### 3.1 时间线
+
+| 事件 | 实际值 / 结果 | 证据 |
+|---|---|---|
+| 合同提交 | `54ee2ba8d2819014f3e5656de023ffaf283b4a4a` | [事前合同](../tools/runners/system_level_before_after_20260908/contract.json) |
+| Annotated tag | `system-before-after-contract-20260908`，对象 `0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3` | [时间/停止证据](../data/raw/system_level_before_after_20260908/stop_evidence.json) |
+| origin 推送完成确认 | `2026-09-08T04:55:52.140217+00:00` | 同上 |
+| 前置检查开始 / 结束（host UTC） | `05:06:11.703742` / `05:06:16.326055` | 同上、[逐命令记录](../data/raw/system_level_before_after_20260908/preflight_commands.json) |
+| 推送确认至检查间隔 | `619.572023306 s`，满足至少 `600 s` | 同上；UTC 与 monotonic 双检，不依赖板端时钟 |
+| 只读占用追加核查 | 两个 `sh -l` 自 `Sep04` 在 `pts/0`、`pts/1` 等待；归属未明 | [命令](../data/raw/system_level_before_after_20260908/occupancy_followup_commands.json)、[原文摘录](../data/raw/system_level_before_after_20260908/occupancy_excerpt.txt) |
+| 最终门 | `STOP_OCCUPANCY_UNRESOLVED` | [判定证据](../data/raw/system_level_before_after_20260908/stop_evidence.json) |
+
+自动检查原输出 `PASS_READONLY_AVAILABILITY` **原样保留，不代表独占使用已获确认**。
+人工复核发现它只计 sdb TCP 连接，不能辨识同连接多路复用的逻辑 shell；最终占用判定优先。
+没有把“进程 sleeping”或“当前没有高负载”偷换成无人占用，也没有声称已证明另一人正在运行测试。
+
+### 3.2 身份与环境原文
+
+以下逐字取自 [只读原文](../data/raw/system_level_before_after_20260908/preflight_raw.txt)（换行归一化；路由地址按映射编辑）。
+
+```text
+6.12.80-arm-rpi4-v7l
+
+RC=0
+DONE_UNAME_R
+
+armv7l
+
+RC=0
+DONE_UNAME_M
+
+NAME=Tizen
+VERSION="11.0.0 (Tizen11.0/Unified)"
+ID=tizen
+VERSION_ID=11.0.0
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+ANSI_COLOR="0;36"
+CPE_NAME="cpe:/o:tizen:tizen:11.0.0"
+BUILD_ID=tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l
+
+RC=0
+DONE_OS_RELEASE
+
+glibc-2.40-1.6.armv7l
+
+RC=0
+DONE_GLIBC
+```
+
+同一原文中 MemTotal=`8117408 kB`、UID=`0`、四核均 `schedutil`；`/opt/usr/glibc_memopt` 为 `ABSENT`。
+根分区可用 `1789104 KiB`，`/opt/usr` 可用 `115421396 KiB`；memps 存在，gdb 未安装。
+这些是前置观察，不是 G1–G4 回收结果；未据空间预算安装任何包。
+
+### 3.3 占用证据与停止理由
+
+[占用原文摘录](../data/raw/system_level_before_after_20260908/occupancy_excerpt.txt) 显示：
+
+| PID | 命令 / 起始日期 | PPID / 状态 | 标准输入输出 | 判定 |
+|---|---|---|---|---|
+| 26799 | `/bin/sh -l` / `Sep04` | `1` / sleeping，`wchan=wait_woken` | `/dev/pts/0` | 已有交互会话，归属未明，不动 |
+| 27105 | `/bin/sh -l` / `Sep04` | `1` / sleeping，`wchan=wait_woken` | `/dev/pts/1` | 已有交互会话，归属未明，不动 |
+
+PPID=1 可能是历史/孤儿会话，但不证明失去交互终端或归属本项目；本轮没有创建这两个 PID。
+按 §1.1 事前“占用/未知即停止”门，停止全部后续段。只做了一次只读归属追加核查；未关闭
+这些 shell、未断开共享连接、未杀 server、未重启板，也没有为得到可用板结论反复探测。
+
+### 3.4 零实验执行与现场状态
+
+| 项目 | 本轮实际状态 |
+|---|---|
+| G1 / G2 / G3 / G4 | 全部 `NOT_EXECUTED`，不存在可用于中位/极差的测量样本 |
+| 推送二进制/媒体/脚本 | 0；所有准备件仅在 host |
+| 安装/卸载包 | 0；gdb 保持未安装 |
+| governor 修改 / trim 注入 | 0 / 0；未启动需恢复的执行路径 |
+| 新建/删除板上工作目录或临时文件 | 0 / 0；无本轮文件需要清理 |
+| dmesg 增量、zram 变化、周期健康门 | 无正式格，`NOT-EVALUATED`，不能填零假装通过 |
+| 第 2、3 段 | `NOT_EXECUTED_STOP_GATE`；未更新 Demo 数字，未切 demo-v12 |
+
+只读命令不可避免会产生系统自身的审计/瞬时活动；“零写入”在此特指未显式推送、建文件、
+改配置/包或产生实验产物，不声称系统日志位级不变。停止后不再连板补“清理复核”，避免
+把无需清理的只读会话扩展为新操作。
+
+## 4. Host 准备件与未闭合项
+
+事前分析器 10 项测试、观测握手 smoke 1 项通过；既有 verify `OVERALL PASS`。独立
+预提交核对促使分析器补齐缺失源件/业务墙钟/G4 间隔/负faults拒绝，不将行数齐全等同于
+证据完整。以上属于 host 功能测试，不是性能数字。
+
+等待期间的板端控制器草稿从未推送/执行。其失败码保存和限时恢复路径已做静态修正，但
+尚有 stability 管道错误传播、G4 fopen/PID 安全门、路径边界及故障注入测试待闭合；故
+[两份草稿](../tools/runners/system_level_before_after_20260908/README.md#未执行准备件不可作为可用复现入口)
+已加无条件 RC=2 阻断，保留来源，不作为已完成 harness 或 HQ 操作入口。不得直接解除阻断运行。
+
+需要后续明确的是两条已有会话的归属/是否可用的实验时段；本轮不向 PM 临时索取许可继续，
+不自行清理、不另换负载或板。本次无人值守任务在此终止，完整汇总见
+[晨间汇总](overnight_summary_20260908.md)。
