@@ -38,22 +38,36 @@ GNU-compatible `date -Ins/+%s%N` and `stat -c` are required (Ubuntu/Debian coreu
 Every whitelist command is checked by preflight for resolution to a real,
 executable file using Python `shutil.which`, not shell `command -v`. Python is
 bootstrapped by filesystem PATH traversal, never by invoking a shell function.
-Before ordinary commands run, Bash builtins inspect the current function/alias
-tables, including **unexported** entries left by a startup file that unset its own
+Before ordinary commands run, an assignment enables Bash POSIX lookup: its
+[special builtins precede functions](https://www.gnu.org/software/bash/manual/html_node/Special-Builtins.html).
+Escaped `readonly -f builtin` therefore checks the enumeration entry without
+calling a shadowing `readonly` or `builtin` function. If `builtin` is shadowed,
+enumeration is refused; otherwise `builtin declare -F` and `builtin alias -p`
+must both succeed. An unavailable enumerator fails closed, never as an empty
+table. These tables include **unexported** entries left by a startup file that unset its own
 `BASH_ENV`/`ENV` markers or deleted itself. Any such state or exported `BASH_FUNC_*`
 marker is `FAIL runtime-injection`, not a misleading missing-command diagnostic.
 An actually absent/non-executable command is separately `FAIL runtime-preflight`
 with `missing default-verify command: <name>`.
 
-The resolved real Python then uses `os.execve` to start a new Bash with
-`--noprofile --norc -p`, stripping `BASH_ENV`, `ENV`, and every `BASH_FUNC_*` entry.
+The **last command of the launcher is the resolved absolute Python executable**;
+its exit status is naturally the script status. Rejection prints a nonempty
+`FAIL runtime-injection` diagnostic and returns RC=2 in Python, without shell
+`exec`, `exit`, or `printf`. The inert workflow body precedes that last command;
+there is no successful trailing command to overwrite a rejection. POSIX `unset`
+also removes an absolute-interpreter-path function after recording the table.
+The resolved real Python uses `os.execve` on the accepted path to start a new Bash with
+`--noprofile --norc -p`, stripping `BASH_ENV`, `ENV`, every `BASH_FUNC_*` entry,
+and bootstrap-only `POSIXLY_CORRECT`.
 Only the workflow body from the same entrypoint file is passed to that shell;
 there is no trusted-boolean shortcut back through the public launcher. A pre-set
 `REPRODUCE_SANITIZED_ENTRYPOINT` (even empty) fails closed before any ordinary
 command; `REPRODUCE_ACTIVE_ENTRYPOINT` also rejects self-recursion. Only controlled
 host-test fixtures clear these internal markers for independent CLI invocations.
-This relies on the installed shell/Python and their builtins, not a hostile-host
-sandbox or proof of code executed before entrypoint control.
+This relies on the installed Bash/Python, enabled POSIX special builtins and
+trusted filesystem/PATH. It is not a hostile-host sandbox or proof of code
+executed before entrypoint control. If PATH lacks Python, a system Python is used
+only to diagnose refusal, never to bypass the dependency gate.
 
 **Environment Modules:** rejection intentionally includes unrelated exported
 functions such as `module`, not just whitelist command names. Do not source this
@@ -92,14 +106,14 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v10
+  --tag demo-v11
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v10 <url>
+git clone --branch demo-v11 <url>
 git clone <url>                 # remote default must be main
 ```
 
@@ -107,8 +121,14 @@ Each clone is verified under six environment profiles: GBS/RPM both
 discoverable, only RPM discoverable, only GBS discoverable, and neither
 discoverable (`minimal-whitelist`), plus `broken-tools` (rpmspec and gbs return
 nonzero if invoked), plus `startup-injection` using the minimal whitelist.
-The latter first runs the five startup/marker regression variants and requires
-RC=2, no `MODE host verify`, and no `OVERALL PASS` for each injected invocation;
+The latter runs 43 rejection cases: the original five startup/marker variants,
+six function sets × six startup/marker contexts, and two unavailable-enumerator
+cases. Function sets cover exec, exit, exec+exit, builtin, builtin+exec+exit,
+and combined helper shadowing (readonly/command/declare/compgen/set/export/colon).
+Contexts include self-clearing markers, unexported-only functions, self-deleting
+startup files, pre-set nonempty/empty markers, and self-delete+pre-set marker.
+Every case requires **RC=2, a nonempty explicit rejection diagnostic, zero spoofed
+command calls**, no `MODE host verify`, and no `OVERALL PASS`;
 it then runs a **real, clean, complete verify**. Rejection is not counted as a
 successful replay. [`make_verify_path.py`](make_verify_path.py) symlinks only
 the explicit command list above; it does not enumerate or append the host PATH.
@@ -116,7 +136,7 @@ Discoverable optional tools are deterministic
 fail-if-invoked stubs, so this gate proves that default verify does not execute them;
 `rpmspec -P` alone uses a local parser fixture because that optional syntax branch is
 intentionally exercised, while a broken rpmspec must emit a reasoned `SKIPPED`.
-This is `3 × 6 = 18` complete verifies, plus 15 expected-rejection probes, with nested host
+This is `3 × 6 = 18` complete verifies, plus 129 expected-rejection probes, with nested host
 tests enabled. The demo branch and detached tag must pass required delivery identity;
 main keeps its recorded `REPORT_ONLY` identity semantics. Every check must print
 `host-tests=PASS OVERALL=PASS`, and the final row must be

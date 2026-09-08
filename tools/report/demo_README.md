@@ -42,7 +42,8 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
    the dependency audit are documented in
    [`tools/reproduce/README.md`](tools/reproduce/README.md).
    Run from a clean shell: startup hooks and even unexported functions/aliases
-   are rejected before verify; Environment Modules users can use the documented
+   are rejected before verify with RC=2 and a nonempty diagnostic, including
+   exec/exit/builtin shadowing; Environment Modules users can use the documented
    [clean-process invocation](tools/reproduce/README.md#default-verify-system-dependencies).
 3. **Repeat on a board — hours.** Run
    `bash tools/reproduce/reproduce.sh board --ip <addr>` only after the prerequisites

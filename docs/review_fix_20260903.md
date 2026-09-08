@@ -201,3 +201,23 @@ RC=2，被误分环境。修复后四例都为 proof integrity RC=1，且不生�
 切库前检查另发现 Modules 正向 fixture 清空环境时丢弃临时 identity override；已把该
 环境测试的身份固定为自身 HEAD，避免依赖尚未创建的交付标签。独立的 required /
 REPORT_ONLY 身份测试与最终远端克隆门保持原语义。
+
+## 第 8 轮定向闭环（demo-v10，2026-09-08）
+
+仅 host 入口信任边界与注入拒绝路径加固，不改测量、验收带、held-out 或技术结论。
+依据见 [`N10-01 PM 裁决`](pm_decisions.md#2026-09-08-定向裁决demo-v10-demo-v11)。
+保留 demo-v10 及上节记录，但上节“exec/exit 不落入未净化正文”不足以关闭原 N9-01：
+旧测试在 exec+exit 同时存在时特意没有断言退出码，也没有要求非空诊断或零调用。
+本轮增强测试在旧实现上出现 29 个失败子例，包括空输出 RC=0、拒绝时调用冒充函数、
+以及禁用 builtin 后把枚举失败当作空表并输出 OVERALL PASS；这些不能算拒绝成功。
+
+| 评审编号 | 修复提交 | 闭环与验证方式 |
+|---|---|---|
+| N10-01（1） | `demo-v11^` | 脚本最后的真实绝对路径 Python 直接返回状态；拒绝不调用 shell exec/exit/printf；惰性正文移至最后调用之前，不留成功尾命令覆盖 RC |
+| N10-01（2） | `demo-v11^` | POSIX lookup 的特殊内建优先于函数，转义名称不展开别名；先用 readonly 检查 builtin 名称，再严格校验 declare/alias 枚举状态；被遮蔽或禁用即失败关闭 |
+| N10-01（3） | `demo-v11^` | `test_bootstrap_cannot_fall_through_to_unclean_workflow_body` 六函数集合 × 六上下文；原五变体强化诊断/零调用；另测 builtin/declare 禁用，共 43 个拒绝变体。每例 RC=2、明确非空 FAIL、无 MODE/PASS、调用哨兵文件不存在 |
+| N10-01（4） | `demo-v11^` | `predelivery_check.sh` 从测试同源读取变体数；每克隆 43 次预期拒绝后真跑完整 verify；三克隆六环境 = 18 次完整 verify + 129 次拒绝探针，不把拒绝算复算 PASS |
+
+代码仍在 provenance 覆盖的单个入口文件内。普通环境的递归/缺依赖/旧 Python、
+Modules 净化命令、required 与 REPORT_ONLY 交付身份、GBS proof 完整性回归均保留。
+旧 Python 诊断统一到 stderr；递归自链接改为执行前文件身份识别，不启动递归子脚本。

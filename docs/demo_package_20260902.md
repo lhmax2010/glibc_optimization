@@ -40,7 +40,7 @@
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v10 <url>
+git clone --branch demo-v11 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -50,18 +50,21 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v10
+  --tag demo-v11
 ```
 
 六种环境是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上
 `broken-tools`（rpmspec/gbs 执行返回非零）与 `startup-injection`。
-注入形态使用最小 PATH，先核验启动文件自清标记、未导出函数单独存在、启动文件
-自删除、预置净化标记（非空/空值）五种调用均 RC=2，且未进入 `MODE host verify`；
+2026-09-08 N10-01 升级：注入形态使用最小 PATH，先核验 43 个变体：原五种启动/标记
+调用，加六组 exec/exit/builtin/枚举辅助函数遮蔽 × 六种启动文件/标记组合、两种枚举器
+不可用。每例必须 RC=2、有非空拒绝诊断、冒充命令零调用，无 `MODE host verify` 或
+`OVERALL PASS`；仅“没输出假 PASS”不算拒绝成功。退出状态由最后的真实 Python 调用
+自然传回，不再经由可遮蔽的 shell exec/exit；枚举不可用失败关闭。
 随后在干净环境真正运行完整 verify。拒绝攻击不冒充复算成功。所有形态只软链
 [`verify_commands.txt`](../tools/reproduce/verify_commands.txt) 显式列出的命令；二者都不可
 发现的 `minimal-whitelist` 不再以排除法继承 host 命令。依赖含 Python ≥3.10、Git、
 Bash/POSIX sh 和白名单中的系统工具，详见依赖审计。
-`3 × 6 = 18` 次都必须出现 `host-tests=PASS OVERALL=PASS`，另有 15 次预期拒绝探针，最终汇总必须为
+`3 × 6 = 18` 次都必须出现 `host-tests=PASS OVERALL=PASS`，另有 129 次预期拒绝探针，最终汇总必须为
 `OVERALL PASS checks=18` 才能宣告交付就绪。`demo` 与
 detached tag 执行 required 交付身份校验；`main` 保持已登记的 `REPORT_ONLY` 身份语义，
 但其完整 verify 同样是硬门。脚本、逐模块依赖审计及后续标签递增规则见

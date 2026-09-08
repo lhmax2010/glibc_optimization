@@ -22,7 +22,8 @@ Each clone shape is checked under six closed-whitelist environment profiles:
   present-gbs+present-rpm, absent-gbs+present-rpm,
   present-gbs+absent-rpm, minimal-whitelist, broken-tools, startup-injection
 The 3 clone shapes x 6 environment profiles = 18 complete verifies.
-startup-injection first requires all startup/marker variants to fail before MODE,
+startup-injection first requires all startup/marker/exec/exit/builtin combinations
+to return RC=2 with nonempty rejection diagnostics, zero spoof calls and no MODE/PASS,
 then runs the complete verify in a clean environment (not a synthetic PASS).
 Only commands explicitly listed in verify_commands.txt are symlinked. No host
 PATH directory is copied or included. broken-tools has failing rpmspec/gbs stubs.
@@ -90,6 +91,7 @@ profile_minimal=$(make_path_profile minimal-whitelist) || exit 2
 profile_broken=$(make_path_profile broken-tools) || exit 2
 
 failures=0
+startup_rejection_checks=0
 check_profile()
 {
     profile=$1
@@ -173,14 +175,19 @@ run_shape()
             PATH=$verify_path
             export PATH
             PYTHONDONTWRITEBYTECODE=1 python3 -m unittest \
-                tools.reproduce.test_host.ReproduceTests.test_startup_self_clearing_unexported_functions_fail_before_mode
+                tools.reproduce.test_host.ReproduceTests.test_startup_self_clearing_unexported_functions_fail_before_mode \
+                tools.reproduce.test_host.ReproduceTests.test_bootstrap_cannot_fall_through_to_unclean_workflow_body \
+                tools.reproduce.test_host.ReproduceTests.test_unavailable_function_enumeration_fails_closed || exit 1
         ) >"$log" 2>&1; then
             printf 'FAIL\tprofile=%s shape=%s\tstartup rejection regression failed\n' "$profile" "$shape"
             sed -n '1,200p' "$log"
             failures=$((failures + 1))
             return
         fi
-        printf 'PASS\tstartup-rejection shape=%s\t5 variants RC=2; no MODE host verify; clean verify follows\n' "$shape"
+        variant_count=$(cd "$destination" && PYTHONDONTWRITEBYTECODE=1 python3 -c \
+            'from tools.reproduce.test_host import STARTUP_REJECTION_CHECKS; print(STARTUP_REJECTION_CHECKS)') || exit 1
+        startup_rejection_checks=$((startup_rejection_checks + variant_count))
+        printf 'PASS\tstartup-rejection shape=%s\t%s variants RC=2; explicit diagnostic; zero spoof calls; no MODE/PASS; clean verify follows\n' "$shape" "$variant_count"
     fi
 
     if ! (
@@ -260,4 +267,4 @@ if [ "$failures" -ne 0 ]; then
     printf 'OVERALL\tFAIL\tchecks_failed=%s\n' "$failures"
     exit 1
 fi
-printf 'OVERALL\tPASS\tchecks=18 clone_shapes=3 environment_profiles=6 startup_rejection_checks=15\n'
+printf 'OVERALL\tPASS\tchecks=18 clone_shapes=3 environment_profiles=6 startup_rejection_checks=%s\n' "$startup_rejection_checks"

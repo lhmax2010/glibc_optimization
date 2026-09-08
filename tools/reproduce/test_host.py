@@ -26,6 +26,14 @@ REPO = HERE.parents[1]
 EVALUATOR = HERE / "evaluate_acceptance.py"
 BANDS = HERE / "acceptance_bands.json"
 STABILITY = HERE / "stability_monitor.py"
+STARTUP_CONTEXTS = ("self-clear", "unexported-only", "self-delete", "preset-marker", "preset-empty-marker")
+REJECTION_FUNCTIONS = (
+    ("exec",), ("exit",), ("exec", "exit"), ("builtin",),
+    ("builtin", "exec", "exit"),
+    ("builtin", "readonly", "exec", "exit", "command", "declare", "compgen", "set", "export", ":"),
+)
+REJECTION_CONTEXTS = (*STARTUP_CONTEXTS, "self-delete-preset-marker")
+STARTUP_REJECTION_CHECKS = len(STARTUP_CONTEXTS) + len(REJECTION_FUNCTIONS) * len(REJECTION_CONTEXTS) + 2
 
 
 class ReproduceTests(unittest.TestCase):
@@ -489,11 +497,12 @@ elif name == "cpio":
                 self.assertNotIn("MODE\thost verify", result.stdout)
 
     def test_startup_self_clearing_unexported_functions_fail_before_mode(self) -> None:
-        for variant in ("self-clear", "unexported-only", "self-delete", "preset-marker", "preset-empty-marker"):
+        for variant in STARTUP_CONTEXTS:
             with self.subTest(variant=variant), tempfile.TemporaryDirectory() as directory:
                 init = Path(directory) / "init.sh"
-                body = ("python3() { if [ \"$1\" = -c ]; then " + shlex.quote(sys.executable) +
-                        ' "$@"; else while [ "$#" -gt 0 ]; do if [ "$1" = --output ]; then shift; mkdir -p "$1"; : > "$1/acceptance_input.json"; break; fi; shift; done; fi; }\ncmp() { :; }\n')
+                called = Path(directory) / "spoof-called"
+                body = ("python3() { printf called >> " + shlex.quote(str(called)) + "; };\n"
+                        "cmp() { printf called >> " + shlex.quote(str(called)) + "; }\n")
                 if variant == "self-delete":
                     body += shlex.quote(sys.executable) + " -c 'import os; os.unlink(os.environ[\"BASH_ENV\"])'\n"
                 body += "unset BASH_ENV ENV\n"
@@ -507,27 +516,60 @@ elif name == "cpio":
                 else:
                     env["BASH_ENV"] = str(init)
                 result = subprocess.run(argv, env=env, text=True, capture_output=True, timeout=30)
-                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-                self.assertIn("runtime-injection", result.stderr)
+                self._assert_explicit_injection_rejection(result)
+                self.assertFalse(called.exists(), "spoofed command was invoked")
                 self.assertNotIn("missing default-verify command", result.stderr)
-                self.assertNotIn("MODE\thost verify", result.stdout)
-                self.assertNotIn("OVERALL\tPASS", result.stdout)
                 if variant == "self-delete":
                     self.assertFalse(init.exists())
 
     def test_bootstrap_cannot_fall_through_to_unclean_workflow_body(self) -> None:
-        for functions in ("exit() { :; }", "exec() { :; }", "exec() { :; }; exit() { :; }"):
-            with self.subTest(functions=functions):
+        for functions in REJECTION_FUNCTIONS:
+            for context in REJECTION_CONTEXTS:
+                with self.subTest(functions=functions, context=context), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    init, called = root / "init.sh", root / "spoof-called"
+                    body = "\n".join(name + "() { printf '%s\\n' " + shlex.quote(name) + " >> " +
+                                     shlex.quote(str(called)) + "; }" for name in (*functions, "python3", "cmp")) + "\n"
+                    if context.startswith("self-delete"):
+                        body += shlex.quote(sys.executable) + " -c 'import os; os.unlink(os.environ[\"BASH_ENV\"])'\n"
+                    body += "unset BASH_ENV ENV\n"
+                    init.write_text(body)
+                    env = {**os.environ, "REPRODUCE_ALLOW_DIRTY": "1", "REPRODUCE_SKIP_TESTS": "1"}
+                    argv = ["bash", str(HERE / "reproduce.sh"), "verify"]
+                    if context == "unexported-only":
+                        argv = ["bash", "--noprofile", "--norc", "-c", body + '\n. "$0" verify', str(HERE / "reproduce.sh")]
+                    else:
+                        env["BASH_ENV"] = str(init)
+                    if "preset" in context:
+                        env["REPRODUCE_SANITIZED_ENTRYPOINT"] = "" if context == "preset-empty-marker" else "fixture"
+                    result = subprocess.run(argv, env=env, text=True, capture_output=True, timeout=10)
+                    self._assert_explicit_injection_rejection(result)
+                    self.assertFalse(called.exists(), "spoofed command was invoked")
+                    if context.startswith("self-delete"):
+                        self.assertFalse(init.exists())
+
+    def _assert_explicit_injection_rejection(self, result: subprocess.CompletedProcess) -> None:
+        output = result.stdout + result.stderr
+        self.assertEqual(result.returncode, 2, output)
+        self.assertTrue(output.strip(), "silent rejection is an automation false success")
+        self.assertIn("FAIL\truntime-injection\t", output)
+        self.assertNotIn("MODE\thost verify", output)
+        self.assertNotIn("OVERALL\tPASS", output)
+
+    def test_unavailable_function_enumeration_fails_closed(self) -> None:
+        for disabled in ("builtin", "declare"):
+            with self.subTest(disabled=disabled), tempfile.TemporaryDirectory() as directory:
+                called = Path(directory) / "spoof-called"
+                body = "enable -n " + disabled + "; python3() { printf called >> " + shlex.quote(str(called)) + "; }; "
                 result = subprocess.run(
                     ["bash", "--noprofile", "--norc", "-c",
-                     functions + '; python3() { :; }; cmp() { :; }; . "$0" verify', str(HERE / "reproduce.sh")],
+                     body + '. "$0" verify', str(HERE / "reproduce.sh")],
                     env={**os.environ, "REPRODUCE_ALLOW_DIRTY": "1", "REPRODUCE_SKIP_TESTS": "1"},
                     text=True, capture_output=True, timeout=10,
                 )
-                self.assertNotIn("MODE\thost verify", result.stdout)
-                self.assertNotIn("OVERALL\tPASS", result.stdout)
-                if "exec()" not in functions or "exit()" not in functions:
-                    self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self._assert_explicit_injection_rejection(result)
+                self.assertIn("enumeration", result.stderr)
+                self.assertFalse(called.exists())
 
     def test_unrelated_module_function_has_actionable_clean_process_workaround(self) -> None:
         env = {**os.environ, "BASH_FUNC_module%%": "() { :; }", "REPRODUCE_ALLOW_DIRTY": "1", "REPRODUCE_SKIP_TESTS": "1"}
@@ -561,8 +603,8 @@ elif name == "cpio":
             self.assertIn("runtime-recursion", result.stderr)
             self.assertIn("OVERALL\tFAIL", result.stderr)
             self.assertNotIn("python-runtime", result.stdout)
-            # An accidental python3 -> entrypoint link really re-enters the shell
-            # once; the inherited marker stops it before a second child starts.
+            # An accidental python3 -> entrypoint link is detected by file
+            # identity before invocation; system Python only diagnoses refusal.
             (Path(directory) / "python3").symlink_to(HERE / "reproduce.sh")
             env = {**os.environ, "PATH": directory}
             env.pop("REPRODUCE_ACTIVE_ENTRYPOINT", None)
@@ -650,8 +692,8 @@ elif name == "cpio":
     def test_historical_v9_public_execution_proof_matches_execution_commit(self) -> None:
         self._check_public_execution_proof("demo_v9_delivery_20260907", current=False)
 
-    def test_v10_public_execution_proof_matches_commit_and_delivery_files(self) -> None:
-        self._check_public_execution_proof("demo_v10_delivery_20260908", current=True)
+    def test_historical_v10_public_execution_proof_matches_execution_commit(self) -> None:
+        self._check_public_execution_proof("demo_v10_delivery_20260908", current=False)
 
     def _check_public_execution_proof(self, directory: str, *, current: bool) -> None:
         archive = REPO / "data/raw" / directory / "gbs"
@@ -900,8 +942,8 @@ elif name == "cpio":
                 text=True, capture_output=True,
             )
             self.assertEqual(result.returncode, 2)
-            self.assertIn("Python >=3.10 required", result.stdout)
-            self.assertIn("OVERALL\tFAIL", result.stdout)
+            self.assertIn("Python >=3.10 required", result.stderr)
+            self.assertIn("OVERALL\tFAIL", result.stderr)
             self.assertNotIn("MODE\thost verify", result.stdout)
 
     def test_missing_required_userland_command_is_named_by_preflight(self) -> None:
@@ -1218,8 +1260,8 @@ elif name == "cpio":
 
     def test_delivery_identity_marks_main_report_only(self) -> None:
         refs = json.loads((HERE / "delivery_refs.json").read_text(encoding="utf-8"))
-        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v10"})
-        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v10"})
+        self.assertEqual(refs["branch_refs"]["main"], {"mode": "report_only", "ref": "demo-v11"})
+        self.assertEqual(refs["branch_refs"]["demo"], {"mode": "required", "ref": "demo-v11"})
 
     def test_main_clone_without_delivery_tag_is_report_only_and_passes(self) -> None:
         result = self._run_delivery_identity_clone("main", include_delivery_tag=False)

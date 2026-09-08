@@ -1,83 +1,58 @@
-#!/bin/sh
-set -u
-
-# This guard runs before resolving or invoking any external program. Host-test
-# fixtures explicitly start independent invocations below, not recursive ones.
-if [ "${REPRODUCE_SANITIZED_ENTRYPOINT+x}" = x ]; then
-    printf 'FAIL\truntime-injection\tpre-set sanitation marker refused (including empty values)\nOVERALL\tFAIL\n' >&2
-    exit 2
+#!/bin/bash
+# Assignment/keywords first: POSIX special builtins outrank functions. Escaping
+# their spelling also prevents alias expansion. No exec/exit/printf command is
+# used to carry a refusal: the final real Python process owns its status/output.
+POSIXLY_CORRECT=1
+_reproduce_functions=
+_reproduce_aliases=
+_reproduce_enumeration='unavailable (function/alias enumeration failed)'
+if \readonly -f builtin 2>/dev/null; then
+    _reproduce_enumeration='blocked (builtin function shadows enumeration)'
+elif _reproduce_functions=$(\builtin declare -F 2>/dev/null) &&
+     _reproduce_aliases=$(\builtin alias -p 2>/dev/null); then
+    _reproduce_enumeration=ok
 fi
-if [ -n "${REPRODUCE_ACTIVE_ENTRYPOINT:-}" ]; then
-    printf 'FAIL\truntime-recursion\treproduce.sh already active (pid=%s); recursive invocation refused\nOVERALL\tFAIL\n' "$REPRODUCE_ACTIVE_ENTRYPOINT" >&2
-    exit 2
-fi
-REPRODUCE_ACTIVE_ENTRYPOINT=$$
-export REPRODUCE_ACTIVE_ENTRYPOINT
 
-# Bootstrap Python via filesystem PATH traversal using shell builtins only.
-# Never execute a command/python3 function or trust a command -v override.
+# Filesystem traversal and [[ ]] are not shell command-name lookups. Keep
+# malformed/missing PATH and self-links diagnosable without invoking a function.
 _reproduce_python=
+_reproduce_python_problem=
 _reproduce_search=${PATH:-}:
-while [ -n "$_reproduce_search" ]; do
+while [[ -n "$_reproduce_search" ]]; do
     _reproduce_dir=${_reproduce_search%%:*}
     _reproduce_search=${_reproduce_search#*:}
     _reproduce_candidate=${_reproduce_dir:-.}/python3
-    if [ -f "$_reproduce_candidate" ] && [ -x "$_reproduce_candidate" ]; then
-        _reproduce_python=$_reproduce_candidate
+    if [[ -f "$_reproduce_candidate" && -x "$_reproduce_candidate" ]]; then
+        if [[ "$_reproduce_candidate" -ef "$0" ]]; then
+            _reproduce_python_problem=recursive
+        else
+            _reproduce_python=$_reproduce_candidate
+        fi
         break
     fi
 done
-if [ -z "$_reproduce_python" ]; then
-    printf 'FAIL\truntime-preflight\tpython3 is not available; Python >=3.10 required\nOVERALL\tFAIL\n' >&2
-    exit 2
+if [[ -z "$_reproduce_python" ]]; then
+    _reproduce_python_problem=${_reproduce_python_problem:-missing}
+    # A system interpreter is used only to print a refusal, never to bypass a
+    # missing PATH dependency. If none is installed, the OS itself fails nonzero.
+    for _reproduce_candidate in /usr/bin/python3 /usr/local/bin/python3; do
+        if [[ -f "$_reproduce_candidate" && -x "$_reproduce_candidate" &&
+              ! "$_reproduce_candidate" -ef "$0" ]]; then
+            _reproduce_python=$_reproduce_candidate
+            break
+        fi
+    done
 fi
-# Inspect the current Bash state, not only exported environment markers. A
-# startup file may have unset/deleted itself while leaving unexported functions.
-# Only shell builtins and the filesystem-resolved Python run before execve.
-_reproduce_functions=
-_reproduce_aliases=
-if [ -n "${BASH_VERSION:-}" ]; then
-    _reproduce_functions=$(builtin compgen -A function)
-    _reproduce_aliases=$(builtin compgen -A alias)
+if [[ "$_reproduce_python" != /* ]]; then
+    _reproduce_python=${PWD}/$_reproduce_python
 fi
-exec "$_reproduce_python" -c '
-import os, shutil, sys
-from pathlib import Path
-if sys.version_info < (3, 10):
-    print("FAIL\tpython-runtime\tPython >=3.10 required (Path.write_text newline support); found " + sys.version.split()[0])
-    print("OVERALL\tFAIL")
-    sys.exit(2)
-script, python, functions, aliases, *arguments = sys.argv[1:]
-markers = sorted(k for k in os.environ if k.startswith("BASH_FUNC_") or k in ("BASH_ENV", "ENV"))
-if functions or aliases or markers:
-    print("FAIL\truntime-injection\tshell function/startup injection refused: functions=" +
-          repr(functions.splitlines()) + "; aliases=" + repr(aliases.splitlines()) +
-          "; environment markers=" + repr(markers), file=sys.stderr)
-    print("OVERALL\tFAIL", file=sys.stderr)
-    sys.exit(2)
-shell = shutil.which("bash")
-if not shell or not os.path.isfile(shell) or not os.access(shell, os.X_OK):
-    print("FAIL\truntime-preflight\tmissing default-verify command: bash (real executable required)", file=sys.stderr)
-    sys.exit(2)
-try:
-    body = Path(script).read_text().split("\n# REPRODUCE_CLEAN_BODY\n", 1)[1].rsplit("\nREPRODUCE_BODY_END\n", 1)[0]
-except (OSError, IndexError) as error:
-    print("FAIL\truntime-preflight\tcannot read entrypoint body: " + str(error), file=sys.stderr)
-    sys.exit(2)
-environment = {k: v for k, v in os.environ.items()
-               if k not in ("BASH_ENV", "ENV") and not k.startswith("BASH_FUNC_")}
-environment["REPRODUCE_SANITIZED_ENTRYPOINT"] = str(os.getpid())
-environment["REPRODUCE_RESOLVED_PYTHON"] = os.path.abspath(python)
-print("PASS\tpython-runtime\t" + sys.version.split()[0], flush=True)
-# Do not re-enter the public launcher with a trusted boolean bypass. Pass only
-# the body to a fresh privileged Bash: no startup files/functions/options import.
-os.execve(os.path.abspath(shell), [shell, "--noprofile", "--norc", "-p", "-c", body, script, *arguments], environment)
-' "$0" "$_reproduce_python" "$_reproduce_functions" "$_reproduce_aliases" "$@"
-exit 2
+# Retain the captured table for rejection, but prevent even an absolute-path
+# function from intercepting the interpreter. POSIX unset is a special builtin.
+\unset -f "$_reproduce_python"
 
-# Keep the body inert in the original shell even if startup code replaced exec
-# or exit with a returning function. Only Python passes this text to fresh Bash.
-: <<'REPRODUCE_BODY_END'
+# The original shell never evaluates this workflow. Python alone passes the
+# stored body to a fresh shell. Keep this BEFORE the final Python invocation.
+\: <<'REPRODUCE_BODY_END'
 # REPRODUCE_CLEAN_BODY
 set -u
 _reproduce_python=$REPRODUCE_RESOLVED_PYTHON
@@ -430,3 +405,44 @@ if [ "$failures" -ne 0 ]; then
 fi
 printf 'OVERALL\tPASS\n'
 REPRODUCE_BODY_END
+
+"$_reproduce_python" -c '
+import os, shutil, sys
+from pathlib import Path
+
+def refuse(label, reason):
+    print("FAIL\t" + label + "\t" + reason, file=sys.stderr, flush=True)
+    print("OVERALL\tFAIL", file=sys.stderr, flush=True)
+    sys.exit(2)
+
+if sys.version_info < (3, 10):
+    refuse("python-runtime", "Python >=3.10 required (Path.write_text newline support); found " + sys.version.split()[0])
+script, python, problem, enumeration, functions, aliases, *arguments = sys.argv[1:]
+if "REPRODUCE_SANITIZED_ENTRYPOINT" in os.environ:
+    refuse("runtime-injection", "pre-set sanitation marker refused (including empty values)")
+if os.environ.get("REPRODUCE_ACTIVE_ENTRYPOINT") or problem == "recursive":
+    refuse("runtime-recursion", "reproduce.sh already active or python3 resolves to entrypoint; recursive invocation refused")
+markers = sorted(k for k in os.environ if k.startswith("BASH_FUNC_") or k in ("BASH_ENV", "ENV"))
+if enumeration != "ok":
+    refuse("runtime-injection", "function/alias enumeration " + enumeration + "; fail closed")
+if functions or aliases or markers:
+    refuse("runtime-injection", "shell function/startup injection refused: functions=" +
+           repr(functions.splitlines()) + "; aliases_present=" + str(bool(aliases)) +
+           "; environment markers=" + repr(markers))
+if problem:
+    refuse("runtime-preflight", "python3 is not available in PATH; Python >=3.10 required")
+shell = shutil.which("bash")
+if not shell or not os.path.isfile(shell) or not os.access(shell, os.X_OK):
+    refuse("runtime-preflight", "missing default-verify command: bash (real executable required)")
+try:
+    body = Path(script).read_text().split("\n# REPRODUCE_CLEAN_BODY\n", 1)[1].split("\nREPRODUCE_BODY_END\n", 1)[0]
+except (OSError, IndexError) as error:
+    refuse("runtime-preflight", "cannot read entrypoint body: " + str(error))
+environment = {k: v for k, v in os.environ.items()
+               if k not in ("BASH_ENV", "ENV", "POSIXLY_CORRECT") and not k.startswith("BASH_FUNC_")}
+environment["REPRODUCE_ACTIVE_ENTRYPOINT"] = str(os.getpid())
+environment["REPRODUCE_SANITIZED_ENTRYPOINT"] = str(os.getpid())
+environment["REPRODUCE_RESOLVED_PYTHON"] = os.path.abspath(python)
+print("PASS\tpython-runtime\t" + sys.version.split()[0], flush=True)
+os.execve(os.path.abspath(shell), [shell, "--noprofile", "--norc", "-p", "-c", body, script, *arguments], environment)
+' "$0" "$_reproduce_python" "$_reproduce_python_problem" "$_reproduce_enumeration" "$_reproduce_functions" "$_reproduce_aliases" "$@"
