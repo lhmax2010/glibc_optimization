@@ -12,7 +12,7 @@
 | 4 · demo-v12 | NOT_EXECUTED_STOP_GATE | 不切库、不执行新交付矩阵，demo-v11 保持有效 |
 | 5 · 定向复审准备 | NOT_EXECUTED_STOP_GATE | 无 v12，不生成其 brief、不联系第三方 |
 
-本次从 2026-09-09 03:09:54.998716 UTC 的客户端检查开始，至 03:09:58.111178 UTC
+本次从 2026-09-09 03:09:54.998761 UTC 的客户端检查开始，至 03:09:58.111178 UTC
 停止。只读原文、命令、编辑前后 SHA 见[回执](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/execution.json)
 和[清单](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/manifest.json)。
 本次 0 格测量、0 次注入、0 文件推送、0 包安装/卸载、0 governor 修改，无重启或会话清除。
@@ -51,7 +51,15 @@ G4 背景参考仍为[历史 B/B2](tizen_native_evidence_20260904.md)的 272 KiB
 原 18 格/失败 G4 结果提交：`60bea7c63ca2c603351e0ef25df15546e78db05c`；
 执行器来源：`06799668543c014b0552a23720ca7e79304f4346`。
 本次第 1 段已推提交：`ff2442ef0b2b8779646a08408fab9bf5bc3e7488`。
-停止结果提交在推送后追加；所有已完成部分进入 main，未改 demo 分支。
+停止结果已推提交：`776de96e6c53932f2ed45e28558a9e8035ae2a78`。
+所有已完成部分进入 main，未改 demo 分支。
+
+从 GitHub 远端普通 main 克隆结果提交 `776de96e6c53932f2ed45e28558a9e8035ae2a78`，
+工作树干净、未使用 dirty/test-skip override：本轮 114 项测试通过，默认 verify
+`OVERALL PASS`；main 的交付身份正确标为 REPORT_ONLY，指向 demo-v11。
+停止报告链接 235 项通过，11 件公开日志哈希与清单一致，脱敏扫描零命中；
+见[检查回执](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/host_checks.tsv)。
+这是 host 修复验证，不是未执行的 G4/整轮健康/交付 v12 矩阵通过。
 
 待周五 PM 裁决：当前 sdb 会话 UID=5001，不满足固定 root 门；请决定如何恢复满足合同的
 会话并重新授权 G4，或是否接受缺 G4 的 v12。执行器不得自行 root-on、降门或重启。

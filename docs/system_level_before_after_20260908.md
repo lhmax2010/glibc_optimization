@@ -390,8 +390,8 @@ python3 tools/runners/system_level_before_after_20260908/execute_g4_resume.py \
 ### 7.4 本次终态：UID 门 STOP，G4 NOT_EXECUTED
 
 第 1 段修复已推 main：`ff2442ef0b2b8779646a08408fab9bf5bc3e7488`。
-随后首次只读门于 2026-09-09 03:09:54.998716 UTC 开始 sdb 客户端检查，
-03:09:55.043292 UTC 执行 connect；03:09:58.111178 UTC 以 STOP 结束。
+随后首次只读门于 2026-09-09 03:09:54.998761 UTC 开始 sdb 客户端检查，
+03:09:55.043316 UTC 执行 connect；03:09:58.111178 UTC 以 STOP 结束。
 对应原合同推送至本次执行启动间隔 80042.85845797 s，未重打合同 tag。
 时间线、精确命令和原文 SHA 见[commands](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/commands.json)、
 [execution](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/execution.json)、
@@ -427,3 +427,6 @@ G4 三格均 **NOT_EXECUTED**，上轮失败尝试仍在 §6 保留。G1/G2/G3 �
 有效交付仍为 **demo-v11**。周五需 PM 裁决满足 UID=0 后如何恢复 G4，或是否缺 G4 发布；
 历史 B/B2 的 272 KiB / 36 KiB 仅作[替代背景证据](tizen_native_evidence_20260904.md)，
 不冒充本合同 G4 数据。汇总见[两日记录](twoday_summary_20260910.md)。
+
+原文 `devices.txt` 首行末尾空格按源输出保留，未为消除 whitespace 提示而编辑证据；
+清单中的公开 SHA 对应此保留版本。除约定的 CR/IP/host 路径替换外，不改原文。

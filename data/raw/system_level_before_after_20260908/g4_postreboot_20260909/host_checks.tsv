@@ -6,3 +6,10 @@ related-links	PASS	local-links checked=217 before this receipt link was added
 frozen-contract-analyzer	PASS	git diff system-before-after-contract-20260908 on contract.json and analyze_system_level.py empty
 accepted-prefix-preservation	PASS	18 cells / 330 pairs; old execution SHA256 5cc81666216b4ee204f0cf5171ac8af0dc7655992b66bc0dd399145c4f64c61c; all archives and per-file hashes revalidated
 board-connection-before-stage1	NOT_EXECUTED	No board connection or command during host closure
+github-clean-main-clone	PASS	776de96e6c53932f2ed45e28558a9e8035ae2a78; git status --porcelain empty
+clean-clone-round-tests	PASS	Ran 114 tests; OK; no board commands
+clean-clone-verify	PASS	OVERALL PASS; no dirty/test-skip override; main delivery identity REPORT_ONLY points to demo-v11
+stop-report-links	PASS	local-links checked=235
+stop-log-integrity	PASS	11 published files match manifest public_sha256; original bytes retained locally
+redaction	PASS	No private board address or host-home matches in new publication and changed documents
+effective-delivery-remote	PASS	demo and demo-v11 peel 0e8a2f731b13690009badf1ca2acbd57018e7bc8; tag object f1266c0be6c225a2ceb962836380c656758f9427; demo-v12 absent
