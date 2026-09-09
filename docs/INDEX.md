@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-09: [两日续跑](twoday_summary_20260910.md)：先闭合 G4 执行器与故障测试；已验收 G1/G2/G3 18 格不重跑，原合同不变，只有 G4/健康门全部通过才进入 Demo 集成与 v12。
+
 - 2026-09-08: [系统级补测续跑](system_level_before_after_20260908.md#6-当日续跑结果g4-首格停止不进入-demo-集成)：PM 占用裁决已落实，G1/G2/G3 18 格通过；G4 首格 M7 赋值失败而停止，可能的目标内 FILE*/FD 状态未排除；不做 Demo 集成、不切 v12，见 [当日汇总](overnight_summary_20260908.md)。
 
 | Date | Target | Activity | One-line result | Report |

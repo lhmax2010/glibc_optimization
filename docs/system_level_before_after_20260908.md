@@ -327,3 +327,62 @@ python3 tools/runners/system_level_before_after_20260908/publish_execution_log.p
 这些检查不覆盖尚未修复的 ARM GDB 赋值语义，不将 host PASS 写成 G4 可用。
 G4 必须待执行器兼容性与目标内状态恢复方案明确后再议，不采用当前不完整数据生成
 新的三重复 Demo 头条。第 2、3 段均停止，当前有效交付保持 demo-v11。
+
+## 7. 两日批量续跑（2026-09-09）
+
+### 7.1 授权、历史与不变项
+
+PM 于 2026-09-08 明确板专供项目，并报告已手动重启，旧 FILE*/FD 残留恢复事项由该次
+重启闭合。§6 原始失败、不确定性和卸包警告原样保留；新的“现场恢复”判断只依据本次
+首次连接后的原文核验，不把 PM 陈述冒充现场观测。执行器无 reboot/poweroff 权限，旧
+两个 PID 的清除授权不再使用。裁决人/批准人 PM；见[裁决台账](pm_decisions.md#2026-09-08-两日续跑裁决2026-09-09-落地)。
+
+本次仍对应 `system-before-after-contract-20260908`，tag 对象
+`0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3`、合同提交
+`54ee2ba8d2819014f3e5656de023ffaf283b4a4a`。contract.json 与 analyze_system_level.py
+逐字节不改；G1/G2/G3 的 18 格、330 对采样已验收，禁止重跑。只执行剩余 G4 三格，
+重启前 18 格与重启后 G4 分开保存环境/健康/执行回执，不能描述为一次连续运行。
+
+### 7.2 Host 执行器闭合
+
+- 原 `$fp` 回归先由失败测试证实，再改为 GDB Python 变量接收 FILE*，不使用寄存器
+  convenience name；NULL 不调用 malloc_info/fclose，非 NULL 在 finally 中仅关闭一次。
+  malloc_info、关闭或 detach 失败均拒绝成功；未知 inferior-call 状态仍如实报告，不猜指针。
+- M7 与 trim 都在 attach 后、inferior 调用前核对 PID/start tick/comm；shell 保留有界
+  debugger 清理、目标不杀死、异常恢复 governor、路径/符号链接门与逐文件完整性门。
+- 新[续跑入口](../tools/runners/system_level_before_after_20260908/execute_g4_resume.py)
+  只允许 G4_trim_r1/r2/r3，只推 reclaim_probe；连板前重验已发布 18 格回执/归档/原件哈希，
+  并要求执行提交已在 origin/main。旧 21 格入口是历史复现代码，不是本次执行命令。
+- 新鲜占用检查包含完整 PTY 进程表与 boot_id；任何其他交互会话即停，不清除。
+  全轮告警枚举/元数据失败不再落成空表；缺 owner proof 时保留目录但仍尝试恢复 governor。
+- rpm 查询故障不得当作“未安装”；卸包前后成功取得的完整清单必须一致。卸包警告和
+  包路径残留观察保留；清理后另取 dmesg/zram/stability/boot 核验，不扩大旧回执覆盖范围。
+
+### 7.3 复现与分段门
+
+第 1 段 host 验证：本轮执行器 114 项测试通过，既有 verify OVERALL PASS（提交前显式
+`REPRODUCE_ALLOW_DIRTY=1`），相关文档链接 217 项通过；合同/analyzer 与 tag 逐字节一致。
+见[紧凑检查回执](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/host_checks.tsv)。
+这不代替 G4 板上执行和首次重启后卫生门。
+
+以下是本次 G4-only 续跑形式；不得重新运行 G1/G2/G3。完整原始件本地留存，可按请求提供。
+先完成 host 测试并推 main，再运行只读门；核验原文后，使用另一个全新 host 输出目录执行：
+
+```sh
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py'
+python3 tools/runners/system_level_before_after_20260908/execute_g4_resume.py \
+  --preflight-only --ip <TEST_BOARD_IP> --output-dir /path/to/new-readonly-gate \
+  --accepted-run /path/to/accepted-18-run \
+  --contract-receipt /path/to/contract_push_receipt.json \
+  --probe /path/to/reclaim_probe.armv7l --gdb-cache /path/to/official-six-rpm-cache
+python3 tools/runners/system_level_before_after_20260908/execute_g4_resume.py \
+  --ip <TEST_BOARD_IP> --output-dir /path/to/new-g4-only-run \
+  --accepted-run /path/to/accepted-18-run \
+  --contract-receipt /path/to/contract_push_receipt.json \
+  --probe /path/to/reclaim_probe.armv7l --gdb-cache /path/to/official-six-rpm-cache
+```
+
+确定性/有效性项：合同/资产 SHA、原 18 格保留、三格相同目标身份、≥120.000 s 间隔、
+零 OOM/LMK/major fault、zram 三项 Δ=0、无新增归属告警、拉取完整与清理复核。
+容差/报告项：常驻进程的回收量和含 ptrace 耗时只报告实测，不以历史 272/36 KiB 为通过带；
+静置 faults 与业务下周期 faults 分列。任一失败停止所有后续段，不重跑刷数、不切 v12。

@@ -28,7 +28,7 @@ record()
     shift
     "$@" >"$out/$name" 2>"$out/$name.stderr"
     rc=$?
-    printf 'CMD=%s RC=%s\n' "$*" "$rc" >>"$log"
+    printf 'CMD=%s RC=%s\n' "$*" "$rc" >>"$log" || return 1
     if [ "$rc" -eq 0 ]; then printf 'DONE_%s\n' "$name" >>"$log"; else printf 'FAIL_%s\n' "$name" >>"$log"; return 1; fi
 }
 start=$(date +%s%N) || exit 3

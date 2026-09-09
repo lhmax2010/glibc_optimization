@@ -389,20 +389,11 @@ gdb() { printf 'UNSAFE_GDB\n' >>"$calls"; }
                 self.assertEqual(self.call_lines(), [])
 
     def test_g4_null_file_guard_precedes_malloc_info_and_fclose(self):
-        # Generate the actual GDB command file with the actual production shell
-        # fragment, then inspect its control flow.  This does not emulate ptrace.
         source = CONTROLLER.read_text()
-        start = source.index('        printf \'%s\\n\' "set \\$fp=')
-        end = source.index('\n        run_gdb gdb_m7.txt', start)
-        p = self.run_shell(source[start:end])
-        self.assertEqual(p.returncode, 0, p.stdout)
-        commands = (self.out / "m7.gdb").read_text().splitlines()
-        self.assertTrue(commands[0].startswith("set $fp=(void*)fopen("))
-        self.assertEqual(commands[1:7], ["if $fp == 0", "echo FAIL_NULL_FILE\\n", "detach", "quit 1", "end",
-                                       "set $mrc=(int)malloc_info(0,$fp)"])
-        self.assertEqual(commands[7], "set $crc=(int)fclose($fp)")
-        self.assertEqual(commands[8:], ["if $mrc != 0 || $crc != 0", "echo FAIL_M7_RETURN\\n", "detach",
-                                        "quit 1", "end", "detach", "quit 0"])
+        self.assertNotRegex(source, r"set .*\$fp\b", "ARM fp must never receive fopen")
+        self.assertIn('run_gdb gdb_m7.txt -x "$work/g4_m7.py" || fail M7', source)
+        self.assertIn("gdb -nx -nh", source)
+        self.assertLess(source.index("|| fail M7_COMPLETION"), source.index("run_gdb gdb_trim.txt"))
 
     def test_run_gdb_timeout_retains_owned_debugger_for_finish(self):
         script = function("run_gdb") + r'''

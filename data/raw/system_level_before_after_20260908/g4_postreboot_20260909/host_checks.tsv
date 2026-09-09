@@ -1,0 +1,8 @@
+check	verdict	detail
+g4-fp-regression-before-fix	EXPECTED_FAIL	ARM fp namespace assignment detected; one regression assertion failed before fix
+round-host-tests	PASS	Ran 114 tests; OK; host-only fixtures; no SDB
+existing-verify	PASS	OVERALL PASS; precommit REPRODUCE_ALLOW_DIRTY=1; real GBS excluded by default
+related-links	PASS	local-links checked=217 before this receipt link was added
+frozen-contract-analyzer	PASS	git diff system-before-after-contract-20260908 on contract.json and analyze_system_level.py empty
+accepted-prefix-preservation	PASS	18 cells / 330 pairs; old execution SHA256 5cc81666216b4ee204f0cf5171ac8af0dc7655992b66bc0dd399145c4f64c61c; all archives and per-file hashes revalidated
+board-connection-before-stage1	NOT_EXECUTED	No board connection or command during host closure

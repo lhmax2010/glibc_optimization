@@ -270,7 +270,7 @@ class ExecutorHost(unittest.TestCase):
         self.instance.created = True
         with mock.patch.object(self.instance, "remote", side_effect=ValueError("missing owner proof")) as remote:
             self.assertEqual(self.instance.cleanup(), "FAIL")
-        self.assertEqual([call.args[0] for call in remote.call_args_list], ["WORK_OWNER"])
+        self.assertEqual([call.args[0] for call in remote.call_args_list], ["WORK_OWNER", "RESTORE_GOVERNORS"])
         self.assertIn("ambiguous work creation; preserved", self.instance.receipt["cleanup_problems"][0])
 
     def test_workdir_absence_does_not_skip_governor_or_package_recovery(self):

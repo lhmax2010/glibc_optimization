@@ -56,6 +56,25 @@ def validate_completed(raw, completed):
 
 
 class Executor(Gate):
+    success_verdict = "PASS_COMPLETE_MATRIX"
+
+    def local_authority(self):
+        closure = json.loads(self.args.occupancy_receipt.read_text())
+        if closure["verdict"] != "PASS_PM_OCCUPANCY_CLOSED":
+            raise ValueError("PM occupancy closure receipt missing")
+
+    def selected_cells(self):
+        return CONTRACT["cells"]
+
+    def asset_paths(self):
+        return {"alloc_bench_observer.armv7l": self.args.alloc,
+                "gst_loop_decode.armv7l": self.args.gst,
+                "reclaim_probe.armv7l": self.args.probe, "small_320x240.mp4": self.args.media}
+
+    def complete_analysis(self):
+        subprocess.run([sys.executable, str(HERE / "analyze_system_level.py"), "--raw", str(self.raw),
+                        "--output-dir", str(self.out / "derived")], check=True)
+
     def __init__(self, args):
         args.output_dir.mkdir(parents=True, exist_ok=False)
         super().__init__(args.ip, args.output_dir)
@@ -102,7 +121,9 @@ class Executor(Gate):
 
     def install_gdb(self):
         before = self.remote("PACKAGES_BEFORE", "for p in " + " ".join(GDB_NAMES) +
-                             "; do rpm -q --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH} %{SIZE}\\n' \"$p\"; done; true")
+                             "; do text=$(LC_ALL=C rpm -q --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH} %{SIZE}\\n' \"$p\" 2>&1); rc=$?; "
+                             'printf "%s\\n" "$text"; if [ "$rc" -ne 0 ]; then test "$rc" -eq 1 && '
+                             'test "$text" = "package $p is not installed" || exit 1; fi; done')
         if "gdb 16.3-1.1.armv7l " in before:
             self.remote("GDB_EXISTING", "gdb --version")
             return
@@ -151,9 +172,9 @@ class Executor(Gate):
             "files": expected_files, "verdict": "PASS"}, indent=2) + "\n")
         self.verified_cells.add(cell)
 
-    def alerts(self, cell):
+    def alerts(self, cell, after_name="after"):
         path = self.raw / cell
-        before, after = STABILITY.snapshot(path / "stability_before.tsv"), STABILITY.snapshot(path / "stability_after.tsv")
+        before, after = STABILITY.snapshot(path / "stability_before.tsv"), STABILITY.snapshot(path / ("stability_" + after_name + ".tsv"))
         changed = [name for name in after if name not in before or after[name] != before[name]]
         rows = []
         own_pids = {int(p.read_text()) for p in self.raw.glob("*/pid.txt")}
@@ -175,7 +196,8 @@ class Executor(Gate):
             rows.append(row)
             if own and row not in self.owned_alerts:
                 self.owned_alerts.append(row)
-        (path / "alert_attribution.json").write_text(json.dumps(rows, indent=2) + "\n")
+        filename = "alert_attribution.json" if after_name == "after" else "alert_attribution_" + after_name + ".json"
+        (path / filename).write_text(json.dumps(rows, indent=2) + "\n")
 
     def round_snapshot(self, when):
         path = self.raw / "round_health"
@@ -183,9 +205,18 @@ class Executor(Gate):
         for name, command in (("dmesg", "dmesg"), ("zram", "cat /sys/block/zram0/mm_stat")):
             output = self.remote("ROUND_" + when.upper() + "_" + name.upper(), command)
             (path / (name + "_" + when + ".txt")).write_text(output + "\n")
-        output = self.remote("ROUND_" + when.upper() + "_ALERTS", '''printf 'remote_path\tsize\tmtime_epoch\tsha256\n'
-for f in /opt/usr/share/crash/livedump/*.zip; do
-[ -f "$f" ] || continue
+        output = self.remote("ROUND_" + when.upper() + "_ALERTS", '''printf 'remote_path\tsize\tmtime_epoch\tsha256\n' || exit 1
+d=/opt/usr/share/crash/livedump
+test ! -L "$d" || exit 1
+files=
+if [ -e "$d" ]; then
+test -d "$d" || exit 1
+files=$(find "$d" -maxdepth 1 -name '*.zip') || exit 1
+fi
+IFS='
+'
+for f in $files; do
+test -f "$f" && test ! -L "$f" || exit 1
 size=$(stat -c %s "$f") || exit 1
 stamp=$(stat -c %Y "$f") || exit 1
 hash=$(sha256sum "$f") || exit 1
@@ -220,6 +251,10 @@ done''')
                 raise ValueError("invalid work ownership response")
         except Exception as error:
             self.receipt["cleanup_problems"] = ["ambiguous work creation; preserved: " + str(error)]
+            try:
+                self.remote("RESTORE_GOVERNORS", 'for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; printf "%s\\n" schedutil >"$p" || exit 1; test "$(cat "$p")" = schedutil || exit 1; done')
+            except Exception as restore_error:
+                self.receipt["cleanup_problems"].append("governor restore: " + str(restore_error))
             return "FAIL"
         if self.active_cell:
             cell = self.active_cell
@@ -267,9 +302,12 @@ done''')
         if self.install_attempted:
             try:
                 self.remote("GDB_REMOVE", "names=; for p in " + " ".join(reversed(GDB_NAMES)) +
-                    '; do if rpm -q "$p" >/dev/null 2>&1; then names="$names $p"; fi; done; '
+                    '; do text=$(LC_ALL=C rpm -q "$p" 2>&1); rc=$?; '
+                    'if [ "$rc" -eq 0 ]; then names="$names $p"; else '
+                    'test "$rc" -eq 1 && test "$text" = "package $p is not installed" || { printf "%s\\n" "$text"; exit 1; }; fi; done; '
                     'if [ -n "$names" ]; then rpm -e --test $names && rpm -e $names || exit 1; fi; '
-                    'for p in ' + " ".join(GDB_NAMES) + '; do if rpm -q "$p" >/dev/null 2>&1; then exit 1; fi; done')
+                    'for p in ' + " ".join(GDB_NAMES) + '; do text=$(LC_ALL=C rpm -q "$p" 2>&1); rc=$?; '
+                    'printf "%s\\n" "$text"; test "$rc" -eq 1 && test "$text" = "package $p is not installed" || exit 1; done')
             except Exception as error:
                 problems.append("package removal: " + str(error))
         for row in self.owned_alerts:
@@ -299,31 +337,30 @@ done''')
                     raise ValueError("frozen contract/analyzer byte mismatch")
             if git("status", "--porcelain"):
                 raise ValueError("executor must be committed in a clean snapshot before run")
-            closure = json.loads(self.args.occupancy_receipt.read_text())
-            if closure["verdict"] != "PASS_PM_OCCUPANCY_CLOSED":
-                raise ValueError("PM occupancy closure receipt missing")
+            self.local_authority()
             pushed = json.loads(self.args.contract_receipt.read_text())
             if pushed["tag_object"] != self.receipt["tag_object"] or time.time_ns() - pushed["epoch_ns"] < 600000000000:
                 raise ValueError("pushed contract identity/wait gate failed")
             self.receipt["contract_push_utc"] = pushed["origin_verified_utc"]
             self.receipt["push_to_run_seconds"] = (time.time_ns() - pushed["epoch_ns"]) / 1e9
             self.receipt["preflight"] = self.check()
+            if getattr(self.args, "preflight_only", False):
+                self.receipt["verdict"] = "PASS_READONLY_AVAILABILITY"
+                return 0
             target = self.receipt["preflight"]["enlightenment_pid"]
             self.receipt["target_starttime"] = ANALYSIS.proc_stat(self.remote("TARGET_STAT", f"cat /proc/{target}/stat"))["starttime"]
             self.round_snapshot("before")
             self.created = True
             self.remote("PREPARE_WORK", f'test ! -e {WORK} && mkdir -p {WORK} && printf "%s\\n" {self.owner_token} >{WORK}/owner_token.txt')
-            assets = {"alloc_bench_observer.armv7l": self.args.alloc,
-                      "gst_loop_decode.armv7l": self.args.gst,
-                      "reclaim_probe.armv7l": self.args.probe, "small_320x240.mp4": self.args.media}
+            assets = self.asset_paths()
             for name, path in assets.items():
                 self.push(path, name, CONTRACT["assets"][name])
-            for name in ("run_cell_remote.sh", "capture_point.sh"):
+            for name in ("run_cell_remote.sh", "capture_point.sh", "g4_m7.py"):
                 self.push(HERE / name, name)
             self.push(HERE.parent / "s4_retention_20260901/sample_smaps_1s.sh", "sample_smaps_1s.sh")
             self.remote("EXECUTABLE_MODE", "chmod 755 " + " ".join(WORK + "/" + name for name in assets if name.endswith("armv7l")))
             self.install_gdb()
-            for cell in CONTRACT["cells"]:
+            for cell in self.selected_cells():
                 name = cell["id"]
                 self.active_cell = name
                 self.receipt["active_cell"] = name
@@ -340,9 +377,8 @@ done''')
                 self.active_cell = None
                 self.save()
                 print("PASS_CELL", name, flush=True)
-            subprocess.run([sys.executable, str(HERE / "analyze_system_level.py"), "--raw", str(self.raw),
-                            "--output-dir", str(self.out / "derived")], check=True)
-            self.receipt["verdict"] = "PASS_COMPLETE_MATRIX"
+            self.complete_analysis()
+            self.receipt["verdict"] = self.success_verdict
         except Exception as error:
             self.receipt["reason"] = str(error).replace(self.addr, "<TEST_BOARD_IP>")
             print("STOP", self.receipt["reason"], flush=True)
@@ -365,7 +401,7 @@ done''')
             self.receipt["end_utc"] = utc()
             self.save()
             print(json.dumps(self.receipt, indent=2), flush=True)
-        return 0 if self.receipt["verdict"] == "PASS_COMPLETE_MATRIX" else 1
+        return 0 if self.receipt["verdict"] == self.success_verdict else 1
 
 
 def main():

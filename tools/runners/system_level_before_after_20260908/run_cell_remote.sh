@@ -22,14 +22,14 @@ sampler_start=
 debugger_pid=
 debugger_start=
 changed=0
-mark() { printf '%s\n' "$*" | tee -a "$log"; }
+mark() { printf '%s\n' "$*" >>"$log" || return 1; printf '%s\n' "$*"; }
 record()
 {
     name=$1
     shift
     "$@" >"$out/$name" 2>"$out/$name.stderr"
     record_rc=$?
-    mark "CMD=$* RC=$record_rc"
+    mark "CMD=$* RC=$record_rc" || return 1
     if [ "$record_rc" -eq 0 ]; then mark "DONE_$name"; else mark "FAIL_$name"; return 1; fi
 }
 snapshot()
@@ -37,7 +37,9 @@ snapshot()
     target=$1
     printf 'remote_path\tsize\tmtime_epoch\tsha256\n' >"$target" || return 1
     d=/opt/usr/share/crash/livedump
-    [ -d "$d" ] || return 0
+    [ ! -L "$d" ] || return 1
+    [ -e "$d" ] || return 0
+    [ -d "$d" ] || return 1
     find "$d" -maxdepth 1 -type f -name '*.zip' >"$target.unsorted" || return 1
     LC_ALL=C sort "$target.unsorted" >"$target.sorted" || return 1
     while IFS= read -r file; do
@@ -134,7 +136,7 @@ run_gdb()
     debugger_name=$1
     shift
     assert_target || return 1
-    gdb -p "$bench_pid" -batch "$@" >"$out/$debugger_name" 2>"$out/$debugger_name.stderr" &
+    gdb -nx -nh -p "$bench_pid" -batch "$@" >"$out/$debugger_name" 2>"$out/$debugger_name.stderr" &
     debugger_pid=$!
     debugger_start=$(identity_of "$debugger_pid")
     printf '%s %s\n' "$debugger_pid" "$debugger_start" >"$out/debugger_identity.txt" || return 1
@@ -265,19 +267,21 @@ case "$cell" in
         [ "$bench_start" = "${3:?approved enlightenment start tick required}" ] || fail TARGET_RESTARTED
         printf '%s\n' "$bench_pid" >"$out/pid.txt"
         start_sampler || fail SAMPLER
-        printf '%s\n' "set \$fp=(void*)fopen(\"$out/malloc_info_pre.xml\",\"w\")" \
-          'if $fp == 0' 'echo FAIL_NULL_FILE\n' 'detach' 'quit 1' 'end' \
-          'set $mrc=(int)malloc_info(0,$fp)' 'set $crc=(int)fclose($fp)' \
-          'if $mrc != 0 || $crc != 0' 'echo FAIL_M7_RETURN\n' 'detach' 'quit 1' 'end' \
-          'detach' 'quit 0' >"$out/m7.gdb" || fail M7_COMMAND_FILE
-        run_gdb gdb_m7.txt -x "$out/m7.gdb" || fail M7
+        export GLIBC_MEMOPT_M7_PATH="$out/malloc_info_pre.xml"
+        export GLIBC_MEMOPT_TARGET_PID="$bench_pid"
+        export GLIBC_MEMOPT_TARGET_TICK="$bench_start"
+        export GLIBC_MEMOPT_ACTION=m7
+        run_gdb gdb_m7.txt -x "$work/g4_m7.py" || fail M7
+        grep -Fx 'DONE_M7 RC=0' "$out/gdb_m7.txt" >/dev/null || fail M7_COMPLETION
         [ -s "$out/malloc_info_pre.xml" ] || fail M7
         record m7_xml_check.txt python3 -c 'import sys,xml.etree.ElementTree as E; assert E.parse(sys.argv[1]).getroot().tag == "malloc"; print("VALID_MALLOC_XML")' "$out/malloc_info_pre.xml" || fail M7_XML
         cycle=1
         point pre || fail PRE_CAPTURE
         date +%s%N >"$out/injection_start_ns.txt"
-        run_gdb gdb_trim.txt -ex 'call (int)malloc_trim(0)' -ex detach || fail TRIM
+        export GLIBC_MEMOPT_ACTION=trim
+        run_gdb gdb_trim.txt -x "$work/g4_m7.py" || fail TRIM
         date +%s%N >"$out/injection_end_ns.txt"
+        grep -Fx 'DONE_TRIM RC=0' "$out/gdb_trim.txt" >/dev/null || fail TRIM_COMPLETION
         point post || fail POST_CAPTURE
         record idle_stat_start.txt cat "/proc/$bench_pid/stat" || fail IDLE
         date +%s%N >"$out/idle_start_ns.txt"

@@ -99,7 +99,15 @@ class Gate:
         governors = self.remote("GOVERNORS", "for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; test -w \"$p\" || exit 1; cat \"$p\" || exit 1; done")
         if governors.splitlines() != ["schedutil"] * 4:
             raise ValueError("occupied/unknown: governors not four schedutil")
-        self.remote("WORKDIR", "test -d /opt/usr && test -w /opt/usr && if [ -d /opt/usr/glibc_memopt ]; then ls -la /opt/usr/glibc_memopt; test -z \"$(ls -A /opt/usr/glibc_memopt)\"; else echo ABSENT; fi")
+        self.remote("WORKDIR", '''test -d /opt/usr && test -w /opt/usr || exit 1
+p=/opt/usr/glibc_memopt
+test ! -L "$p" || exit 1
+if [ -e "$p" ]; then
+test -d "$p" || exit 1
+ls -la "$p" || exit 1
+entries=$(ls -A "$p") || exit 1
+test -z "$entries" || exit 1
+else echo ABSENT; fi''')
         processes = self.remote("PROCESSES", "for p in /proc/[0-9]*; do test -r \"$p/comm\" || continue; printf '%s\\t' \"${p##*/}\"; tr '\\n' ' ' <\"$p/comm\"; printf '\\t'; tr '\\000' ' ' <\"$p/cmdline\" 2>/dev/null; printf '\\n'; done")
         targets = []
         for line in processes.splitlines():
