@@ -1,0 +1,111 @@
+[
+  {
+    "label": "sdb_version",
+    "start_utc": "2026-09-09T03:09:54.998761+00:00",
+    "end_utc": "2026-09-09T03:09:55.043099+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "connect",
+    "start_utc": "2026-09-09T03:09:55.043316+00:00",
+    "end_utc": "2026-09-09T03:09:57.051654+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "devices",
+    "start_utc": "2026-09-09T03:09:57.052203+00:00",
+    "end_utc": "2026-09-09T03:09:57.056690+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "devices"
+    ]
+  },
+  {
+    "label": "UNAME_R",
+    "start_utc": "2026-09-09T03:09:57.056923+00:00",
+    "end_utc": "2026-09-09T03:09:57.195502+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nWRAPPER_RC_UNAME_R=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UNAME_R; else echo FAIL_REMOTE_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "UNAME_M",
+    "start_utc": "2026-09-09T03:09:57.195911+00:00",
+    "end_utc": "2026-09-09T03:09:57.328201+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nWRAPPER_RC_UNAME_M=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UNAME_M; else echo FAIL_REMOTE_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "OS_RELEASE",
+    "start_utc": "2026-09-09T03:09:57.328597+00:00",
+    "end_utc": "2026-09-09T03:09:57.459199+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nWRAPPER_RC_OS_RELEASE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_OS_RELEASE; else echo FAIL_REMOTE_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "GLIBC",
+    "start_utc": "2026-09-09T03:09:57.459590+00:00",
+    "end_utc": "2026-09-09T03:09:57.848632+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q glibc ); rc=$?; printf '\\nWRAPPER_RC_GLIBC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GLIBC; else echo FAIL_REMOTE_GLIBC; fi"
+    ]
+  },
+  {
+    "label": "MEMINFO",
+    "start_utc": "2026-09-09T03:09:57.848928+00:00",
+    "end_utc": "2026-09-09T03:09:57.976029+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/meminfo ); rc=$?; printf '\\nWRAPPER_RC_MEMINFO=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MEMINFO; else echo FAIL_REMOTE_MEMINFO; fi"
+    ]
+  },
+  {
+    "label": "UID",
+    "start_utc": "2026-09-09T03:09:57.976273+00:00",
+    "end_utc": "2026-09-09T03:09:58.110775+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id -u ); rc=$?; printf '\\nWRAPPER_RC_UID=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UID; else echo FAIL_REMOTE_UID; fi"
+    ]
+  }
+]

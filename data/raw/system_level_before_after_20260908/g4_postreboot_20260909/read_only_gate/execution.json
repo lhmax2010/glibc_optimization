@@ -1,0 +1,46 @@
+{
+  "start_utc": "2026-09-09T03:09:52.692447+00:00",
+  "verdict": "STOP",
+  "contract_tag": "system-before-after-contract-20260908",
+  "tag_object": "0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3",
+  "executor_commit": "ff2442ef0b2b8779646a08408fab9bf5bc3e7488",
+  "completed_cells": [],
+  "cleanup": "NO_BOARD_FILES_CREATED",
+  "accepted_prefix": {
+    "execution_sha256": "5cc81666216b4ee204f0cf5171ac8af0dc7655992b66bc0dd399145c4f64c61c",
+    "executor_commit": "06799668543c014b0552a23720ca7e79304f4346",
+    "completed_cells": [
+      "G1_none_r1",
+      "G1_trim_r1",
+      "G2_none_r1",
+      "G2_trim_r1",
+      "G1_trim_r2",
+      "G1_none_r2",
+      "G2_trim_r2",
+      "G2_none_r2",
+      "G1_none_r3",
+      "G1_trim_r3",
+      "G2_none_r3",
+      "G2_trim_r3",
+      "G3_none_r1",
+      "G3_trim_r1",
+      "G3_trim_r2",
+      "G3_none_r2",
+      "G3_none_r3",
+      "G3_trim_r3"
+    ],
+    "verdict": "PRESERVED_ACCEPTED_PREFIX",
+    "scope": "previous boot; no execution or modification of these 18 cells"
+  },
+  "authority": {
+    "approved_by": "PM",
+    "date": "2026-09-08",
+    "scope": "post-reboot G4-only; previous exact-PID termination authorization NOT reused",
+    "reboot": "PM reports manual reboot on 2026-09-08; fresh checks define current restoration",
+    "uninstall_warnings": "record warnings/residue; package inventory must match before"
+  },
+  "contract_push_utc": "2026-09-08T04:55:52.140217+00:00",
+  "push_to_run_seconds": 80042.85845797,
+  "reason": "root uid unavailable; root-on prohibited",
+  "end_utc": "2026-09-09T03:09:58.111178+00:00"
+}

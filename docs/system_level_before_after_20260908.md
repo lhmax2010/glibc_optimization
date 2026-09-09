@@ -386,3 +386,44 @@ python3 tools/runners/system_level_before_after_20260908/execute_g4_resume.py \
 零 OOM/LMK/major fault、zram 三项 Δ=0、无新增归属告警、拉取完整与清理复核。
 容差/报告项：常驻进程的回收量和含 ptrace 耗时只报告实测，不以历史 272/36 KiB 为通过带；
 静置 faults 与业务下周期 faults 分列。任一失败停止所有后续段，不重跑刷数、不切 v12。
+
+### 7.4 本次终态：UID 门 STOP，G4 NOT_EXECUTED
+
+第 1 段修复已推 main：`ff2442ef0b2b8779646a08408fab9bf5bc3e7488`。
+随后首次只读门于 2026-09-09 03:09:54.998716 UTC 开始 sdb 客户端检查，
+03:09:55.043292 UTC 执行 connect；03:09:58.111178 UTC 以 STOP 结束。
+对应原合同推送至本次执行启动间隔 80042.85845797 s，未重打合同 tag。
+时间线、精确命令和原文 SHA 见[commands](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/commands.json)、
+[execution](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/execution.json)、
+[原文清单](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/manifest.json)。
+
+| 门 | 原文结果 | 判定/出处 |
+|---|---|---|
+| 内核 | `6.12.80-arm-rpi4-v7l` | PASS；[UNAME_R](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/UNAME_R.txt) |
+| 架构 | `armv7l` | PASS；[UNAME_M](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/UNAME_M.txt) |
+| BUILD_ID | `tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l` | PASS；[os-release 全文](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/OS_RELEASE.txt) |
+| glibc | `glibc-2.40-1.6.armv7l` | PASS；[GLIBC](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/GLIBC.txt) |
+| MemTotal | `8117408 kB` | PASS；[MEMINFO](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/MEMINFO.txt) |
+| 当前 UID | `5001` | **STOP**；合同要求 0，禁止 root-on；[UID 原文](../data/raw/system_level_before_after_20260908/g4_postreboot_20260909/read_only_gate/UID.txt) |
+
+UID 命令的原文如下；`RC=0` 仅指 id 成功返回，不是 UID 硬门通过：
+
+```text
+5001
+
+WRAPPER_RC_UID=0
+DONE_REMOTE_UID
+```
+
+未执行 `sdb root on`、重启、权限替代尝试或再次连接。工作目录/进程/占用/governor/df/
+stability/包清单等位于失败门之后，**NOT_EVALUATED**；因此本次不能写“现场已恢复”或
+“无其他使用者”。PM 手动重启的事实记录保留，但不能据此填入未采集的 boot_id 或卫生项。
+
+本次推送文件、安装/卸载包、governor 修改、注入和新测量格均为 0；
+cleanup=`NO_BOARD_FILES_CREATED`，不是清理动作完成的 PASS。旧卸包警告仍见 §6.3；
+本次因未安装包，无新的卸包警告，也未越过 UID 门重新查询包清单。
+G4 三格均 **NOT_EXECUTED**，上轮失败尝试仍在 §6 保留。G1/G2/G3 的原 18 格未重跑、
+未改写。第 3–5 段全部停止，不改 HTML/README/指南头条，不切 demo-v12，
+有效交付仍为 **demo-v11**。周五需 PM 裁决满足 UID=0 后如何恢复 G4，或是否缺 G4 发布；
+历史 B/B2 的 272 KiB / 36 KiB 仅作[替代背景证据](tizen_native_evidence_20260904.md)，
+不冒充本合同 G4 数据。汇总见[两日记录](twoday_summary_20260910.md)。

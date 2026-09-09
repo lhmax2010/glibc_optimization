@@ -2,6 +2,10 @@
 
 ## 2026-09-09 续跑入口（host 闭合后使用）
 
+本次实际终态：host 114 项测试与既有 verify 通过；只读连接后 UID=5001，不满足合同的
+root 门，因此 G4 NOT_EXECUTED。禁止自行 root-on/重启或再次执行测量；等待 PM 裁决。
+代码的 host 验证不等于已在本镜像完成 G4。见[本次停止原文](../../../docs/system_level_before_after_20260908.md#74-本次终态uid-门-stopg4-not_executed)。
+
 只用 [execute_g4_resume.py](execute_g4_resume.py) 续跑 G4 三格；**不得重新执行已验收的
 G1/G2/G3 18 格**。该入口没有 alloc/gst 参数，只推采集 probe，连板前核对历史证据与已推
 执行提交。`--preflight-only` 只读核验，无推送/安装/测量；正式调用用另一个全新输出目录。

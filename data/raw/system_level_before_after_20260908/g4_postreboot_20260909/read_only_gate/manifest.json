@@ -1,0 +1,81 @@
+{
+  "schema": "system-before-after.execution-log-publication.v1",
+  "scope": "Original log transcription only; no measurement derivation. Full originals remain local and are available on request.",
+  "verdict": "STOP",
+  "cleanup": "NO_BOARD_FILES_CREATED",
+  "execution_end_utc": "2026-09-09T03:09:58.111178+00:00",
+  "editing": "Only CR removal, board address -> <TEST_BOARD_IP>, host home -> <USER_HOME>; board runtime paths retained.",
+  "commands_record_present": true,
+  "files": [
+    {
+      "path": "GLIBC.txt",
+      "original_sha256": "2580ea62903be3dd5dde82a349556e9af076489f18c011d9cde4f5115c7cd264",
+      "public_sha256": "2580ea62903be3dd5dde82a349556e9af076489f18c011d9cde4f5115c7cd264",
+      "edits": []
+    },
+    {
+      "path": "MEMINFO.txt",
+      "original_sha256": "c44627b41f0000caec7d2189f118c788c08926e9adf35b3915491cb80758ccee",
+      "public_sha256": "c44627b41f0000caec7d2189f118c788c08926e9adf35b3915491cb80758ccee",
+      "edits": []
+    },
+    {
+      "path": "OS_RELEASE.txt",
+      "original_sha256": "00445d764ee2e38f1b1a4bfb718a69a6f79787bc2f28220452d5b0645863b25d",
+      "public_sha256": "00445d764ee2e38f1b1a4bfb718a69a6f79787bc2f28220452d5b0645863b25d",
+      "edits": []
+    },
+    {
+      "path": "UID.txt",
+      "original_sha256": "d04f04c67e2dfcecb0f5a1d5a2f53426e4af61dec99a7f706df20e2ff7f017f1",
+      "public_sha256": "d04f04c67e2dfcecb0f5a1d5a2f53426e4af61dec99a7f706df20e2ff7f017f1",
+      "edits": []
+    },
+    {
+      "path": "UNAME_M.txt",
+      "original_sha256": "05cc19d055a2fa1078146b48587d9bfcaf955f8de949a3126e6e363d92d8c7bd",
+      "public_sha256": "05cc19d055a2fa1078146b48587d9bfcaf955f8de949a3126e6e363d92d8c7bd",
+      "edits": []
+    },
+    {
+      "path": "UNAME_R.txt",
+      "original_sha256": "c4b02a8964d57d19cb7ebc938e44a739f8f5abf385c270a269d56c850317f38c",
+      "public_sha256": "c4b02a8964d57d19cb7ebc938e44a739f8f5abf385c270a269d56c850317f38c",
+      "edits": []
+    },
+    {
+      "path": "commands.json",
+      "original_sha256": "cd0f1616a362277692cd6640a5dee621e091a0311e71da64c41cd3adb65c6115",
+      "public_sha256": "cd0f1616a362277692cd6640a5dee621e091a0311e71da64c41cd3adb65c6115",
+      "edits": []
+    },
+    {
+      "path": "connect.txt",
+      "original_sha256": "83e0048ffcc311d563207698ad2cac34d097c8f2fa7dd3fe29fba1c69d8299f9",
+      "public_sha256": "95c676939fd351571ef0b1d921fe4f8a5df7be412e440b1dd610824747e0013c",
+      "edits": [
+        "BOARD_ADDRESS_REPLACED"
+      ]
+    },
+    {
+      "path": "devices.txt",
+      "original_sha256": "41e128d1606715e567ef0d4a39335789df196da34f92531c6c6a9a3b9dc6a0c6",
+      "public_sha256": "6f132b8fdb2cd23da1489ba4f71c4e4b297ce31b8cbe9dd44575e7993be00462",
+      "edits": [
+        "BOARD_ADDRESS_REPLACED"
+      ]
+    },
+    {
+      "path": "execution.json",
+      "original_sha256": "7e557d5fa5289e1145db83886ea20a4f2cc7601639ca9b2df6173e81cb0bdeab",
+      "public_sha256": "7e557d5fa5289e1145db83886ea20a4f2cc7601639ca9b2df6173e81cb0bdeab",
+      "edits": []
+    },
+    {
+      "path": "sdb_version.txt",
+      "original_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "public_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "edits": []
+    }
+  ]
+}

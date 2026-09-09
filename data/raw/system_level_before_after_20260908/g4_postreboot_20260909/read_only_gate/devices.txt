@@ -1,0 +1,2 @@
+List of devices attached 
+<TEST_BOARD_IP>:26101	device    	rpi4
