@@ -1,0 +1,156 @@
+<malloc version="1">
+<heap nr="0">
+<sizes>
+  <size from="17" to="17" total="306" count="18"/>
+  <size from="25" to="25" total="400" count="16"/>
+  <size from="33" to="33" total="627" count="19"/>
+  <size from="41" to="41" total="492" count="12"/>
+  <size from="49" to="49" total="343" count="7"/>
+  <size from="57" to="57" total="513" count="9"/>
+  <size from="65" to="65" total="195" count="3"/>
+  <size from="81" to="81" total="243" count="3"/>
+  <size from="89" to="89" total="89" count="1"/>
+  <size from="97" to="97" total="97" count="1"/>
+  <size from="129" to="129" total="129" count="1"/>
+  <size from="145" to="145" total="145" count="1"/>
+  <size from="161" to="161" total="322" count="2"/>
+  <size from="169" to="169" total="338" count="2"/>
+  <size from="177" to="177" total="177" count="1"/>
+  <size from="217" to="217" total="868" count="4"/>
+  <size from="241" to="241" total="241" count="1"/>
+  <size from="281" to="281" total="281" count="1"/>
+  <size from="329" to="329" total="329" count="1"/>
+  <size from="393" to="393" total="393" count="1"/>
+  <size from="481" to="481" total="481" count="1"/>
+  <size from="521" to="569" total="1619" count="3"/>
+  <size from="593" to="625" total="1218" count="2"/>
+  <size from="657" to="673" total="1330" count="2"/>
+  <size from="761" to="761" total="761" count="1"/>
+  <size from="921" to="937" total="1858" count="2"/>
+  <size from="1033" to="1033" total="2066" count="2"/>
+  <size from="1217" to="1217" total="1217" count="1"/>
+  <size from="1393" to="1393" total="1393" count="1"/>
+  <size from="1617" to="1617" total="1617" count="1"/>
+  <size from="1889" to="1889" total="1889" count="1"/>
+  <size from="1961" to="1961" total="1961" count="1"/>
+  <size from="2865" to="2865" total="2865" count="1"/>
+  <size from="3289" to="3289" total="3289" count="1"/>
+  <size from="3857" to="4081" total="20181" count="5"/>
+  <size from="8241" to="8241" total="8241" count="1"/>
+  <size from="9049" to="9049" total="9049" count="1"/>
+  <size from="65529" to="65529" total="65529" count="1"/>
+  <size from="125865" to="125865" total="125865" count="1"/>
+  <unsorted from="49" to="49" total="49" count="1"/>
+</sizes>
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="135" size="380574"/>
+<system type="current" size="5066752"/>
+<system type="max" size="5066752"/>
+<aspace type="total" size="5066752"/>
+<aspace type="mprotect" size="5066752"/>
+</heap>
+<heap nr="1">
+<sizes>
+  <size from="25" to="32" total="32" count="1"/>
+  <size from="41" to="41" total="82" count="2"/>
+  <size from="65" to="65" total="130" count="2"/>
+  <size from="105" to="105" total="210" count="2"/>
+  <size from="2825" to="2825" total="2825" count="1"/>
+  <unsorted from="545" to="545" total="545" count="1"/>
+</sizes>
+<total type="fast" count="1" size="32"/>
+<total type="rest" count="9" size="53032"/>
+<system type="current" size="135168"/>
+<system type="max" size="135168"/>
+<aspace type="total" size="135168"/>
+<aspace type="mprotect" size="135168"/>
+<aspace type="subheaps" size="1"/>
+</heap>
+<heap nr="2">
+<sizes>
+  <size from="9" to="16" total="32" count="2"/>
+  <size from="33" to="40" total="40" count="1"/>
+  <unsorted from="17" to="137" total="876" count="20"/>
+</sizes>
+<total type="fast" count="3" size="72"/>
+<total type="rest" count="21" size="119836"/>
+<system type="current" size="135168"/>
+<system type="max" size="135168"/>
+<aspace type="total" size="135168"/>
+<aspace type="mprotect" size="135168"/>
+<aspace type="subheaps" size="1"/>
+</heap>
+<heap nr="3">
+<sizes>
+</sizes>
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="1" size="133640"/>
+<system type="current" size="135168"/>
+<system type="max" size="135168"/>
+<aspace type="total" size="135168"/>
+<aspace type="mprotect" size="135168"/>
+<aspace type="subheaps" size="1"/>
+</heap>
+<heap nr="4">
+<sizes>
+  <size from="49" to="56" total="56" count="1"/>
+</sizes>
+<total type="fast" count="1" size="56"/>
+<total type="rest" count="1" size="133280"/>
+<system type="current" size="135168"/>
+<system type="max" size="135168"/>
+<aspace type="total" size="135168"/>
+<aspace type="mprotect" size="135168"/>
+<aspace type="subheaps" size="1"/>
+</heap>
+<heap nr="5">
+<sizes>
+  <unsorted from="2353" to="8209" total="10562" count="2"/>
+</sizes>
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="3" size="142898"/>
+<system type="current" size="147456"/>
+<system type="max" size="278528"/>
+<aspace type="total" size="147456"/>
+<aspace type="mprotect" size="278528"/>
+<aspace type="subheaps" size="1"/>
+</heap>
+<heap nr="6">
+<sizes>
+</sizes>
+<total type="fast" count="0" size="0"/>
+<total type="rest" count="1" size="133472"/>
+<system type="current" size="135168"/>
+<system type="max" size="135168"/>
+<aspace type="total" size="135168"/>
+<aspace type="mprotect" size="135168"/>
+<aspace type="subheaps" size="1"/>
+</heap>
+<heap nr="7">
+<sizes>
+  <size from="9" to="16" total="32" count="2"/>
+  <size from="17" to="24" total="24" count="1"/>
+  <size from="25" to="32" total="32" count="1"/>
+  <size from="33" to="40" total="160" count="4"/>
+  <size from="41" to="48" total="96" count="2"/>
+  <size from="57" to="64" total="128" count="2"/>
+  <size from="81" to="81" total="81" count="1"/>
+  <size from="625" to="625" total="625" count="1"/>
+  <unsorted from="81" to="137" total="218" count="2"/>
+</sizes>
+<total type="fast" count="12" size="472"/>
+<total type="rest" count="5" size="50828"/>
+<system type="current" size="135168"/>
+<system type="max" size="135168"/>
+<aspace type="total" size="135168"/>
+<aspace type="mprotect" size="135168"/>
+<aspace type="subheaps" size="1"/>
+</heap>
+<total type="fast" count="17" size="632"/>
+<total type="rest" count="176" size="1147560"/>
+<total type="mmap" count="2" size="782336"/>
+<system type="current" size="6025216"/>
+<system type="max" size="6156288"/>
+<aspace type="total" size="6025216"/>
+<aspace type="mprotect" size="6156288"/>
+</malloc>

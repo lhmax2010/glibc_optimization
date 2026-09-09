@@ -41,6 +41,7 @@ G4 堆 PD 下降为 **88/0/4 KiB**，memps 同样观测到该下降量；静置 
 [公开文件哈希清单](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/manifest.json)。
 原 18 格结果提交仍为 `60bea7c63ca2c603351e0ef25df15546e78db05c`，host 闭合基线
 `6095765575addbd57f421efbf106b0e72da522a5`；本次先推授权入口 `cdab1dbf0d24afefe05c4db1039f58ffde6911b9`。
+三格观测、原文及停止报告已推结果提交 `ffd695ef345355da9f8fd9689442a70ffb59b392`。
 
 停止后 host 检查：本轮 **129 项测试通过**，默认 verify **OVERALL PASS**（本地提交前
 显式 dirty override，未跳过 host tests），两件 G4 派生 cmp、165 件公开日志哈希和
