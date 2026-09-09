@@ -1,5 +1,60 @@
 # 两日批量执行汇总（2026-09-08 至 09-10）
 
+## 最新续跑终态：G4 已观测三格，收尾审计 STOP
+
+PM 方案 A 的消息日期为 **2026-09-10**，实际 host 命令时间为 **2026-09-09
+05:26:22.230806–05:33:19.602955 UTC**；文件名为交付窗口，不倒填日期。
+重启后会话 UID=5001，经 PM 本轮授权提权至 root；结束时首次 root-off 成功并复核
+UID=5001，授权不外推。原合同/annotated tag 未改，旧 G1/G2/G3 18 格没有重跑。
+
+| 段 | 本次状态 | 证据/原因 |
+|---|---|---|
+| 1 · host 执行器闭合 | 既有完成；另补本轮显式授权包装层 | 原 114 项 + 授权 9 项测试通过；默认 verify OVERALL PASS；授权包装层已推 `cdab1dbf0d24afefe05c4db1039f58ffde6911b9` 后连板 |
+| 2 · 提权/前置门/G4/收尾 | **STOP**；实际三格完成、交付项 NOT_EXECUTED（未完成整轮验收） | 三格观测/健康/完整性通过；六包卸载、目录/进程/governor/非 root 恢复均有原文。残留审计请求过长被 SDB 拒绝，其后卸包后健康核验未执行 |
+| 3 · Demo 集成 | NOT_EXECUTED_STOP_GATE | 未把部分通过结果写入 HTML/README/指南头条，未生成完整矩阵证据 |
+| 4 · demo-v12 | NOT_EXECUTED_STOP_GATE | 不切库、不执行新交付矩阵，demo-v11 保持有效 |
+| 5 · 复审简报 | NOT_EXECUTED_STOP_GATE | 未切 v12，因此无 v12 brief，不联系第三方 |
+
+失败原文只有 `error: service name too long`，没有远端 RC/DONE；请求体 **11800 字节**，
+来自按 200 条路径分批的首个残留审计命令。这不是 rpm 卸包失败，不是发现了残留；
+已有卸包警告依裁决不阻断，但不能跳过独立的后置审计门。
+测量期 OOM/LMK=0、zram 三项 Δ=0、stability 0→0；包清单 1263→1263、无差异。
+**缺口：包文件残留清单，以及卸包后的 dmesg/zram/stability/boot 核验。**
+
+| 组（cycle=1 三重复中位） | RSS 下降 MiB / % | 系统 MemAvailable 配对净效应 MiB | trim ms | none RSS 下降 MiB | 状态 |
+|---|---|---|---|---|---|
+| G1 mixed | 5.296875 / 40.696279% | **-0.167969** | 1.458574 | 0 | 原 18 格保留 |
+| G2 medium-only | 5.960938 / 45.322245% | +5.304688 | 1.478167 | 0 | 原 18 格保留 |
+| G3 解码循环 | 1.820312 / 21.009919% | +1.855469 | 0.843612 | 0 | 原 18 格保留 |
+| G4 enlightenment | 0.003906 / 0.033659% | NA（无 none 臂） | 1899.209517（含 ptrace，非 hook） | NA | 三格已观测，整轮 STOP |
+
+G1–G3 数字来源：[旧逐周期 TSV](../data/raw/system_level_before_after_20260908/completed_prefix/completed_cycles.tsv)；
+G4 来源：[本次逐格 TSV](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_cycles.tsv)、
+[三重复汇总](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_summary.tsv)。
+G4 堆 PD 下降为 **88/0/4 KiB**，memps 同样观测到该下降量；静置 faults 为
+**1/0、0/0、1/0**（min/maj），独立于 next-cycle 的 NA。G1 系统净效应为负，不改写为
+“净增”；none 的系统 MemAvailable 不是零。以上为测试板观测量级，非产品/整机收益。
+完整原始件本地留存，可按请求提供；本次三份归档 243 文件均已校验。
+
+命令、提权前后及降权原文、清理边界与复现入口见[报告 §8](system_level_before_after_20260908.md#8-pm-方案-a-授权续跑三格已观测收尾-stop)，
+[执行回执](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/execution.json)及
+[公开文件哈希清单](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/manifest.json)。
+原 18 格结果提交仍为 `60bea7c63ca2c603351e0ef25df15546e78db05c`，host 闭合基线
+`6095765575addbd57f421efbf106b0e72da522a5`；本次先推授权入口 `cdab1dbf0d24afefe05c4db1039f58ffde6911b9`。
+
+停止后 host 检查：本轮 **129 项测试通过**，默认 verify **OVERALL PASS**（本地提交前
+显式 dirty override，未跳过 host tests），两件 G4 派生 cmp、165 件公开日志哈希和
+脱敏零命中均通过。见[检查回执](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/host_checks.tsv)。
+这些是 host 归档验证，不是未执行的板端后置健康或 demo-v12 矩阵通过。
+
+待 PM 裁决：是否授权**只修复短命令分批并补齐收尾只读核验**；不需且不得重跑已完成
+G4 或旧 18 格。未闭合前保持停止，不以历史 B/B2 的 272 KiB / 36 KiB / 8–20 KiB
+背景代替本轮健康门。**当前有效交付快照仍为 demo-v11**：peel commit
+`0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated tag 对象
+`f1266c0be6c225a2ceb962836380c656758f9427`。没有 demo-v12。
+
+## 历史：授权前 UID 停止记录（原文保留）
+
 记录创建于 2026-09-09；文件名为批量交付窗口，不表示尚未发生的 09-10 测量。
 **终态：第 2 段在当前 UID=5001（要求 0）处 STOP，后续全部停止。**
 当前有效交付快照仍为 **demo-v11**，未创建 demo-v12。G1/G2/G3 已验收的 18 格保留，未重跑。

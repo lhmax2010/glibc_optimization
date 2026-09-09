@@ -1,0 +1,213 @@
+COLLECTOR_PID=16160
+  PID  PPID TT                        STARTED     ELAPSED COMMAND
+    1     0 ?        Wed Sep  9 11:38:51 2026    02:48:02 /sbin/init
+    2     0 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kthreadd]
+    3     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [pool_workqueue_release]
+    4     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-kvfree_rcu_reclaim]
+    5     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-rcu_gp]
+    6     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-sync_wq]
+    7     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-slub_flushwq]
+    8     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-netns]
+   13     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-mm_percpu_wq]
+   14     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [rcu_tasks_rude_kthread]
+   15     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [rcu_tasks_trace_kthread]
+   16     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [ksoftirqd/0]
+   17     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [rcu_sched]
+   18     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [rcu_exp_par_gp_kthread_worker/0]
+   19     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [rcu_exp_gp_kthread_worker]
+   20     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [migration/0]
+   21     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [cpuhp/0]
+   22     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [cpuhp/1]
+   23     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [migration/1]
+   24     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [ksoftirqd/1]
+   27     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [cpuhp/2]
+   28     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [migration/2]
+   29     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [ksoftirqd/2]
+   32     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [cpuhp/3]
+   33     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [migration/3]
+   34     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [ksoftirqd/3]
+   37     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/u17:0-events_unbound]
+   38     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/u18:0-flush-179:0]
+   39     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/u19:0-ext4-rsv-conversion]
+   41     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kdevtmpfs]
+   42     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-inet_frag_wq]
+   43     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kauditd]
+   44     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [khungtaskd]
+   45     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [oom_reaper]
+   46     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/u17:1-events_unbound]
+   47     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-writeback]
+   48     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kcompactd0]
+   49     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-cryptd]
+   50     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-kblockd]
+   51     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-blkcg_punt_bio]
+   52     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/u20:1-ext4-rsv-conversion]
+   55     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [watchdogd]
+   57     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/1:1H-kblockd]
+   58     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-rpciod]
+   59     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-xprtiod]
+   60     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/R-cfg80211]
+   61     2 ?        Wed Sep  9 11:38:51 2026    02:48:02 [kworker/u18:2-writeback]
+   62     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kswapd0]
+   63     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/R-nfsiod]
+   64     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/u21:0-hci0]
+   65     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/u22:0]
+   66     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/u23:0]
+   67     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/u24:0]
+   68     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/u25:0]
+   69     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/R-kthrotld]
+   76     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [hwrng]
+   77     2 ?        Wed Sep  9 11:38:51 2026    02:48:01 [kworker/R-iscsi_conn_cleanup]
+   79     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-uas]
+   81     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-dm_bufio_cache]
+   82     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [sugov:0]
+   83     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [vchiq-slot/0]
+   84     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [vchiq-recy/0]
+   85     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [vchiq-sync/0]
+   86     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [vchiq-keep/0]
+   88     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/3:1H-kblockd]
+   89     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [SMIO]
+   90     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmal-vchiq]
+   91     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmal-vchiq]
+   92     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmal-vchiq]
+   93     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmal-vchiq]
+   94     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmal-vchiq]
+   95     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmal-vchiq]
+   96     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmal-vchiq]
+   97     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mld]
+   98     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-ipv6_addrconf]
+  100     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [krfcommd]
+  101     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/u20:3-events_unbound]
+  103     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/54-vc4 hdmi hpd connected]
+  104     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/55-vc4 hdmi hpd disconnected]
+  105     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [cec-vc4-hdmi-0]
+  106     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/56-vc4 hdmi cec rx]
+  107     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/57-vc4 hdmi cec tx]
+  108     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/58-vc4 hdmi hpd connected]
+  109     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/59-vc4 hdmi hpd disconnected]
+  110     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [cec-vc4-hdmi-1]
+  111     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/60-vc4 hdmi cec rx]
+  112     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/61-vc4 hdmi cec tx]
+  113     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [card0-crtc0]
+  114     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [card0-crtc1]
+  115     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [card0-crtc2]
+  116     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [card0-crtc3]
+  117     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [card0-crtc4]
+  118     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [card0-crtc5]
+  121     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-sdhci]
+  122     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-v3d_bin]
+  123     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [irq/68-mmc0]
+  125     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-v3d_render]
+  126     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-v3d_tfu]
+  127     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-v3d_csd]
+  128     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-v3d_cache_clean]
+  129     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-v3d_cpu]
+  145     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/R-mmc_complete]
+  146     2 ?        Wed Sep  9 11:38:52 2026    02:48:00 [kworker/0:1H-mmc_complete]
+  171     2 ?        Wed Sep  9 11:38:53 2026    02:48:00 [kworker/u19:1-events_unbound]
+  189     2 ?        Wed Sep  9 11:38:53 2026    02:47:59 [jbd2/mmcblk0p6-8]
+  190     2 ?        Wed Sep  9 11:38:53 2026    02:47:59 [kworker/R-ext4-rsv-conversion]
+  197     2 ?        Wed Sep  9 11:38:53 2026    02:47:59 [kworker/2:1H-kblockd]
+  225     2 ?        Wed Sep  9 11:38:54 2026    02:47:58 [jbd2/mmcblk0p2-8]
+  226     2 ?        Wed Sep  9 11:38:54 2026    02:47:58 [kworker/R-ext4-rsv-conversion]
+  230     2 ?        Wed Sep  9 11:38:54 2026    02:47:58 [jbd2/mmcblk0p3-8]
+  231     2 ?        Wed Sep  9 11:38:54 2026    02:47:58 [kworker/R-ext4-rsv-conversion]
+  233     2 ?        Wed Sep  9 11:38:54 2026    02:47:58 [jbd2/mmcblk0p10-8]
+  234     2 ?        Wed Sep  9 11:38:54 2026    02:47:58 [kworker/R-ext4-rsv-conversion]
+  272     2 ?        Wed Sep  9 11:39:02 2026    02:47:50 [jbd2/mmcblk0p9-8]
+  273     2 ?        Wed Sep  9 11:39:02 2026    02:47:50 [kworker/R-ext4-rsv-conversion]
+  276     1 ?        Wed Sep  9 11:39:02 2026    02:47:50 /usr/lib/systemd/systemd-journald
+  281     2 ?        Wed Sep  9 11:39:02 2026    02:47:50 [f2fs_ckpt-179:5]
+  282     2 ?        Wed Sep  9 11:39:02 2026    02:47:50 [f2fs_flush-179:5]
+  283     2 ?        Wed Sep  9 11:39:02 2026    02:47:50 [f2fs_discard-179:5]
+  300     2 ?        Wed Sep  9 11:39:02 2026    02:47:50 [f2fs_gc-179:5]
+  320     1 ?        Wed Sep  9 11:39:02 2026    02:47:50 /usr/lib/systemd/systemd-udevd
+  377     2 ?        Wed Sep  9 11:39:03 2026    02:47:49 [kworker/u21:1-hci0]
+  385     1 ?        Wed Sep  9 11:39:04 2026    02:47:49 /usr/bin/hal/hal-backend-service --stub-proc-name d::hal-backend-service device-display device-led device-battery device-bezel device-external-connection
+  400     1 ?        Wed Sep  9 11:39:04 2026    02:47:48 /usr/sbin/actd
+  401     1 ?        Wed Sep  9 11:39:04 2026    02:47:48 /usr/sbin/buxton2d -f
+  404     1 ?        Wed Sep  9 11:39:04 2026    02:47:48 /usr/bin/key-manager
+  405     1 ?        Wed Sep  9 11:39:04 2026    02:47:48 /usr/bin/esd
+  406     1 ?        Wed Sep  9 11:39:04 2026    02:47:48 /usr/bin/pkginfo-server
+  411     1 ?        Wed Sep  9 11:39:04 2026    02:47:48 /usr/bin/resourced
+  412     1 ?        Wed Sep  9 11:39:04 2026    02:47:48 /usr/bin/dlog_logger
+  423     1 ?        Wed Sep  9 11:39:05 2026    02:47:48 /usr/bin/sensord
+  433     1 ?        Wed Sep  9 11:39:05 2026    02:47:48 /usr/bin/amd
+  435     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/cynara
+  437     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  439     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/deviced
+  443     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/license-manager-agent
+  445     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/media-server
+  456     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/pushd
+  469     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 login -- root
+  470     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/net-config
+  474     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/sbin/stability-monitor
+  498     1 ?        Wed Sep  9 11:39:05 2026    02:47:47 /usr/bin/enlightenment
+  511     1 ?        Wed Sep  9 11:39:06 2026    02:47:47 /usr/bin/pulseaudio
+  512     1 ?        Wed Sep  9 11:39:06 2026    02:47:47 /usr/lib/systemd/systemd-logind
+  513     1 ?        Wed Sep  9 11:39:06 2026    02:47:47 /usr/bin/connmand -n --nobacktrace --noplugin vpn
+  520     1 ?        Wed Sep  9 11:39:06 2026    02:47:47 /usr/bin/rscmgr-service
+  523     1 ?        Wed Sep  9 11:39:06 2026    02:47:47 /usr/bin/update-manager
+  566     2 ?        Wed Sep  9 11:39:06 2026    02:47:46 [psimon]
+  573     1 ?        Wed Sep  9 11:39:06 2026    02:47:46 /usr/bin/contextd
+  582     2 ?        Wed Sep  9 11:39:06 2026    02:47:46 [kworker/R-ext4-rsv-conversion]
+  592     1 ?        Wed Sep  9 11:39:06 2026    02:47:46 /usr/bin/storaged
+  612     2 ?        Wed Sep  9 11:39:06 2026    02:47:46 [kworker/R-ext4-rsv-conversion]
+  615     1 ?        Wed Sep  9 11:39:07 2026    02:47:46 /usr/bin/tlm
+  629   615 ?        Wed Sep  9 11:39:07 2026    02:47:46 /usr/bin/tlm-sessiond
+  641     1 ?        Wed Sep  9 11:39:07 2026    02:47:45 /usr/bin/focus_server -S
+  656     1 ?        Wed Sep  9 11:39:07 2026    02:47:45 /usr/lib/systemd/systemd --user
+  658   656 ?        Wed Sep  9 11:39:07 2026    02:47:45 (sd-pam)
+  667   629 tty7     Wed Sep  9 11:39:07 2026    02:47:45 /bin/bash
+  730   656 ?        Wed Sep  9 11:39:08 2026    02:47:45 /usr/bin/launchpad-process-pool
+  753   730 ?        Wed Sep  9 11:39:08 2026    02:47:44 /usr/apps/ise-default/bin/ise-default `zaybxcwdveuftgsh` __APP_SVC_OP_TYPE__ UgAAAAEEAAAUAAAAX19BUFBfU1ZDX09QX1RZUEVfXwAuAAAAaHR0cDovL3RpemVuLm9yZy9hcHBjb250cm9sL29wZXJhdGlvbi9kZWZhdWx0AA== __AUL_TARGET_UID__ KAAAAAEEAAATAAAAX19BVUxfVEFSR0VUX1VJRF9fAAUAAAA1MDAxAA== __AUL_APPID__ KgAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAMAAAAaXNlLWRlZmF1bHQA __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADE3LzYzMDYyNjM0MQA= __AUL_SOCKET_TIMEOUT__ LQAAAAEEAAAXAAAAX19BVUxfU09DS0VUX1RJTUVPVVRfXwAGAAAAMTAwMDAA __APP_SVC_PKG_NAME__ MQAAAAEEAAAVAAAAX19BUFBfU1ZDX1BLR19OQU1FX18ADAAAAGlzZS1kZWZhdWx0AA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA3NTgA __AUL_CALLER_UID__ KAAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAUAAAA1MDAxAA== __AUL_ALLOWED_BG__ LgAAAAEEAAATAAAAX19BVUxfQUxMT1dFRF9CR19fAAsAAABBTExPV0VEX0JHAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAU1lTAA== __AUL_ROOT_PATH__ OAAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18AFgAAAC91c3IvYXBwcy9pc2UtZGVmYXVsdAA= __AUL_EXEC__ QwAAAAEEAAANAAAAX19BVUxfRVhFQ19fACYAAAAvdXNyL2FwcHMvaXNlLWRlZmF1bHQvYmluL2lzZS1kZWZhdWx0AA== __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAcnBtAA== __AUL_PKGID_ KQAAAAEEAAANAAAAX19BVUxfUEtHSURfAAwAAABpc2UtZGVmYXVsdAA= __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KAAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABgAAAHVpYXBwAA== __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KAAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAEAAAANC4wAA== __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+  758   656 ?        Wed Sep  9 11:39:08 2026    02:47:44 /usr/bin/isf
+  760     1 ?        Wed Sep  9 11:39:08 2026    02:47:44 bash /usr/bin/enlightenment_mon.sh
+  775     1 ?        Wed Sep  9 11:39:08 2026    02:47:44 /usr/bin/muse-server -D
+  786     1 ?        Wed Sep  9 11:39:08 2026    02:47:44 /usr/bin/pass
+  788     1 ?        Wed Sep  9 11:39:08 2026    02:47:44 /usr/bin/security-manager
+  801   788 ?        Wed Sep  9 11:39:08 2026    02:47:44 /usr/bin/security-manager
+  820     1 ?        Wed Sep  9 11:39:08 2026    02:47:44 /usr/bin/lbs-server
+  845   656 ?        Wed Sep  9 11:39:09 2026    02:47:44 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  852   656 ?        Wed Sep  9 11:39:09 2026    02:47:43 /usr/bin/starter
+  865   730 ?        Wed Sep  9 11:39:09 2026    02:47:43 /usr/bin/dotnet-hydra-loader 1 0 1 NDA2NWIwMGMxODg2NTIxYWM3MDRlNWZlZDM5ODYyNzAhAAAAAQQAAAoAAAAtLWFwcFR5cGUABwAAAGRvdG5ldAAfAAAAAQQAAAsAAABUSVpFTl9VSUZXAAQAAABOVUkAHwAAAAEEAAAKAAAALS1wcm9maWxlAAUAAAB0cnVlAB8AAAABBAAACgAAAC0tcHJlZm9yawAFAAAAdHJ1ZQAhAAAAAQQAAA8AAABTQ0hFRF9QUklPUklUWQACAAAAMAA=                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+  873   730 ?        Wed Sep  9 11:39:09 2026    02:47:43 /usr/apps/org.tizen.multi-assistant-service/bin/org.tizen.multi-assistant-service `zaybxcwdveuftgsh` __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADE4Lzk2NTM0ODcyOQA= __AUL_APPID__ QAAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAiAAAAb3JnLnRpemVuLm11bHRpLWFzc2lzdGFudC1zZXJ2aWNlAA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA0MzMA __AUL_CALLER_UID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAQAAAAzMDEA __AUL_ALLOWED_BG__ LgAAAAEEAAATAAAAX19BVUxfQUxMT1dFRF9CR19fAAsAAABBTExPV0VEX0JHAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAU1lTAA== __AUL_ROOT_PATH__ TgAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18ALAAAAC91c3IvYXBwcy9vcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_EXEC__ bwAAAAEEAAANAAAAX19BVUxfRVhFQ19fAFIAAAAvdXNyL2FwcHMvb3JnLnRpemVuLm11bHRpLWFzc2lzdGFudC1zZXJ2aWNlL2Jpbi9vcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAcnBtAA== __AUL_PKGID_ PwAAAAEEAAANAAAAX19BVUxfUEtHSURfACIAAABvcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KQAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABwAAAHN2Y2FwcAA= __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KAAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAEAAAANS4wAA== __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+  878     1 ?        Wed Sep  9 11:39:09 2026    02:47:43 /usr/bin/ise-engine-loader
+  938   656 ?        Wed Sep  9 11:39:10 2026    02:47:42 /usr/libexec/at-spi-bus-launcher
+  960     1 ?        Wed Sep  9 11:39:10 2026    02:47:42 /usr/bin/mtp-responder
+  962     1 ?        Wed Sep  9 11:39:10 2026    02:47:42 /usr/sbin/sdbd
+  978   730 ?        Wed Sep  9 11:39:10 2026    02:47:42 /usr/apps/org.tizen.homescreen/bin/runner `zaybxcwdveuftgsh` __APP_SVC_OP_TYPE__ UgAAAAEEAAAUAAAAX19BUFBfU1ZDX09QX1RZUEVfXwAuAAAAaHR0cDovL3RpemVuLm9yZy9hcHBjb250cm9sL29wZXJhdGlvbi9kZWZhdWx0AA== __AUL_TARGET_UID__ KAAAAAEEAAATAAAAX19BVUxfVEFSR0VUX1VJRF9fAAUAAAA1MDAxAA== __AUL_APPID__ MwAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAVAAAAb3JnLnRpemVuLmhvbWVzY3JlZW4A __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADIzLzI1MzY5NTExNQA= __AUL_SOCKET_TIMEOUT__ LQAAAAEEAAAXAAAAX19BVUxfU09DS0VUX1RJTUVPVVRfXwAGAAAAMTAwMDAA __APP_SVC_PKG_NAME__ OgAAAAEEAAAVAAAAX19BUFBfU1ZDX1BLR19OQU1FX18AFQAAAG9yZy50aXplbi5ob21lc2NyZWVuAA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA4NTIA __AUL_CALLER_UID__ KAAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAUAAAA1MDAxAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAVVNFAA== __AUL_ROOT_PATH__ QQAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18AHwAAAC91c3IvYXBwcy9vcmcudGl6ZW4uaG9tZXNjcmVlbgA= __AUL_EXEC__ RwAAAAEEAAANAAAAX19BVUxfRVhFQ19fACoAAAAvdXNyL2FwcHMvb3JnLnRpemVuLmhvbWVzY3JlZW4vYmluL3J1bm5lcgA= __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAdHBrAA== __AUL_PKGID_ MgAAAAEEAAANAAAAX19BVUxfUEtHSURfABUAAABvcmcudGl6ZW4uaG9tZXNjcmVlbgA= __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KAAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABgAAAHVpYXBwAA== __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KQAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAFAAAAMTAuMAA= __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+ 1008   865 ?        Wed Sep  9 11:39:11 2026    02:47:41 /usr/bin/dotnet-hydra-loader candidate                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+ 1009   865 ?        Wed Sep  9 11:39:11 2026    02:47:41 /usr/apps/org.tizen.systemui/bin/SystemUI.dll                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+ 1024   865 ?        Wed Sep  9 11:39:12 2026    02:47:40 /usr/bin/process-pool <hydra-loader>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+ 1032     1 ?        Wed Sep  9 11:39:13 2026    02:47:39 /usr/bin/theme-provider
+ 1082     2 ?        Wed Sep  9 11:39:17 2026    02:47:35 [kworker/u18:3-events_unbound]
+ 1096   469 ttyS0    Wed Sep  9 11:39:18 2026    02:47:34 -bash
+ 5075     2 ?        Wed Sep  9 13:48:57 2026       37:56 [kworker/u17:2-events_unbound]
+ 5624     2 ?        Wed Sep  9 13:50:54 2026       35:58 [kworker/u20:0-ext4-rsv-conversion]
+ 5963     2 ?        Wed Sep  9 13:52:07 2026       34:46 [kworker/2:0H]
+ 7136     2 ?        Wed Sep  9 13:56:21 2026       30:31 [kworker/3:0-mm_percpu_wq]
+ 7196     2 ?        Wed Sep  9 13:56:32 2026       30:20 [kworker/0:0H]
+10330     2 ?        Wed Sep  9 14:07:49 2026       19:03 [kworker/2:0-mm_percpu_wq]
+10459     2 ?        Wed Sep  9 14:08:17 2026       18:36 [kworker/u16:0-v3d_bin]
+10825     2 ?        Wed Sep  9 14:09:36 2026       17:17 [kworker/1:1-events]
+11768     2 ?        Wed Sep  9 14:12:59 2026       13:54 [kworker/2:1-mm_percpu_wq]
+12240     2 ?        Wed Sep  9 14:14:41 2026       12:12 [kworker/1:2-mm_percpu_wq]
+12310     2 ?        Wed Sep  9 14:14:55 2026       11:57 [kworker/0:0-events]
+12592     2 ?        Wed Sep  9 14:15:56 2026       10:56 [kworker/3:2-events]
+12917     2 ?        Wed Sep  9 14:17:06 2026       09:46 [kworker/3:2H]
+13116     2 ?        Wed Sep  9 14:17:51 2026       09:01 [kworker/1:0H]
+13328     2 ?        Wed Sep  9 14:18:36 2026       08:16 [kworker/u16:1-v3d_render]
+13807     2 ?        Wed Sep  9 14:20:20 2026       06:33 [kworker/0:2-rcu_gp]
+14284     2 ?        Wed Sep  9 14:22:03 2026       04:50 [kworker/2:2-events]
+14357     2 ?        Wed Sep  9 14:22:18 2026       04:34 [kworker/0:2H]
+14527     2 ?        Wed Sep  9 14:22:56 2026       03:57 [kworker/1:0-events]
+14863     2 ?        Wed Sep  9 14:24:06 2026       02:46 [kworker/u16:2-v3d_render]
+15258     2 ?        Wed Sep  9 14:25:32 2026       01:21 [kworker/0:1-mm_percpu_wq]
+15707     2 ?        Wed Sep  9 12:31:27 2026    01:55:26 [kworker/u19:2-flush-179:0]
+15872   760 ?        Wed Sep  9 14:26:50 2026       00:02 sleep 3
+16160     1 pts/0    Wed Sep  9 14:26:53 2026       00:00 /bin/sh -c ( printf "COLLECTOR_PID=%s\n" "$$"; ps -ww -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\nWRAPPER_RC_POSTREBOOT_SESSIONS=%s\n' "$rc"; if [ "$rc" -eq 0 ]; then echo DONE_REMOTE_POSTREBOOT_SESSIONS; else echo FAIL_REMOTE_POSTREBOOT_SESSIONS; fi
+16162 16160 pts/0    Wed Sep  9 14:26:53 2026       00:00 /bin/sh -c ( printf "COLLECTOR_PID=%s\n" "$$"; ps -ww -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\nWRAPPER_RC_POSTREBOOT_SESSIONS=%s\n' "$rc"; if [ "$rc" -eq 0 ]; then echo DONE_REMOTE_POSTREBOOT_SESSIONS; else echo FAIL_REMOTE_POSTREBOOT_SESSIONS; fi
+16163 16162 pts/0    Wed Sep  9 14:26:53 2026       00:00 ps -ww -eo pid,ppid,tty,lstart,etime,args
+
+WRAPPER_RC_POSTREBOOT_SESSIONS=0
+DONE_REMOTE_POSTREBOOT_SESSIONS

@@ -1,0 +1,1241 @@
+[
+  {
+    "label": "AUTH_CONNECT",
+    "start_utc": "2026-09-09T05:26:22.230806+00:00",
+    "end_utc": "2026-09-09T05:26:22.233433+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "AUTH_UNAME_R",
+    "start_utc": "2026-09-09T05:26:22.233628+00:00",
+    "end_utc": "2026-09-09T05:26:22.363466+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nWRAPPER_RC_AUTH_UNAME_R=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_UNAME_R; else echo FAIL_REMOTE_AUTH_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "AUTH_UNAME_M",
+    "start_utc": "2026-09-09T05:26:22.363648+00:00",
+    "end_utc": "2026-09-09T05:26:22.494387+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nWRAPPER_RC_AUTH_UNAME_M=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_UNAME_M; else echo FAIL_REMOTE_AUTH_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "AUTH_OS_RELEASE",
+    "start_utc": "2026-09-09T05:26:22.535035+00:00",
+    "end_utc": "2026-09-09T05:26:22.665176+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nWRAPPER_RC_AUTH_OS_RELEASE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_OS_RELEASE; else echo FAIL_REMOTE_AUTH_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "AUTH_ID_BEFORE",
+    "start_utc": "2026-09-09T05:26:22.665468+00:00",
+    "end_utc": "2026-09-09T05:26:22.804532+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id ); rc=$?; printf '\\nWRAPPER_RC_AUTH_ID_BEFORE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_ID_BEFORE; else echo FAIL_REMOTE_AUTH_ID_BEFORE; fi"
+    ]
+  },
+  {
+    "label": "AUTH_ROOT_ON",
+    "start_utc": "2026-09-09T05:26:22.805090+00:00",
+    "end_utc": "2026-09-09T05:26:22.856697+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "root",
+      "on"
+    ]
+  },
+  {
+    "label": "AUTH_ID_AFTER_ON",
+    "start_utc": "2026-09-09T05:26:22.857009+00:00",
+    "end_utc": "2026-09-09T05:26:22.995012+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id ); rc=$?; printf '\\nWRAPPER_RC_AUTH_ID_AFTER_ON=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_ID_AFTER_ON; else echo FAIL_REMOTE_AUTH_ID_AFTER_ON; fi"
+    ]
+  },
+  {
+    "label": "sdb_version",
+    "start_utc": "2026-09-09T05:26:22.995958+00:00",
+    "end_utc": "2026-09-09T05:26:22.999001+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "connect",
+    "start_utc": "2026-09-09T05:26:22.999336+00:00",
+    "end_utc": "2026-09-09T05:26:23.003789+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "devices",
+    "start_utc": "2026-09-09T05:26:23.004083+00:00",
+    "end_utc": "2026-09-09T05:26:23.007184+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "devices"
+    ]
+  },
+  {
+    "label": "UNAME_R",
+    "start_utc": "2026-09-09T05:26:23.007445+00:00",
+    "end_utc": "2026-09-09T05:26:23.133427+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nWRAPPER_RC_UNAME_R=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UNAME_R; else echo FAIL_REMOTE_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "UNAME_M",
+    "start_utc": "2026-09-09T05:26:23.133775+00:00",
+    "end_utc": "2026-09-09T05:26:23.263715+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nWRAPPER_RC_UNAME_M=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UNAME_M; else echo FAIL_REMOTE_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "OS_RELEASE",
+    "start_utc": "2026-09-09T05:26:23.264082+00:00",
+    "end_utc": "2026-09-09T05:26:23.395295+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nWRAPPER_RC_OS_RELEASE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_OS_RELEASE; else echo FAIL_REMOTE_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "GLIBC",
+    "start_utc": "2026-09-09T05:26:23.395771+00:00",
+    "end_utc": "2026-09-09T05:26:23.568118+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q glibc ); rc=$?; printf '\\nWRAPPER_RC_GLIBC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GLIBC; else echo FAIL_REMOTE_GLIBC; fi"
+    ]
+  },
+  {
+    "label": "MEMINFO",
+    "start_utc": "2026-09-09T05:26:23.568589+00:00",
+    "end_utc": "2026-09-09T05:26:23.699671+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/meminfo ); rc=$?; printf '\\nWRAPPER_RC_MEMINFO=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MEMINFO; else echo FAIL_REMOTE_MEMINFO; fi"
+    ]
+  },
+  {
+    "label": "UID",
+    "start_utc": "2026-09-09T05:26:23.700220+00:00",
+    "end_utc": "2026-09-09T05:26:23.830584+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id -u ); rc=$?; printf '\\nWRAPPER_RC_UID=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UID; else echo FAIL_REMOTE_UID; fi"
+    ]
+  },
+  {
+    "label": "GOVERNORS",
+    "start_utc": "2026-09-09T05:26:23.830968+00:00",
+    "end_utc": "2026-09-09T05:26:23.979822+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; test -w \"$p\" || exit 1; cat \"$p\" || exit 1; done ); rc=$?; printf '\\nWRAPPER_RC_GOVERNORS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GOVERNORS; else echo FAIL_REMOTE_GOVERNORS; fi"
+    ]
+  },
+  {
+    "label": "WORKDIR",
+    "start_utc": "2026-09-09T05:26:23.980184+00:00",
+    "end_utc": "2026-09-09T05:26:24.109105+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test -d /opt/usr && test -w /opt/usr || exit 1\np=/opt/usr/glibc_memopt\ntest ! -L \"$p\" || exit 1\nif [ -e \"$p\" ]; then\ntest -d \"$p\" || exit 1\nls -la \"$p\" || exit 1\nentries=$(ls -A \"$p\") || exit 1\ntest -z \"$entries\" || exit 1\nelse echo ABSENT; fi ); rc=$?; printf '\\nWRAPPER_RC_WORKDIR=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_WORKDIR; else echo FAIL_REMOTE_WORKDIR; fi"
+    ]
+  },
+  {
+    "label": "PROCESSES",
+    "start_utc": "2026-09-09T05:26:24.109635+00:00",
+    "end_utc": "2026-09-09T05:26:26.634896+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do test -r \"$p/comm\" || continue; printf '%s\\t' \"${p##*/}\"; tr '\\n' ' ' <\"$p/comm\"; printf '\\t'; tr '\\000' ' ' <\"$p/cmdline\" 2>/dev/null; printf '\\n'; done ); rc=$?; printf '\\nWRAPPER_RC_PROCESSES=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PROCESSES; else echo FAIL_REMOTE_PROCESSES; fi"
+    ]
+  },
+  {
+    "label": "TCP",
+    "start_utc": "2026-09-09T05:26:26.635941+00:00",
+    "end_utc": "2026-09-09T05:26:26.765997+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/net/tcp /proc/net/tcp6 ); rc=$?; printf '\\nWRAPPER_RC_TCP=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TCP; else echo FAIL_REMOTE_TCP; fi"
+    ]
+  },
+  {
+    "label": "SPACE",
+    "start_utc": "2026-09-09T05:26:26.766447+00:00",
+    "end_utc": "2026-09-09T05:26:26.900215+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( df -k / /opt/usr ); rc=$?; printf '\\nWRAPPER_RC_SPACE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SPACE; else echo FAIL_REMOTE_SPACE; fi"
+    ]
+  },
+  {
+    "label": "MEMPS",
+    "start_utc": "2026-09-09T05:26:26.900659+00:00",
+    "end_utc": "2026-09-09T05:26:27.031158+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( command -v memps ); rc=$?; printf '\\nWRAPPER_RC_MEMPS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MEMPS; else echo FAIL_REMOTE_MEMPS; fi"
+    ]
+  },
+  {
+    "label": "GDB_STATE",
+    "start_utc": "2026-09-09T05:26:27.031670+00:00",
+    "end_utc": "2026-09-09T05:26:27.192576+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q gdb; command -v gdb; true ); rc=$?; printf '\\nWRAPPER_RC_GDB_STATE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_STATE; else echo FAIL_REMOTE_GDB_STATE; fi"
+    ]
+  },
+  {
+    "label": "UPTIME",
+    "start_utc": "2026-09-09T05:26:27.193107+00:00",
+    "end_utc": "2026-09-09T05:26:27.357615+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( date -u; uptime; cat /proc/loadavg ); rc=$?; printf '\\nWRAPPER_RC_UPTIME=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UPTIME; else echo FAIL_REMOTE_UPTIME; fi"
+    ]
+  },
+  {
+    "label": "HEALTH_READONLY",
+    "start_utc": "2026-09-09T05:26:27.358067+00:00",
+    "end_utc": "2026-09-09T05:26:27.527422+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat; cat /proc/swaps; dmesg ); rc=$?; printf '\\nWRAPPER_RC_HEALTH_READONLY=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_HEALTH_READONLY; else echo FAIL_REMOTE_HEALTH_READONLY; fi"
+    ]
+  },
+  {
+    "label": "POSTREBOOT_BOOT_ID",
+    "start_utc": "2026-09-09T05:26:27.528016+00:00",
+    "end_utc": "2026-09-09T05:26:27.656292+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/sys/kernel/random/boot_id ); rc=$?; printf '\\nWRAPPER_RC_POSTREBOOT_BOOT_ID=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_POSTREBOOT_BOOT_ID; else echo FAIL_REMOTE_POSTREBOOT_BOOT_ID; fi"
+    ]
+  },
+  {
+    "label": "POSTREBOOT_SESSIONS",
+    "start_utc": "2026-09-09T05:26:27.656832+00:00",
+    "end_utc": "2026-09-09T05:26:27.869540+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf \"COLLECTOR_PID=%s\\n\" \"$$\"; ps -ww -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\\nWRAPPER_RC_POSTREBOOT_SESSIONS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_POSTREBOOT_SESSIONS; else echo FAIL_REMOTE_POSTREBOOT_SESSIONS; fi"
+    ]
+  },
+  {
+    "label": "ROUND_POSTREBOOT_DMESG",
+    "start_utc": "2026-09-09T05:26:27.870656+00:00",
+    "end_utc": "2026-09-09T05:26:28.029038+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( dmesg ); rc=$?; printf '\\nWRAPPER_RC_ROUND_POSTREBOOT_DMESG=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_POSTREBOOT_DMESG; else echo FAIL_REMOTE_ROUND_POSTREBOOT_DMESG; fi"
+    ]
+  },
+  {
+    "label": "ROUND_POSTREBOOT_ZRAM",
+    "start_utc": "2026-09-09T05:26:28.029731+00:00",
+    "end_utc": "2026-09-09T05:26:28.159760+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat ); rc=$?; printf '\\nWRAPPER_RC_ROUND_POSTREBOOT_ZRAM=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_POSTREBOOT_ZRAM; else echo FAIL_REMOTE_ROUND_POSTREBOOT_ZRAM; fi"
+    ]
+  },
+  {
+    "label": "ROUND_POSTREBOOT_ALERTS",
+    "start_utc": "2026-09-09T05:26:28.160346+00:00",
+    "end_utc": "2026-09-09T05:26:28.299681+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf 'remote_path\tsize\tmtime_epoch\tsha256\n' || exit 1\nd=/opt/usr/share/crash/livedump\ntest ! -L \"$d\" || exit 1\nfiles=\nif [ -e \"$d\" ]; then\ntest -d \"$d\" || exit 1\nfiles=$(find \"$d\" -maxdepth 1 -name '*.zip') || exit 1\nfi\nIFS='\n'\nfor f in $files; do\ntest -f \"$f\" && test ! -L \"$f\" || exit 1\nsize=$(stat -c %s \"$f\") || exit 1\nstamp=$(stat -c %Y \"$f\") || exit 1\nhash=$(sha256sum \"$f\") || exit 1\nprintf '%s\t%s\t%s\t%s\n' \"$f\" \"$size\" \"$stamp\" \"${hash%% *}\" || exit 1\ndone ); rc=$?; printf '\\nWRAPPER_RC_ROUND_POSTREBOOT_ALERTS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_POSTREBOOT_ALERTS; else echo FAIL_REMOTE_ROUND_POSTREBOOT_ALERTS; fi"
+    ]
+  },
+  {
+    "label": "PACKAGE_INVENTORY_BEFORE",
+    "start_utc": "2026-09-09T05:26:28.300232+00:00",
+    "end_utc": "2026-09-09T05:26:29.307565+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( LC_ALL=C rpm -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH}\\n' ); rc=$?; printf '\\nWRAPPER_RC_PACKAGE_INVENTORY_BEFORE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGE_INVENTORY_BEFORE; else echo FAIL_REMOTE_PACKAGE_INVENTORY_BEFORE; fi"
+    ]
+  },
+  {
+    "label": "TARGET_STAT",
+    "start_utc": "2026-09-09T05:26:29.309823+00:00",
+    "end_utc": "2026-09-09T05:26:29.439021+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/498/stat ); rc=$?; printf '\\nWRAPPER_RC_TARGET_STAT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TARGET_STAT; else echo FAIL_REMOTE_TARGET_STAT; fi"
+    ]
+  },
+  {
+    "label": "ROUND_BEFORE_DMESG",
+    "start_utc": "2026-09-09T05:26:29.439530+00:00",
+    "end_utc": "2026-09-09T05:26:29.604612+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( dmesg ); rc=$?; printf '\\nWRAPPER_RC_ROUND_BEFORE_DMESG=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_BEFORE_DMESG; else echo FAIL_REMOTE_ROUND_BEFORE_DMESG; fi"
+    ]
+  },
+  {
+    "label": "ROUND_BEFORE_ZRAM",
+    "start_utc": "2026-09-09T05:26:29.605584+00:00",
+    "end_utc": "2026-09-09T05:26:29.738880+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat ); rc=$?; printf '\\nWRAPPER_RC_ROUND_BEFORE_ZRAM=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_BEFORE_ZRAM; else echo FAIL_REMOTE_ROUND_BEFORE_ZRAM; fi"
+    ]
+  },
+  {
+    "label": "ROUND_BEFORE_ALERTS",
+    "start_utc": "2026-09-09T05:26:29.739704+00:00",
+    "end_utc": "2026-09-09T05:26:29.878979+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf 'remote_path\tsize\tmtime_epoch\tsha256\n' || exit 1\nd=/opt/usr/share/crash/livedump\ntest ! -L \"$d\" || exit 1\nfiles=\nif [ -e \"$d\" ]; then\ntest -d \"$d\" || exit 1\nfiles=$(find \"$d\" -maxdepth 1 -name '*.zip') || exit 1\nfi\nIFS='\n'\nfor f in $files; do\ntest -f \"$f\" && test ! -L \"$f\" || exit 1\nsize=$(stat -c %s \"$f\") || exit 1\nstamp=$(stat -c %Y \"$f\") || exit 1\nhash=$(sha256sum \"$f\") || exit 1\nprintf '%s\t%s\t%s\t%s\n' \"$f\" \"$size\" \"$stamp\" \"${hash%% *}\" || exit 1\ndone ); rc=$?; printf '\\nWRAPPER_RC_ROUND_BEFORE_ALERTS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_BEFORE_ALERTS; else echo FAIL_REMOTE_ROUND_BEFORE_ALERTS; fi"
+    ]
+  },
+  {
+    "label": "PREPARE_WORK",
+    "start_utc": "2026-09-09T05:26:29.879617+00:00",
+    "end_utc": "2026-09-09T05:26:30.018880+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test ! -e /opt/usr/glibc_memopt/system_level_before_after_20260908 && mkdir -p /opt/usr/glibc_memopt/system_level_before_after_20260908 && printf \"%s\\n\" f725954490c779864d9a4bdd013c8b94 >/opt/usr/glibc_memopt/system_level_before_after_20260908/owner_token.txt ); rc=$?; printf '\\nWRAPPER_RC_PREPARE_WORK=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PREPARE_WORK; else echo FAIL_REMOTE_PREPARE_WORK; fi"
+    ]
+  },
+  {
+    "label": "PUSH_reclaim_probe.armv7l",
+    "start_utc": "2026-09-09T05:26:30.019756+00:00",
+    "end_utc": "2026-09-09T05:26:30.233379+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/demo_v11_delivery_20260908/gbs_bundle/reclaim_probe.armv7l",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/reclaim_probe.armv7l"
+    ]
+  },
+  {
+    "label": "SHA_reclaim_probe.armv7l",
+    "start_utc": "2026-09-09T05:26:30.233935+00:00",
+    "end_utc": "2026-09-09T05:26:30.370076+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/reclaim_probe.armv7l ); rc=$?; printf '\\nWRAPPER_RC_SHA_reclaim_probe.armv7l=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_reclaim_probe.armv7l; else echo FAIL_REMOTE_SHA_reclaim_probe.armv7l; fi"
+    ]
+  },
+  {
+    "label": "PUSH_run_cell_remote.sh",
+    "start_utc": "2026-09-09T05:26:30.370925+00:00",
+    "end_utc": "2026-09-09T05:26:30.608809+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "<USER_HOME>/Toolchain/development/glibc_optimization/tools/runners/system_level_before_after_20260908/run_cell_remote.sh",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh"
+    ]
+  },
+  {
+    "label": "SHA_run_cell_remote.sh",
+    "start_utc": "2026-09-09T05:26:30.609620+00:00",
+    "end_utc": "2026-09-09T05:26:30.741880+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh ); rc=$?; printf '\\nWRAPPER_RC_SHA_run_cell_remote.sh=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_run_cell_remote.sh; else echo FAIL_REMOTE_SHA_run_cell_remote.sh; fi"
+    ]
+  },
+  {
+    "label": "PUSH_capture_point.sh",
+    "start_utc": "2026-09-09T05:26:30.743023+00:00",
+    "end_utc": "2026-09-09T05:26:30.949478+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "<USER_HOME>/Toolchain/development/glibc_optimization/tools/runners/system_level_before_after_20260908/capture_point.sh",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/capture_point.sh"
+    ]
+  },
+  {
+    "label": "SHA_capture_point.sh",
+    "start_utc": "2026-09-09T05:26:30.950232+00:00",
+    "end_utc": "2026-09-09T05:26:31.082229+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/capture_point.sh ); rc=$?; printf '\\nWRAPPER_RC_SHA_capture_point.sh=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_capture_point.sh; else echo FAIL_REMOTE_SHA_capture_point.sh; fi"
+    ]
+  },
+  {
+    "label": "PUSH_g4_m7.py",
+    "start_utc": "2026-09-09T05:26:31.083560+00:00",
+    "end_utc": "2026-09-09T05:26:31.294840+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "<USER_HOME>/Toolchain/development/glibc_optimization/tools/runners/system_level_before_after_20260908/g4_m7.py",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/g4_m7.py"
+    ]
+  },
+  {
+    "label": "SHA_g4_m7.py",
+    "start_utc": "2026-09-09T05:26:31.295589+00:00",
+    "end_utc": "2026-09-09T05:26:31.423612+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/g4_m7.py ); rc=$?; printf '\\nWRAPPER_RC_SHA_g4_m7.py=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_g4_m7.py; else echo FAIL_REMOTE_SHA_g4_m7.py; fi"
+    ]
+  },
+  {
+    "label": "PUSH_sample_smaps_1s.sh",
+    "start_utc": "2026-09-09T05:26:31.424804+00:00",
+    "end_utc": "2026-09-09T05:26:31.623690+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "<USER_HOME>/Toolchain/development/glibc_optimization/tools/runners/s4_retention_20260901/sample_smaps_1s.sh",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/sample_smaps_1s.sh"
+    ]
+  },
+  {
+    "label": "SHA_sample_smaps_1s.sh",
+    "start_utc": "2026-09-09T05:26:31.624260+00:00",
+    "end_utc": "2026-09-09T05:26:31.765504+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/sample_smaps_1s.sh ); rc=$?; printf '\\nWRAPPER_RC_SHA_sample_smaps_1s.sh=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_sample_smaps_1s.sh; else echo FAIL_REMOTE_SHA_sample_smaps_1s.sh; fi"
+    ]
+  },
+  {
+    "label": "EXECUTABLE_MODE",
+    "start_utc": "2026-09-09T05:26:31.766273+00:00",
+    "end_utc": "2026-09-09T05:26:31.903777+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( chmod 755 /opt/usr/glibc_memopt/system_level_before_after_20260908/reclaim_probe.armv7l ); rc=$?; printf '\\nWRAPPER_RC_EXECUTABLE_MODE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_EXECUTABLE_MODE; else echo FAIL_REMOTE_EXECUTABLE_MODE; fi"
+    ]
+  },
+  {
+    "label": "PACKAGES_BEFORE",
+    "start_utc": "2026-09-09T05:26:31.904573+00:00",
+    "end_utc": "2026-09-09T05:26:32.272682+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in libgmp gdbm libpython3_141_0 python3-base python3 gdb; do text=$(LC_ALL=C rpm -q --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH} %{SIZE}\\n' \"$p\" 2>&1); rc=$?; printf \"%s\\n\" \"$text\"; if [ \"$rc\" -ne 0 ]; then test \"$rc\" -eq 1 && test \"$text\" = \"package $p is not installed\" || exit 1; fi; done ); rc=$?; printf '\\nWRAPPER_RC_PACKAGES_BEFORE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGES_BEFORE; else echo FAIL_REMOTE_PACKAGES_BEFORE; fi"
+    ]
+  },
+  {
+    "label": "GDB_SPACE",
+    "start_utc": "2026-09-09T05:26:32.273839+00:00",
+    "end_utc": "2026-09-09T05:26:32.401909+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( df -k / ); rc=$?; printf '\\nWRAPPER_RC_GDB_SPACE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_SPACE; else echo FAIL_REMOTE_GDB_SPACE; fi"
+    ]
+  },
+  {
+    "label": "PUSH_libgmp-4.2.1-1.6.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:32.407684+00:00",
+    "end_utc": "2026-09-09T05:26:32.580478+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/libgmp-4.2.1-1.6.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_libgmp-4.2.1-1.6.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:32.581310+00:00",
+    "end_utc": "2026-09-09T05:26:32.715008+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_libgmp-4.2.1-1.6.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_libgmp-4.2.1-1.6.armv7l.rpm; else echo FAIL_REMOTE_SHA_libgmp-4.2.1-1.6.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_gdbm-1.8.3-1.7.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:32.727424+00:00",
+    "end_utc": "2026-09-09T05:26:32.948424+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/gdbm-1.8.3-1.7.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_gdbm-1.8.3-1.7.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:32.949262+00:00",
+    "end_utc": "2026-09-09T05:26:33.080936+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_gdbm-1.8.3-1.7.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_gdbm-1.8.3-1.7.armv7l.rpm; else echo FAIL_REMOTE_SHA_gdbm-1.8.3-1.7.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_libpython3_141_0-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:33.136628+00:00",
+    "end_utc": "2026-09-09T05:26:33.432409+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/libpython3_141_0-3.14.2-1.6.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:33.433282+00:00",
+    "end_utc": "2026-09-09T05:26:33.586054+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm; else echo FAIL_REMOTE_SHA_libpython3_141_0-3.14.2-1.6.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_python3-base-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:33.648367+00:00",
+    "end_utc": "2026-09-09T05:26:34.609886+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/python3-base-3.14.2-1.6.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_python3-base-3.14.2-1.6.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:34.610582+00:00",
+    "end_utc": "2026-09-09T05:26:34.845845+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_python3-base-3.14.2-1.6.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_python3-base-3.14.2-1.6.armv7l.rpm; else echo FAIL_REMOTE_SHA_python3-base-3.14.2-1.6.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_python3-3.14.2-1.5.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:34.868620+00:00",
+    "end_utc": "2026-09-09T05:26:35.226047+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/python3-3.14.2-1.5.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_python3-3.14.2-1.5.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:35.226762+00:00",
+    "end_utc": "2026-09-09T05:26:35.388268+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_python3-3.14.2-1.5.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_python3-3.14.2-1.5.armv7l.rpm; else echo FAIL_REMOTE_SHA_python3-3.14.2-1.5.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "PUSH_gdb-16.3-1.1.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:35.437649+00:00",
+    "end_utc": "2026-09-09T05:26:35.925587+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "push",
+      "board_results/tizen_native_evidence_20260904/input/gdb-16.3-1.1.armv7l.rpm",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm"
+    ]
+  },
+  {
+    "label": "SHA_gdb-16.3-1.1.armv7l.rpm",
+    "start_utc": "2026-09-09T05:26:35.926313+00:00",
+    "end_utc": "2026-09-09T05:26:36.106596+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_SHA_gdb-16.3-1.1.armv7l.rpm=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SHA_gdb-16.3-1.1.armv7l.rpm; else echo FAIL_REMOTE_SHA_gdb-16.3-1.1.armv7l.rpm; fi"
+    ]
+  },
+  {
+    "label": "GDB_INSTALL_TEST",
+    "start_utc": "2026-09-09T05:26:36.107582+00:00",
+    "end_utc": "2026-09-09T05:26:36.603056+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -Uvh --test /opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_GDB_INSTALL_TEST=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_INSTALL_TEST; else echo FAIL_REMOTE_GDB_INSTALL_TEST; fi"
+    ]
+  },
+  {
+    "label": "GDB_INSTALL",
+    "start_utc": "2026-09-09T05:26:36.604130+00:00",
+    "end_utc": "2026-09-09T05:26:49.568332+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -Uvh /opt/usr/glibc_memopt/system_level_before_after_20260908/libgmp-4.2.1-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdbm-1.8.3-1.7.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/libpython3_141_0-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-base-3.14.2-1.6.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/python3-3.14.2-1.5.armv7l.rpm /opt/usr/glibc_memopt/system_level_before_after_20260908/gdb-16.3-1.1.armv7l.rpm ); rc=$?; printf '\\nWRAPPER_RC_GDB_INSTALL=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_INSTALL; else echo FAIL_REMOTE_GDB_INSTALL; fi"
+    ]
+  },
+  {
+    "label": "GDB_VERIFY",
+    "start_utc": "2026-09-09T05:26:49.569022+00:00",
+    "end_utc": "2026-09-09T05:26:50.028233+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test \"$(rpm -q gdb)\" = gdb-16.3-1.1.armv7l && gdb --version && df -k / ); rc=$?; printf '\\nWRAPPER_RC_GDB_VERIFY=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_VERIFY; else echo FAIL_REMOTE_GDB_VERIFY; fi"
+    ]
+  },
+  {
+    "label": "GDB_PYTHON_CAPABILITY",
+    "start_utc": "2026-09-09T05:26:50.028918+00:00",
+    "end_utc": "2026-09-09T05:26:50.454497+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( gdb -nx -nh -batch -ex 'python import sys; print(\"DONE_GDB_PYTHON \" + sys.version)'  ); rc=$?; printf '\\nWRAPPER_RC_GDB_PYTHON_CAPABILITY=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_PYTHON_CAPABILITY; else echo FAIL_REMOTE_GDB_PYTHON_CAPABILITY; fi"
+    ]
+  },
+  {
+    "label": "GDB_INSTALLED_PATHS",
+    "start_utc": "2026-09-09T05:26:50.455202+00:00",
+    "end_utc": "2026-09-09T05:26:50.692003+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -ql libgmp gdbm libpython3_141_0 python3-base python3 gdb ); rc=$?; printf '\\nWRAPPER_RC_GDB_INSTALLED_PATHS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_INSTALLED_PATHS; else echo FAIL_REMOTE_GDB_INSTALLED_PATHS; fi"
+    ]
+  },
+  {
+    "label": "CELL_G4_trim_r1",
+    "start_utc": "2026-09-09T05:26:50.751240+00:00",
+    "end_utc": "2026-09-09T05:28:56.519708+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G4_trim_r1 498 1489 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G4_trim_r1; else echo FAIL_REMOTE_CELL_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G4_trim_r1",
+    "start_utc": "2026-09-09T05:28:56.538228+00:00",
+    "end_utc": "2026-09-09T05:28:57.125671+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G4_trim_r1 -type f >G4_trim_r1.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G4_trim_r1.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G4_trim_r1; else echo FAIL_REMOTE_MANIFEST_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_G4_trim_r1",
+    "start_utc": "2026-09-09T05:28:57.126422+00:00",
+    "end_utc": "2026-09-09T05:28:57.293606+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G4_trim_r1.tar.gz G4_trim_r1 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G4_trim_r1; else echo FAIL_REMOTE_TAR_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G4_trim_r1",
+    "start_utc": "2026-09-09T05:28:57.293971+00:00",
+    "end_utc": "2026-09-09T05:28:57.425452+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r1.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G4_trim_r1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G4_trim_r1; else echo FAIL_REMOTE_TAR_SHA_G4_trim_r1; fi"
+    ]
+  },
+  {
+    "label": "PULL_G4_trim_r1",
+    "start_utc": "2026-09-09T05:28:57.426275+00:00",
+    "end_utc": "2026-09-09T05:28:57.601155+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r1.tar.gz",
+      "board_results/system_level_before_after_20260908/g4_authorized_20260910/G4_trim_r1.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G4_trim_r2",
+    "start_utc": "2026-09-09T05:28:57.621373+00:00",
+    "end_utc": "2026-09-09T05:31:03.156525+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G4_trim_r2 498 1489 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G4_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G4_trim_r2; else echo FAIL_REMOTE_CELL_G4_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G4_trim_r2",
+    "start_utc": "2026-09-09T05:31:03.157337+00:00",
+    "end_utc": "2026-09-09T05:31:03.717630+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G4_trim_r2 -type f >G4_trim_r2.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G4_trim_r2.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G4_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G4_trim_r2; else echo FAIL_REMOTE_MANIFEST_G4_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_G4_trim_r2",
+    "start_utc": "2026-09-09T05:31:03.718116+00:00",
+    "end_utc": "2026-09-09T05:31:03.877157+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G4_trim_r2.tar.gz G4_trim_r2 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G4_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G4_trim_r2; else echo FAIL_REMOTE_TAR_G4_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G4_trim_r2",
+    "start_utc": "2026-09-09T05:31:03.878216+00:00",
+    "end_utc": "2026-09-09T05:31:04.010258+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r2.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G4_trim_r2=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G4_trim_r2; else echo FAIL_REMOTE_TAR_SHA_G4_trim_r2; fi"
+    ]
+  },
+  {
+    "label": "PULL_G4_trim_r2",
+    "start_utc": "2026-09-09T05:31:04.011340+00:00",
+    "end_utc": "2026-09-09T05:31:04.179630+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r2.tar.gz",
+      "board_results/system_level_before_after_20260908/g4_authorized_20260910/G4_trim_r2.tar.gz"
+    ]
+  },
+  {
+    "label": "CELL_G4_trim_r3",
+    "start_utc": "2026-09-09T05:31:04.232256+00:00",
+    "end_utc": "2026-09-09T05:33:09.819405+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sh /opt/usr/glibc_memopt/system_level_before_after_20260908/run_cell_remote.sh G4_trim_r3 498 1489 ); rc=$?; printf '\\nWRAPPER_RC_CELL_G4_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_CELL_G4_trim_r3; else echo FAIL_REMOTE_CELL_G4_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "MANIFEST_G4_trim_r3",
+    "start_utc": "2026-09-09T05:33:09.820196+00:00",
+    "end_utc": "2026-09-09T05:33:10.378127+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 || exit 1\nfind G4_trim_r3 -type f >G4_trim_r3.files || exit 1\nwhile IFS= read -r f; do sha256sum \"$f\" || exit 1; done <G4_trim_r3.files ); rc=$?; printf '\\nWRAPPER_RC_MANIFEST_G4_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_MANIFEST_G4_trim_r3; else echo FAIL_REMOTE_MANIFEST_G4_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_G4_trim_r3",
+    "start_utc": "2026-09-09T05:33:10.378948+00:00",
+    "end_utc": "2026-09-09T05:33:10.546230+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cd /opt/usr/glibc_memopt/system_level_before_after_20260908 && tar --exclude=control.fifo --exclude=proc -czf G4_trim_r3.tar.gz G4_trim_r3 ); rc=$?; printf '\\nWRAPPER_RC_TAR_G4_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_G4_trim_r3; else echo FAIL_REMOTE_TAR_G4_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "TAR_SHA_G4_trim_r3",
+    "start_utc": "2026-09-09T05:33:10.547071+00:00",
+    "end_utc": "2026-09-09T05:33:10.689049+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( sha256sum /opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r3.tar.gz ); rc=$?; printf '\\nWRAPPER_RC_TAR_SHA_G4_trim_r3=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TAR_SHA_G4_trim_r3; else echo FAIL_REMOTE_TAR_SHA_G4_trim_r3; fi"
+    ]
+  },
+  {
+    "label": "PULL_G4_trim_r3",
+    "start_utc": "2026-09-09T05:33:10.689874+00:00",
+    "end_utc": "2026-09-09T05:33:10.856403+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "pull",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908/G4_trim_r3.tar.gz",
+      "board_results/system_level_before_after_20260908/g4_authorized_20260910/G4_trim_r3.tar.gz"
+    ]
+  },
+  {
+    "label": "ROUND_AFTER_DMESG",
+    "start_utc": "2026-09-09T05:33:11.930245+00:00",
+    "end_utc": "2026-09-09T05:33:12.088208+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( dmesg ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AFTER_DMESG=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AFTER_DMESG; else echo FAIL_REMOTE_ROUND_AFTER_DMESG; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AFTER_ZRAM",
+    "start_utc": "2026-09-09T05:33:12.089286+00:00",
+    "end_utc": "2026-09-09T05:33:12.222592+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AFTER_ZRAM=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AFTER_ZRAM; else echo FAIL_REMOTE_ROUND_AFTER_ZRAM; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AFTER_ALERTS",
+    "start_utc": "2026-09-09T05:33:12.223586+00:00",
+    "end_utc": "2026-09-09T05:33:12.360184+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf 'remote_path\tsize\tmtime_epoch\tsha256\n' || exit 1\nd=/opt/usr/share/crash/livedump\ntest ! -L \"$d\" || exit 1\nfiles=\nif [ -e \"$d\" ]; then\ntest -d \"$d\" || exit 1\nfiles=$(find \"$d\" -maxdepth 1 -name '*.zip') || exit 1\nfi\nIFS='\n'\nfor f in $files; do\ntest -f \"$f\" && test ! -L \"$f\" || exit 1\nsize=$(stat -c %s \"$f\") || exit 1\nstamp=$(stat -c %Y \"$f\") || exit 1\nhash=$(sha256sum \"$f\") || exit 1\nprintf '%s\t%s\t%s\t%s\n' \"$f\" \"$size\" \"$stamp\" \"${hash%% *}\" || exit 1\ndone ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AFTER_ALERTS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AFTER_ALERTS; else echo FAIL_REMOTE_ROUND_AFTER_ALERTS; fi"
+    ]
+  },
+  {
+    "label": "WORK_OWNER",
+    "start_utc": "2026-09-09T05:33:12.364382+00:00",
+    "end_utc": "2026-09-09T05:33:12.504497+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( if [ ! -e /opt/usr/glibc_memopt/system_level_before_after_20260908 ]; then echo ABSENT; else test ! -L /opt/usr/glibc_memopt/system_level_before_after_20260908 && test \"$(cat /opt/usr/glibc_memopt/system_level_before_after_20260908/owner_token.txt)\" = f725954490c779864d9a4bdd013c8b94 && echo OWNED; fi ); rc=$?; printf '\\nWRAPPER_RC_WORK_OWNER=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_WORK_OWNER; else echo FAIL_REMOTE_WORK_OWNER; fi"
+    ]
+  },
+  {
+    "label": "RESTORE_GOVERNORS",
+    "start_utc": "2026-09-09T05:33:12.505367+00:00",
+    "end_utc": "2026-09-09T05:33:12.675626+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do p=/sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor; printf \"%s\\n\" schedutil >\"$p\" || exit 1; test \"$(cat \"$p\")\" = schedutil || exit 1; echo \"$n schedutil\"; done ); rc=$?; printf '\\nWRAPPER_RC_RESTORE_GOVERNORS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_RESTORE_GOVERNORS; else echo FAIL_REMOTE_RESTORE_GOVERNORS; fi"
+    ]
+  },
+  {
+    "label": "OWN_PROCESS_ABSENT",
+    "start_utc": "2026-09-09T05:33:12.676330+00:00",
+    "end_utc": "2026-09-09T05:33:14.379692+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do e=$(readlink \"$p/exe\" 2>/dev/null) || continue; case \"$e\" in /opt/usr/glibc_memopt/system_level_before_after_20260908/*) echo FAIL_OWN_PROCESS_$p; exit 1;; esac; done ); rc=$?; printf '\\nWRAPPER_RC_OWN_PROCESS_ABSENT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_OWN_PROCESS_ABSENT; else echo FAIL_REMOTE_OWN_PROCESS_ABSENT; fi"
+    ]
+  },
+  {
+    "label": "OWN_HELPER_ABSENT",
+    "start_utc": "2026-09-09T05:33:14.380886+00:00",
+    "end_utc": "2026-09-09T05:33:16.234035+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /proc/[0-9]*; do\na=$(tr '\\000' '\\n' <\"$p/cmdline\" 2>/dev/null | sed -n '2p')\ncase \"$a\" in /opt/usr/glibc_memopt/system_level_before_after_20260908/*.sh) echo FAIL_OWN_SCRIPT_$p; exit 1;; esac\ndone\nfor f in /opt/usr/glibc_memopt/system_level_before_after_20260908/G*/debugger_identity.txt /opt/usr/glibc_memopt/system_level_before_after_20260908/G*/sampler_identity.txt; do\ntest -f \"$f\" || continue\nread p tick <\"$f\" || exit 1\ncase \"$p:$tick\" in *[!0-9:]*) exit 1;; esac\nif [ -d /proc/$p ]; then\ns=$(cat /proc/$p/stat) || exit 1; s=${s##*) }; set -- $s\nif [ \"${20}\" = \"$tick\" ]; then echo FAIL_OWN_HELPER_$p; exit 1; fi\nfi\ndone ); rc=$?; printf '\\nWRAPPER_RC_OWN_HELPER_ABSENT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_OWN_HELPER_ABSENT; else echo FAIL_REMOTE_OWN_HELPER_ABSENT; fi"
+    ]
+  },
+  {
+    "label": "GDB_REMOVE",
+    "start_utc": "2026-09-09T05:33:16.235115+00:00",
+    "end_utc": "2026-09-09T05:33:18.438349+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( names=; for p in gdb python3 python3-base libpython3_141_0 gdbm libgmp; do text=$(LC_ALL=C rpm -q \"$p\" 2>&1); rc=$?; if [ \"$rc\" -eq 0 ]; then names=\"$names $p\"; else test \"$rc\" -eq 1 && test \"$text\" = \"package $p is not installed\" || { printf \"%s\\n\" \"$text\"; exit 1; }; fi; done; if [ -n \"$names\" ]; then rpm -e --test $names && rpm -e $names || exit 1; fi; for p in libgmp gdbm libpython3_141_0 python3-base python3 gdb; do text=$(LC_ALL=C rpm -q \"$p\" 2>&1); rc=$?; printf \"%s\\n\" \"$text\"; test \"$rc\" -eq 1 && test \"$text\" = \"package $p is not installed\" || exit 1; done ); rc=$?; printf '\\nWRAPPER_RC_GDB_REMOVE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GDB_REMOVE; else echo FAIL_REMOTE_GDB_REMOVE; fi"
+    ]
+  },
+  {
+    "label": "WORKDIR_REMOVE",
+    "start_utc": "2026-09-09T05:33:18.439426+00:00",
+    "end_utc": "2026-09-09T05:33:18.614427+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( test -d /opt/usr/glibc_memopt/system_level_before_after_20260908 && test ! -L /opt/usr/glibc_memopt/system_level_before_after_20260908 && test \"$(cat /opt/usr/glibc_memopt/system_level_before_after_20260908/owner_token.txt)\" = f725954490c779864d9a4bdd013c8b94 && rm -r -- /opt/usr/glibc_memopt/system_level_before_after_20260908 && test ! -e /opt/usr/glibc_memopt/system_level_before_after_20260908 && rmdir /opt/usr/glibc_memopt ); rc=$?; printf '\\nWRAPPER_RC_WORKDIR_REMOVE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_WORKDIR_REMOVE; else echo FAIL_REMOTE_WORKDIR_REMOVE; fi"
+    ]
+  },
+  {
+    "label": "FINAL_REVIEW",
+    "start_utc": "2026-09-09T05:33:18.615376+00:00",
+    "end_utc": "2026-09-09T05:33:18.817670+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do cat /sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor || exit 1; done; df -k / /opt/usr; ps -ef ); rc=$?; printf '\\nWRAPPER_RC_FINAL_REVIEW=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_FINAL_REVIEW; else echo FAIL_REMOTE_FINAL_REVIEW; fi"
+    ]
+  },
+  {
+    "label": "PACKAGE_INVENTORY_AFTER",
+    "start_utc": "2026-09-09T05:33:18.818890+00:00",
+    "end_utc": "2026-09-09T05:33:19.355090+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( LC_ALL=C rpm -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH}\\n' ); rc=$?; printf '\\nWRAPPER_RC_PACKAGE_INVENTORY_AFTER=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGE_INVENTORY_AFTER; else echo FAIL_REMOTE_PACKAGE_INVENTORY_AFTER; fi"
+    ]
+  },
+  {
+    "label": "PACKAGE_RESIDUE_0000",
+    "start_utc": "2026-09-09T05:33:19.358971+00:00",
+    "end_utc": "2026-09-09T05:33:19.409860+00:00",
+    "host_rc": 1,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /etc/profile.d/python3.csh /etc/profile.d/python3.sh /etc/python3start /etc/rpm/macros.python3 /usr/bin/gcore /usr/bin/gdb /usr/bin/gdb-add-index /usr/bin/gdbserver /usr/bin/gstack /usr/bin/pydoc3 /usr/bin/pydoc3.14 /usr/bin/python3 /usr/bin/python3.14 /usr/lib/libgdbm.so.3 /usr/lib/libgdbm.so.3.0.0 /usr/lib/libgmp.so.3 /usr/lib/libgmp.so.3.4.1 /usr/lib/libpython3.14.so.1.0 /usr/lib/python3.14 /usr/lib/python3.14/LICENSE.txt /usr/lib/python3.14/__future__.py /usr/lib/python3.14/__hello__.py /usr/lib/python3.14/__phello__ /usr/lib/python3.14/__phello__/__init__.py /usr/lib/python3.14/__phello__/__pycache__ /usr/lib/python3.14/__phello__/__pycache__/__init__.cpython-314.opt-1.pyc /usr/lib/python3.14/__phello__/__pycache__/__init__.cpython-314.opt-2.pyc /usr/lib/python3.14/__phello__/__pycache__/__init__.cpython-314.pyc /usr/lib/python3.14/__phello__/__pycache__/spam.cpython-314.opt-1.pyc /usr/lib/python3.14/__phello__/__pycache__/spam.cpython-314.opt-2.pyc /usr/lib/python3.14/__phello__/__pycache__/spam.cpython-314.pyc /usr/lib/python3.14/__phello__/spam.py /usr/lib/python3.14/__pycache__ /usr/lib/python3.14/__pycache__/__future__.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/__future__.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/__future__.cpython-314.pyc /usr/lib/python3.14/__pycache__/__hello__.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/__hello__.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/__hello__.cpython-314.pyc /usr/lib/python3.14/__pycache__/_aix_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_aix_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_aix_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_android_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_android_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_android_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_apple_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_apple_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_apple_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_ast_unparse.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_ast_unparse.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_ast_unparse.cpython-314.pyc /usr/lib/python3.14/__pycache__/_collections_abc.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_collections_abc.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_collections_abc.cpython-314.pyc /usr/lib/python3.14/__pycache__/_colorize.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_colorize.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_colorize.cpython-314.pyc /usr/lib/python3.14/__pycache__/_compat_pickle.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_compat_pickle.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_compat_pickle.cpython-314.pyc /usr/lib/python3.14/__pycache__/_ios_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_ios_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_ios_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_markupbase.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_markupbase.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_markupbase.cpython-314.pyc /usr/lib/python3.14/__pycache__/_opcode_metadata.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_opcode_metadata.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_opcode_metadata.cpython-314.pyc /usr/lib/python3.14/__pycache__/_osx_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_osx_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_osx_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_py_abc.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_py_abc.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_py_abc.cpython-314.pyc /usr/lib/python3.14/__pycache__/_py_warnings.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_py_warnings.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_py_warnings.cpython-314.pyc /usr/lib/python3.14/__pycache__/_pydatetime.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_pydatetime.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_pydatetime.cpython-314.pyc /usr/lib/python3.14/__pycache__/_pydecimal.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_pydecimal.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_pydecimal.cpython-314.pyc /usr/lib/python3.14/__pycache__/_pyio.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_pyio.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_pyio.cpython-314.pyc /usr/lib/python3.14/__pycache__/_pylong.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_pylong.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_pylong.cpython-314.pyc /usr/lib/python3.14/__pycache__/_sitebuiltins.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_sitebuiltins.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_sitebuiltins.cpython-314.pyc /usr/lib/python3.14/__pycache__/_strptime.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_strptime.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_strptime.cpython-314.pyc /usr/lib/python3.14/__pycache__/_sysconfigdata__linux_arm-linux-gnueabi.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_sysconfigdata__linux_arm-linux-gnueabi.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_sysconfigdata__linux_arm-linux-gnueabi.cpython-314.pyc /usr/lib/python3.14/__pycache__/_threading_local.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_threading_local.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_threading_local.cpython-314.pyc /usr/lib/python3.14/__pycache__/_weakrefset.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_weakrefset.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_weakrefset.cpython-314.pyc /usr/lib/python3.14/__pycache__/abc.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/abc.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/abc.cpython-314.pyc /usr/lib/python3.14/__pycache__/annotationlib.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/annotationlib.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/annotationlib.cpython-314.pyc /usr/lib/python3.14/__pycache__/antigravity.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/antigravity.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/antigravity.cpython-314.pyc /usr/lib/python3.14/__pycache__/argparse.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/argparse.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/argparse.cpython-314.pyc /usr/lib/python3.14/__pycache__/ast.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/ast.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/ast.cpython-314.pyc /usr/lib/python3.14/__pycache__/base64.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/base64.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/base64.cpython-314.pyc /usr/lib/python3.14/__pycache__/bdb.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/bdb.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/bdb.cpython-314.pyc /usr/lib/python3.14/__pycache__/bisect.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/bisect.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/bisect.cpython-314.pyc /usr/lib/python3.14/__pycache__/bz2.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/bz2.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/bz2.cpython-314.pyc /usr/lib/python3.14/__pycache__/cProfile.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/cProfile.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/cProfile.cpython-314.pyc /usr/lib/python3.14/__pycache__/calendar.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/calendar.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/calendar.cpython-314.pyc /usr/lib/python3.14/__pycache__/cmd.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/cmd.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/cmd.cpython-314.pyc /usr/lib/python3.14/__pycache__/code.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/code.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/code.cpython-314.pyc /usr/lib/python3.14/__pycache__/codecs.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/codecs.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/codecs.cpython-314.pyc /usr/lib/python3.14/__pycache__/codeop.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/codeop.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/codeop.cpython-314.pyc /usr/lib/python3.14/__pycache__/colorsys.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/colorsys.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/colorsys.cpython-314.pyc /usr/lib/python3.14/__pycache__/compileall.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/compileall.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/compileall.cpython-314.pyc /usr/lib/python3.14/__pycache__/configparser.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/configparser.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/configparser.cpython-314.pyc /usr/lib/python3.14/__pycache__/contextlib.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/contextlib.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/contextlib.cpython-314.pyc /usr/lib/python3.14/__pycache__/contextvars.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/contextvars.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/contextvars.cpython-314.pyc /usr/lib/python3.14/__pycache__/copy.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/copy.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/copy.cpython-314.pyc /usr/lib/python3.14/__pycache__/copyreg.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/copyreg.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/copyreg.cpython-314.pyc /usr/lib/python3.14/__pycache__/csv.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/csv.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/csv.cpython-314.pyc /usr/lib/python3.14/__pycache__/dataclasses.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/dataclasses.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/dataclasses.cpython-314.pyc /usr/lib/python3.14/__pycache__/datetime.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/datetime.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/datetime.cpython-314.pyc /usr/lib/python3.14/__pycache__/decimal.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/decimal.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/decimal.cpython-314.pyc /usr/lib/python3.14/__pycache__/difflib.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/difflib.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/difflib.cpython-314.pyc /usr/lib/python3.14/__pycache__/dis.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/dis.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/dis.cpython-314.pyc /usr/lib/python3.14/__pycache__/doctest.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/doctest.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/doctest.cpython-314.pyc /usr/lib/python3.14/__pycache__/enum.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/enum.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/enum.cpython-314.pyc /usr/lib/python3.14/__pycache__/filecmp.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/filecmp.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/filecmp.cpython-314.pyc /usr/lib/python3.14/__pycache__/fileinput.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/fileinput.cpython-314.opt-2.pyc; do if [ -e \"$p\" ] || [ -L \"$p\" ]; then printf \"%s\\t\" \"$p\"; stat -c \"%F\" \"$p\" || exit 1; fi; done ); rc=$?; printf '\\nWRAPPER_RC_PACKAGE_RESIDUE_0000=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGE_RESIDUE_0000; else echo FAIL_REMOTE_PACKAGE_RESIDUE_0000; fi"
+    ]
+  },
+  {
+    "label": "AUTH_ROOT_OFF_1",
+    "start_utc": "2026-09-09T05:33:19.411112+00:00",
+    "end_utc": "2026-09-09T05:33:19.461098+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "root",
+      "off"
+    ]
+  },
+  {
+    "label": "AUTH_ID_AFTER_OFF_1",
+    "start_utc": "2026-09-09T05:33:19.462281+00:00",
+    "end_utc": "2026-09-09T05:33:19.602955+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id ); rc=$?; printf '\\nWRAPPER_RC_AUTH_ID_AFTER_OFF_1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_ID_AFTER_OFF_1; else echo FAIL_REMOTE_AUTH_ID_AFTER_OFF_1; fi"
+    ]
+  }
+]

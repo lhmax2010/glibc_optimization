@@ -1,0 +1,6 @@
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/mmcblk0p2         3021464   1202676   1789104  41% /
+/dev/mmcblk0p5       116404224    982808 115421416   1% /opt/usr
+
+WRAPPER_RC_SPACE=0
+DONE_REMOTE_SPACE

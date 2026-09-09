@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-09（PM 方案 A 消息日期 09-10）：[授权 G4 续跑](system_level_before_after_20260908.md#8-pm-方案-a-授权续跑三格已观测收尾-stop)三格完成/校验通过；卸包后残留审计触发 SDB 请求过长 STOP，后置健康未核验。六包/目录/进程/governor 已清理，root-off 首次成功回到 UID=5001；旧 18 格不重跑，后续停止，demo-v11 不变。见[更新汇总](twoday_summary_20260910.md)。
+
 - 2026-09-09: [两日续跑](twoday_summary_20260910.md)：G4 执行器 114 项 host 测试与 verify 通过并推 main；首次只读门 UID=5001 触发 STOP，未 root-on/推送/安装/注入；已验收 18 格不变，G4 NOT_EXECUTED，后续停止，demo-v11 继续有效。
 
 - 2026-09-08: [系统级补测续跑](system_level_before_after_20260908.md#6-当日续跑结果g4-首格停止不进入-demo-集成)：PM 占用裁决已落实，G1/G2/G3 18 格通过；G4 首格 M7 赋值失败而停止，可能的目标内 FILE*/FD 状态未排除；不做 Demo 集成、不切 v12，见 [当日汇总](overnight_summary_20260908.md)。

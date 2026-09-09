@@ -1,0 +1,95 @@
+{
+  "start_utc": "2026-09-09T05:26:19.254318+00:00",
+  "verdict": "STOP",
+  "contract_tag": "system-before-after-contract-20260908",
+  "tag_object": "0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3",
+  "executor_commit": "cdab1dbf0d24afefe05c4db1039f58ffde6911b9",
+  "completed_cells": [
+    "G4_trim_r1",
+    "G4_trim_r2",
+    "G4_trim_r3"
+  ],
+  "cleanup": "FAIL",
+  "accepted_prefix": {
+    "execution_sha256": "5cc81666216b4ee204f0cf5171ac8af0dc7655992b66bc0dd399145c4f64c61c",
+    "executor_commit": "06799668543c014b0552a23720ca7e79304f4346",
+    "completed_cells": [
+      "G1_none_r1",
+      "G1_trim_r1",
+      "G2_none_r1",
+      "G2_trim_r1",
+      "G1_trim_r2",
+      "G1_none_r2",
+      "G2_trim_r2",
+      "G2_none_r2",
+      "G1_none_r3",
+      "G1_trim_r3",
+      "G2_none_r3",
+      "G2_trim_r3",
+      "G3_none_r1",
+      "G3_trim_r1",
+      "G3_trim_r2",
+      "G3_none_r2",
+      "G3_none_r3",
+      "G3_trim_r3"
+    ],
+    "verdict": "PRESERVED_ACCEPTED_PREFIX",
+    "scope": "previous boot; no execution or modification of these 18 cells"
+  },
+  "authority": {
+    "approved_by": "PM",
+    "date": "2026-09-08",
+    "scope": "post-reboot G4-only; previous exact-PID termination authorization NOT reused",
+    "reboot": "PM reports manual reboot on 2026-09-08; fresh checks define current restoration",
+    "uninstall_warnings": "record warnings/residue; package inventory must match before"
+  },
+  "contract_push_utc": "2026-09-08T04:55:52.140217+00:00",
+  "push_to_run_seconds": 88230.09050868,
+  "root_authorization": {
+    "approved_by": "PM",
+    "decision_date": "2026-09-10",
+    "scope": "this G4 continuation and cleanup only; no reboot; not a default harness behavior",
+    "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+    "start_utc": "2026-09-09T05:26:22.804914+00:00",
+    "root_off": "PASS_NONROOT",
+    "id_after_on": "uid=0(root) gid=0(root) groups=0(root),29(audio),44(video),201(display),1901(log),6505(pulse-access),6506(pulse-rt),6525(usb_device),10001(priv_externalstorage),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+    "off_attempts": [
+      {
+        "attempt": 1,
+        "start_utc": "2026-09-09T05:33:19.411090+00:00",
+        "id": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+        "end_utc": "2026-09-09T05:33:19.604367+00:00"
+      }
+    ]
+  },
+  "preflight": {
+    "enlightenment_pid": 498,
+    "verdict": "PASS_READONLY_AVAILABILITY",
+    "boot_id": "7a8e3b20-dc78-40b0-86a6-ba404f766752",
+    "interactive_sessions": [],
+    "hygiene": "PASS_FRESH_POSTREBOOT"
+  },
+  "target_starttime": 1489,
+  "active_cell": "G4_trim_r3",
+  "round_health": {
+    "oom_lmk_new": 0,
+    "zram_three_delta": [
+      0,
+      0,
+      0
+    ],
+    "stability_before": 0,
+    "stability_after": 0,
+    "attributable_alerts_new": 0
+  },
+  "cleanup_problems": [
+    "remote RC/DONE gate failed: PACKAGE_RESIDUE_0000"
+  ],
+  "package_inventory": {
+    "before_count": 1263,
+    "after_count": 1263,
+    "added": [],
+    "removed": []
+  },
+  "end_utc": "2026-09-09T05:33:19.604651+00:00"
+}

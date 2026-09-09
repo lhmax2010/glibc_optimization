@@ -430,3 +430,129 @@ G4 三格均 **NOT_EXECUTED**，上轮失败尝试仍在 §6 保留。G1/G2/G3 �
 
 原文 `devices.txt` 首行末尾空格按源输出保留，未为消除 whitespace 提示而编辑证据；
 清单中的公开 SHA 对应此保留版本。除约定的 CR/IP/host 路径替换外，不改原文。
+
+## 8. PM 方案 A 授权续跑：三格已观测，收尾 STOP
+
+### 8.1 授权、时间与合同
+
+PM 消息裁决日期为 **2026-09-10**；本次工具实录的 host UTC 日期为 **2026-09-09**，
+两者分别记录，不把裁决日期或目录名当测量日期。原 §6/§7 的失败及重启前 FILE*/FD
+不确定性保留。重启恢复事实由 PM 陈述，当前现场以本节新核验为准。
+
+本轮使用原 annotated tag `system-before-after-contract-20260908`，对象
+`0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3`；contract/analyzer 字节不变、未重打 tag。
+原推送确认 2026-09-08 04:55:52.140217 UTC；本次入口检查时距其
+88230.090509 s，满足原等待门。授权包装层先提交并推至
+`cdab1dbf0d24afefe05c4db1039f58ffde6911b9`，再执行任何板端命令。
+见[最终执行回执](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/execution.json)、
+[命令时间线](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/commands.json)和
+[PM 台账](pm_decisions.md#2026-09-10-g4-单轮提权授权方案-a)。
+
+**重启后会话为 UID=5001，经 PM 授权提权至 root。** 授权只用于本轮 G4 和收尾，
+不成为默认 harness 行为；未执行 reboot/poweroff、未清除任何旧会话。G1/G2/G3 已验收
+18 格未推送、未调度、未重跑，其原回执/归档/逐文件哈希在运行前后均通过原公开证据比对。
+
+| 事件 | host UTC（2026-09-09） | 原文/结果 |
+|---|---|---|
+| 提权前 id | 05:26:22.665468–22.804532 | UID=5001；[全文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/AUTH_ID_BEFORE.txt) |
+| root on / 提权后 id | 05:26:22.805090–22.995012 | UID=0；[root on](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/AUTH_ROOT_ON.txt)、[id 全文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/AUTH_ID_AFTER_ON.txt) |
+| G4 r1 | 05:26:50.751240–05:28:56.519708 | 完成、拉回、哈希及原 analyzer 校验通过 |
+| G4 r2 | 05:28:57.621373–05:31:03.156525 | 完成、拉回、哈希及原 analyzer 校验通过 |
+| G4 r3 | 05:31:04.232256–05:33:09.819405 | 完成、拉回、哈希及原 analyzer 校验通过 |
+| 卸包 | 05:33:16.235115–18.438349 | 六包均不存在，警告按裁决不阻断 |
+| 残留审计 STOP | 05:33:19.358971–19.409860 | `error: service name too long`，无远端 RC/DONE |
+| root off / 最终 id | 05:33:19.411112–19.602955 | 首次成功，UID=5001；[root off](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/AUTH_ROOT_OFF_1.txt)、[id 全文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/AUTH_ID_AFTER_OFF_1.txt) |
+
+板端纳秒时间戳和 host UTC 分开保留；注入间隔只在同一板端时钟内计算，不跨时钟相减。
+
+### 8.2 提权后完整前置门
+
+| 核验项 | 实测/判定 | 原文 |
+|---|---|---|
+| 内核/架构 | `6.12.80-arm-rpi4-v7l` / `armv7l`，PASS | [uname -r](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/UNAME_R.txt)、[uname -m](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/UNAME_M.txt) |
+| BUILD_ID | `tizen-unified-toolchain_20260814.092727_tizen-headed-armv7l`，PASS | [os-release 全文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/OS_RELEASE.txt) |
+| glibc / MemTotal | `glibc-2.40-1.6.armv7l` / `8117408 kB`，PASS | [rpm](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/GLIBC.txt)、[meminfo](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/MEMINFO.txt) |
+| UID / governor | 0 / 四核均 schedutil 且可写，PASS | [UID](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/UID.txt)、[governor](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/GOVERNORS.txt) |
+| 工作目录/占用 | 原工作目录不存在；无其他交互会话或匹配负载 | [目录](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/WORKDIR.txt)、[完整 ps](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/POSTREBOOT_SESSIONS.txt)、[进程命令行](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/PROCESSES.txt) |
+| 空间 | `/` 可用 1789104 KiB；`/opt/usr` 可用 115421416 KiB；安装预算通过 | [df](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/SPACE.txt)、[安装前预算](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/GDB_SPACE.txt) |
+| 目标/启动身份 | enlightenment PID=498，start tick=1489；本次三格恒定 | [启动身份](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TARGET_STAT.txt)、[boot_id](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/POSTREBOOT_BOOT_ID.txt) |
+| stability / zram | 告警 0；三项 4096/74/4096 B | [快照](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/raw/round_health/stability_postreboot.tsv)、[mm_stat](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/raw/round_health/zram_postreboot.txt) |
+
+reclaim_probe SHA-256 为 `e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31`，
+推送前/后均与合同相同；[远端复核](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/SHA_reclaim_probe.armv7l.txt)。
+六个 GDB RPM 仍为 §6 的固定集合，未改版本/来源；[安装原文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/GDB_INSTALL.txt)、
+[安装后版本](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/GDB_VERIFY.txt)、
+[GDB Python 能力](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/GDB_PYTHON_CAPABILITY.txt)均通过。
+
+### 8.3 三格已观测数据（STOP 下保留，不是完整轮通过）
+
+来源：[逐格 TSV](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_cycles.tsv)、
+[三重复汇总](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_summary.tsv)、
+[解析输入/健康/归档与逐文件哈希](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_points.json)。
+三份归档共 243 个原始文件逐件校验；完整原始件本地留存，可按请求提供。
+本节不生成完整 21 格 Demo 证据，不覆盖旧失败尝试。
+
+| 格 | RSS KiB 前→后 / 下降 | glibc 堆 PD KiB 前→后 / 下降 | memps heap P(DATA) KiB 前→后 | MemAvailable Δ KiB（无 none，非净效应） | 含 ptrace 注入 ms | 静置 min/maj faults |
+|---|---|---|---|---|---|---|
+| r1 | 11972→11880 / 92 | 3208→3120 / 88 | 3108→3020 | +12524 | 1861.981721 | 1 / 0 |
+| r2 | 11884→11884 / 0 | 3124→3124 / 0 | 3024→3024 | -9280 | 1899.209517 | 0 / 0 |
+| r3 | 11884→11880 / 4 | 3124→3120 / 4 | 3024→3020 | +8376 | 1963.377091 | 1 / 0 |
+
+RSS 下降三重复中位 4 KiB（0.003906 MiB、0.033659%），极差 92 KiB；堆 PD 下降中位
+4 KiB、极差 88 KiB。memps heap 的绝对水平与含其他 glibc arena 的我方分类相差
+100 KiB，但两者下降量逐格一致为 88/0/4 KiB；不能把桶水平说成相同。
+含 ptrace 耗时中位 1899.209517 ms，不是约 1 ms 的 release-hook 代价。
+系统背景变化大且无 none 对照，不归因为守护进程 trim 的整机收益。
+
+注入起点间隔 126.096085980 / 126.617640221 s；三段独立静置窗
+120.113473725 / 120.098603391 / 120.113094707 s，全部满足 ≥120.000 s。
+采样窗口 major fault 均 0；静置 faults 单列，next-cycle 为 NA。
+M7 XML 三份均 parse 成功、非 NULL FILE 关闭成功、调试器 detach 成功；
+[r1 XML](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/xml/G4_trim_r1.xml)、
+[r2 XML](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/xml/G4_trim_r2.xml)、
+[r3 XML](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/xml/G4_trim_r3.xml)，
+对应 [r1](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/raw/G4_trim_r1/gdb_m7.txt)、
+[r2](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/raw/G4_trim_r2/gdb_m7.txt)、
+[r3](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/raw/G4_trim_r3/gdb_m7.txt)原文。
+
+### 8.4 清理完成项与未闭合边界
+
+| 项目 | 状态 | 证据/范围 |
+|---|---|---|
+| 三格及测量后健康 | PASS | 各格 OOM/LMK=0、可归因新告警=0、zram 三项 Δ=0；测量期 stability 0→0，见最终回执 `round_health`。不外推到卸包后 |
+| 四核 governor | PASS | [恢复原文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/RESTORE_GOVERNORS.txt)均 schedutil |
+| 我方进程/helper | PASS | [负载](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/OWN_PROCESS_ABSENT.txt)、[helper](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/OWN_HELPER_ABSENT.txt)不存在；未终止 enlightenment |
+| 工作目录 | PASS | [删除并核验](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/WORKDIR_REMOVE.txt)，只删除带本轮 owner token 的目录及空父目录；原始件已拉回可恢复 |
+| 六包卸载与包清单 | PASS | [卸载原文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/GDB_REMOVE.txt)：六包均 not installed；包清单 1263→1263，added/removed 均空；[卸包后清单](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/PACKAGE_INVENTORY_AFTER.txt) |
+| 包文件残留审计 | **FAIL / 未执行** | [原文](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/PACKAGE_RESIDUE_0000.txt)只有 `error: service name too long`。按 200 条路径拼接的首请求为 11800 UTF-8 字节，SDB 请求层拒绝，无远端 RC/DONE；不是发现了残留，也不是 rpm 卸载失败 |
+| 卸包后的 dmesg/zram/stability/boot | **NOT_EVALUATED** | 前项异常短路，未运行 `after_cleanup` 快照与 boot 复核；不可用测量前后快照填补 |
+| root off | PASS_NONROOT | 一次成功，UID=5001；无降权重试，此后无板端命令 |
+
+卸包警告原文为 `warning: Plugin msm: hook tsm_post failed` 和
+`/sbin/ldconfig: Cannot lstat /lib/libpython3.14.so.1.0: Permission denied`。
+按 PM 裁决，警告本身不阻断；本次停止项是独立的审计命令长度缺陷与后置健康缺口。
+未放宽停止门、未改为短命令重试、未重跑已完成格、未再提权或重启。
+
+因此 **G4 交付项按用户停止门记 NOT_EXECUTED（未完成整轮验收）**；事实层明确保留
+“3/3 格观测已完成并逐格校验通过”，不是 0 次执行。最终回执为 STOP/cleanup FAIL。
+历史 B/B2 的 [272 KiB / 36 KiB / 8–20 KiB](tizen_native_evidence_20260904.md)
+只作常驻/官方负载背景，不填补本次后置健康门。第 3–5 段停止，demo-v11 继续有效，
+没有 demo-v12、没有新头条或复审 brief。
+
+### 8.5 复现与下一步限制
+
+harness 为 [G4-only 入口](../tools/runners/system_level_before_after_20260908/execute_g4_resume.py)及
+[本轮显式授权包装层](../tools/runners/system_level_before_after_20260908/run_authorized_g4_20260910.py)，
+冻结参数仍引用 §1/原 contract。授权已在本次降权收尾，不可当作未来 root-on 默认许可；
+当前入口存在本节已记录的残留审计长度缺陷，**不得直接再次运行**。
+
+确定性/有效性检查：同 PID/start tick、XML/JSON parse、归档/逐文件 SHA、每格 RC/DONE、
+无 OOM/LMK/可归因新告警、zram Δ=0、静置 major fault=0、间隔 ≥120 s、清理及非 root 复核。
+容差/报告项：RSS/堆 PD 实测回收与含 ptrace 耗时不以历史值作为通过带；系统变化保留
+符号且 G4 净效应为 NA。当前不是全门通过的复现样本。
+
+host 保留件可用 [publish_g4_observations.py](../tools/runners/system_level_before_after_20260908/publish_g4_observations.py)
+重新校验并输出两份原 analyzer 派生 TSV；它只能发布 STOP 下的三格观测，不能发布完整
+矩阵头条。[日志发布器](../tools/runners/system_level_before_after_20260908/publish_execution_log.py)
+同时要求最终降权回执，原文编辑/逐文件哈希见[manifest](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/manifest.json)。
+下一步须 PM 裁决是否仅授权修复短命令分批并补齐收尾核验，**无需且不得重跑已有三格或旧 18 格**。

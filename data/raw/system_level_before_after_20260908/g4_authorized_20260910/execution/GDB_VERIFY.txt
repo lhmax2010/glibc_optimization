@@ -1,0 +1,10 @@
+[35;1mGNU gdb (GDB) 16.3[m
+Copyright (C) 2024 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <[32mhttp://gnu.org/licenses/gpl.html[m>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/mmcblk0p2         3021464   1258848   1732932  43% /
+
+WRAPPER_RC_GDB_VERIFY=0
+DONE_REMOTE_GDB_VERIFY

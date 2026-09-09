@@ -1,0 +1,20 @@
+[New LWP 708]
+[New LWP 703]
+[New LWP 697]
+[New LWP 695]
+[New LWP 687]
+[New LWP 686]
+[New LWP 670]
+[New LWP 659]
+[New LWP 657]
+[New LWP 640]
+[New LWP 624]
+[New LWP 623]
+[New LWP 622]
+[New LWP 621]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/libthread_db.so.1".
+0xb6543868 in __GI___poll (fds=0xbe8be6e8, nfds=7, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+DONE_M7_FCLOSE RC=0
+[Inferior 1 (process 498) detached]
+DONE_M7 RC=0

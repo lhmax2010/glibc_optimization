@@ -23,7 +23,8 @@ ROOT_NAMES = frozenset((
     "RESTORE_GOVERNORS", "OWN_PROCESS_ABSENT", "OWN_HELPER_ABSENT", "WORK_OWNER",
     "WORKDIR_REMOVE", "WORKDIR_ABSENT", "FINAL_REVIEW",
 ))
-ROOT_PREFIXES = ("SHA_", "CELL_", "GDB_", "ROUND_", "ALERT_CLEAN_")
+ROOT_PREFIXES = ("SHA_", "CELL_", "GDB_", "ROUND_", "ALERT_CLEAN_", "AUTH_",
+                 "POSTREBOOT_", "POST_CLEANUP_", "POST_CLEAN_ALERT_", "PACKAGE_")
 CELL_PATTERN = re.compile(r"(?:G[123]_(?:trim|none)_r[123]|G4_trim_r[123])")
 CELL_FILES = frozenset((
     "exit_status.txt", "governor_before.txt", "governor_run.txt", "governor_after.txt",
@@ -38,6 +39,9 @@ CELL_FILES = frozenset((
 ROUND_FILES = frozenset((
     "dmesg_before.txt", "dmesg_after.txt", "dmesg_increment.txt", "zram_before.txt",
     "zram_after.txt", "stability_before.tsv", "stability_after.tsv", "alert_attribution.json",
+    "dmesg_postreboot.txt", "zram_postreboot.txt", "stability_postreboot.tsv",
+    "dmesg_after_cleanup.txt", "zram_after_cleanup.txt", "stability_after_cleanup.tsv",
+    "alert_attribution_after_cleanup.json",
 ))
 
 
@@ -54,8 +58,15 @@ def no_symlink(path):
 
 def terminal_receipt(data):
     receipt = json.loads(data.decode("utf-8"))
-    if receipt.get("verdict") not in ("PASS_COMPLETE_MATRIX", "STOP"):
+    if receipt.get("verdict") not in ("PASS_COMPLETE_MATRIX", "PASS_G4_ONLY", "STOP"):
         raise ValueError("execution has no supported terminal verdict")
+    authorization = receipt.get("root_authorization")
+    if authorization is not None:
+        if authorization.get("root_off") not in ("PASS_NONROOT", "FAIL"):
+            raise ValueError("authorized root lifecycle still active")
+        if receipt["verdict"] != "STOP" and (authorization["root_off"] != "PASS_NONROOT" or
+                                             authorization.get("recording_error")):
+            raise ValueError("authorized success without verified root-off receipt")
     end = receipt.get("end_utc")
     if not isinstance(end, str) or not end:
         raise ValueError("execution is still active or missing end_utc")

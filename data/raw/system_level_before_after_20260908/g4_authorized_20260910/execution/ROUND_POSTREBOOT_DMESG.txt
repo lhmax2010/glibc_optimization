@@ -1,0 +1,564 @@
+[32m[    0.000000] [0mBooting Linux on physical CPU 0x0
+[32m[    0.000000] [0mLinux version 6.12.80-arm-rpi4-v7l (abuild@ip-192-168-56-188) (clang version 22.1.8, LLD 22.1.8) #1 SMP Fri Aug 14 10:46:17 UTC 2026
+[32m[    0.000000] [0m[33mCPU: [0mARMv7 Processor [410fd083] revision 3 (ARMv7), cr=30c5383d
+[32m[    0.000000] [0m[33mCPU: [0mdiv instructions available: patching division code
+[32m[    0.000000] [0m[33mCPU: [0mPIPT / VIPT nonaliasing data cache, PIPT instruction cache
+[32m[    0.000000] [0m[33mOF: [0mfdt: Machine model: Raspberry Pi 4 Model B Rev 1.5
+[32m[    0.000000] [0m[33mrandom: [0mcrng init done
+[32m[    0.000000] [0m[33mearlycon: [0muart8250 at MMIO32 0x00000000fe215040 (options '')
+[32m[    0.000000] [0m[33mprintk: [0mlegacy bootconsole [uart8250] enabled
+[32m[    0.000000] [0m[33mMemory policy: [0mData cache writealloc
+[32m[    0.000000] [0m[33mReserved memory: [0mcreated CMA memory pool at 0x000000001ac00000, size 320 MiB
+[32m[    0.000000] [0m[33mOF: [0mreserved mem: initialized node linux,cma, compatible id shared-dma-pool
+[32m[    0.000000] [0m[33mOF: [0mreserved mem: 0x000000001ac00000..0x000000002ebfffff (327680 KiB) map reusable linux,cma
+[32m[    0.000000] [0mZone ranges:
+[32m[    0.000000] [0m  DMA      [mem 0x0000000000000000-0x000000002fffffff]
+[32m[    0.000000] [0m  Normal   empty
+[32m[    0.000000] [0m  HighMem  [mem 0x0000000030000000-0x00000001ffffffff]
+[32m[    0.000000] [0mMovable zone start for each node
+[32m[    0.000000] [0mEarly memory node ranges
+[32m[    0.000000] [0m[33m  node   0: [0m[mem 0x0000000000000000-0x000000003b3fffff]
+[32m[    0.000000] [0m[33m  node   0: [0m[mem 0x0000000040000000-0x00000000fbffffff]
+[32m[    0.000000] [0m[33m  node   0: [0m[mem 0x0000000100000000-0x00000001ffffffff]
+[32m[    0.000000] [0mInitmem setup node 0 [mem 0x0000000000000000-0x00000001ffffffff]
+[32m[    0.000000] [0m[33mOF: [0mreserved mem: 0x000000003ef66860..0x000000003ef66895 (0 KiB) nomap non-reusable nvram@0
+[32m[    0.000000] [0m[33mOF: [0mreserved mem: 0x000000003ef66420..0x000000003ef6681f (1 KiB) nomap non-reusable nvram@1
+[32m[    0.000000] [0m[33mpercpu: [0mEmbedded 19 pages/cpu s46092 r8192 d23540 u77824
+[32m[    0.000000] [0m[33mpcpu-alloc: [0ms46092 r8192 d23540 u77824 alloc=19*4096
+[32m[    0.000000] [0m[33mpcpu-alloc: [0m[0] 0 [0] 1 [0] 2 [0] 3 
+[32m[    0.000000] [0m[33mKernel command line: [0mcgroup_enable=memory vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000 swiotlb=8192 8250.nr_uarts=1 dma.dmachans=0x7f35 bcm2709.serial=0xed6687d3 snd_bcm2835.enable_compat_alsa=0 snd_bcm2835.enable_hdmi=1 bcm2709.uart_clock=48000000 dwc_otg.lpm_enable=0  bootmode=normal partition_ab=a console=ttyS0,115200n8 earlycon=uart8250,mmio32,0xfe215040 loglevel=4 
+[32m[    0.000000] [0m[33mcgroup: [0mEnabling memory control group subsystem
+[32m[    0.000000] [0mUnknown kernel command line parameters "bootmode=normal partition_ab=a", will be passed to user space.
+[32m[    0.000000] [0m[33mDentry cache hash table entries: [0m65536 (order: 6, 262144 bytes, linear)
+[32m[    0.000000] [0m[33mInode-cache hash table entries: [0m32768 (order: 5, 131072 bytes, linear)
+[32m[    0.000000] [0m[33mBuilt 1 zonelists, mobility grouping on.  Total pages: [0m2061312
+[32m[    0.000000] [0m[33mmem auto-init: [0mstack:all(zero), heap alloc:off, heap free:off
+[32m[    0.000000] [0m[33msoftware IO TLB: [0marea num 4.
+[32m[    0.000000] [0m[33msoftware IO TLB: [0mmapped [mem 0x0000000015400000-0x0000000016400000] (16MB)
+[32m[    0.000000] [0m[33mSLUB: [0mHWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[32m[    0.000000] [0m[33mftrace: [0mallocating 55861 entries in 164 pages
+[32m[    0.000000] [0m[33mftrace: [0mallocated 164 pages with 3 groups
+[32m[    0.000000] [0m[33mrcu: [0mHierarchical RCU implementation.
+[32m[    0.000000] [0m	Rude variant of Tasks RCU enabled.
+[32m[    0.000000] [0m	Tracing variant of Tasks RCU enabled.
+[32m[    0.000000] [0m[33mrcu: [0mRCU calculated value of scheduler-enlistment delay is 10 jiffies.
+[32m[    0.000000] [0m[33mRCU Tasks Rude: [0mSetting shift to 2 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=4.
+[32m[    0.000000] [0m[33mRCU Tasks Trace: [0mSetting shift to 2 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=4.
+[32m[    0.000000] [0m[33mNR_IRQS: [0m16, nr_irqs: 16, preallocated irqs: 16
+[32m[    0.000000] [0m[33mGIC: [0mUsing split EOI/Deactivate mode
+[32m[    0.000000] [0m[33mrcu: [0msrcu_init: Setting srcu_struct sizes based on contention.
+[32m[    0.000000] [0m[33march_timer: [0mcp15 timer(s) running at 54.00MHz (phys).
+[32m[    0.000000] [0m[33mclocksource: [0march_sys_counter: mask: 0xffffffffffffff max_cycles: 0xc743ce346, max_idle_ns: 440795203123 ns
+[32m[    0.000000] [0m[33msched_clock: [0m56 bits at 54MHz, resolution 18ns, wraps every 4398046511102ns
+[32m[    0.000008] [0mSwitching to timer-based delay loop, resolution 18ns
+[32m[    0.000182] [0m[33mConsole: [0mcolour dummy device 80x30
+[32m[    0.000219] [0mCalibrating delay loop (skipped), value calculated using timer frequency.. 108.00 BogoMIPS (lpj=540000)
+[32m[    0.000230] [0m[33mCPU: [0mTesting write buffer coherency: ok
+[32m[    0.000251] [0m[33mCPU0: [0mSpectre BHB: enabling loop workaround for all CPUs
+[32m[    0.000256] [0m[33mpid_max: [0mdefault: 32768 minimum: 301
+[32m[    0.000305] [0m[33mLSM: [0minitializing lsm=capability,smack
+[32m[    0.000537] [0m[33mSmack: [0m Initializing.
+[32m[    0.000542] [0m[33mSmack: [0m IPv6 port labeling enabled.
+[32m[    0.000609] [0m[33mMount-cache hash table entries: [0m1024 (order: 0, 4096 bytes, linear)
+[32m[    0.000618] [0m[33mMountpoint-cache hash table entries: [0m1024 (order: 0, 4096 bytes, linear)
+[32m[    0.001189] [0m[33mCPU0: [0mthread -1, cpu 0, socket 0, mpidr 80000000
+[32m[    0.001940] [0mSetting up static identity map for 0x200000 - 0x20003c
+[32m[    0.002024] [0m[33mrcu: [0mHierarchical SRCU implementation.
+[32m[    0.002029] [0m[33mrcu: [0m	Max phase no-delay instances is 1000.
+[32m[    0.002182] [0m[33mTimer migration: [0m1 hierarchy levels; 8 children per group; 1 crossnode level
+[32m[    0.002500] [0m[33msmp: [0mBringing up secondary CPUs ...
+[32m[    0.003007] [0m[33mCPU1: [0mthread -1, cpu 1, socket 0, mpidr 80000001
+[32m[    0.003563] [0m[33mCPU2: [0mthread -1, cpu 2, socket 0, mpidr 80000002
+[32m[    0.004080] [0m[33mCPU3: [0mthread -1, cpu 3, socket 0, mpidr 80000003
+[32m[    0.004142] [0m[33msmp: [0mBrought up 1 node, 4 CPUs
+[32m[    0.004151] [0m[33mSMP: [0mTotal of 4 processors activated (432.00 BogoMIPS).
+[32m[    0.004158] [0m[33mCPU: [0mAll CPU(s) started in HYP mode.
+[32m[    0.004163] [0m[33mCPU: [0mVirtualization extensions available.
+[32m[    0.004586] [0m[33mMemory: [0m7769440K/8245248K available (20480K kernel code, 1863K rwdata, 11856K rodata, 2048K init, 575K bss, 144864K reserved, 327680K cma-reserved, 7458816K highmem)
+[32m[    0.004875] [0m[33mdevtmpfs: [0minitialized
+[32m[    0.010422] [0m[33mVFP support v0.3: [0mimplementor 41 architecture 3 part 40 variant 8 rev 0
+[32m[    0.010529] [0m[33mclocksource: [0mjiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[32m[    0.010543] [0m[33mfutex hash table entries: [0m1024 (order: 4, 65536 bytes, linear)
+[32m[    0.015182] [0m[33mpinctrl core: [0minitialized pinctrl subsystem
+[32m[    0.015924] [0m[33mNET: [0mRegistered PF_NETLINK/PF_ROUTE protocol family
+[32m[    0.016820] [0m[33mDMA: [0mpreallocated 256 KiB pool for atomic coherent allocations
+[32m[    0.017130] [0m[33maudit: [0minitializing netlink subsys (disabled)
+[32m[    0.017275] [0m[33maudit: [0mtype=2000 audit(0.000:1): state=initialized audit_enabled=0 res=1
+[32m[    0.017527] [0m[33mthermal_sys: [0mRegistered thermal governor 'step_wise'
+[32m[    0.017672] [0m[33mhw-breakpoint: [0mfound 5 (+1 reserved) breakpoint and 4 watchpoint registers.
+[32m[    0.017680] [0m[33mhw-breakpoint: [0mmaximum watchpoint size is 8 bytes.
+[32m[    0.017945] [0m[33mSerial: [0mAMBA PL011 UART driver
+[32m[    0.021369] [0m[33m/soc/interrupt-controller@40041000: [0mFixed dependency cycle(s) with /soc/interrupt-controller@40041000
+[32m[    0.022040] [0m[33mbcm2835-mbox fe00b880.mailbox: [0mmailbox enabled
+[32m[    0.040006] [0m[33mraspberrypi-firmware soc:firmware: [0mAttached to firmware from 2025-05-14T12:23:36, variant start
+[32m[    0.050014] [0m[33mraspberrypi-firmware soc:firmware: [0mFirmware hash is 17084b403fb60475b8ee2641c26049a7d54bf153
+[32m[    0.062233] [0m[33m/scb/pcie@7d500000: [0mFixed dependency cycle(s) with /scb/pcie@7d500000
+[32m[    0.062395] [0m[33m/scb/pcie@7d500000: [0mFixed dependency cycle(s) with /scb/pcie@7d500000
+[32m[    0.063980] [0m[33mkprobes: [0mkprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[32m[    0.070680] [0m[33mcryptd: [0mmax_cpu_qlen set to 1000
+[32m[    0.071017] [0m[33mraid6: [0mskipped pq benchmark and selected neonx8
+[32m[    0.071024] [0m[33mraid6: [0musing neon recovery algorithm
+[32m[    0.071324] [0m[33mbcm2835-dma fe007000.dma-controller: [0mDMA legacy API manager, dmachans=0x1
+[32m[    0.073475] [0mSCSI subsystem initialized
+[32m[    0.073572] [0m[33musbcore: [0mregistered new interface driver usbfs
+[32m[    0.073595] [0m[33musbcore: [0mregistered new interface driver hub
+[32m[    0.073618] [0m[33musbcore: [0mregistered new device driver usb
+[32m[    0.073960] [0m[33mmc: [0mLinux media interface: v0.10
+[32m[    0.073990] [0m[33mvideodev: [0mLinux video capture interface: v2.00
+[32m[    0.074030] [0m[33mpps_core: [0mLinuxPPS API ver. 1 registered
+[32m[    0.074035] [0m[33mpps_core: [0mSoftware ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[32m[    0.074047] [0mPTP clock support registered
+[32m[    0.074168] [0mAdvanced Linux Sound Architecture Driver Initialized.
+[32m[    0.074530] [0m[33mBluetooth: [0mCore ver 2.22
+[32m[    0.074549] [0m[33mNET: [0mRegistered PF_BLUETOOTH protocol family
+[32m[    0.074554] [0m[33mBluetooth: [0mHCI device and connection manager initialized
+[32m[    0.074561] [0m[33mBluetooth: [0mHCI socket layer initialized
+[32m[    0.074568] [0m[33mBluetooth: [0mL2CAP socket layer initialized
+[32m[    0.074579] [0m[33mBluetooth: [0mSCO socket layer initialized
+[32m[    0.074606] [0m[33mNetLabel: [0mInitializing
+[32m[    0.074610] [0m[33mNetLabel: [0m domain hash size = 128
+[32m[    0.074615] [0m[33mNetLabel: [0m protocols = UNLABELED CIPSOv4 CALIPSO
+[32m[    0.074649] [0m[33mNetLabel: [0m unlabeled traffic allowed by default
+[32m[    0.074898] [0m[33mvgaarb: [0mloaded
+[32m[    0.075147] [0m[33mclocksource: [0mSwitched to clocksource arch_sys_counter
+[32m[    0.075511] [0m[33mnetfs: [0mFS-Cache loaded
+[32m[    0.080088] [0m[33mCacheFiles: [0mLoaded
+[32m[    0.084435] [0m[33mNET: [0mRegistered PF_INET protocol family
+[32m[    0.084538] [0m[33mIP idents hash table entries: [0m8192 (order: 4, 65536 bytes, linear)
+[32m[    0.114616] [0m[33mtcp_listen_portaddr_hash hash table entries: [0m512 (order: 0, 4096 bytes, linear)
+[32m[    0.114632] [0m[33mTable-perturb hash table entries: [0m65536 (order: 6, 262144 bytes, linear)
+[32m[    0.114641] [0m[33mTCP established hash table entries: [0m4096 (order: 2, 16384 bytes, linear)
+[32m[    0.114658] [0m[33mTCP bind hash table entries: [0m4096 (order: 4, 65536 bytes, linear)
+[32m[    0.114690] [0m[33mTCP: [0mHash tables configured (established 4096 bind 4096)
+[32m[    0.114748] [0m[33mUDP hash table entries: [0m256 (order: 1, 8192 bytes, linear)
+[32m[    0.114762] [0m[33mUDP-Lite hash table entries: [0m256 (order: 1, 8192 bytes, linear)
+[32m[    0.114842] [0m[33mNET: [0mRegistered PF_UNIX/PF_LOCAL protocol family
+[32m[    0.115085] [0m[33mRPC: [0mRegistered named UNIX socket transport module.
+[32m[    0.115091] [0m[33mRPC: [0mRegistered udp transport module.
+[32m[    0.115096] [0m[33mRPC: [0mRegistered tcp transport module.
+[32m[    0.115100] [0m[33mRPC: [0mRegistered tcp-with-tls transport module.
+[32m[    0.115105] [0m[33mRPC: [0mRegistered tcp NFSv4.1 backchannel transport module.
+[32m[    0.115544] [0m[33mPCI: [0mCLS 0 bytes, default 64
+[32m[    0.116315] [0mTrying to unpack rootfs image as initramfs...
+[32m[    0.156800] [0m[33mFreeing initrd memory: [0m14976K
+[32m[    0.468583] [0mInitialise system trusted keyrings
+[32m[    0.468762] [0m[33mworkingset: [0mtimestamp_bits=14 max_order=21 bucket_order=7
+[32m[    0.469011] [0m[33msquashfs: [0mversion 4.0 (2009/01/31) Phillip Lougher
+[32m[    0.469192] [0m[33mNFS: [0mRegistering the id_resolver key type
+[32m[    0.469207] [0mKey type id_resolver registered
+[32m[    0.469213] [0mKey type id_legacy registered
+[32m[    0.469325] [0m[33mfuse: [0minit (API version 7.41)
+[32m[    0.520719] [0m[33mxor: [0mmeasuring software checksum speed
+[32m[    0.521596] [0m[33m   arm4regs        : [0m 3773 MB/sec
+[32m[    0.522816] [0m[33m   8regs           : [0m 2703 MB/sec
+[32m[    0.523756] [0m[33m   32regs          : [0m 3508 MB/sec
+[32m[    0.524658] [0m[33m   neon            : [0m 3655 MB/sec
+[32m[    0.524663] [0m[33mxor: [0musing function: arm4regs (3773 MB/sec)
+[32m[    0.524671] [0mKey type asymmetric registered
+[32m[    0.524677] [0mAsymmetric key parser 'x509' registered
+[32m[    0.524727] [0m[33mbounce: [0mpool size: 64 pages
+[32m[    0.524754] [0mBlock layer SCSI generic (bsg) driver version 0.4 loaded (major 244)
+[32m[    0.524852] [0mio scheduler mq-deadline registered
+[32m[    0.524859] [0mio scheduler kyber registered
+[32m[    0.524881] [0mio scheduler bfq registered
+[32m[    0.525254] [0m[33mirq_brcmstb_l2: [0mregistered L2 intc (/soc/interrupt-controller@7ef00100, parent irq: 38)
+[32m[    0.526778] [0m[33mpinctrl-bcm2835 fe200000.gpio: [0mGPIO_OUT persistence: yes
+[32m[    0.532963] [0m[33mledtrig-cpu: [0mregistered to indicate activity on CPUs
+[32m[    0.533357] [0m[33mbrcm-pcie fd500000.pcie: [0mhost bridge /scb/pcie@7d500000 ranges:
+[32m[    0.533370] [0m[33mbrcm-pcie fd500000.pcie: [0m  No bus range found for /scb/pcie@7d500000, using [bus 00-ff]
+[32m[    0.533397] [0m[33mbrcm-pcie fd500000.pcie: [0m     MEM 0x0600000000..0x063fffffff -> 0x00c0000000
+[32m[    0.533423] [0m[33mbrcm-pcie fd500000.pcie: [0m  IB MEM 0x0000000000..0x01ffffffff -> 0x0400000000
+[32m[    0.534110] [0m[33mbrcm-pcie fd500000.pcie: [0mPCI host bridge to bus 0000:00
+[32m[    0.534120] [0m[33mpci_bus 0000:00: [0mroot bus resource [bus 00-ff]
+[32m[    0.534129] [0m[33mpci_bus 0000:00: [0mroot bus resource [mem 0x600000000-0x63fffffff] (bus address [0xc0000000-0xffffffff])
+[32m[    0.534196] [0m[33mpci 0000:00:00.0: [0m[14e4:2711] type 01 class 0x060400 PCIe Root Port
+[32m[    0.534219] [0m[33mpci 0000:00:00.0: [0mPCI bridge to [bus 01]
+[32m[    0.534230] [0m[33mpci 0000:00:00.0: [0m  bridge window [mem 0x638000000-0x6380fffff]
+[32m[    0.534287] [0m[33mpci 0000:00:00.0: [0mPME# supported from D0 D3hot
+[32m[    0.535675] [0m[33mPCI: [0mbus0: Fast back to back transfers disabled
+[32m[    0.535753] [0m[33mpci_bus 0000:01: [0m[1msupply vpcie3v3 not found, using dummy regulator[0m
+[32m[    0.535826] [0m[33mpci_bus 0000:01: [0m[1msupply vpcie3v3aux not found, using dummy regulator[0m
+[32m[    0.535859] [0m[33mpci_bus 0000:01: [0m[1msupply vpcie12v not found, using dummy regulator[0m
+[32m[    0.645158] [0m[33mbrcm-pcie fd500000.pcie: [0mclkreq-mode set to default
+[32m[    0.647219] [0m[33mbrcm-pcie fd500000.pcie: [0mlink up, 5.0 GT/s PCIe x1 (SSC)
+[32m[    0.647384] [0m[33mpci 0000:01:00.0: [0m[1106:3483] type 00 class 0x0c0330 PCIe Endpoint
+[32m[    0.647471] [0m[33mpci 0000:01:00.0: [0mBAR 0 [mem 0x00000000-0x00000fff 64bit]
+[32m[    0.647626] [0m[33mpci 0000:01:00.0: [0mASPM: VL805 fixup applied
+[32m[    0.647774] [0m[33mpci 0000:01:00.0: [0mPME# supported from D0 D3hot
+[32m[    0.675228] [0m[33mPCI: [0mbus1: Fast back to back transfers disabled
+[32m[    0.675250] [0m[33mpci 0000:00:00.0: [0mbridge window [mem 0x600000000-0x6000fffff]: assigned
+[32m[    0.675259] [0m[33mpci 0000:01:00.0: [0mBAR 0 [mem 0x600000000-0x600000fff 64bit]: assigned
+[32m[    0.675277] [0m[33mpci 0000:00:00.0: [0mPCI bridge to [bus 01]
+[32m[    0.675286] [0m[33mpci 0000:00:00.0: [0m  bridge window [mem 0x600000000-0x6000fffff]
+[32m[    0.675297] [0m[33mpci_bus 0000:00: [0mresource 4 [mem 0x600000000-0x63fffffff]
+[32m[    0.675304] [0m[33mpci_bus 0000:01: [0mresource 1 [mem 0x600000000-0x6000fffff]
+[32m[    0.675456] [0m[33mpcieport 0000:00:00.0: [0menabling device (0000 -> 0002)
+[32m[    0.675533] [0m[33mpcieport 0000:00:00.0: [0mPME: Signaling with IRQ 42
+[32m[    0.676063] [0m[33msimple-framebuffer 3e29a000.framebuffer: [0mframebuffer at 0x3e29a000, 0x960000 bytes
+[32m[    0.676071] [0m[33msimple-framebuffer 3e29a000.framebuffer: [0mformat=a8r8g8b8, mode=1920x1280x32, linelength=7680
+[32m[    0.680803] [0m[33mConsole: [0mswitching to colour frame buffer device 240x80
+[32m[    0.685060] [0m[33msimple-framebuffer 3e29a000.framebuffer: [0mfb0: simplefb registered!
+[32m[    0.689689] [0m[33mSerial: [0m8250/16550 driver, 1 ports, IRQ sharing enabled
+[32m[    0.691011] [0m[33miproc-rng200 fe104000.rng: [0mhwrng registered
+[32m[    0.691147] [0m[33mvc-mem: [0mphys_addr:0x00000000 mem_base=0x3ec00000 mem_size:0x40000000(1024 MiB)
+[32m[    0.695192] [0m[33mConsole: [0mswitching to colour dummy device 80x30
+[32m[    0.777835] [0m[33mvc4-drm gpu: [0mbound fe400000.hvs (ops vc4_hvs_ops)
+[32m[    0.788291] [0m[33mbrd: [0mmodule loaded
+[32m[    0.791590] [0m[33mloop: [0mmodule loaded
+[32m[    0.791840] [0m[33mzram: [0mAdded device: zram0
+[32m[    0.792173] [0mLoading iSCSI transport class v2.0-870.
+[32m[    0.792623] [0m[33mwireguard: [0mWireGuard 1.0.0 loaded. See www.wireguard.com for information.
+[32m[    0.792629] [0m[33mwireguard: [0mCopyright (C) 2015-2019 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+[32m[    0.793730] [0m[33mtun: [0mUniversal TUN/TAP device driver, 1.6
+[32m[    0.794164] [0m[33mbcmgenet fd580000.ethernet: [0mGENET 5.0 EPHY: 0x0000
+[32m[    1.115190] [0m[33munimac-mdio unimac-mdio.-19: [0mBroadcom UniMAC MDIO bus
+[32m[    1.115666] [0mPPP generic driver version 2.4.2
+[32m[    1.115771] [0mPPP BSD Compression module registered
+[32m[    1.115779] [0mPPP Deflate Compression module registered
+[32m[    1.115814] [0m[33musbcore: [0mregistered new interface driver rt2800usb
+[32m[    1.115831] [0m[33musbcore: [0mregistered new device driver r8152-cfgselector
+[32m[    1.115856] [0m[33musbcore: [0mregistered new interface driver r8152
+[32m[    1.115880] [0m[33musbcore: [0mregistered new interface driver lan78xx
+[32m[    1.115908] [0m[33musbcore: [0mregistered new interface driver asix
+[32m[    1.115933] [0m[33musbcore: [0mregistered new interface driver ax88179_178a
+[32m[    1.115957] [0m[33musbcore: [0mregistered new interface driver cdc_ether
+[32m[    1.115982] [0m[33musbcore: [0mregistered new interface driver smsc95xx
+[32m[    1.116010] [0m[33musbcore: [0mregistered new interface driver net1080
+[32m[    1.116037] [0m[33musbcore: [0mregistered new interface driver cdc_subset
+[32m[    1.116061] [0m[33musbcore: [0mregistered new interface driver zaurus
+[32m[    1.116086] [0m[33musbcore: [0mregistered new interface driver cdc_ncm
+[32m[    1.116114] [0m[33musbcore: [0mregistered new interface driver r8153_ecm
+[32m[    1.116388] [0m[33mdwc2 fe980000.usb: [0m[1msupply vusb_d not found, using dummy regulator[0m
+[32m[    1.116467] [0m[33mdwc2 fe980000.usb: [0m[1msupply vusb_a not found, using dummy regulator[0m
+[32m[    1.166827] [0m[33mdwc2 fe980000.usb: [0mEPs: 8, dedicated fifos, 4080 entries in SPRAM
+[32m[    1.258584] [0m[33mxhci_hcd 0000:01:00.0: [0mxHCI Host Controller
+[32m[    1.258600] [0m[33mxhci_hcd 0000:01:00.0: [0mnew USB bus registered, assigned bus number 1
+[32m[    1.260579] [0m[33mxhci_hcd 0000:01:00.0: [0mhcc params 0x002841eb hci version 0x100 quirks 0x0300240000000890
+[32m[    1.261219] [0m[33mxhci_hcd 0000:01:00.0: [0mxHCI Host Controller
+[32m[    1.261230] [0m[33mxhci_hcd 0000:01:00.0: [0mnew USB bus registered, assigned bus number 2
+[32m[    1.261239] [0m[33mxhci_hcd 0000:01:00.0: [0mHost supports USB 3.0 SuperSpeed
+[32m[    1.261396] [0m[33musb usb1: [0mNew USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.12
+[32m[    1.261405] [0m[33musb usb1: [0mNew USB device strings: Mfr=3, Product=2, SerialNumber=1
+[32m[    1.261411] [0m[33musb usb1: [0mProduct: xHCI Host Controller
+[32m[    1.261417] [0m[33musb usb1: [0mManufacturer: Linux 6.12.80-arm-rpi4-v7l xhci-hcd
+[32m[    1.261423] [0m[33musb usb1: [0mSerialNumber: 0000:01:00.0
+[32m[    1.261748] [0m[33mhub 1-0:1.0: [0mUSB hub found
+[32m[    1.261777] [0m[33mhub 1-0:1.0: [0m1 port detected
+[32m[    1.262099] [0m[33musb usb2: [0mNew USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 6.12
+[32m[    1.262107] [0m[33musb usb2: [0mNew USB device strings: Mfr=3, Product=2, SerialNumber=1
+[32m[    1.262113] [0m[33musb usb2: [0mProduct: xHCI Host Controller
+[32m[    1.262119] [0m[33musb usb2: [0mManufacturer: Linux 6.12.80-arm-rpi4-v7l xhci-hcd
+[32m[    1.262124] [0m[33musb usb2: [0mSerialNumber: 0000:01:00.0
+[32m[    1.262384] [0m[33mhub 2-0:1.0: [0mUSB hub found
+[32m[    1.262410] [0m[33mhub 2-0:1.0: [0m4 ports detected
+[32m[    1.263050] [0m[33musbcore: [0mregistered new interface driver usblp
+[32m[    1.263213] [0m[33musbcore: [0mregistered new interface driver uas
+[32m[    1.263256] [0m[33musbcore: [0mregistered new interface driver usb-storage
+[32m[    1.263316] [0m[33musbcore: [0mregistered new interface driver usbserial_generic
+[32m[    1.263332] [0m[33musbserial: [0mUSB Serial support registered for generic
+[32m[    1.263483] [0m[33mmousedev: [0mPS/2 mouse device common for all mice
+[32m[    1.263560] [0m[33mi2c_dev: [0mi2c /dev entries driver
+[32m[    1.263984] [0m[33mbrcmstb-i2c fef04500.i2c: [0m @97500hz registered in polling mode
+[32m[    1.264200] [0m[33mbrcmstb-i2c fef09500.i2c: [0m @97500hz registered in polling mode
+[32m[    1.264565] [0mIR JVC protocol handler initialized
+[32m[    1.264570] [0mIR MCE Keyboard/mouse protocol handler initialized
+[32m[    1.264575] [0mIR NEC protocol handler initialized
+[32m[    1.264580] [0mIR RC5(x/sz) protocol handler initialized
+[32m[    1.264585] [0mIR RC6 protocol handler initialized
+[32m[    1.264590] [0mIR SANYO protocol handler initialized
+[32m[    1.264595] [0mIR Sharp protocol handler initialized
+[32m[    1.264600] [0mIR Sony protocol handler initialized
+[32m[    1.264604] [0mIR XMP protocol handler initialized
+[32m[    1.264835] [0m[33musbcore: [0mregistered new interface driver uvcvideo
+[32m[    1.265688] [0m[33mdevice-mapper: [0muevent: version 1.0.3
+[32m[    1.265804] [0m[33mdevice-mapper: [0mioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@lists.linux.dev
+[32m[    1.267188] [0m[33msdhci: [0mSecure Digital Host Controller Interface driver
+[32m[    1.267196] [0m[33msdhci: [0mCopyright(c) Pierre Ossman
+[32m[    1.267310] [0m[33msdhci-pltfm: [0mSDHCI platform and OF driver helper
+[32m[    1.267509] [0m[33mhid: [0mraw HID events driver (C) Jiri Kosina
+[32m[    1.267606] [0m[33musbcore: [0mregistered new interface driver usbhid
+[32m[    1.267611] [0m[33musbhid: [0mUSB HID core driver
+[32m[    1.277404] [0m[33mbcm2835-audio bcm2835-audio: [0mcard created with 8 channels
+[32m[    1.283375] [0m[33mbcm2835_vc_sm_cma_probe: [0mVideocore shared memory driver
+[32m[    1.283384] [0m[33m[vc_sm_connected_init]: [0mstart
+[32m[    1.283600] [0m[33m[vc_sm_connected_init]: [0minstalled successfully
+[32m[    1.286722] [0m[33mbcm2835-codec bcm2835-codec: [0mDevice registered as /dev/video10
+[32m[    1.286739] [0m[33mbcm2835-codec bcm2835-codec: [0mLoaded V4L2 decode
+[32m[    1.288290] [0m[33mbcm2835-codec bcm2835-codec: [0mDevice registered as /dev/video11
+[32m[    1.288304] [0m[33mbcm2835-codec bcm2835-codec: [0mLoaded V4L2 encode
+[32m[    1.290460] [0m[33mbcm2835-codec bcm2835-codec: [0mDevice registered as /dev/video12
+[32m[    1.290473] [0m[33mbcm2835-codec bcm2835-codec: [0mLoaded V4L2 isp
+[32m[    1.291866] [0m[33mbcm2835-codec bcm2835-codec: [0mDevice registered as /dev/video18
+[32m[    1.291879] [0m[33mbcm2835-codec bcm2835-codec: [0mLoaded V4L2 image_fx
+[32m[    1.293491] [0m[33mbcm2835-codec bcm2835-codec: [0mDevice registered as /dev/video31
+[32m[    1.293504] [0m[33mbcm2835-codec bcm2835-codec: [0mLoaded V4L2 encode_image
+[32m[    1.297553] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node output[0] registered as /dev/video13
+[32m[    1.297753] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node capture[0] registered as /dev/video14
+[32m[    1.297932] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node capture[1] registered as /dev/video15
+[32m[    1.298055] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node stats[2] registered as /dev/video16
+[32m[    1.298065] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister output node 0 with media controller
+[32m[    1.298074] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister capture node 1 with media controller
+[32m[    1.298081] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister capture node 2 with media controller
+[32m[    1.298088] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister capture node 3 with media controller
+[32m[    1.299995] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node output[0] registered as /dev/video20
+[32m[    1.300180] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node capture[0] registered as /dev/video21
+[32m[    1.300337] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node capture[1] registered as /dev/video22
+[32m[    1.300465] [0m[33mbcm2835-isp bcm2835-isp: [0mDevice node stats[2] registered as /dev/video23
+[32m[    1.300474] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister output node 0 with media controller
+[32m[    1.300482] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister capture node 1 with media controller
+[32m[    1.300490] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister capture node 2 with media controller
+[32m[    1.300496] [0m[33mbcm2835-isp bcm2835-isp: [0mRegister capture node 3 with media controller
+[32m[    1.300572] [0m[33mbcm2835-isp bcm2835-isp: [0mLoaded V4L2 bcm2835-isp
+[32m[    1.301758] [0m[33musbcore: [0mregistered new interface driver snd-usb-audio
+[32m[    1.302818] [0m[33mxt_time: [0mkernel timezone is -0000
+[32m[    1.302977] [0mInitializing XFRM netlink socket
+[32m[    1.303016] [0m[33mNET: [0mRegistered PF_INET6 protocol family
+[32m[    1.303614] [0mSegment Routing with IPv6
+[32m[    1.303634] [0mIn-situ OAM (IOAM) with IPv6
+[32m[    1.303716] [0m[33msit: [0mIPv6, IPv4 and MPLS over IPv4 tunneling driver
+[32m[    1.304037] [0m[33mNET: [0mRegistered PF_PACKET protocol family
+[32m[    1.304049] [0m[33mNET: [0mRegistered PF_KEY protocol family
+[32m[    1.304075] [0mBridge firewalling registered
+[32m[    1.304165] [0m[33mBluetooth: [0mRFCOMM TTY layer initialized
+[32m[    1.304174] [0m[33mBluetooth: [0mRFCOMM socket layer initialized
+[32m[    1.304195] [0m[33mBluetooth: [0mRFCOMM ver 1.11
+[32m[    1.304205] [0m[33mBluetooth: [0mBNEP (Ethernet Emulation) ver 1.3
+[32m[    1.304210] [0m[33mBluetooth: [0mBNEP filters: protocol multicast
+[32m[    1.304217] [0m[33mBluetooth: [0mBNEP socket layer initialized
+[32m[    1.304222] [0m[33mBluetooth: [0mHIDP (Human Interface Emulation) ver 1.2
+[32m[    1.304229] [0m[33mBluetooth: [0mHIDP socket layer initialized
+[32m[    1.304261] [0m[33m8021q: [0m802.1Q VLAN Support v1.8
+[32m[    1.304284] [0mKey type dns_resolver registered
+[32m[    1.304396] [0mRegistering SWP/SWPB emulation handler
+[32m[    1.310665] [0mregistered taskstats version 1
+[32m[    1.310814] [0mLoading compiled-in X.509 certificates
+[32m[    1.316982] [0mBtrfs loaded, zoned=no, fsverity=no
+[32m[    1.325458] [0m[33muart-pl011 fe201000.serial: [0mthere is not valid maps for state default
+[32m[    1.325716] [0m[33muart-pl011 fe201000.serial: [0mcts_event_workaround enabled
+[32m[    1.325951] [0m[33mfe201000.serial: [0mttyAMA1 at MMIO 0xfe201000 (irq = 52, base_baud = 0) is a PL011 rev3
+[32m[    1.326085] [0m[33mserial serial0: [0mtty port ttyAMA1 registered
+[32m[    1.327288] [0m[33mbcm2835-aux-uart fe215040.serial: [0mthere is not valid maps for state default
+[32m[    1.327745] [0m[33mprintk: [0mlegacy console [ttyS0] disabled
+[32m[    1.328153] [0m[33mfe215040.serial: [0mttyS0 at MMIO 0xfe215040 (irq = 53, base_baud = 62500000) is a 16550
+[32m[    1.328181] [0m[33mprintk: [0mlegacy console [ttyS0] enabled
+[32m[    1.328187] [0m[33mprintk: [0mlegacy bootconsole [uart8250] disabled
+[32m[    1.330923] [0m[33mvc4-drm gpu: [0mbound fe400000.hvs (ops vc4_hvs_ops)
+[32m[    1.332932] [0m[33minput: [0mvc4-hdmi-0 HDMI Jack as /devices/platform/soc/fef00700.hdmi/sound/card1/input0
+[32m[    1.333412] [0m[33mvc4-drm gpu: [0mbound fef00700.hdmi (ops vc4_hdmi_ops)
+[32m[    1.337574] [0m[33minput: [0mvc4-hdmi-1 HDMI Jack as /devices/platform/soc/fef05700.hdmi/sound/card2/input1
+[32m[    1.339865] [0m[33mvc4-drm gpu: [0mbound fef05700.hdmi (ops vc4_hdmi_ops)
+[32m[    1.340042] [0m[33mvc4-drm gpu: [0mbound fe004000.txp (ops vc4_txp_ops)
+[32m[    1.340146] [0m[33mvc4-drm gpu: [0mbound fe206000.pixelvalve (ops vc4_crtc_ops)
+[32m[    1.340249] [0m[33mvc4-drm gpu: [0mbound fe207000.pixelvalve (ops vc4_crtc_ops)
+[32m[    1.340350] [0m[33mvc4-drm gpu: [0mbound fe20a000.pixelvalve (ops vc4_crtc_ops)
+[32m[    1.340424] [0m[33mvc4-drm gpu: [0mbound fe216000.pixelvalve (ops vc4_crtc_ops)
+[32m[    1.340514] [0m[33mvc4-drm gpu: [0mbound fec12000.pixelvalve (ops vc4_crtc_ops)
+[32m[    1.342635] [0m[drm] Initialized vc4 0.0.0 for gpu on minor 0
+[32m[    1.398085] [0m[33mvc4-drm gpu: [0m[1m[drm] The core clock cannot reach frequencies high enough to support 4k @ 60Hz.[0m
+[32m[    1.398098] [0m[33mvc4-drm gpu: [0m[1m[drm] Please change your config.txt file to add hdmi_enable_4kp60.[0m
+[32m[    1.496484] [0m[33mConsole: [0mswitching to colour frame buffer device 480x135
+[32m[    1.525167] [0m[33musb 1-1: [0mnew high-speed USB device number 2 using xhci_hcd
+[32m[    1.527674] [0m[33mvc4-drm gpu: [0m[drm] fb0: vc4drmfb frame buffer device
+[32m[    1.528298] [0m[33mbcm2835-wdt bcm2835-wdt: [0mBroadcom BCM2835 watchdog timer
+[32m[    1.531978] [0m[33mbcm2835-power bcm2835-power: [0mBroadcom BCM2835 power domains driver
+[32m[    1.539380] [0m[33mmmc-bcm2835 fe300000.mmcnr: [0mmmc_debug:0 mmc_debug2:0
+[32m[    1.539392] [0m[33mmmc-bcm2835 fe300000.mmcnr: [0mDMA channel allocated
+[32m[    1.584385] [0m[33mv3d fec00000.v3d: [0m[drm] Transparent Hugepage support is recommended for optimal performance on this platform!
+[32m[    1.586041] [0m[drm] Initialized v3d 1.0.0 for fec00000.v3d on minor 1
+[32m[    1.589218] [0mof_cfs_init
+[32m[    1.589239] [0m[33mof_cfs_init: [0mOK
+[32m[    1.606711] [0m[33mcfg80211: [0mLoading compiled-in X.509 certificates for regulatory database
+[32m[    1.612741] [0m[33mLoaded X.509 cert 'benh@debian.org: [0m577e021cb980e0e820821ba7b54b4961b8b4fadf'
+[32m[    1.613331] [0m[33mLoaded X.509 cert 'romain.perier@gmail.com: [0m3abbc6ec146e09d1b6016ab9d6cf71dd233f0328'
+[32m[    1.613911] [0m[33mLoaded X.509 cert 'sforshee: [0m00b28ddf47aef9cea7'
+[32m[    1.614471] [0m[33mLoaded X.509 cert 'wens: [0m61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[32m[    1.614548] [0m[33mplatform regulatory.0: [0m[1mDirect firmware load for regulatory.db failed with error -2[0m
+[32m[    1.614558] [0m[33mcfg80211: [0mfailed to load regulatory.db
+[32m[    1.614802] [0m[33mclk: [0mDisabling unused clocks
+[32m[    1.618802] [0m[33mPM: [0mgenpd: Disabling unused power domains
+[32m[    1.618891] [0mALSA device list:
+[32m[    1.618897] [0m[33m  #0: [0mbcm2835 Headphones
+[32m[    1.618903] [0m[33m  #1: [0mvc4-hdmi-0
+[32m[    1.618908] [0m[33m  #2: [0mvc4-hdmi-1
+[32m[    1.620804] [0m[33mmmc0: [0mSDHCI controller on fe340000.mmc [fe340000.mmc] using ADMA
+[32m[    1.647092] [0m[33mFreeing unused kernel image (initmem) memory: [0m2048K
+[32m[    1.659350] [0mRun /init as init process
+[32m[    1.659357] [0m  with arguments:
+[32m[    1.659361] [0m    /init
+[32m[    1.659365] [0m  with environment:
+[32m[    1.659370] [0m    HOME=/
+[32m[    1.659374] [0m    TERM=linux
+[32m[    1.659378] [0m    bootmode=normal
+[32m[    1.659382] [0m    partition_ab=a
+[32m[    1.673868] [0m[33mmmc1: [0mnew high speed SDIO card at address 0001
+[32m[    1.687782] [0m[33musb 1-1: [0mNew USB device found, idVendor=2109, idProduct=3431, bcdDevice= 4.21
+[32m[    1.687801] [0m[33musb 1-1: [0mNew USB device strings: Mfr=0, Product=1, SerialNumber=0
+[32m[    1.687808] [0m[33musb 1-1: [0mProduct: USB2.0 Hub
+[32m[    1.689637] [0m[33mhub 1-1:1.0: [0mUSB hub found
+[32m[    1.689951] [0m[33mhub 1-1:1.0: [0m4 ports detected
+[32m[    1.731427] [0m[33mmmc0: [0mnew ultra high speed DDR50 SDXC card at address 59b4
+[32m[    1.731922] [0m[33mmmcblk0: [0mmmc0:59b4 FD4Q5 119 GiB
+[32m[    1.736081] [0m[33m mmcblk0: [0mp1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19
+[32m[    1.737757] [0m[33mmmcblk0: [0mmmc0:59b4 FD4Q5 119 GiB
+[32m[    2.743950] [0m[33mEXT4-fs (mmcblk0p6): [0mmounted filesystem 5ea9e0f5-1d0c-4b2c-a184-ef8b318793d2 ro with ordered data mode. Quota mode: disabled.
+[32m[    2.779954] [0m[33mextcon_usb_fixed: [0m[1mloading out-of-tree module taints kernel.[0m
+[32m[    2.798895] [0m[33mlogger: [0mcreated 256K log 'log_main'
+[32m[    2.799094] [0m[33mlogger: [0mcreated 256K log 'log_events'
+[32m[    2.799596] [0m[33mlogger: [0mcreated 256K log 'log_radio'
+[32m[    2.799824] [0m[33mlogger: [0mcreated 256K log 'log_system'
+[32m[    2.819344] [0m[33mkdbus: [0minitialized
+[32m[    2.981957] [0m[33mEXT4-fs (mmcblk0p3): [0mmounted filesystem 32754324-f523-4796-b0eb-c4b0e57e0beb r/w with ordered data mode. Quota mode: disabled.
+[32m[    2.999298] [0m[33mEXT4-fs (mmcblk0p3): [0munmounting filesystem 32754324-f523-4796-b0eb-c4b0e57e0beb.
+[32m[    3.072544] [0m[33mEXT4-fs (mmcblk0p2): [0mINFO: recovery required on readonly filesystem
+[32m[    3.072557] [0m[33mEXT4-fs (mmcblk0p2): [0mwrite access will be enabled during recovery
+[32m[    3.674280] [0m[33mEXT4-fs (mmcblk0p2): [0mrecovery complete
+[32m[    3.677014] [0m[33mEXT4-fs (mmcblk0p2): [0mmounted filesystem 4b817f72-085f-49ff-b44e-195cb4441231 ro with ordered data mode. Quota mode: disabled.
+[32m[    3.749012] [0m[33mEXT4-fs (mmcblk0p3): [0mmounted filesystem 32754324-f523-4796-b0eb-c4b0e57e0beb r/w with ordered data mode. Quota mode: disabled.
+[32m[    3.778473] [0m[33mEXT4-fs (mmcblk0p10): [0mINFO: recovery required on readonly filesystem
+[32m[    3.778485] [0m[33mEXT4-fs (mmcblk0p10): [0mwrite access will be enabled during recovery
+[32m[    3.803115] [0m[33mEXT4-fs (mmcblk0p10): [0mrecovery complete
+[32m[    3.804941] [0m[33mEXT4-fs (mmcblk0p10): [0mmounted filesystem a4b18ad2-8190-4d5a-a73b-a03b5d22f270 ro with ordered data mode. Quota mode: disabled.
+[32m[   10.014301] [0m[33msystemd[1]: [0mSuccessfully loaded Smack policies.
+[32m[   10.014860] [0m[33msystemd[1]: [0mSuccessfully loaded Smack/CIPSO policies.
+[32m[   10.015703] [0m[33msystemd[1]: [0mSuccessfully loaded Smack network host rules.
+[32m[   10.055176] [0m[33msystemd[1]: [0mSuccessfully wrote Smack onlycap list.
+[32m[   10.071821] [0m[33msystemd[1]: [0mRelabelled /dev, /dev/shm, /run, /sys/fs/cgroup in 6.353ms.
+[32m[   10.073845] [0m[33msystemd[1]: [0msystemd 244 running in system mode. (+PAM -AUDIT -SELINUX +IMA -APPARMOR +SMACK -SYSVINIT +UTMP -LIBCRYPTSETUP -GCRYPT -GNUTLS +ACL +XZ -LZ4 -SECCOMP +BLKID -ELFUTILS +KMOD -IDN2 -IDN +PCRE2 default-hierarchy=legacy)
+[32m[   10.074183] [0m[33msystemd[1]: [0mDetected architecture arm.
+[32m[   10.175231] [0m[33msystemd[1]: [0mNo hostname configured.
+[32m[   10.175257] [0m[33msystemd[1]: [0mSet hostname to <localhost>.
+[32m[   10.585804] [0m[33msystemd[1]: [0mUnnecessary job for /dev/mmcblk0p3 was removed.
+[32m[   10.586953] [0m[33msystemd[1]: [0m[1msystem-serial\x2dgetty.slice: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.[0m
+[32m[   10.586968] [0m[33msystemd[1]: [0m[1m(This warning is only shown for the first unit using IP firewalling.)[0m
+[32m[   10.589169] [0m[33msystemd[1]: [0mCreated slice system-serial\x2dgetty.slice.
+[32m[   10.615746] [0m[33msystemd[1]: [0mCreated slice system-wait\x2dmount.slice.
+[32m[   10.635638] [0m[33msystemd[1]: [0mCreated slice User and Session Slice.
+[32m[   10.655344] [0m[33msystemd[1]: [0mStarted muse server.
+[32m[   10.675681] [0m[33msystemd[1]: [0mSet up automount Arbitrary Executable File Formats File System Automount Point.
+[32m[   10.695380] [0m[33msystemd[1]: [0mReached target Slices.
+[32m[   10.715235] [0m[33msystemd[1]: [0mReached target Swap.
+[32m[   10.735229] [0m[33msystemd[1]: [0mReached target Timers.
+[32m[   10.755557] [0m[33msystemd[1]: [0mListening on Application Management Daemon Socket.
+[32m[   10.775512] [0m[33msystemd[1]: [0mListening on Alarm server Socket.
+[32m[   10.795668] [0m[33msystemd[1]: [0mListening on D-Bus System Message Bus Socket.
+[32m[   10.815468] [0m[33msystemd[1]: [0mListening on ESD Badge Socket.
+[32m[   10.835416] [0m[33msystemd[1]: [0mListening on ESD Cion Socket.
+[32m[   10.855416] [0m[33msystemd[1]: [0mListening on Noti Service Socket.
+[32m[   10.875419] [0m[33msystemd[1]: [0mListening on ESD Group Socket.
+[32m[   10.896281] [0m[33msystemd[1]: [0mListening on HAL Backend Service Socket.
+[32m[   10.915663] [0m[33msystemd[1]: [0mListening on Tizen Package Manager Socket.
+[32m[   10.935898] [0m[33msystemd[1]: [0mListening on PackageManager Service.
+[32m[   10.955418] [0m[33msystemd[1]: [0mListening on initctl Compatibility Named Pipe.
+[32m[   10.975600] [0m[33msystemd[1]: [0mListening on Journal Audit Socket.
+[32m[   10.995503] [0m[33msystemd[1]: [0mListening on Journal Socket (/dev/log).
+[32m[   11.015499] [0m[33msystemd[1]: [0mListening on Journal Socket.
+[32m[   11.035506] [0m[33msystemd[1]: [0mListening on udev Control Socket.
+[32m[   11.055411] [0m[33msystemd[1]: [0mListening on udev Kernel Socket.
+[32m[   11.075478] [0m[33msystemd[1]: [0mListening on Tizen Action Framework Plugin Launcher socket.
+[32m[   11.095462] [0m[33msystemd[1]: [0mListening on Tizen Theme Manager Socket.
+[32m[   11.155370] [0m[33msystemd[1]: [0mMounting POSIX Message Queue File System...
+[32m[   11.177411] [0m[33msystemd[1]: [0mMounting Kernel Configuration File System...
+[32m[   11.197453] [0m[33msystemd[1]: [0mMounting Kernel Debug File System...
+[32m[   11.216304] [0m[33msystemd[1]: [0mtmp.mount: Directory /tmp to mount over is not empty, mounting anyway.
+[32m[   11.218156] [0m[33msystemd[1]: [0mMounting Temporary Directory (/tmp)...
+[32m[   11.235606] [0m[33msystemd[1]: [0mCondition check resulted in Data checkpoint being skipped.
+[32m[   11.238863] [0m[33msystemd[1]: [0mMounting Reboot Parameter Partition...
+[32m[   11.258368] [0m[33msystemd[1]: [0mMounting /opt/usr...
+[32m[   11.269850] [0m[33mEXT4-fs (mmcblk0p9): [0mrecovery complete
+[32m[   11.271409] [0m[33mEXT4-fs (mmcblk0p9): [0mmounted filesystem 9c8573d8-a992-41c0-b789-4358f8d90734 r/w with ordered data mode. Quota mode: disabled.
+[32m[   11.275513] [0m[33msystemd[1]: [0mCondition check resulted in Create list of static device nodes for the current kernel being skipped.
+[32m[   11.275799] [0m[33msystemd[1]: [0mCondition check resulted in Configure platform-extension according to /hal/etc/platform-extension/platform-extension.conf being skipped.
+[32m[   11.279578] [0m[33msystemd[1]: [0mStarting Journal Service...
+[32m[   11.297545] [0m[33msystemd[1]: [0mStarting Apply Kernel Variables...
+[32m[   11.317488] [0m[33msystemd[1]: [0mStarting Create Static Device Nodes in /dev...
+[32m[   11.338300] [0m[33msystemd[1]: [0mStarting udev Coldplug all Devices...
+[32m[   11.357581] [0m[33msystemd[1]: [0mStarting Setup Virtual Console...
+[32m[   11.377398] [0m[33msystemd[1]: [0mStarting Generate environment from /etc/profile.d...
+[32m[   11.404072] [0m[33msystemd[1]: [0mStarted Journal Service.
+[32m[   11.474875] [0m[33mF2FS-fs (mmcblk0p5): [0mFound nat_bits in checkpoint
+[32m[   11.598159] [0m[33mF2FS-fs (mmcblk0p5): [0mMounted with checkpoint version = 4cad559e
+[32m[   11.988476] [0m[33msystemd-journald[276]: [0mReceived client request to flush runtime journal.
+[32m[   11.995172] [0m[33msystemd-journald[276]: [0m[1mFile /var/log/journal/160627c4a8154b32af05be601c47a0b5/system.journal corrupted or uncleanly shut down, renaming and replacing.[0m
+[32m[   12.437700] [0m[33mBluetooth: [0mHCI UART driver ver 2.3
+[32m[   12.437713] [0m[33mBluetooth: [0mHCI UART protocol H4 registered
+[32m[   12.437885] [0m[33mBluetooth: [0mHCI UART protocol Broadcom registered
+[32m[   12.439388] [0m[33mhci_uart_bcm serial0-0: [0m[1msupply vbat not found, using dummy regulator[0m
+[32m[   12.439542] [0m[33mhci_uart_bcm serial0-0: [0m[1msupply vddio not found, using dummy regulator[0m
+[32m[   12.801613] [0m[33mBluetooth: [0mhci0: BCM: chip id 107
+[32m[   12.801891] [0m[33mBluetooth: [0mhci0: BCM: features 0x2f
+[32m[   12.802962] [0m[33mBluetooth: [0mhci0: BCM4345C0
+[32m[   12.802977] [0m[33mBluetooth: [0mhci0: BCM4345C0 (003.001.025) build 0000
+[32m[   12.804108] [0m[33mbrcmfmac: [0mF1 signature read @0x18000000=0x15264345
+[32m[   12.808001] [0m[33mbrcmfmac: [0mbrcmf_of_probe: Disabled feature 0x202000
+[32m[   12.808310] [0m[33mbrcmfmac: [0mbrcmf_fw_alloc_request: using brcm/brcmfmac43455-sdio for chip BCM4345/6
+[32m[   12.809455] [0m[33mbrcmfmac mmc1:0001:1: [0m[1mDirect firmware load for brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.bin failed with error -2[0m
+[32m[   12.809528] [0m[33mbrcmfmac mmc1:0001:1: [0m[1mDirect firmware load for brcm/brcmfmac43455-sdio.bin failed with error -2[0m
+[32m[   12.811324] [0m[33mBluetooth: [0mhci0: BCM4345C0 'brcm/BCM4345C0.hcd' Patch
+[32m[   13.465917] [0m[33mBluetooth: [0mhci0: BCM: features 0x2f
+[32m[   13.467197] [0m[33mBluetooth: [0mhci0: BCM43455 37.4MHz Raspberry Pi 3+-0156
+[32m[   13.467207] [0m[33mBluetooth: [0mhci0: BCM4345C0 (003.001.025) build 0280
+[32m[   13.815213] [0m[33mbrcmfmac: [0m[31mbrcmf_sdio_htclk: HT Avail timeout (1000000): clkctl 0x50[0m
+[32m[   14.607822] [0m[33maudit: [0mtype=1400 audit(14.599:2): lsm=SMACK fn=smack_inode_permission action=denied subject="User::App::Shared" object="System::Run" requested=x pid=457 comm="gen_rm_msgq" name="/" dev="tmpfs" ino=1
+[32m[   14.607847] [0m[33maudit: [0mtype=1300 audit(14.599:2): arch=40000028 syscall=317 per=800000 success=no exit=-13 a0=3 a1=6a4980 a2=3c8 a3=0 items=0 ppid=1 pid=457 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="gen_rm_msgq" exe="/usr/bin/gen_rm_msgq" subj=User::App::Shared key=(null)
+[32m[   14.607865] [0m[33maudit: [0mtype=1327 audit(14.599:2): proctitle="/usr/bin/gen_rm_msgq"
+[32m[   14.608230] [0m[33maudit: [0mtype=1400 audit(14.599:3): lsm=SMACK fn=smack_inode_permission action=denied subject="User::App::Shared" object="System::Run" requested=x pid=457 comm="gen_rm_msgq" name="/" dev="tmpfs" ino=1
+[32m[   14.608246] [0m[33maudit: [0mtype=1300 audit(14.599:3): arch=40000028 syscall=283 per=800000 success=no exit=-13 a0=4 a1=b6f7c294 a2=6e a3=1 items=0 ppid=1 pid=457 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="gen_rm_msgq" exe="/usr/bin/gen_rm_msgq" subj=User::App::Shared key=(null)
+[32m[   14.608259] [0m[33maudit: [0mtype=1327 audit(14.599:3): proctitle="/usr/bin/gen_rm_msgq"
+[32m[   14.608275] [0m[33maudit: [0mtype=1400 audit(14.599:4): lsm=SMACK fn=smack_inode_permission action=denied subject="User::App::Shared" object="System::Shared" requested=x pid=457 comm="gen_rm_msgq" name="etc" dev="mmcblk0p3" ino=419
+[32m[   14.608286] [0m[33maudit: [0mtype=1300 audit(14.599:4): arch=40000028 syscall=322 per=800000 success=no exit=-13 a0=ffffff9c a1=b6f83380 a2=80000 a3=0 items=0 ppid=1 pid=457 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="gen_rm_msgq" exe="/usr/bin/gen_rm_msgq" subj=User::App::Shared key=(null)
+[32m[   14.608297] [0m[33maudit: [0mtype=1327 audit(14.599:4): proctitle="/usr/bin/gen_rm_msgq"
+[32m[   14.608312] [0m[33maudit: [0mtype=1400 audit(14.599:5): lsm=SMACK fn=smack_inode_permission action=denied subject="User::App::Shared" object="System::Run" requested=x pid=457 comm="gen_rm_msgq" name="/" dev="tmpfs" ino=1
+[32m[   15.430192] [0m[1mCgroup memory moving (move_charge_at_immigrate) is deprecated. Please report your usecase to linux-mm@kvack.org if you depend on this functionality.[0m
+[32m[   15.472952] [0m[33mzram0: [0mdetected capacity change from 0 to 6493928
+[32m[   15.547929] [0m[33mloop0: [0mdetected capacity change from 0 to 20480
+[32m[   15.642792] [0m[33mEXT4-fs (loop0): [0mmounted filesystem da0b3b92-9b26-45a9-9ff5-3484b67c54c3 r/w without journal. Quota mode: disabled.
+[32m[   15.696842] [0mAdding 3246960k swap on /dev/zram0.  Priority:0 extents:1 across:3246960k SSDsc
+[32m[   15.796265] [0m[33mbcmgenet fd580000.ethernet: [0mconfiguring instance for external RGMII (RX delay)
+[32m[   15.797284] [0m[33mbcmgenet fd580000.ethernet eth0: [0mLink is Down
+[32m[   15.879134] [0m[33mloop1: [0mdetected capacity change from 0 to 20480
+[32m[   15.923488] [0m[33mEXT4-fs (loop1): [0mmounted filesystem 35e78331-4f60-4cd3-b0a8-b58055633c9c r/w without journal. Quota mode: disabled.
+[32m[   17.024726] [0m[33minput: [0mVirtual Key Device as /devices/virtual/input/input2
+[32m[   18.886663] [0m[33mbcmgenet fd580000.ethernet eth0: [0mLink is Up - 100Mbps/Full - flow control rx/tx
+[32m[   19.046980] [0m[1moom_control is deprecated and will be removed. Please report your usecase to linux-mm-@kvack.org if you depend on this functionality. [0m
+[32m[   19.047437] [0m[1moom_control is deprecated and will be removed. Please report your usecase to linux-mm-@kvack.org if you depend on this functionality. [0m
+[32m[   19.645004] [0mfile system registered
+[32m[   19.679568] [0mread descriptors
+[32m[   19.687855] [0mread strings
+[32m[   19.716915] [0mread descriptors
+[32m[   19.717465] [0mread strings
+[32m[   19.787379] [0m[33mdwc2 fe980000.usb: [0mbound driver configfs-gadget.hal-gadget
+[32m[   22.828158] [0m[33minput: [0mInput Generator as /devices/virtual/input/input3
+[32m[   25.008843] [0m[33mkauditd_printk_skb: [0m[1m185 callbacks suppressed[0m
+[32m[   25.008853] [0m[33maudit: [0mtype=1325 audit(24.999:67): table=filter family=2 entries=46 op=xt_replace pid=590 subj=System comm="stc-iptables"
+[32m[   25.009245] [0m[33maudit: [0mtype=1300 audit(24.999:67): arch=40000028 syscall=294 per=800000 success=yes exit=0 a0=8 a1=0 a2=40 a3=1ce1ca8 items=0 ppid=1 pid=590 auid=4294967295 uid=551 gid=551 euid=551 suid=551 fsuid=551 egid=551 sgid=551 fsgid=551 tty=(none) ses=4294967295 comm="stc-iptables" exe="/usr/bin/stc-iptables" subj=System key=(null)
+[32m[   25.009354] [0m[33maudit: [0mtype=1327 audit(24.999:67): proctitle="/usr/bin/stc-iptables"
+[32m[   25.011387] [0m[33maudit: [0mtype=1325 audit(24.999:68): table=filter family=2 entries=46 op=xt_replace pid=590 subj=System comm="stc-iptables"
+[32m[   25.011406] [0m[33maudit: [0mtype=1300 audit(24.999:68): arch=40000028 syscall=294 per=800000 success=yes exit=0 a0=8 a1=0 a2=40 a3=1ce0478 items=0 ppid=1 pid=590 auid=4294967295 uid=551 gid=551 euid=551 suid=551 fsuid=551 egid=551 sgid=551 fsgid=551 tty=(none) ses=4294967295 comm="stc-iptables" exe="/usr/bin/stc-iptables" subj=System key=(null)
+[32m[   25.011418] [0m[33maudit: [0mtype=1327 audit(24.999:68): proctitle="/usr/bin/stc-iptables"
+[32m[   25.013212] [0m[33maudit: [0mtype=1325 audit(24.999:69): table=filter family=2 entries=46 op=xt_replace pid=590 subj=System comm="stc-iptables"
+[32m[   25.013481] [0m[33maudit: [0mtype=1300 audit(24.999:69): arch=40000028 syscall=294 per=800000 success=yes exit=0 a0=8 a1=0 a2=40 a3=1ce04f0 items=0 ppid=1 pid=590 auid=4294967295 uid=551 gid=551 euid=551 suid=551 fsuid=551 egid=551 sgid=551 fsgid=551 tty=(none) ses=4294967295 comm="stc-iptables" exe="/usr/bin/stc-iptables" subj=System key=(null)
+[32m[   25.013497] [0m[33maudit: [0mtype=1327 audit(24.999:69): proctitle="/usr/bin/stc-iptables"
+[32m[   25.015902] [0m[33maudit: [0mtype=1325 audit(24.999:70): table=filter family=2 entries=46 op=xt_replace pid=590 subj=System comm="stc-iptables"
+[32m[   29.177616] [0m[33mbcmgenet fd580000.ethernet eth0: [0mLink is Down
+[32m[   29.490894] [0m[33mbcmgenet fd580000.ethernet: [0mconfiguring instance for external RGMII (RX delay)
+[32m[   29.492932] [0m[33mbcmgenet fd580000.ethernet eth0: [0mLink is Down
+[32m[   32.645444] [0m[33mbcmgenet fd580000.ethernet eth0: [0mLink is Up - 100Mbps/Full - flow control rx/tx
+[32m[   44.220353] [0m[33mEXT4-fs (mmcblk0p2): [0mre-mounted 4b817f72-085f-49ff-b44e-195cb4441231 r/w.
+[32m[   45.306856] [0m[33mEXT4-fs (mmcblk0p10): [0mre-mounted a4b18ad2-8190-4d5a-a73b-a03b5d22f270 r/w.
+[32m[   45.306889] [0m[1mext4 filesystem being remounted at /hal supports timestamps until 2038-01-19 (0x7fffffff)[0m
+[32m[   46.515467] [0m[33mEXT4-fs (mmcblk0p2): [0mre-mounted 4b817f72-085f-49ff-b44e-195cb4441231.
+[32m[   46.585243] [0m[33mEXT4-fs (mmcblk0p10): [0mre-mounted a4b18ad2-8190-4d5a-a73b-a03b5d22f270.
+[32m[   80.063929] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 6564 - nr_to_reclaim: 2560
+[32m[   80.103873] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 5175 - nr_to_reclaim: 2560
+[32m[   80.139313] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 5238 - nr_to_reclaim: 2560
+[32m[   80.250366] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 5141 - nr_to_reclaim: 2560
+[32m[   80.295925] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 5129 - nr_to_reclaim: 2560
+[32m[   81.369669] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 5288 - nr_to_reclaim: 2560
+[32m[   81.457911] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 5149 - nr_to_reclaim: 2560
+[32m[   81.557108] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 5162 - nr_to_reclaim: 2560
+[32m[   81.643124] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 4564 - nr_to_reclaim: 2560
+[32m[   81.767748] [0m[33mmem_cgroup_force_reclaim: [0m[Mem_reclaim] Loop: 1 - Total_reclaimed: 2635 - nr_to_reclaim: 2560
+[32m[ 1891.341895] [0m[33msdbd-user (9820): [0m[1m/proc/9820/oom_adj is deprecated, please use /proc/9820/oom_score_adj instead.[0m
+
+WRAPPER_RC_ROUND_POSTREBOOT_DMESG=0
+DONE_REMOTE_ROUND_POSTREBOOT_DMESG

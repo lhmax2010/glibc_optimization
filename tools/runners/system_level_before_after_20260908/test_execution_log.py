@@ -101,6 +101,32 @@ class ExecutionLog(unittest.TestCase):
                     self.publish()
                 self.assert_atomic_refusal()
 
+    def test_root_lifecycle_requires_final_receipt_not_parent_intermediate(self):
+        for verdict, off, error in (("PASS_G4_ONLY", "NOT-EVALUATED", None),
+                                    ("STOP", "NOT-EVALUATED", None),
+                                    ("PASS_G4_ONLY", "FAIL", None),
+                                    ("PASS_G4_ONLY", "PASS_NONROOT", "disk full")):
+            with self.subTest(verdict=verdict, off=off, error=error):
+                self.receipt.update(verdict=verdict,
+                    root_authorization={"root_off": off, "recording_error": error})
+                self.write("execution.json", json.dumps(self.receipt))
+                with self.assertRaisesRegex(ValueError, "root"):
+                    self.publish()
+                self.assert_atomic_refusal()
+
+    def test_g4_authorization_and_post_cleanup_logs_are_selected(self):
+        self.receipt.update(verdict="PASS_G4_ONLY", root_authorization={"root_off": "PASS_NONROOT"})
+        self.write("execution.json", json.dumps(self.receipt))
+        names = ("AUTH_ID_BEFORE.txt", "AUTH_ID_AFTER_ON.txt", "AUTH_ID_AFTER_OFF_1.txt",
+                 "POSTREBOOT_SESSIONS.txt", "PACKAGE_INVENTORY_AFTER.txt", "PACKAGE_RESIDUE_0000.txt",
+                 "raw/round_health/zram_after_cleanup.txt", "raw/round_health/stability_postreboot.tsv",
+                 "raw/round_health/alert_attribution_after_cleanup.json")
+        for name in names:
+            self.write(name, "HOST_FIXTURE_ONLY\n")
+        manifest, _ = self.publish()
+        self.assertEqual(manifest["verdict"], "PASS_G4_ONLY")
+        self.assertTrue(set(names).issubset({r["path"] for r in manifest["files"]}))
+
     def test_only_allowed_redactions_and_exact_original_public_hashes(self):
         original = ("HOST_FIXTURE_ONLY board=" + self.ADDRESS + "\r\nlocal=" + self.HOME +
                     "/result\r\nboard=/opt/usr/glibc_memopt/work\r\nBUILD_ID=public-image\n").encode()

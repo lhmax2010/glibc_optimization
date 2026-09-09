@@ -1,0 +1,13 @@
+check	result	scope
+authorization-tests-before-board	PASS 9	mock-only; no SDB calls
+round-tests-before-board	PASS 123	executor and explicit authorization wrapper
+verify-before-board	OVERALL PASS	REPRODUCE_ALLOW_DIRTY=1; all default host modules executed
+round-tests-after-stop	PASS 129	includes STOP observation publication and final-root receipt gating
+verify-after-stop	OVERALL PASS	REPRODUCE_ALLOW_DIRTY=1; all default host modules executed
+g4-archive-integrity	PASS 3 archives / 243 files	STOP observations; not full-round acceptance
+g4-derived-byte-cmp	PASS 2	g4_cycles.tsv and g4_summary.tsv
+execution-public-manifest	PASS 165 files	all public SHA-256 values verified
+contract-and-analyzer	UNCHANGED	byte-identical to original annotated contract tag
+accepted-18-prefix	UNCHANGED	original receipt and archive/file proofs checked before and after G4
+redaction	PASS zero hits	board IPv4 literals / host home / CI host / token patterns
+demo-v12	NOT_EXECUTED_STOP_GATE	keep demo-v11; no new delivery-matrix claim

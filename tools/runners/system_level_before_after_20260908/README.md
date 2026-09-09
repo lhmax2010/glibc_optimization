@@ -2,6 +2,10 @@
 
 ## PM 2026-09-10 单轮授权包装层
 
+**执行结果追注：本轮已结束并 root-off 回到 UID=5001，不得直接再次运行。** G4 三格已观测
+并校验；`PACKAGE_RESIDUE_0000` 的 11800 字节请求被 SDB 拒绝，残留清单与后置健康
+未闭合，最终 STOP。下面仅记录当时授权入口，不是新的运行许可；见[报告 §8](../../../docs/system_level_before_after_20260908.md#8-pm-方案-a-授权续跑三格已观测收尾-stop)。
+
 仅本轮可以显式使用 `run_authorized_g4_20260910.py --pm-authorization PM-G4-20260910`，
 其余参数与下方 G4-only 入口相同（不接受 `--preflight-only`）。它先核验三项身份和
 UID=5001，再记录 root-on / id；继承完整前置门与仅 G4 三格执行，退出时 root-off / id，
@@ -9,6 +13,11 @@ UID=5001，再记录 root-on / id；继承完整前置门与仅 G4 三格执行�
 这是[单轮授权](../../../docs/pm_decisions.md#2026-09-10-g4-单轮提权授权方案-a)，
 不是默认复现行为，也不是只读预检。最终 `execution.json` 的 `root_authorization.root_off`
 必须为 `PASS_NONROOT`，不能只看父入口中间输出。
+
+`publish_g4_observations.py --run /path/to/terminal-g4-run --output-dir /path/to/new-public-observations`
+仅保留 STOP 下已观测的三格，原 analyzer 重建 `g4_cycles.tsv/g4_summary.tsv` 并与拉回
+派生件 cmp；输出显式 `STOP_NOT_ACCEPTED_FOR_DEMO`。不拼接旧 18 格、不生成完整矩阵。
+日志发布器加入授权/降权及后置审计原文选集，拒绝尚未结束的 root 生命周期。
 
 ## 2026-09-09 续跑入口（host 闭合后使用）
 
