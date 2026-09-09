@@ -42,10 +42,15 @@ G4 堆 PD 下降为 **88/0/4 KiB**，memps 同样观测到该下降量；静置 
 原 18 格结果提交仍为 `60bea7c63ca2c603351e0ef25df15546e78db05c`，host 闭合基线
 `6095765575addbd57f421efbf106b0e72da522a5`；本次先推授权入口 `cdab1dbf0d24afefe05c4db1039f58ffde6911b9`。
 三格观测、原文及停止报告已推结果提交 `ffd695ef345355da9f8fd9689442a70ffb59b392`。
+三份选定 M7 XML 原文及结果回执已推补充提交 `eef3888fbee2996b6e011314d65d7912ae3381cd`。
 
 停止后 host 检查：本轮 **129 项测试通过**，默认 verify **OVERALL PASS**（本地提交前
 显式 dirty override，未跳过 host tests），两件 G4 派生 cmp、165 件公开日志哈希和
 脱敏零命中均通过。见[检查回执](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/host_checks.tsv)。
+随后从 GitHub 远端新克隆 main 的 `eef3888fbee2996b6e011314d65d7912ae3381cd`，
+工作树干净、未设置 dirty/test-skip/expected-SHA override：本轮 **129 项测试通过**，
+默认 verify **OVERALL PASS**，报告关联链接 **309 项通过**。main 交付身份按设计为
+REPORT_ONLY，提示 checkout demo-v11；未把 main 复核冒充交付快照的 required 验收。
 这些是 host 归档验证，不是未执行的板端后置健康或 demo-v12 矩阵通过。
 
 待 PM 裁决：是否授权**只修复短命令分批并补齐收尾只读核验**；不需且不得重跑已完成

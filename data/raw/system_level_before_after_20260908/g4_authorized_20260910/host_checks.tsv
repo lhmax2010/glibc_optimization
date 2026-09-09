@@ -4,6 +4,10 @@ round-tests-before-board	PASS 123	executor and explicit authorization wrapper
 verify-before-board	OVERALL PASS	REPRODUCE_ALLOW_DIRTY=1; all default host modules executed
 round-tests-after-stop	PASS 129	includes STOP observation publication and final-root receipt gating
 verify-after-stop	OVERALL PASS	REPRODUCE_ALLOW_DIRTY=1; all default host modules executed
+clean-github-clone-source	PASS eef3888fbee2996b6e011314d65d7912ae3381cd	ordinary main clone; clean worktree; no dirty/test-skip/expected-SHA override
+clean-github-clone-round-tests	PASS 129	all system-level runner tests executed
+clean-github-clone-verify	OVERALL PASS	all default host modules executed; main identity REPORT_ONLY; not demo-v12 required verification
+report-related-links	PASS 309	report/summary/index/PM ledger/runner/public evidence links
 g4-archive-integrity	PASS 3 archives / 243 files	STOP observations; not full-round acceptance
 g4-derived-byte-cmp	PASS 2	g4_cycles.tsv and g4_summary.tsv
 execution-public-manifest	PASS 165 files	all public SHA-256 values verified
