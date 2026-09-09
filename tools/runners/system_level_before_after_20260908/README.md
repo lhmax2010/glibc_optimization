@@ -1,5 +1,15 @@
 # 系统级前后对照：事前合同与派生入口
 
+## PM 2026-09-10 单轮授权包装层
+
+仅本轮可以显式使用 `run_authorized_g4_20260910.py --pm-authorization PM-G4-20260910`，
+其余参数与下方 G4-only 入口相同（不接受 `--preflight-only`）。它先核验三项身份和
+UID=5001，再记录 root-on / id；继承完整前置门与仅 G4 三格执行，退出时 root-off / id，
+至多一次降权重试。失败停止后续；不会清除旧 PID、重跑旧 18 格或更改合同。
+这是[单轮授权](../../../docs/pm_decisions.md#2026-09-10-g4-单轮提权授权方案-a)，
+不是默认复现行为，也不是只读预检。最终 `execution.json` 的 `root_authorization.root_off`
+必须为 `PASS_NONROOT`，不能只看父入口中间输出。
+
 ## 2026-09-09 续跑入口（host 闭合后使用）
 
 本次实际终态：host 114 项测试与既有 verify 通过；只读连接后 UID=5001，不满足合同的
