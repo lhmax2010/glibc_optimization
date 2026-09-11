@@ -1,0 +1,7 @@
+................................................................................................/usr/lib/python3.12/tarfile.py:2301: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.
+  warnings.warn(
+......................................................................................................................................................
+----------------------------------------------------------------------
+Ran 246 tests in 22.742s
+
+OK

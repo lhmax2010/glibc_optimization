@@ -19,6 +19,11 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-11（周末批次收线）：demo-v12 已发布；隔离与 GitHub 远端各 18/18 verify、
+  129/129 注入拒绝，额外 full/no-tags/shallow 公开复算通过；当前树脱敏零命中。
+  [周末汇总](weekend_summary_20260914.md)、[v12 复审简报](v12_review_brief.md)、
+  [机器回执](../data/raw/demo_v12_delivery_20260911/weekend/verification.json)。
+
 - 2026-09-11（09-12 至 09-14 周末批次）：三份 TCP 7 行定向脱敏、public 哈希链
   更新与编码端点扫描硬门；原 21 格和历史不改，继续 v12 矩阵。
   [处置记录](weekend_redaction_20260911.md)、[PM 授权](pm_decisions.md)。

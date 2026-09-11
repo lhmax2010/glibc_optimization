@@ -1,0 +1,5 @@
+PASS full public-replay cells=21 cycles=333 five-byte-cmps=PASS cleanup-replay=PASS
+PASS no-tags public-replay cells=21 cycles=333 five-byte-cmps=PASS cleanup-replay=PASS
+PASS shallow-missing-object expected_RC=2 explicit-fetch-diagnostic no-skip
+PASS shallow public-replay cells=21 cycles=333 five-byte-cmps=PASS cleanup-replay=PASS
+OVERALL PASS clone_shapes=3 shallow-missing-negative-control=PASS

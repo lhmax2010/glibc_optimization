@@ -1,0 +1,3 @@
+delivery-surface: PASS local-links checked=723
+all-repository: PASS local-links checked=1483
+templates interpreted as repository-root README; both actual README files and docs/INDEX included

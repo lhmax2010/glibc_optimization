@@ -1,5 +1,14 @@
 # demo-v12：host 合同身份闭合与交付验收（2026-09-11）
 
+**周末续跑终态（2026-09-11）：完成，当前有效交付为 demo-v12。**
+隔离与真实 GitHub 远端各 18 次完整 verify、129 次启动拒绝全通过；额外完整/无 tag/
+浅克隆公开复算通过；三份 TCP 定向脱敏与 public 哈希链已闭合，历史不重写。
+main 切库源 `60c102d`，demo / v12 commit `9ff3fe9`，annotated tag 对象 `26e46c4`。
+[逐格验收](../data/raw/demo_v12_delivery_20260911/weekend/verification.json)、
+[周末汇总](weekend_summary_20260914.md)、[复审简报](v12_review_brief.md)。
+以下停止表述均为对应阶段的历史记录，不代表当前状态。四非空目录是已接受已知项，
+不是阻塞项；21 格数据未重跑、未改，全部本次操作均在 host。
+
 2026-09-11 周末授权续报：下述脱敏 STOP 已按 PM 定向范围修复，
 见[处置与哈希链](weekend_redaction_20260911.md)。以下 §1–5 是此前停止时的历史记录；
 不改写当时矩阵未完成的事实。新交付矩阵与最终 refs 另行归档后才宣告 v12 有效。

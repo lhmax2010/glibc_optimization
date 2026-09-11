@@ -1,0 +1,89 @@
+{
+  "schema": "demo-v12.weekend-delivery.v1",
+  "archived_at_utc": "2026-09-11T12:47:14.304744+00:00",
+  "batch": "2026-09-12..2026-09-14",
+  "verdict": "PASS",
+  "host_only": true,
+  "board_connections": 0,
+  "measurement_reruns": 0,
+  "measurement_changes": 0,
+  "main_cut_source": "60c102d39fcc6293d3a77ee2081fac83e4f60482",
+  "snapshot_commit": "9ff3fe9c0e91b6be6b599fd6abab6276e8556ade",
+  "annotated_tag": "demo-v12",
+  "tag_object": "26e46c46fdc32c04da08fa31b317800dda25d560",
+  "prior_tag_preserved": "demo-v11",
+  "matrices": {
+    "isolated": {
+      "complete_verifies": 18,
+      "startup_rejection_checks": 129,
+      "exit_code": 0
+    },
+    "github": {
+      "complete_verifies": 18,
+      "startup_rejection_checks": 129,
+      "exit_code": 0
+    }
+  },
+  "public_replay_clones": {
+    "origin": "GitHub",
+    "full": "PASS",
+    "no_tags": "PASS",
+    "shallow_absent": "EXPECTED_RC_2_EXPLICIT_FETCH_DIAGNOSTIC",
+    "shallow_after_commit_fetch": "PASS_STILL_SHALLOW_NO_TAGS",
+    "derived_byte_cmps_per_shape": 5
+  },
+  "tests": {
+    "targeted": 47,
+    "runner": 246,
+    "public_composition": 12
+  },
+  "html": {
+    "byte_cmp": "PASS",
+    "bytes": 58184,
+    "sha256": "62a2b068bade3b42c550cc1360727d05631ce3d65926e70047e6b5d9c8cbc91a",
+    "source_commit": "7093d8a60814b706f1f6809cf6b6d282a359c402"
+  },
+  "snapshot_links": {
+    "delivery": 723,
+    "all_repository": 1483,
+    "verdict": "PASS"
+  },
+  "gbs_protected_files": "unchanged from clean executed build 4539139956b89d82864a93c57ce68b7b07bdc850; no new real build in this host-only round",
+  "files": [
+    {
+      "path": "isolated_matrix.tsv",
+      "sha256": "93feddf294e490f44579124fcbaf7687f4212b58fefe1ef3ddccd244695357be"
+    },
+    {
+      "path": "github_matrix.tsv",
+      "sha256": "3df7205a018a16f9f8b3ad9d15d8b920d64fd0dbf4ba2b469f577f704f43c39c"
+    },
+    {
+      "path": "main_verify_0518993.log",
+      "sha256": "a5ad9a6393c0b8804a9d353503dcdd6cff33f3b5530b50b0df44afc7bd11879c",
+      "original_transcription_sha256": "1d7e12288b428fc5ec77da316c1635bb07c908c914e94895ce40f6d790f4a636",
+      "editing": "Host summary only: remove trailing table padding; all values retained; original log remains local"
+    },
+    {
+      "path": "public_replay_clones.log",
+      "sha256": "d94c47b0edc145a64515bf1b3d9874756bcc78528e38a9b187209ee9a24c3a8a"
+    },
+    {
+      "path": "public_replay_tests.log",
+      "sha256": "d4dd57420e698d4e8d1512ba3cc2910d5c8d3e6717c9b6ea66f6b85433507ba0"
+    },
+    {
+      "path": "runner_tests.log",
+      "sha256": "de5d95dd79deae3f8f2acdf37bff90d2b6592115dc5efd709d0f0082bed9894a"
+    },
+    {
+      "path": "targeted_tests.log",
+      "sha256": "3fe5edff816781b082e063204cdcafeba6ca3b0d09ccd52aa67083148bcbac49"
+    },
+    {
+      "path": "snapshot_links.txt",
+      "sha256": "cb2b1c4b57e23402a451145114985c48a2a99f37a977d578d118258fd7322e57"
+    }
+  ],
+  "scope": "current working-tree endpoint gate; historical Git objects not rewritten; post-cut main receipts not falsely claimed to be inside frozen snapshot"
+}

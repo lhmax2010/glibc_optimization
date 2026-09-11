@@ -1,0 +1,8 @@
+{
+  "schema": "private-endpoint-scan.v1",
+  "files": 4427,
+  "findings": [],
+  "count": 0,
+  "verdict": "PASS",
+  "scope": "current tracked tree only; no historical rewrite; no address values in output"
+}

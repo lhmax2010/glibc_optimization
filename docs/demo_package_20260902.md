@@ -4,6 +4,10 @@
 
 # glibc 内存优化 Demo 演示包
 
+2026-09-11 周末续跑完成：当前交付为 **demo-v12**，隔离与 GitHub 远端各 18 次完整
+verify / 129 次启动拒绝全通过。[交付汇总](weekend_summary_20260914.md)、
+[复审简报](v12_review_brief.md)。以下阶段性 STOP 保留作历史，不是当前有效状态。
+
 2026-09-11 工程集成追注：main 已加入 21 格绝对值；无 tag 克隆的 host 合同身份依赖
 按 PM 方向二闭合，[修复与交付验收](demo_v12_delivery_20260911.md)记录各阶段结果。
 [旧阻塞记录](demo_v12_delivery_blocker_20260911.md)保留；随后全仓 TCP 编码地址脱敏门
