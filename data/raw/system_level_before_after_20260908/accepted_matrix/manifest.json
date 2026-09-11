@@ -1,0 +1,45 @@
+{
+  "schema": "system-before-after.composed-files.v1",
+  "files": [
+    {
+      "path": "composition.json",
+      "sha256": "f9d4cc6963a5f08d0f4099da056caed38870f3ed8e22388f23f41b2f31ae4f0f",
+      "bytes": 4061
+    },
+    {
+      "path": "cycles.tsv",
+      "sha256": "b6a77c801de81bd0e3a80c904cc36e19f8ceebaaf50ecb8df81cafc1b2640e44",
+      "bytes": 104444
+    },
+    {
+      "path": "gst_arms.tsv",
+      "sha256": "979994fd59311e66296eea61cfb5f8523bcda74cf4f60c9d9301afcd47acda0e",
+      "bytes": 631
+    },
+    {
+      "path": "gst_comparison.json",
+      "sha256": "8bbbe4fbff7bb09d7795893932cfbe9d4c03b35bec9e34c6120b6b9aeca59a63",
+      "bytes": 437
+    },
+    {
+      "path": "gst_cycles.tsv",
+      "sha256": "b644d69abfd999085095eec3ee4aa5650e8ff678181342f91c8b6412daf86a0f",
+      "bytes": 25504
+    },
+    {
+      "path": "gst_repetitions.tsv",
+      "sha256": "150decdd1d5462171fe047807a8407464bea4bcee6523abe21cab5f66855888c",
+      "bytes": 1244
+    },
+    {
+      "path": "point_source.json",
+      "sha256": "88cd02a83ad93856e01c3f834682d466e0bd2b4886c2b35d3d86f9c58eeaca5e",
+      "bytes": 2882606
+    },
+    {
+      "path": "summary.tsv",
+      "sha256": "a265aa297a0f87b34dbfbe3a7c7ab25b25f2a2429c1eb0a21662232e0c7e1ebd",
+      "bytes": 1984
+    }
+  ]
+}

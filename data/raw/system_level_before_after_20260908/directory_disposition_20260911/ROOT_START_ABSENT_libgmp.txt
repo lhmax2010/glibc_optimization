@@ -1,0 +1,4 @@
+package libgmp is not installed
+
+RC=1
+FAIL

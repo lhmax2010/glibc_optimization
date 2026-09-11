@@ -95,6 +95,11 @@ M7 赋值失败而停止；[停止与恢复边界](system_level_before_after_202
 
 ## Specifications And Designs
 
+2026-09-11：PM 非空目录 REPORT_ONLY 裁决执行、延期收尾闭合，已验收 21 格不重跑；
+[系统前后对照与原文](system_level_before_after_20260908.md#121-实际处置与收尾结果)、
+[优化效果一览](demo_report.html#system-effect)、[L1 复算](demo_reproduction_guide_20260901.md#l1-system-before-after)、
+[两日续报](twoday_summary_20260910.md)。交付矩阵通过后另记 v12 身份，不提前宣告。
+
 - Allocator benchmark contracts: [`alloc_bench_spec_v1_zh.md`](alloc_bench_spec_v1_zh.md), [`alloc_bench_spec_v1_1_delta_zh.md`](alloc_bench_spec_v1_1_delta_zh.md), [`alloc_bench_spec_v1_1a_zh.md`](alloc_bench_spec_v1_1a_zh.md).
 - Batch 1 matrix: [`ab_matrix_batch1_zh.md`](ab_matrix_batch1_zh.md).
 - Design history: [`tizen_glibc_memopt_design_v1.md`](tizen_glibc_memopt_design_v1.md), [`tizen_glibc_memopt_design_v2.md`](tizen_glibc_memopt_design_v2.md), [`tizen_glibc_memopt_design_v2_zh.md`](tizen_glibc_memopt_design_v2_zh.md).

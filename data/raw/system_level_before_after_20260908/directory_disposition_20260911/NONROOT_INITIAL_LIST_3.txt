@@ -1,0 +1,4 @@
+auto-load  python
+
+RC=0
+DONE

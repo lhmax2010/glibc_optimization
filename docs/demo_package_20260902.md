@@ -24,6 +24,24 @@
 离线 HTML、手工指南与 workflow 是同一合同的三个入口：HTML 用于演示，指南是流程
 权威参考，workflow 将其机械化并给出可机读判定；三者不各自维护第二套统计口径。
 
+2026-09-11 合同②③补充：[优化效果一览](demo_report.html#system-effect)新增已验收
+21 格的绝对值，输入为[组合点转录](../data/raw/system_level_before_after_20260908/accepted_matrix/point_source.json)，
+复算见[系统前后对照 L1](demo_reproduction_guide_20260901.md#l1-system-before-after)，
+workflow verify 同口径五文件 cmp。合同不改变；重启前 18 格、重启后 G4 三格与延期
+收尾分期保留，不补造一次连续运行。四个非空 GDB 目录按 PM 裁决保留待查，不能写零残留。
+
+新增头条：mixed RSS 13.015625→7.718750 MiB / 40.696279%，medium-only
+13.152344→7.191406 MiB / 45.322245%，gst 8.671875→6.859375 MiB / 21.009919%。
+系统配对净效应依次 −0.167969/+5.304688/+1.855469 MiB；调用中位
+1.458574/1.478167/0.843612 ms。数据和极差均见
+[summary](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)与
+[复算](demo_reproduction_guide_20260901.md#l1-system-before-after)。前后/降幅各取三重复中位。
+本轮 gst p99 −1.652834 ms 对 none 离散 11.794149 ms，仅 REPORT_ONLY 未检出；
+[判定](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json)。
+G4 仅 88/0/4 KiB heap PD，RSS 0.033659%，1899.209517 ms 含 gdb/ptrace，不是
+释放点钩子代价；[逐周期](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)。
+none 的零仅指 RSS 下降，mixed 系统净效应为负；测试板量级不是产品或整机收益。
+
 ### 0.1 板上轮次证据顺序（长期规则）
 
 每个新板上轮次必须先把不可变 contract 与 analyzer 提交到 `main`，打 annotated 事前

@@ -5,6 +5,7 @@
 - 版本：**v2.8**
 - 日期：2026-09-01（v2.8 修订：补正 `enlightenment` a+b 双标签；完成新 LLVM 镜像 S4 锚点与合成滞留表型 trim 效果/再激活 faults 测量）
 - 范围：glibc(ptmalloc) 层内存优化的方案调研、实证结论、平台约束、实施计划
+- 2026-09-11 交付补充：[已验收系统前后对照](system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果)、[Demo 绝对值一览](demo_report.html#system-effect)；非空残留保留待查，旧 STOP/既有技术结论不改。
 - 证据基线：设计文档 v2.4、板级实验 Batch 1/2/2.5、环境侦察 ×3、PG0 决定性探测、**回收天花板实测**（`docs/reclaim_ceiling_probe.md`、`docs/a_ceiling_lldb_probe.md`）、新 LLVM 镜像冻结 S2（`docs/cyclic_s2_board_replication_20260831.md`）、周期下降归因 v2（`docs/cyclic_fall_mechanism_attribution_v2_20260901.md`）、新镜像 S4 锚点/滞留 trim（`docs/s4_reference_and_retention_trim_20260901.md`）、六轮异构 AI 交叉评审
 
 ---

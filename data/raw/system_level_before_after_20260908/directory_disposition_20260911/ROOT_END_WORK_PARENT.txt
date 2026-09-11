@@ -1,0 +1,4 @@
+stat: cannot stat `/opt/usr/glibc_memopt': No such file or directory
+
+RC=1
+FAIL

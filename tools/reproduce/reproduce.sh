@@ -303,6 +303,19 @@ trimmable_estimator_replay()
     cmp "$out" "$repo/data/raw/trimmable_estimator_20260905/validation.tsv"
 }
 
+system_before_after_replay()
+{
+    source="$repo/data/raw/system_level_before_after_20260908/accepted_matrix"
+    out="$tmp/system-before-after"
+    python3 "$repo/tools/runners/system_level_before_after_20260908/replay_compact.py" \
+      --points "$source/point_source.json" --gst-cycles "$source/gst_cycles.tsv" --output-dir "$out" || return 1
+    for name in cycles.tsv summary.tsv gst_repetitions.tsv gst_arms.tsv gst_comparison.json; do
+        cmp "$source/$name" "$out/$name" || return 1
+    done
+    python3 "$repo/tools/runners/system_level_before_after_20260908/analyze_directory_disposition.py" \
+      "$repo/data/raw/system_level_before_after_20260908/directory_disposition_20260911" || return 1
+}
+
 acceptance_replay()
 {
     [ -f "$tmp/s4/acceptance_input.json" ] || return 1
@@ -370,6 +383,8 @@ host_tests()
       tools/report/test_build_demo_report.py \
       tools/reproduce/test_host.py \
       tools/reproduce/test_board_workflow_mocked_sdb.py \
+      tools/runners/system_level_before_after_20260908/test_accepted_composition.py \
+      tools/runners/system_level_before_after_20260908/test_directory_disposition.py \
       tools/runners/tool_provenance_20260903/test_host.py
 )
 
@@ -386,6 +401,7 @@ check a-anchor-public-replay-cmp a_anchor_replay
 check gbs-heldout-public-replay-cmp gbs_heldout_replay
 check gst-public-replay-cmp gst_replay
 check trimmable-estimator-cmp trimmable_estimator_replay
+check system-before-after-public-replay-cmp system_before_after_replay
 check acceptance-v4 acceptance_replay
 if [ -f "$repo/docs/demo_report.html" ] && [ -f "$repo/tools/report/source_commit.txt" ]; then
     check offline-report-byte-cmp report_rebuild

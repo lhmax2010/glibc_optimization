@@ -167,6 +167,14 @@ plus the mocked board-workflow group). Their external-command boundary is:
 | `tools/reproduce/test_host.py` | `git`, `python3`, base shell utilities | RPM/GBS paths use self-contained stubs; ARM build check is explicit `SKIPPED` without its environment |
 | `tools/reproduce/test_board_workflow_mocked_sdb.py` | `sh`; creates its own `sdb` stub | No real SDB or board connection |
 | `tools/runners/tool_provenance_20260903/test_host.py` | `python3`; local XML fixtures | No network or repository download |
+| `tools/runners/system_level_before_after_20260908/test_accepted_composition.py` | `python3`, `git`; public compact files | Byte-exact five-file replay, immutable historical STOP, cleanup proofs; no local full archives or board access required |
+| `tools/runners/system_level_before_after_20260908/test_directory_disposition.py` | current Python interpreter; mocked SDB transport | Directory/UID/200-byte/health failure paths; no actual SDB or root |
+
+System before-after L1 is included in `verify`: the fixed analyzer replays the
+accepted 18+3 parsed points and GST cycles, compares five derived files, and
+independently checks the delayed cleanup logs. This does not rerun any accepted
+measurement. The nonempty GDB directories remain REPORT_ONLY, not "zero residue".
+See the [guide](../../docs/demo_reproduction_guide_20260901.md#l1-system-before-after).
 
 The top-level static GBS check parses the spec and manifest in Python. `rpmspec -P`
 is optional and reports `SKIPPED` when absent, non-executable, timed out, or returning

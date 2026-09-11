@@ -1,5 +1,44 @@
 # 两日批量执行汇总（2026-09-08 至 09-10）
 
+## 当前续报（2026-09-11）：延期收尾完成，21 格进入 Demo 集成
+
+PM 五目录裁决已按一次受限 root round 执行，详见[报告 §12.1](system_level_before_after_20260908.md#121-实际处置与收尾结果)。
+实际四目录均非空，含 __pycache__/auto-load 等；全部保留待查，镜像 python 不动。
+按 PM 规则这不是停止门，但不能声称零残留。UID 5001→0→5001，root-off 首次成功；
+原包清单、schedutil、全系统 PID 1/原 daemon、boot、dmesg/zram/stability 均通过。
+原 21 格全部保留，本次没有重跑、删除、推送、包改动或重启。
+
+| 段 | 当前状态 |
+|---|---|
+| 1 执行器闭合 | 完成；限定目录执行器以 c89c9ab 先推 main，232 项 host 测试通过 |
+| 2 G4/延期收尾 | 完成；旧 STOP 回执保留，新独立收尾证明闭合，非空项 REPORT_ONLY |
+| 3 Demo 集成 | 已生成完整 21 格/333 对点的合成证据，更新 HTML/双语入口/L1；交付验证进行中 |
+| 4 demo-v12 | 尚未宣告通过；完整远端矩阵与构建证明结束后另记 |
+| 5 复审 brief | 仅在 v12 切出后写入，不联系第三方 |
+
+关键数字均为 cycle=1 三重复中位，来源与极差见
+[summary.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)与
+[L1](demo_reproduction_guide_20260901.md#l1-system-before-after)。
+
+| 组 | RSS 下降 MiB / % | 系统配对净效应 MiB | 代价 ms | none RSS 下降 |
+|---|---|---|---|---|
+| G1 mixed | 5.296875 / 40.696279% | −0.167969 | 1.458574 释放点 | 0 |
+| G2 medium-only | 5.960938 / 45.322245% | +5.304688 | 1.478167 释放点 | 0 |
+| G3 gst | 1.820312 / 21.009919% | +1.855469 | 0.843612 释放点 | 0 |
+| G4 enlightenment | 0.003906 / 0.033659% | NA，无 none | 1899.209517 含 gdb/ptrace | NA |
+
+G4 heap PD 88/0/4 KiB，不能把 RSS 0.03% 当 heap 百分比；
+[cycles.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)。
+gst p99 −1.652834 ms 对离散 11.794149 ms，固定门未检出，不等于零代价；
+[判定](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json)。
+测试板量级、非产品或整机收益；mixed 系统净效应为负，none 的零仅指 RSS。
+
+已推执行器 SHA：`c89c9abd1add883fd35850e805e9d4a7248b2eee`。后续提交/交付 SHA
+待验证后追加。待查非空目录不阻断本次交付；若未来需查其内容或清除，须另行授权，
+不外推本次 root round。**矩阵正式通过前有效快照仍为 demo-v11**。
+
+以下历次停止记录全部保留，不代表本节之后的最新终态。
+
 ## 最新续报（2026-09-11 05:04 UTC）：受限 root 门闭合，五目录归属仍 STOP
 
 PM 于 2026-09-10 新授权进程全系统视图可纳入一次受限 root round，非我方进程只报告、

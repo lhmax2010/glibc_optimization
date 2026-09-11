@@ -417,6 +417,50 @@ B2 E4 rest=6019572B heap=3324->3288KiB reclaim=36KiB
 estimator outside=15/15 E4=2200-7976KiB measured=36KiB
 ```
 
+<a id="l1-system-before-after"></a>
+### L1 · 系统前后对照（已验收 18+3，延期收尾后集成）
+
+仅需本仓库与 Python ≥3.10；不连板、不重跑测量。原 annotated 合同/analyzer 一字不改，
+历史两个 STOP 回执保留。已验收数据分为重启前 18 格与重启后 G4 三格，另以延期收尾
+核验闭合；这不是一次不中断的连续运行。来源身份链见
+[composition.json](../data/raw/system_level_before_after_20260908/accepted_matrix/composition.json)。
+
+```sh
+system_out=$(mktemp -d)
+system_source=data/raw/system_level_before_after_20260908/accepted_matrix
+python3 tools/runners/system_level_before_after_20260908/replay_compact.py \
+  --points "$system_source/point_source.json" \
+  --gst-cycles "$system_source/gst_cycles.tsv" --output-dir "$system_out"
+cmp "$system_source/cycles.tsv" "$system_out/cycles.tsv"
+cmp "$system_source/summary.tsv" "$system_out/summary.tsv"
+cmp "$system_source/gst_repetitions.tsv" "$system_out/gst_repetitions.tsv"
+cmp "$system_source/gst_arms.tsv" "$system_out/gst_arms.tsv"
+cmp "$system_source/gst_comparison.json" "$system_out/gst_comparison.json"
+```
+
+预期唯一输出如下，五个 cmp 静默且 RC=0；预计分钟级。workflow verify 已纳入同一
+`system-before-after-public-replay-cmp`，调用原 analyzer，不复制统计逻辑。
+
+```text
+PASS system-before-after compact replay cells=21 cycles=333 group_arms=7
+```
+
+| 新 Demo 数字 | 公开输入与派生字段 | 判读 / 单位 |
+|---|---|---|
+| mixed RSS 13.015625→7.718750 MiB，40.696279%；medium-only 13.152344→7.191406 MiB，45.322245% | [point_source.json](../data/raw/system_level_before_after_20260908/accepted_matrix/point_source.json) → [summary.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv) 的 rss_pre/post_kib_median、rss_drop_pct_median | KiB/1024；cycle=1，每臂三重复，三列各自取中位 |
+| gst RSS 8.671875→6.859375 MiB，21.009919%；前三组 none RSS 下降 0 | 同上 summary；[cycles.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv) | 不是用前后中位相减计算百分比；0 只指 RSS 下降 |
+| 系统配对净效应 −0.167969/+5.304688/+1.855469 MiB | summary 的 memavailable_net_mb_median，或 cycles 的 memavailable_net_mib | summary 旧字段是十进制 MB，除以 1.048576 转 MiB；同重复/周期顺序 none 对照，不是并行同期 |
+| 调用中位 1.458574/1.478167/0.843612 ms | summary 的 trim_elapsed_ms_median | G1/G2/G3 释放点约 1 ms，不含 G4 |
+| G4 heap 88/0/4 KiB，RSS 0.033659%，注入 1899.209517 ms | cycles 的 heap_drop_kib；summary 的 rss_drop_pct_median、trim_elapsed_ms_median | 约 0.03% 的分母为 RSS；计时含 gdb/ptrace；无 none，系统净效应 NA |
+| gst p99 −1.652834 ms 对 none 离散 11.794149 ms，未检出 | [gst_cycles.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_cycles.tsv) → [gst_comparison.json](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json) | 原 nearest-rank 与固定规则；方向 REPORT_ONLY，不等于零代价，不与旧 gst 轮混池 |
+| major fault 0；G4 静置 minflt 1/0/1 | cycles 的 capture_majflt、next_cycle_majflt、idle_120s_minflt/majflt | 最后周期 next-cycle NA，不宣称首启任意窗口无 faults |
+
+所有原始件 SHA/拉回完整性在 host 组合入口二次校验；完整原始件本地留存，可按请求
+提供。公开 L1 只重放解析后的点和 gst cycle 转录，不替代原始件独立来源审计。
+收尾原文与独立复核见[报告 §12.1](system_level_before_after_20260908.md#121-实际处置与收尾结果)：
+四个非空 GDB 目录按 PM 裁决保留待查，不将此项写成“零残留”。
+测试板量级不等于产品收益；整机/产品侧仍需另行验证，mixed 的负系统净效应保留原符号。
+
 ### Demo 数字到公开输入的总表
 
 | Demo 展示值 | 公开输入 | 复算入口 |
@@ -436,6 +480,7 @@ estimator outside=15/15 E4=2200-7976KiB measured=36KiB
 | Tizen GST `5/5`、回收 `8/16/16/20/16 KiB`、间隔 `120.122271759–120.142672892 s` | [`cells_derived.tsv`](../data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv)、[`summary.json`](../data/raw/tizen_native_evidence_b2_20260904/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
 | E4′ rest `6019572 B`、heap `3324→3288 KiB`、回收 `36 KiB` | [`malloc_info_E4_PRIME.xml`](../data/raw/tizen_native_evidence_b2_20260904/malloc_info_E4_PRIME.xml)、[`summary.json`](../data/raw/tizen_native_evidence_b2_20260904/summary.json) | [原生 B2 L1](#l1-tizen-native-b2) |
 | 整页估算 E4′ `2200–7976 KiB`；严格配对 `15/15` 区间外 | [`validation.tsv`](../data/raw/trimmable_estimator_20260905/validation.tsv) | [原生 B2 L1](#l1-tizen-native-b2) |
+| 系统前后对照 RSS / 配对系统净效应 / 释放点与注入代价 / 本轮 gst p99 | [点转录](../data/raw/system_level_before_after_20260908/accepted_matrix/point_source.json)、[gst cycles](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_cycles.tsv) | [系统前后对照 L1](#l1-system-before-after)，上表逐项字段映射 |
 
 ## L2 · 测试板实验复跑
 

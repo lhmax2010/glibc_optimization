@@ -155,6 +155,48 @@ def build(repo: Path, source_commit: str) -> str:
     native_b2_cells = read_tsv(raw / "tizen_native_evidence_b2_20260904/cells_derived.tsv")
     estimator_validation = read_tsv(raw / "trimmable_estimator_20260905/validation.tsv")
     acceptance = json.loads((repo / "tools/reproduce/acceptance_bands.json").read_text())
+    system_dir = raw / 'system_level_before_after_20260908/accepted_matrix'
+    system_summary = {(r['group'], r['arm']): r for r in read_tsv(system_dir / 'summary.tsv')}
+    system_cycles = read_tsv(system_dir / 'cycles.tsv')
+    system_gst = json.loads((system_dir / 'gst_comparison.json').read_text())
+    system_proof = json.loads((system_dir / 'composition.json').read_text())
+    assert system_proof['verdict'] == 'PASS_ACCEPTED_MATRIX_WITH_DELAYED_CLEANUP'
+    assert len(system_proof['completed_cells']) == 21 and len(system_cycles) == 333
+    # Positive controls: these are independently derived from the accepted,
+    # frozen-analyzer TSVs; a changed customer number must fail the build.
+    system_expected = {
+        'G1': ('13328','7904','5.296875','40.696279','-0.176128','1.458574'),
+        'G2': ('13468','7364','5.960938','45.322245','5.562368','1.478167'),
+        'G3': ('8880','7024','1.820312','21.009919','1.945600','0.843612'),
+        'G4': ('11884','11880','0.003906','0.033659','NA','1899.209517'),
+    }
+    system_fields = ('rss_pre_kib_median','rss_post_kib_median','rss_drop_mib_median',
+        'rss_drop_pct_median','memavailable_net_mb_median','trim_elapsed_ms_median')
+    for group, expected in system_expected.items():
+        row = system_summary[group, 'trim']
+        assert tuple(row[k] for k in system_fields) == expected
+        if group != 'G4':
+            assert system_summary[group, 'none']['rss_drop_mib_median'] == '0.000000'
+            assert all(float(r['rss_drop_mib']) == 0 for r in system_cycles if r['group']==group and r['arm']=='none')
+    system_g4 = [r for r in system_cycles if r['group']=='G4']
+    assert [int(r['heap_drop_kib']) for r in system_g4] == [88,0,4]
+    assert all(r['capture_majflt']=='0' for r in system_cycles)
+    assert all(r['next_cycle_majflt'] in ('0','NA') for r in system_cycles)
+    assert [r['idle_120s_minflt'] for r in system_g4] == ['1','0','1']
+    assert all(r['memavailable_net_mib']=='NA' for r in system_g4)
+    assert system_gst['delta_p99_ms'] == -1.652834
+    assert system_gst['none_p99_repeat_dispersion_ms'] == 11.794149
+    assert system_gst['business_cost_visible'] is False
+    system_links = ('<a href="../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv">summary.tsv</a> · '
+        '<a href="../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv">逐周期 TSV</a> · '
+        '<a href="'+guide+'#l1-system-before-after">L1 复算</a>')
+    system_table = []
+    for group, label in (('G1','mixed'),('G2','medium-only'),('G3','gst 解码循环'),('G4','enlightenment 常驻对照')):
+        r = system_summary[group,'trim']
+        net = 'NA（无 none 臂）' if group=='G4' else f"{float(r['memavailable_net_mb_median']) / 1.048576:+.6f}"
+        cost = r['trim_elapsed_ms_median'] + ('（含 gdb/ptrace）' if group=='G4' else '（释放点调用）')
+        system_table.append(f'<tr><td>{group} {label}</td><td>{float(r["rss_pre_kib_median"])/1024:.6f} → {float(r["rss_post_kib_median"])/1024:.6f}</td>'
+            f'<td>{r["rss_drop_mib_median"]} / {r["rss_drop_pct_median"]}%</td><td>{net}</td><td>{cost}</td><td>{system_links}</td></tr>')
 
     expected_docs = (
         "docs/demo_narrative_20260901.md",
@@ -419,7 +461,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <h1>只在四门全过时 trim</h1>
   <p>把自动归还当作反信号，先用 M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针实测收益达到事前固定阈值，最后把再激活 faults、业务 p99 和健康门作为同一份代价合同验收。</p>
 </header>
-<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#native">真实平台进程</a><a href="#decision-gate">决策门</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
+<nav aria-label="报告章节"><a href="#summary">摘要</a><a href="#system-effect">优化效果一览</a><a href="#finding-one">发现一</a><a href="#finding-two">发现二</a><a href="#s4">S4 效果</a><a href="#gst">真实并发</a><a href="#native">真实平台进程</a><a href="#decision-gate">决策门</a><a href="#reproduce">复现</a><a href="#boundaries">边界</a></nav>
 <main>
 <section id="summary">
   <span class="pill">一页摘要</span><h2>方案、交付合同与头条结果</h2>
@@ -436,6 +478,19 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
     <div class="card"><small>门控 trim 回收 / 已释放</small><strong class="metric">{min(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%–{max(float(r['trim_reclaim_pct_of_released']) for r in b_cycles if r['trim_at']=='valley'):.2f}%</strong><span>调用中位 mixed {s4_trim_median_by_profile['mixed']:.6f} / medium-only {s4_trim_median_by_profile['medium-only']:.6f} ms；majflt 0</span><br><a href="{evidence_s4_b}">证据 TSV</a> · <a href="{guide}#l1-s4">L1 复算</a></div>
     <div class="card"><small>gst 业务 p99 固定规则判定（REPORT_ONLY）</small><strong class="metric">+{gst_comparison['delta_p99_ms']:.3f} ms &lt; {gst_comparison['none_p99_repeat_dispersion_ms']:.3f} ms</strong><span class="pill">未检出；margin {gst_p99_margin:.3f} ms（阈值 {gst_p99_threshold_pct:.1f}%）</span><br><a href="../data/raw/gst_trim_cost_20260901/comparison.json">证据 JSON</a> · <a href="{guide}#l1-gst-trim-cost">L1 复算</a></div>
   </div>
+</section>
+
+<section id="system-effect">
+  <span class="pill">优化效果一览</span><h2>释放后的进程内存，实际降了多少？</h2>
+  <p class="lead">测试板负载的进程 RSS 明显下降，但系统背景波动不能忽略。这是测试板合成/解码工具负载量级，不等于产品收益。</p>
+  <p>下表沿用合同的 cycle=1、每臂三重复口径：前值、后值、降幅各自取中位；中位前值减中位后值不一定等于降幅中位。RSS 是进程驻留内存，不等于 glibc 堆 PD。</p>
+  <table><thead><tr><th>目标</th><th>RSS 前 → 后（MiB）</th><th>RSS 降幅 MiB / %</th><th>配对 MemAvailable 净效应（MiB）</th><th>耗时中位（ms）</th><th>证据 / 复算</th></tr></thead><tbody>{''.join(system_table)}</tbody></table>
+  <p>G1/G2/G3 不调用 trim 的对照臂 RSS 下降均为 0；这个 0 不指系统 MemAvailable。系统净效应按同重复、同周期的顺序 none 格相减，非同时并行对照。mixed 为 −0.167969 MiB，不能宣传为系统净增。每格极差、堆 PD/other-anon/total PD、memps 与 faults 见完整 TSV。{system_links}</p>
+  <p>释放点调用为 0.843612–1.478167 ms 的逐组中位（约 1 ms）；前后采样窗口 major fault 为 0，末周期 next-cycle 为 NA，G4 的静置 faults 独立记录。trim/none 使用同一已验哈希产物，差别是运行时调用，不修改 ELF，二进制体积不变；不是磁盘空间优化。{system_links}</p>
+  <p>本轮 gst 业务 p99 中位差 {system_gst['delta_p99_ms']:.6f} ms，none 重复间离散 {system_gst['none_p99_repeat_dispersion_ms']:.6f} ms；按固定规则未检出可见劣化，方向仅 REPORT_ONLY，不等于零代价。<a href="../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json">本轮 p99 证据</a> · <a href="{guide}#l1-system-before-after">复算</a>。此前 gst 代价轮的数字仍在下方独立呈现，不混池。</p>
+  <p>G4 常驻守护进程堆 PD 仅下降 88/0/4 KiB，RSS 降幅中位约 0.03%（分母是 RSS）；1899.209517 ms 是包含 gdb/ptrace 的注入开销，不是约 1 ms 的钩子代价。与 B/B2 的 272 KiB / 36 KiB / 8–20 KiB 同向：这些格的主要收益在批量释放型负载，不在已测常驻守护格；不外推所有服务。{system_links} · <a href="#native">历史原生证据</a></p>
+  <p class="source-links"><a href="system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果">完整报告与分期边界</a> · <a href="../data/raw/system_level_before_after_20260908/accepted_matrix/composition.json">18+3 与延期收尾证据链</a></p>
+  <div class="callout">延期收尾按 PM 规则通过，不等于零残留：四个非空 GDB 目录均保留待查，镜像 python 未动；无测量重跑。<a href="system_level_before_after_20260908.md#121-实际处置与收尾结果">目录处置原文</a>。整机/产品收益仍待产品板验证。</div>
 </section>
 
 <section id="finding-one">
@@ -533,6 +588,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
 <section id="boundaries">
   <span class="pill warn">边界</span><h2>这份证据没有承诺什么</h2>
   <ul>
+    <li>系统前后对照只代表测试板负载；mixed 的配对 MemAvailable 净效应为负，不能外推整机收益。G4 堆 PD 下降 88/0/4 KiB，其注入计时含 gdb/ptrace；四个非空 GDB 目录按 PM 规则保留待查。<a href="#system-effect">同口径绝对值与限制</a></li>
     <li>合成代理仍缺产品候选的 M7 live/bin 分解、产品业务时延，以及真实并发分配线程的直接全-arena 锁停顿。</li>
     <li>gst trim 在 PLAYING→NULL release 后触发；它测到下一循环业务墙钟，但没有把 trim 放进并发分配热区。</li>
     <li><strong>“p99 未检出”不等于“零代价”</strong>：结论严格受三重复、{gst_comparison['primary_samples_per_repeat']} 个主样本与固定离散门约束。<a href="../data/raw/gst_trim_cost_20260901/comparison.json">判定证据</a></li>

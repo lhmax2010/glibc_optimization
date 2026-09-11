@@ -1,0 +1,4 @@
+apps  data  dbspace  dotnet  globalapps  home  media  media_shared  share
+
+RC=0
+DONE

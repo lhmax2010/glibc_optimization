@@ -26,6 +26,13 @@ results, not a product-memory-benefit promise.
 | Gated valley trim vs none | `80.18%–85.45%` of released payload; median call mixed `1.233269 ms` / medium-only `1.218361 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` vs none dispersion `6.784167 ms`: margin `0.555556 ms`, 91.8% of threshold, `REPORT_ONLY` not visible; the same p50 rule is visible (`+1.870462` vs `0.173927 ms`); `+359 minflt/cycle` | [Real concurrency](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json), [`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
 | Tizen native cross-witness | Historical enlightenment cells: about `5.84 MiB` rest and `272/4/4 KiB` reclaim. B2: official gst `5/5`, reclaim `8/16/16/20/16 KiB`; five verified UI cycles then E4′ rest `6019572 B`, reclaim `36 KiB`. Project heap PD and Tizen `memps` match exactly | [Native process evidence](docs/demo_report.html#native) | [`B2 cells`](data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv), [`B2 summary`](data/raw/tizen_native_evidence_b2_20260904/summary.json), [`historical summary`](data/raw/tizen_native_evidence_20260904/summary.json) |
+| Absolute RSS: allocation loads | mixed `13.015625 → 7.718750 MiB`, drop `40.696279%`; medium-only `13.152344 → 7.191406 MiB`, drop `45.322245%`; paired system available-memory effects `−0.167969 / +5.304688 MiB`, respectively | [Effect overview](docs/demo_report.html#system-effect), [L1 replay](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [Three-repeat summary](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv), [cycle-level inputs](data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv) |
+| Absolute RSS: decoder vs none | gst `8.671875 → 6.859375 MiB`, drop median `21.009919%`; paired system effect `+1.855469 MiB`; call median `0.843612 ms`; none RSS drop `0`; p99 change `−1.652834 ms` vs repeat dispersion `11.794149 ms`, not detected by the fixed rule | [Effect overview](docs/demo_report.html#system-effect), [L1 replay](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [Summary](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv), [p99](data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json) |
+
+Absolute-value rows use cycle 1, with three-repeat medians computed separately for
+before, after and the paired percentage; subtracting the two medians need not give
+the median drop. None's zero refers to process RSS, not system MemAvailable.
+These are test-board scales, not product benefit. See the [definitions](docs/system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果).
 
 The batch release reference `48.9% / 1.36 MiB × 8 processes` comes from
 `<TEST_IMAGE_B>` / `glibc-2.40-2.8`; it is a compatibility comparison, not part of
@@ -118,6 +125,17 @@ artifacts. Inspect the exact reported path, then clean it with
   available on request through the project owner.
 
 ## Environment and acceptance
+
+The accepted system comparison keeps all 21 original cells; none were rerun for
+packaging. In its G4 resident-daemon control, heap PD fell `88/0/4 KiB`; median RSS
+drop was `0.033659%` (about `0.03%` of RSS, not heap PD). The `1899.209517 ms`
+injection includes gdb/ptrace and is not the approximately 1 ms release-hook cost.
+The trim/none arms use the same hashed binary: this is a runtime call, with no ELF
+or binary-size change. [Evidence and L1](docs/demo_reproduction_guide_20260901.md#l1-system-before-after).
+
+Delayed cleanup passed under the authorized rule, not a zero-residue claim:
+four nonempty GDB directories were listed and left pending; the image's Python
+directory was preserved, and the session returned to UID 5001. [Disposition](docs/system_level_before_after_20260908.md#121-实际处置与收尾结果).
 
 [`acceptance_bands.json`](tools/reproduce/acceptance_bands.json) is the single
 machine-readable contract. The only deterministic numeric item is released-payload

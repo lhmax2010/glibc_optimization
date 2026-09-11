@@ -230,3 +230,15 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 实现提交 `3fe95c18a52e86ef45ad97ab0b6323737eecd311` 已在 clean HEAD 实际完成 GBS
 构建与 publisher 校验；[v11 归档](../data/raw/demo_v11_delivery_20260908/gbs/README.md)
 绑定新入口字节，旧 proof 留作对应执行提交的历史。没有板端连接或新的实验数据。
+## v11 → v12：已验收系统前后对照与延期收尾集成
+
+- SYSTEM-CLEANUP-BOUNDS / PM-GDB-DIRECTORIES-20260911：受限目录执行器与故障回归，
+  [c89c9abd1add883fd35850e805e9d4a7248b2eee](https://github.com/lhmax2010/glibc_optimization/commit/c89c9abd1add883fd35850e805e9d4a7248b2eee)；
+  四个非空目录实际全部保留，UID 恢复，健康核验闭合。[证据](system_level_before_after_20260908.md#121-实际处置与收尾结果)。
+- SYSTEM-ABSOLUTE：按原 annotated `system-before-after-contract-20260908` 合同组合
+  已验收 18+3 格，不改历史 STOP，不重跑；[组合证明](../data/raw/system_level_before_after_20260908/accepted_matrix/composition.json)。
+- DEMO-SYSTEM-OVERVIEW：HTML 摘要后新增绝对值章节、双语入口两行、L1 五项 cmp 与
+  跨载体数字断言；[新章节](demo_report.html#system-effect)、[复算](demo_reproduction_guide_20260901.md#l1-system-before-after)。
+  保留 mixed 系统净效应为负、G4 含 ptrace、非空目录待查及非产品收益的边界。
+- 入口只新增 host 公开件复算/测试，不修改既有启动注入防护、GBS/held-out 结论或
+  验收带；交付将执行原完整远端矩阵。裁决依据见[PM 台账](pm_decisions.md)。

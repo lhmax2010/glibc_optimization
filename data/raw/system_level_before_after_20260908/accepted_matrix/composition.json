@@ -1,0 +1,169 @@
+{
+  "schema": "system-before-after.accepted-composition-receipt.v1",
+  "verdict": "PASS_ACCEPTED_MATRIX_WITH_DELAYED_CLEANUP",
+  "contract_tag": "system-before-after-contract-20260908",
+  "contract_tag_object": "0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3",
+  "execution_sha256": [
+    "5cc81666216b4ee204f0cf5171ac8af0dc7655992b66bc0dd399145c4f64c61c",
+    "373282a0a93179a8f8563dd3a6889a6a9e6277df8d1149e49ada334e97711886"
+  ],
+  "historical_execution_verdicts": [
+    "STOP",
+    "STOP"
+  ],
+  "execution_epochs": [
+    {
+      "start_utc": "2026-09-08T06:05:53.362393+00:00",
+      "end_utc": "2026-09-08T08:16:11.304636+00:00",
+      "cells": [
+        "G1_none_r1",
+        "G1_trim_r1",
+        "G2_none_r1",
+        "G2_trim_r1",
+        "G1_trim_r2",
+        "G1_none_r2",
+        "G2_trim_r2",
+        "G2_none_r2",
+        "G1_none_r3",
+        "G1_trim_r3",
+        "G2_none_r3",
+        "G2_trim_r3",
+        "G3_none_r1",
+        "G3_trim_r1",
+        "G3_trim_r2",
+        "G3_none_r2",
+        "G3_none_r3",
+        "G3_trim_r3"
+      ]
+    },
+    {
+      "start_utc": "2026-09-09T05:26:19.254318+00:00",
+      "end_utc": "2026-09-09T05:33:19.604651+00:00",
+      "cells": [
+        "G4_trim_r1",
+        "G4_trim_r2",
+        "G4_trim_r3"
+      ]
+    }
+  ],
+  "acceptance": {
+    "approved_by": "PM",
+    "decision_date": "2026-09-10",
+    "rule": "preserve accepted 21; never rerun"
+  },
+  "cleanup": {
+    "verdict": "PASS_DELAYED_CLEANUP_WITH_REPORT_ONLY_NONEMPTY",
+    "files": 116,
+    "commands": 111,
+    "shell_requests": 107,
+    "request_bytes": [
+      70,
+      161
+    ],
+    "uid_sequence": [
+      5001,
+      0,
+      5001
+    ],
+    "root_rounds": 1,
+    "root_off_attempts": 1,
+    "disposition": [
+      {
+        "path": "/usr/share/gdb/python/gdb/function",
+        "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+        "raw_listing": "__pycache__"
+      },
+      {
+        "path": "/usr/share/gdb/python/gdb/command",
+        "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+        "raw_listing": "__pycache__"
+      },
+      {
+        "path": "/usr/share/gdb/python/gdb",
+        "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+        "raw_listing": "__pycache__  command  function"
+      },
+      {
+        "path": "/usr/share/gdb",
+        "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+        "raw_listing": "auto-load  python"
+      }
+    ],
+    "health": {
+      "START": {
+        "process_rows": 207,
+        "pid_1": true,
+        "packages": 1263,
+        "governors": [
+          "schedutil",
+          "schedutil",
+          "schedutil",
+          "schedutil"
+        ],
+        "stability_count": 0,
+        "dmesg_increment_lines": 39,
+        "oom_lmk": 0,
+        "zram_delta": [
+          0,
+          0,
+          0
+        ]
+      },
+      "END": {
+        "process_rows": 207,
+        "pid_1": true,
+        "packages": 1263,
+        "governors": [
+          "schedutil",
+          "schedutil",
+          "schedutil",
+          "schedutil"
+        ],
+        "stability_count": 0,
+        "dmesg_increment_lines": 39,
+        "oom_lmk": 0,
+        "zram_delta": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "measurement_cells_rerun": 0,
+    "source_execution_sha256": "373282a0a93179a8f8563dd3a6889a6a9e6277df8d1149e49ada334e97711886"
+  },
+  "cleanup_audit_sha256": "35cbc7e4914a3941f1672a70ca435299d96b3701c4ef1560a15b60f8eb85d3bb",
+  "completed_cells": [
+    "G1_none_r1",
+    "G1_trim_r1",
+    "G2_none_r1",
+    "G2_trim_r1",
+    "G1_trim_r2",
+    "G1_none_r2",
+    "G2_trim_r2",
+    "G2_none_r2",
+    "G1_none_r3",
+    "G1_trim_r3",
+    "G2_none_r3",
+    "G2_trim_r3",
+    "G3_none_r1",
+    "G3_trim_r1",
+    "G3_trim_r2",
+    "G3_none_r2",
+    "G3_none_r3",
+    "G3_trim_r3",
+    "G4_trim_r1",
+    "G4_trim_r2",
+    "G4_trim_r3"
+  ],
+  "cycles": 333,
+  "gst_cycles": 306,
+  "cmp_files": [
+    "cycles.tsv",
+    "summary.tsv",
+    "gst_repetitions.tsv",
+    "gst_arms.tsv",
+    "gst_comparison.json"
+  ],
+  "original_raw_policy": "complete originals retained locally; available on request"
+}

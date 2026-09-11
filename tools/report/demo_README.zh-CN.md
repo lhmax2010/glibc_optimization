@@ -23,6 +23,12 @@ M7 确认 allocator 空闲驻留，再要求同目标、同相位的 trim 探针
 | 门控 valley trim vs none | 已释放 payload 的 `80.18%–85.45%`；调用中位 mixed `1.233269 ms` / medium-only `1.218361 ms`；下一周期 `+1351/+1465 minflt`，`majflt=0` | [S4 效果](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv)、[`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` 对 none 离散 `6.784167 ms`：margin `0.555556 ms`、达门槛 91.8%，`REPORT_ONLY` 未检出；同规则 p50 判可见（`+1.870462` 对 `0.173927 ms`）；`+359 minflt/循环` | [真实并发](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json)、[`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
 | Tizen 原生交叉见证 | 历史 enlightenment 格约 `5.84 MiB` rest、回收 `272/4/4 KiB`；B2 官方 gst `5/5` 回收 `8/16/16/20/16 KiB`，原生 UI 五次验证后 E4′ rest `6019572 B`、回收 `36 KiB`；项目 heap PD 与 Tizen `memps` 逐值一致 | [真实平台进程](docs/demo_report.html#native) | [`B2 格`](data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv)、[`B2 摘要`](data/raw/tizen_native_evidence_b2_20260904/summary.json)、[`历史摘要`](data/raw/tizen_native_evidence_20260904/summary.json) |
+| 分配负载 RSS 绝对值 | mixed `13.015625 → 7.718750 MiB`，下降 `40.696279%`；medium-only `13.152344 → 7.191406 MiB`，下降 `45.322245%`；系统配对净效应分别 `−0.167969 / +5.304688 MiB` | [优化效果一览](docs/demo_report.html#system-effect)、[L1 复算](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [三重复摘要](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)、[逐周期](data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv) |
+| 解码 RSS vs none | gst `8.671875 → 6.859375 MiB`，降幅中位 `21.009919%`；系统配对净效应 `+1.855469 MiB`；调用中位 `0.843612 ms`；none RSS 下降 `0`；p99 差 `−1.652834 ms` 对离散 `11.794149 ms`，固定规则未检出 | [优化效果一览](docs/demo_report.html#system-effect)、[L1 复算](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [摘要](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)、[p99](data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json) |
+
+绝对值行沿用 cycle=1、每臂三重复；前值、后值、配对降幅分别取中位，前后中位相减
+不一定等于降幅中位。none 的零指进程 RSS，不指系统 MemAvailable。这里只是测试板
+量级，非产品收益。[口径](docs/system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果)。
 
 批量释放相位的 `48.9% / 1.36 MiB × 8 进程` 来自 `<TEST_IMAGE_B>` /
 `glibc-2.40-2.8`，仅为相容性对照，不属于冻结矩阵
@@ -98,6 +104,15 @@ held-out 验证。范围详见 [held-out 报告 §7](docs/gbs_heldout_validation
 - `board_results/`：不公开；完整原始件在 host 本地留存，可按请求提供。
 
 ## 环境前提与验收带
+
+系统前后对照保留原 21 格，打包不重跑。G4 常驻守护对照堆 PD 下降 `88/0/4 KiB`；
+RSS 降幅中位 `0.033659%`（约 `0.03%`，分母是 RSS 而不是堆 PD）。`1899.209517 ms`
+包含 gdb/ptrace 注入开销，不是约 1 ms 的释放点钩子代价。trim/none 两臂使用同一已验
+哈希二进制，差别为运行时调用，不修改 ELF，二进制体积不变。
+[证据与 L1](docs/demo_reproduction_guide_20260901.md#l1-system-before-after)。
+
+延期收尾按授权规则通过，不等于零残留：四个非空 GDB 目录列举后保留待查，镜像 Python
+目录保留，会话已回到 UID 5001。[处置原文](docs/system_level_before_after_20260908.md#121-实际处置与收尾结果)。
 
 唯一机器合同是 [`acceptance_bands.json`](tools/reproduce/acceptance_bands.json)。唯一
 确定性数字为 released payload 字节。validity gates 是：回收量 4 KiB 对齐、

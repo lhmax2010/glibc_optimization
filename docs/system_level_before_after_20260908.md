@@ -942,3 +942,96 @@ python3 tools/runners/system_level_before_after_20260908/dispose_gdb_dirs_202609
 执行器要求自身为已推 main 的干净提交后才可连接板。确定性验收：一操作一请求、
 完整请求 ≤200 字节、远端证明匹配、非 root 复原；健康/有效性门沿用原 G4；本次只做
 目录处置，不新增性能容差或测量值。非空项按本次 PM 裁决单列，不视为性能/健康失败。
+
+### 12.1 实际处置与收尾结果
+
+执行器 `c89c9abd1add883fd35850e805e9d4a7248b2eee` 先推 main；232 项本轮 host 测试
+及默认 verify 通过后执行。实际窗口为 2026-09-11 06:39:24.953366–06:39:42.378125 UTC。
+原文/逐文件编辑前后 SHA 见[manifest](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/manifest.json)，
+时序见[commands](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/commands.json)。
+
+| 目录 | ls -A 原文（含隐藏项） | 处置 / 原文 |
+|---|---|---|
+| /usr/share/gdb/python/gdb/function | `__pycache__` | 非空保留待查；[原文](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_CHECK_LIST_0.txt) |
+| /usr/share/gdb/python/gdb/command | `__pycache__` | 非空保留待查；[原文](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_CHECK_LIST_1.txt) |
+| /usr/share/gdb/python/gdb | `__pycache__  command  function` | 非空保留待查；[原文](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_CHECK_LIST_2.txt) |
+| /usr/share/gdb | `auto-load  python` | 非空保留待查；[原文](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_CHECK_LIST_3.txt) |
+| /usr/share/gdb/python | `gdb` | 镜像目录保留；[结束原文](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_LIST_4.txt) |
+
+清单为板端终端多列输出，未把一行误当一个文件名/目录项计数；未进入非空子目录查文件。
+**没有发送 rmdir/rm/kill，零删除，无需恢复文件；四个非空项按最新裁决 REPORT_ONLY，
+不构成停止门。** 目录设备号/inode/权限前后一致；不能称“残留全清”或“零残留”。
+
+| 收尾项 | 核验 | 原文 |
+|---|---|---|
+| root round | 5001→0→5001，一次 root-off 成功；最后动作是降权后 id | [前](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/NONROOT_ID_BEFORE_ROOT.txt)、[root](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_ID_ROOT.txt)、[off](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_ID_OFF_1.txt) |
+| 全系统视图 | 两份均 207 行、含 PID 1；enlightenment 498/start tick 1489 和 boot 未变，无匹配测试残留 | [ps](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_PS.txt)、[目标](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_TARGET.txt)、[boot](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_BOOT.txt) |
+| 包/工作目录 | 清单 1263→1263、新增/缺失均空；gdb 和原五依赖缺席；工作目录及父目录不存在 | [包](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_PACKAGES.txt)、[回执](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/audit.json) |
+| governor/健康 | 四核 schedutil；stability 0→0；dmesg 原前缀保留，增量 39 行无 OOM/LMK；zram 三项 Δ=0 | [回执](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/audit.json)、[告警](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_ALERTS.txt)、[dmesg](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/dmesg_increment_END.txt)、[zram](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_ZRAM.txt) |
+| df | 分别取根和 /opt/usr 原文；无安装/卸载或推送 | [根](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_DF_ROOT.txt)、[/opt/usr](../data/raw/system_level_before_after_20260908/directory_disposition_20260911/ROOT_END_DF_OPTUSR.txt) |
+
+非我方 PID 667/tty7、1096/ttyS0 shell 仅报告。历史 dmesg 有 SMACK 拒绝行，不能写成
+“日志没有任何告警”。共 111 条客户端命令、107 条 shell 正文，70–161 UTF-8 字节；
+91 条 RC=0，16 条 RC=1 恰为工作目录/父目录四次缺席与六包各两次缺席，标志全部匹配。
+116 是 manifest 文件数，不是命令数。以上计数可独立从原文重放：
+
+```sh
+python3 tools/runners/system_level_before_after_20260908/analyze_directory_disposition.py \
+  data/raw/system_level_before_after_20260908/directory_disposition_20260911
+```
+
+输出 `PASS_DELAYED_CLEANUP_WITH_REPORT_ONLY_NONEMPTY`，重验哈希、操作、UID、进程
+与健康，不依赖回执自报 PASS。按 PM 裁决延期收尾闭合，**整轮完成**；旧 STOP 与 G4
+cleanup=FAIL 原回执不修改。21 格不重跑；本次无测量、注入、文件推送、包/目录/文件
+增删、governor 写入、进程终止或重启。完整原始件本地留存，可按请求提供。
+
+## 13. 已验收矩阵合成与优化效果
+
+[合成回执](../data/raw/system_level_before_after_20260908/accepted_matrix/composition.json)
+连接已验收的重启前 18 格、重启后 G4 三格与延期收尾；不是一次连续运行。两次旧执行
+回执 SHA、各 tar/文件/点转录均再次核验，原合同/analyzer 一字不改。
+[组合入口](../tools/runners/system_level_before_after_20260908/compose_accepted_measurement.py)
+不放宽旧 publish_measurement 的 STOP 拒绝门，也不覆盖历史回执。
+
+以下为合同 **cycle=1、每臂三重复** 中位，前值、后值、配对降幅分别取中位，不能把
+两个中位之差代替降幅中位。每格全量与极差见
+[cycles.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)、
+[summary.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)。
+
+| trim 组 | RSS 前→后 MiB | RSS 降幅 MiB / % 中位 | 系统配对净效应 MiB | 耗时中位 ms |
+|---|---|---|---|---|
+| G1 mixed | 13.015625→7.718750 | 5.296875 / 40.696279% | **−0.167969** | 1.458574（释放点） |
+| G2 medium-only | 13.152344→7.191406 | 5.960938 / 45.322245% | +5.304688 | 1.478167（释放点） |
+| G3 gst | 8.671875→6.859375 | 1.820312 / 21.009919% | +1.855469 | 0.843612（释放点） |
+| G4 enlightenment | 11.605469→11.601562 | 0.003906 / 0.033659% | NA，无 none 臂 | **1899.209517（含 gdb/ptrace 注入）** |
+
+前三组 none 的 RSS 下降为零，不是系统 MemAvailable 不变。系统净效应按同重复/周期
+顺序 none 格相减，非同一时刻并行隔离；mixed 为负，不能宣传系统净增。summary 中
+memavailable_*_mb 是十进制 MB，除以 1.048576 转 MiB，原字段定义保留。RSS、heap PD、
+other-anon、total PD、memps 不能互换；所有细项见逐周期 TSV。
+
+G4 heap PD 下降 **88/0/4 KiB**，memps 堆口径同步；约 **0.03% 的分母是 RSS**。
+静置 minflt **1/0/1**、majflt 零，next-cycle NA；两注入间隔均 ≥120 s，不能冒称业务
+再激活代价。见[原 G4 观察](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_points.json)。
+与[历史 B/B2](tizen_native_evidence_20260904.md)的 272 KiB / 36 KiB / 8–20 KiB 同向，
+仅支持已测批量释放负载收益明显、已测常驻守护对照收益很小的边界。
+
+本轮 gst 原 nearest-rank 规则、周期 2–51（每重复 50 主样本）：none p99 中位
+20019.978470 ms，trim 20018.325636 ms，差 **−1.652834 ms**，none 极差
+**11.794149 ms**；未检出可见劣化，仅 REPORT_ONLY，不等于零代价，不与旧 gst 轮混池。
+来源：[判定](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json)、
+[逐循环](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_cycles.tsv)。
+
+trim/none 使用相同已验哈希二进制，仅运行时调用，不修改 ELF 体积。前后采样窗 major
+fault 均为零，末周期 next-cycle NA；不外推冷启任意窗口。以上是测试板量级，整机/
+产品收益仍待产品板验证，产品侧四道启用门不变。
+
+### 13.1 复现
+
+[L1 完整命令/预期输出/五项 cmp](demo_reproduction_guide_20260901.md#l1-system-before-after)。
+板端 harness 仍为本轮目录内 execute_contract.py / execute_g4_resume.py 与
+[原合同](../tools/runners/system_level_before_after_20260908/contract.json)；不允许重跑本次
+已验收格，未来复测需另行授权/登记，root 不作默认行为。
+确定性项为合同 payload；validity gates 包括页对齐、majflt/zram/OOM-LMK、PID/身份、
+健康/清理和 UID 复原；性能量按原统计/容差规则报告，不将本次 RSS/System 结果制定为
+新验收带，G4 注入计时不套释放点调用带。

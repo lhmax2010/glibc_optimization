@@ -1,0 +1,629 @@
+{
+  "reads": {
+    "START_BOOT": [
+      "cat",
+      "/proc/sys/kernel/random/boot_id"
+    ],
+    "START_PS": [
+      "ps",
+      "-ww",
+      "-eo",
+      "pid,ppid,tty,comm,args"
+    ],
+    "START_DMESG": [
+      "dmesg"
+    ],
+    "START_ZRAM": [
+      "cat",
+      "/sys/block/zram0/mm_stat"
+    ],
+    "START_ALERTS": [
+      "ls",
+      "-A",
+      "--",
+      "/opt/usr/share/crash/livedump"
+    ],
+    "START_TARGET": [
+      "cat",
+      "/proc/498/stat"
+    ],
+    "START_PACKAGES": [
+      "rpm",
+      "-qa",
+      "--queryformat",
+      "%{NAME} %{VERSION}-%{RELEASE}.%{ARCH}\\n"
+    ],
+    "START_DF_ROOT": [
+      "df",
+      "-k",
+      "/"
+    ],
+    "START_DF_OPTUSR": [
+      "df",
+      "-k",
+      "/opt/usr"
+    ],
+    "START_WORK": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908"
+    ],
+    "START_WORK_PARENT": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/opt/usr/glibc_memopt"
+    ],
+    "START_DATE": [
+      "date",
+      "-u"
+    ],
+    "START_MEMINFO": [
+      "cat",
+      "/proc/meminfo"
+    ],
+    "START_TOP_TMP": [
+      "ls",
+      "-A",
+      "--",
+      "/tmp"
+    ],
+    "START_TOP_HOME": [
+      "ls",
+      "-A",
+      "--",
+      "/home"
+    ],
+    "START_TOP_OPTUSR": [
+      "ls",
+      "-A",
+      "--",
+      "/opt/usr"
+    ],
+    "START_GOV_0": [
+      "cat",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+    ],
+    "START_GOV_1": [
+      "cat",
+      "/sys/devices/system/cpu/cpu1/cpufreq/scaling_governor"
+    ],
+    "START_GOV_2": [
+      "cat",
+      "/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor"
+    ],
+    "START_GOV_3": [
+      "cat",
+      "/sys/devices/system/cpu/cpu3/cpufreq/scaling_governor"
+    ],
+    "START_ABSENT_libgmp": [
+      "rpm",
+      "-q",
+      "libgmp"
+    ],
+    "START_ABSENT_gdbm": [
+      "rpm",
+      "-q",
+      "gdbm"
+    ],
+    "START_ABSENT_libpython3_141_0": [
+      "rpm",
+      "-q",
+      "libpython3_141_0"
+    ],
+    "START_ABSENT_python3-base": [
+      "rpm",
+      "-q",
+      "python3-base"
+    ],
+    "START_ABSENT_python3": [
+      "rpm",
+      "-q",
+      "python3"
+    ],
+    "START_ABSENT_gdb": [
+      "rpm",
+      "-q",
+      "gdb"
+    ],
+    "END_BOOT": [
+      "cat",
+      "/proc/sys/kernel/random/boot_id"
+    ],
+    "END_PS": [
+      "ps",
+      "-ww",
+      "-eo",
+      "pid,ppid,tty,comm,args"
+    ],
+    "END_DMESG": [
+      "dmesg"
+    ],
+    "END_ZRAM": [
+      "cat",
+      "/sys/block/zram0/mm_stat"
+    ],
+    "END_ALERTS": [
+      "ls",
+      "-A",
+      "--",
+      "/opt/usr/share/crash/livedump"
+    ],
+    "END_TARGET": [
+      "cat",
+      "/proc/498/stat"
+    ],
+    "END_PACKAGES": [
+      "rpm",
+      "-qa",
+      "--queryformat",
+      "%{NAME} %{VERSION}-%{RELEASE}.%{ARCH}\\n"
+    ],
+    "END_DF_ROOT": [
+      "df",
+      "-k",
+      "/"
+    ],
+    "END_DF_OPTUSR": [
+      "df",
+      "-k",
+      "/opt/usr"
+    ],
+    "END_WORK": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/opt/usr/glibc_memopt/system_level_before_after_20260908"
+    ],
+    "END_WORK_PARENT": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/opt/usr/glibc_memopt"
+    ],
+    "END_DATE": [
+      "date",
+      "-u"
+    ],
+    "END_MEMINFO": [
+      "cat",
+      "/proc/meminfo"
+    ],
+    "END_TOP_TMP": [
+      "ls",
+      "-A",
+      "--",
+      "/tmp"
+    ],
+    "END_TOP_HOME": [
+      "ls",
+      "-A",
+      "--",
+      "/home"
+    ],
+    "END_TOP_OPTUSR": [
+      "ls",
+      "-A",
+      "--",
+      "/opt/usr"
+    ],
+    "END_GOV_0": [
+      "cat",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+    ],
+    "END_GOV_1": [
+      "cat",
+      "/sys/devices/system/cpu/cpu1/cpufreq/scaling_governor"
+    ],
+    "END_GOV_2": [
+      "cat",
+      "/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor"
+    ],
+    "END_GOV_3": [
+      "cat",
+      "/sys/devices/system/cpu/cpu3/cpufreq/scaling_governor"
+    ],
+    "END_ABSENT_libgmp": [
+      "rpm",
+      "-q",
+      "libgmp"
+    ],
+    "END_ABSENT_gdbm": [
+      "rpm",
+      "-q",
+      "gdbm"
+    ],
+    "END_ABSENT_libpython3_141_0": [
+      "rpm",
+      "-q",
+      "libpython3_141_0"
+    ],
+    "END_ABSENT_python3-base": [
+      "rpm",
+      "-q",
+      "python3-base"
+    ],
+    "END_ABSENT_python3": [
+      "rpm",
+      "-q",
+      "python3"
+    ],
+    "END_ABSENT_gdb": [
+      "rpm",
+      "-q",
+      "gdb"
+    ],
+    "INITIAL_STAT_0": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr"
+    ],
+    "INITIAL_STAT_1": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share"
+    ],
+    "INITIAL_STAT_2": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "INITIAL_STAT_3": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python"
+    ],
+    "INITIAL_STAT_4": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "INITIAL_STAT_5": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "INITIAL_STAT_6": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "INITIAL_LIST_0": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "END_DIR_0": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "END_LIST_0": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "INITIAL_LIST_1": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "END_DIR_1": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "END_LIST_1": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "INITIAL_LIST_2": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "END_DIR_2": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "END_LIST_2": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "INITIAL_LIST_3": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "END_DIR_3": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "END_LIST_3": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "INITIAL_LIST_4": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python"
+    ],
+    "END_DIR_4": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python"
+    ],
+    "END_LIST_4": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python"
+    ],
+    "CHECK_LIST_0": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "NONEMPTY_RACE_0": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "VERIFY_REMOVED_0": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "RECHECK_0_0": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr"
+    ],
+    "RECHECK_0_1": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share"
+    ],
+    "RECHECK_0_2": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "RECHECK_0_3": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python"
+    ],
+    "RECHECK_0_4": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "RECHECK_0_5": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/function"
+    ],
+    "CHECK_LIST_1": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "NONEMPTY_RACE_1": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "VERIFY_REMOVED_1": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "RECHECK_1_0": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr"
+    ],
+    "RECHECK_1_1": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share"
+    ],
+    "RECHECK_1_2": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "RECHECK_1_3": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python"
+    ],
+    "RECHECK_1_4": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "RECHECK_1_6": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb/command"
+    ],
+    "CHECK_LIST_2": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "NONEMPTY_RACE_2": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "VERIFY_REMOVED_2": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "RECHECK_2_0": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr"
+    ],
+    "RECHECK_2_1": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share"
+    ],
+    "RECHECK_2_2": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "RECHECK_2_3": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python"
+    ],
+    "RECHECK_2_4": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb/python/gdb"
+    ],
+    "CHECK_LIST_3": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "NONEMPTY_RACE_3": [
+      "ls",
+      "-A",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "VERIFY_REMOVED_3": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb"
+    ],
+    "RECHECK_3_0": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr"
+    ],
+    "RECHECK_3_1": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share"
+    ],
+    "RECHECK_3_2": [
+      "stat",
+      "-c",
+      "%F|%d|%i|%a|%u:%g|%s|%Y",
+      "--",
+      "/usr/share/gdb"
+    ]
+  },
+  "removable_directories": [
+    "/usr/share/gdb/python/gdb/function",
+    "/usr/share/gdb/python/gdb/command",
+    "/usr/share/gdb/python/gdb",
+    "/usr/share/gdb"
+  ],
+  "preserved_directory": "/usr/share/gdb/python"
+}

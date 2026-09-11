@@ -189,3 +189,35 @@ E1–E3 两间隔 `119.806876910 / 119.856460299 s` 仍是不合规记录
 
 产品侧下一步和硬前置见
 [`product_landing_recommendation_20260901.md`](product_landing_recommendation_20260901.md)。
+
+## 2026-09-11 追注：优化效果一览
+
+先展示[HTML 前后对照](demo_report.html#system-effect)。沿用原合同 cycle=1、每臂三重复，
+前值、后值与降幅分别取中位（不是先把中位前后相减再求比例）。所有数值来自
+[summary.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)，
+[逐周期证据](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)与
+[L1 复算](demo_reproduction_guide_20260901.md#l1-system-before-after)。
+
+| 测试板目标 | RSS 前 → 后 MiB | RSS 降幅中位 | 配对 MemAvailable 净效应 MiB | 代价中位 ms |
+|---|---|---|---|---|
+| mixed | 13.015625 → 7.718750 | 40.696279% | −0.167969 | 1.458574（释放点） |
+| medium-only | 13.152344 → 7.191406 | 45.322245% | +5.304688 | 1.478167（释放点） |
+| gst 解码循环 | 8.671875 → 6.859375 | 21.009919% | +1.855469 | 0.843612（释放点） |
+| enlightenment 常驻对照 | 11.605469 → 11.601562 | 0.033659% | NA，无 none 臂 | 1899.209517（gdb/ptrace 注入） |
+
+前三组 none 的 RSS 下降为 0；不等于系统背景为零。mixed 的系统净效应为负，不能宣称
+普遍系统净增。G4 堆 PD 下降 88/0/4 KiB；约 0.03% 的分母是 RSS。该格的注入开销
+不能并入约 1 ms 的释放点钩子代价。trim/none 同一已验哈希产物、运行时调用，不改 ELF
+体积。前后采样窗 major fault 均为 0，最后周期 next-cycle 为 NA，G4 静置 faults 单列。
+来源：[逐周期](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)、
+[合同与口径](system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果)、
+[复算](demo_reproduction_guide_20260901.md#l1-system-before-after)。
+
+本轮 gst p99 差为 −1.652834 ms、none 离散 11.794149 ms，固定规则未检出可见劣化，
+仅 REPORT_ONLY，未检出不等于零代价；不与既有 gst 代价轮混池。
+来源：[判定 JSON](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json)、
+[复算](demo_reproduction_guide_20260901.md#l1-system-before-after)。
+
+这些观测支持“已测批量释放负载收益明显、已测常驻守护对照收益很小”的边界，不外推
+所有服务，更不等于整机/产品收益。四个非空 GDB 目录按裁决保留待查；延期收尾通过
+不是“零残留”。[收尾原文](system_level_before_after_20260908.md#121-实际处置与收尾结果)。

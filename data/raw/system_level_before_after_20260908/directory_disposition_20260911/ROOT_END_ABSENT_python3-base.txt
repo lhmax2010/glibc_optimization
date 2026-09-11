@@ -1,0 +1,4 @@
+package python3-base is not installed
+
+RC=1
+FAIL

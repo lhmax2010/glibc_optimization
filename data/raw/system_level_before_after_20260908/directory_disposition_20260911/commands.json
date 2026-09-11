@@ -1,0 +1,1440 @@
+[
+  {
+    "label": "SDB_VERSION",
+    "start_utc": "2026-09-11T06:39:26.070233+00:00",
+    "end_utc": "2026-09-11T06:39:26.158048+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "CONNECT",
+    "start_utc": "2026-09-11T06:39:26.158309+00:00",
+    "end_utc": "2026-09-11T06:39:26.163321+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "NONROOT_ID_BEFORE",
+    "start_utc": "2026-09-11T06:39:26.164013+00:00",
+    "end_utc": "2026-09-11T06:39:26.305991+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_UNAME_R",
+    "start_utc": "2026-09-11T06:39:26.306549+00:00",
+    "end_utc": "2026-09-11T06:39:26.435597+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C uname -r;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_UNAME_M",
+    "start_utc": "2026-09-11T06:39:26.435952+00:00",
+    "end_utc": "2026-09-11T06:39:26.570277+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C uname -m;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_OS_RELEASE",
+    "start_utc": "2026-09-11T06:39:26.570793+00:00",
+    "end_utc": "2026-09-11T06:39:26.702615+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /etc/os-release;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_GLIBC",
+    "start_utc": "2026-09-11T06:39:26.703164+00:00",
+    "end_utc": "2026-09-11T06:39:26.870184+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q glibc;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_MEMINFO",
+    "start_utc": "2026-09-11T06:39:26.870564+00:00",
+    "end_utc": "2026-09-11T06:39:27.004240+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/meminfo;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_STAT_0",
+    "start_utc": "2026-09-11T06:39:27.004977+00:00",
+    "end_utc": "2026-09-11T06:39:27.139867+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_STAT_1",
+    "start_utc": "2026-09-11T06:39:27.140579+00:00",
+    "end_utc": "2026-09-11T06:39:27.277897+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_STAT_2",
+    "start_utc": "2026-09-11T06:39:27.278463+00:00",
+    "end_utc": "2026-09-11T06:39:27.410518+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_STAT_3",
+    "start_utc": "2026-09-11T06:39:27.411067+00:00",
+    "end_utc": "2026-09-11T06:39:27.543606+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_STAT_4",
+    "start_utc": "2026-09-11T06:39:27.544070+00:00",
+    "end_utc": "2026-09-11T06:39:27.673385+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_STAT_5",
+    "start_utc": "2026-09-11T06:39:27.673837+00:00",
+    "end_utc": "2026-09-11T06:39:27.801239+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb/function;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_STAT_6",
+    "start_utc": "2026-09-11T06:39:27.801686+00:00",
+    "end_utc": "2026-09-11T06:39:27.932042+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb/command;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_LIST_0",
+    "start_utc": "2026-09-11T06:39:27.932464+00:00",
+    "end_utc": "2026-09-11T06:39:28.071026+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb/function;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_LIST_1",
+    "start_utc": "2026-09-11T06:39:28.071483+00:00",
+    "end_utc": "2026-09-11T06:39:28.211807+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb/command;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_LIST_2",
+    "start_utc": "2026-09-11T06:39:28.212052+00:00",
+    "end_utc": "2026-09-11T06:39:28.346556+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_LIST_3",
+    "start_utc": "2026-09-11T06:39:28.346902+00:00",
+    "end_utc": "2026-09-11T06:39:28.485225+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_INITIAL_LIST_4",
+    "start_utc": "2026-09-11T06:39:28.485715+00:00",
+    "end_utc": "2026-09-11T06:39:28.622148+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_ID_BEFORE_ROOT",
+    "start_utc": "2026-09-11T06:39:28.622735+00:00",
+    "end_utc": "2026-09-11T06:39:28.765770+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_ON",
+    "start_utc": "2026-09-11T06:39:28.767011+00:00",
+    "end_utc": "2026-09-11T06:39:28.818996+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "root",
+      "on"
+    ]
+  },
+  {
+    "label": "ROOT_ID_ROOT",
+    "start_utc": "2026-09-11T06:39:28.819411+00:00",
+    "end_utc": "2026-09-11T06:39:28.958831+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_BOOT",
+    "start_utc": "2026-09-11T06:39:28.959341+00:00",
+    "end_utc": "2026-09-11T06:39:29.090278+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/sys/kernel/random/boot_id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_PS",
+    "start_utc": "2026-09-11T06:39:29.090798+00:00",
+    "end_utc": "2026-09-11T06:39:29.273016+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ps -ww -eo pid,ppid,tty,comm,args;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_DMESG",
+    "start_utc": "2026-09-11T06:39:29.273871+00:00",
+    "end_utc": "2026-09-11T06:39:29.445316+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C dmesg;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ZRAM",
+    "start_utc": "2026-09-11T06:39:29.446578+00:00",
+    "end_utc": "2026-09-11T06:39:29.579747+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/block/zram0/mm_stat;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ALERTS",
+    "start_utc": "2026-09-11T06:39:29.580700+00:00",
+    "end_utc": "2026-09-11T06:39:29.719208+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /opt/usr/share/crash/livedump;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_TARGET",
+    "start_utc": "2026-09-11T06:39:29.719893+00:00",
+    "end_utc": "2026-09-11T06:39:29.850775+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/498/stat;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_PACKAGES",
+    "start_utc": "2026-09-11T06:39:29.851509+00:00",
+    "end_utc": "2026-09-11T06:39:30.373579+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH}\\n';r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_DF_ROOT",
+    "start_utc": "2026-09-11T06:39:30.375410+00:00",
+    "end_utc": "2026-09-11T06:39:30.506864+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C df -k /;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_DF_OPTUSR",
+    "start_utc": "2026-09-11T06:39:30.507468+00:00",
+    "end_utc": "2026-09-11T06:39:30.638457+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C df -k /opt/usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_WORK",
+    "start_utc": "2026-09-11T06:39:30.642322+00:00",
+    "end_utc": "2026-09-11T06:39:30.772691+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /opt/usr/glibc_memopt/system_level_before_after_20260908;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_WORK_PARENT",
+    "start_utc": "2026-09-11T06:39:30.773515+00:00",
+    "end_utc": "2026-09-11T06:39:30.905019+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /opt/usr/glibc_memopt;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_DATE",
+    "start_utc": "2026-09-11T06:39:30.905814+00:00",
+    "end_utc": "2026-09-11T06:39:31.039568+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C date -u;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_MEMINFO",
+    "start_utc": "2026-09-11T06:39:31.040183+00:00",
+    "end_utc": "2026-09-11T06:39:31.167675+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/meminfo;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_TOP_TMP",
+    "start_utc": "2026-09-11T06:39:31.168283+00:00",
+    "end_utc": "2026-09-11T06:39:31.307979+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /tmp;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_TOP_HOME",
+    "start_utc": "2026-09-11T06:39:31.308838+00:00",
+    "end_utc": "2026-09-11T06:39:31.449167+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /home;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_TOP_OPTUSR",
+    "start_utc": "2026-09-11T06:39:31.449740+00:00",
+    "end_utc": "2026-09-11T06:39:31.585459+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /opt/usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_GOV_0",
+    "start_utc": "2026-09-11T06:39:31.586111+00:00",
+    "end_utc": "2026-09-11T06:39:31.720389+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_GOV_1",
+    "start_utc": "2026-09-11T06:39:31.721028+00:00",
+    "end_utc": "2026-09-11T06:39:31.857588+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_GOV_2",
+    "start_utc": "2026-09-11T06:39:31.858497+00:00",
+    "end_utc": "2026-09-11T06:39:31.992475+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_GOV_3",
+    "start_utc": "2026-09-11T06:39:31.993102+00:00",
+    "end_utc": "2026-09-11T06:39:32.127492+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ABSENT_libgmp",
+    "start_utc": "2026-09-11T06:39:32.128111+00:00",
+    "end_utc": "2026-09-11T06:39:32.290089+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q libgmp;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ABSENT_gdbm",
+    "start_utc": "2026-09-11T06:39:32.290685+00:00",
+    "end_utc": "2026-09-11T06:39:32.452895+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q gdbm;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ABSENT_libpython3_141_0",
+    "start_utc": "2026-09-11T06:39:32.453545+00:00",
+    "end_utc": "2026-09-11T06:39:32.611674+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q libpython3_141_0;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ABSENT_python3-base",
+    "start_utc": "2026-09-11T06:39:32.612252+00:00",
+    "end_utc": "2026-09-11T06:39:32.766646+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q python3-base;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ABSENT_python3",
+    "start_utc": "2026-09-11T06:39:32.767249+00:00",
+    "end_utc": "2026-09-11T06:39:32.931233+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q python3;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_START_ABSENT_gdb",
+    "start_utc": "2026-09-11T06:39:32.931956+00:00",
+    "end_utc": "2026-09-11T06:39:33.091364+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_0_0",
+    "start_utc": "2026-09-11T06:39:33.103236+00:00",
+    "end_utc": "2026-09-11T06:39:33.233061+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_0_1",
+    "start_utc": "2026-09-11T06:39:33.233462+00:00",
+    "end_utc": "2026-09-11T06:39:33.363898+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_0_2",
+    "start_utc": "2026-09-11T06:39:33.766461+00:00",
+    "end_utc": "2026-09-11T06:39:33.897856+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_0_3",
+    "start_utc": "2026-09-11T06:39:33.898613+00:00",
+    "end_utc": "2026-09-11T06:39:34.029685+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_0_4",
+    "start_utc": "2026-09-11T06:39:34.030693+00:00",
+    "end_utc": "2026-09-11T06:39:34.163420+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_0_5",
+    "start_utc": "2026-09-11T06:39:34.164453+00:00",
+    "end_utc": "2026-09-11T06:39:34.299420+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb/function;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_CHECK_LIST_0",
+    "start_utc": "2026-09-11T06:39:34.300149+00:00",
+    "end_utc": "2026-09-11T06:39:34.434621+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb/function;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_1_0",
+    "start_utc": "2026-09-11T06:39:34.435521+00:00",
+    "end_utc": "2026-09-11T06:39:34.565454+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_1_1",
+    "start_utc": "2026-09-11T06:39:34.566472+00:00",
+    "end_utc": "2026-09-11T06:39:34.696960+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_1_2",
+    "start_utc": "2026-09-11T06:39:34.697466+00:00",
+    "end_utc": "2026-09-11T06:39:34.833672+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_1_3",
+    "start_utc": "2026-09-11T06:39:34.834182+00:00",
+    "end_utc": "2026-09-11T06:39:34.963014+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_1_4",
+    "start_utc": "2026-09-11T06:39:34.963752+00:00",
+    "end_utc": "2026-09-11T06:39:35.092758+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_1_6",
+    "start_utc": "2026-09-11T06:39:35.093529+00:00",
+    "end_utc": "2026-09-11T06:39:35.224276+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb/command;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_CHECK_LIST_1",
+    "start_utc": "2026-09-11T06:39:35.225391+00:00",
+    "end_utc": "2026-09-11T06:39:35.364032+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb/command;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_2_0",
+    "start_utc": "2026-09-11T06:39:35.365465+00:00",
+    "end_utc": "2026-09-11T06:39:35.497541+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_2_1",
+    "start_utc": "2026-09-11T06:39:35.498300+00:00",
+    "end_utc": "2026-09-11T06:39:35.633478+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_2_2",
+    "start_utc": "2026-09-11T06:39:35.634598+00:00",
+    "end_utc": "2026-09-11T06:39:35.777786+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_2_3",
+    "start_utc": "2026-09-11T06:39:35.778430+00:00",
+    "end_utc": "2026-09-11T06:39:35.909834+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_2_4",
+    "start_utc": "2026-09-11T06:39:35.910911+00:00",
+    "end_utc": "2026-09-11T06:39:36.040881+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_CHECK_LIST_2",
+    "start_utc": "2026-09-11T06:39:36.042016+00:00",
+    "end_utc": "2026-09-11T06:39:36.180189+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_3_0",
+    "start_utc": "2026-09-11T06:39:36.181667+00:00",
+    "end_utc": "2026-09-11T06:39:36.312656+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_3_1",
+    "start_utc": "2026-09-11T06:39:36.313807+00:00",
+    "end_utc": "2026-09-11T06:39:36.443331+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_RECHECK_3_2",
+    "start_utc": "2026-09-11T06:39:36.444091+00:00",
+    "end_utc": "2026-09-11T06:39:36.572222+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_CHECK_LIST_3",
+    "start_utc": "2026-09-11T06:39:36.572994+00:00",
+    "end_utc": "2026-09-11T06:39:36.709870+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DIR_0",
+    "start_utc": "2026-09-11T06:39:36.711415+00:00",
+    "end_utc": "2026-09-11T06:39:36.844965+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb/function;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_LIST_0",
+    "start_utc": "2026-09-11T06:39:36.845764+00:00",
+    "end_utc": "2026-09-11T06:39:36.980276+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb/function;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DIR_1",
+    "start_utc": "2026-09-11T06:39:36.981051+00:00",
+    "end_utc": "2026-09-11T06:39:37.112163+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb/command;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_LIST_1",
+    "start_utc": "2026-09-11T06:39:37.112915+00:00",
+    "end_utc": "2026-09-11T06:39:37.244913+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb/command;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DIR_2",
+    "start_utc": "2026-09-11T06:39:37.245706+00:00",
+    "end_utc": "2026-09-11T06:39:37.378007+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_LIST_2",
+    "start_utc": "2026-09-11T06:39:37.378834+00:00",
+    "end_utc": "2026-09-11T06:39:37.519620+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DIR_3",
+    "start_utc": "2026-09-11T06:39:37.520672+00:00",
+    "end_utc": "2026-09-11T06:39:37.654581+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_LIST_3",
+    "start_utc": "2026-09-11T06:39:37.655426+00:00",
+    "end_utc": "2026-09-11T06:39:37.794242+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DIR_4",
+    "start_utc": "2026-09-11T06:39:37.795455+00:00",
+    "end_utc": "2026-09-11T06:39:37.927776+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /usr/share/gdb/python;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_LIST_4",
+    "start_utc": "2026-09-11T06:39:37.929023+00:00",
+    "end_utc": "2026-09-11T06:39:38.065109+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /usr/share/gdb/python;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_BOOT",
+    "start_utc": "2026-09-11T06:39:38.066013+00:00",
+    "end_utc": "2026-09-11T06:39:38.192762+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/sys/kernel/random/boot_id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_PS",
+    "start_utc": "2026-09-11T06:39:38.194101+00:00",
+    "end_utc": "2026-09-11T06:39:38.364652+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ps -ww -eo pid,ppid,tty,comm,args;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DMESG",
+    "start_utc": "2026-09-11T06:39:38.365578+00:00",
+    "end_utc": "2026-09-11T06:39:38.527422+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C dmesg;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ZRAM",
+    "start_utc": "2026-09-11T06:39:38.529302+00:00",
+    "end_utc": "2026-09-11T06:39:38.654754+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/block/zram0/mm_stat;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ALERTS",
+    "start_utc": "2026-09-11T06:39:38.656044+00:00",
+    "end_utc": "2026-09-11T06:39:38.798642+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /opt/usr/share/crash/livedump;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_TARGET",
+    "start_utc": "2026-09-11T06:39:38.799571+00:00",
+    "end_utc": "2026-09-11T06:39:38.931802+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/498/stat;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_PACKAGES",
+    "start_utc": "2026-09-11T06:39:38.933172+00:00",
+    "end_utc": "2026-09-11T06:39:39.475805+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH}\\n';r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DF_ROOT",
+    "start_utc": "2026-09-11T06:39:39.477275+00:00",
+    "end_utc": "2026-09-11T06:39:39.609830+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C df -k /;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DF_OPTUSR",
+    "start_utc": "2026-09-11T06:39:39.610411+00:00",
+    "end_utc": "2026-09-11T06:39:39.741730+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C df -k /opt/usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_WORK",
+    "start_utc": "2026-09-11T06:39:39.742677+00:00",
+    "end_utc": "2026-09-11T06:39:39.874087+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /opt/usr/glibc_memopt/system_level_before_after_20260908;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_WORK_PARENT",
+    "start_utc": "2026-09-11T06:39:39.874999+00:00",
+    "end_utc": "2026-09-11T06:39:40.006458+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C stat -c '%F|%d|%i|%a|%u:%g|%s|%Y' -- /opt/usr/glibc_memopt;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_DATE",
+    "start_utc": "2026-09-11T06:39:40.007729+00:00",
+    "end_utc": "2026-09-11T06:39:40.138354+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C date -u;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_MEMINFO",
+    "start_utc": "2026-09-11T06:39:40.139703+00:00",
+    "end_utc": "2026-09-11T06:39:40.268090+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/meminfo;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_TOP_TMP",
+    "start_utc": "2026-09-11T06:39:40.269013+00:00",
+    "end_utc": "2026-09-11T06:39:40.409898+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /tmp;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_TOP_HOME",
+    "start_utc": "2026-09-11T06:39:40.410470+00:00",
+    "end_utc": "2026-09-11T06:39:40.550112+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /home;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_TOP_OPTUSR",
+    "start_utc": "2026-09-11T06:39:40.550720+00:00",
+    "end_utc": "2026-09-11T06:39:40.690247+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /opt/usr;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_GOV_0",
+    "start_utc": "2026-09-11T06:39:40.691602+00:00",
+    "end_utc": "2026-09-11T06:39:40.820872+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_GOV_1",
+    "start_utc": "2026-09-11T06:39:40.821783+00:00",
+    "end_utc": "2026-09-11T06:39:40.951844+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_GOV_2",
+    "start_utc": "2026-09-11T06:39:40.952827+00:00",
+    "end_utc": "2026-09-11T06:39:41.081859+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_GOV_3",
+    "start_utc": "2026-09-11T06:39:41.083034+00:00",
+    "end_utc": "2026-09-11T06:39:41.212158+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ABSENT_libgmp",
+    "start_utc": "2026-09-11T06:39:41.212667+00:00",
+    "end_utc": "2026-09-11T06:39:41.366795+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q libgmp;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ABSENT_gdbm",
+    "start_utc": "2026-09-11T06:39:41.368124+00:00",
+    "end_utc": "2026-09-11T06:39:41.522707+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q gdbm;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ABSENT_libpython3_141_0",
+    "start_utc": "2026-09-11T06:39:41.523244+00:00",
+    "end_utc": "2026-09-11T06:39:41.685217+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q libpython3_141_0;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ABSENT_python3-base",
+    "start_utc": "2026-09-11T06:39:41.685765+00:00",
+    "end_utc": "2026-09-11T06:39:41.845700+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q python3-base;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ABSENT_python3",
+    "start_utc": "2026-09-11T06:39:41.847141+00:00",
+    "end_utc": "2026-09-11T06:39:42.019872+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q python3;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_END_ABSENT_gdb",
+    "start_utc": "2026-09-11T06:39:42.020874+00:00",
+    "end_utc": "2026-09-11T06:39:42.179348+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q gdb;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "ROOT_OFF_1",
+    "start_utc": "2026-09-11T06:39:42.183629+00:00",
+    "end_utc": "2026-09-11T06:39:42.235460+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "root",
+      "off"
+    ]
+  },
+  {
+    "label": "ROOT_ID_OFF_1",
+    "start_utc": "2026-09-11T06:39:42.236374+00:00",
+    "end_utc": "2026-09-11T06:39:42.377566+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  }
+]

@@ -15,6 +15,24 @@ BUILDER = HERE / "build_demo_report.py"
 
 
 class DemoReportTests(unittest.TestCase):
+    def test_system_absolute_values_agree_across_customer_surfaces(self) -> None:
+        paths = ['docs/demo_report.html','docs/demo_narrative_20260901.md',
+            'docs/demo_package_20260902.md','docs/demo_reproduction_guide_20260901.md',
+            'docs/system_level_before_after_20260908.md','tools/report/demo_README.md',
+            'tools/report/demo_README.zh-CN.md']
+        for relative in paths:
+            text = (REPO / relative).read_text()
+            for number in ('13.015625','7.718750','40.696279','13.152344','7.191406','45.322245',
+                '8.671875','6.859375','21.009919','0.167969','5.304688','1.855469',
+                '0.843612','1899.209517','0.033659','1.652834','11.794149'):
+                self.assertIn(number,text,(relative,number))
+            self.assertIn('ptrace',text,relative)
+            self.assertTrue('非空' in text or 'nonempty' in text,relative)
+            self.assertTrue('非产品' in text or '产品收益' in text or 'not product' in text or 'not a product' in text,relative)
+        html=(REPO/'docs/demo_report.html').read_text()
+        self.assertLess(html.index('<section id="summary">'),html.index('<section id="system-effect">'))
+        self.assertLess(html.index('<section id="system-effect">'),html.index('<section id="finding-one">'))
+
     def build(self, output: Path, source: str = "TEST-COMMIT") -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             ["python3", str(BUILDER), "--repo-root", str(REPO), "--output", str(output), "--source-commit", source],

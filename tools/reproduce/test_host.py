@@ -174,7 +174,7 @@ class ReproduceTests(unittest.TestCase):
         start = entrypoint.index("host_tests()\n")
         end = entrypoint.index("\n)\n", start)
         modules = re.findall(r"^\s+(tools/\S+\.py)(?:\s+\\)?$", entrypoint[start:end], re.MULTILINE)
-        self.assertEqual(len(modules), 11, modules)
+        self.assertEqual(len(modules), 13, modules)
         documentation = (HERE / "README.md").read_text(encoding="utf-8")
         for module in modules:
             with self.subTest(module=module):

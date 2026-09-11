@@ -1,0 +1,4 @@
+__pycache__  command  function
+
+RC=0
+DONE

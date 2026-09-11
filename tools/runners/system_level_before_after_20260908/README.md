@@ -212,3 +212,13 @@ PID/start tick、解释器与脚本完整路径，归档及再核对后 TERM/复
 python3 tools/runners/system_level_before_after_20260908/analyze_restricted_cleanup.py \
   data/raw/system_level_before_after_20260908/cleanup_restricted_20260911
 ```
+# PM 2026-09-11 目录处置与已验收矩阵
+
+四目录实际非空，均按新裁决保留待查；镜像 python 保留，UID 恢复、健康核验通过。
+限定执行器 `dispose_gdb_dirs_20260911.py` 已执行一次，不应为重做证明再次运行。
+只读 host 核验：`analyze_directory_disposition.py`；已验收 18+3 原始件连接到延期收尾
+的唯一组合入口是 `compose_accepted_measurement.py`，不会修改历史 STOP 或合同。
+公共 `replay_compact.py` 从点/gst 转录重建五派生件；
+[L1](../../../docs/demo_reproduction_guide_20260901.md#l1-system-before-after)、
+[完成报告](../../../docs/system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果)。
+全部 21 格禁止重跑。任何未来板端复测须另行授权和事前合同，root 不是默认行为。

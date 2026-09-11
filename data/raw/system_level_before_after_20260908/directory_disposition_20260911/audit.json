@@ -1,0 +1,225 @@
+{
+  "schema": "system-before-after.directory-disposition.v1",
+  "start_utc": "2026-09-11T06:39:24.953366+00:00",
+  "verdict": "PASS_READONLY_CLEANUP",
+  "body_limit_bytes": 200,
+  "approved_by": "PM",
+  "pm_decision_date": "2026-09-11",
+  "measurement_cells_run": 0,
+  "board_files_pushed": 0,
+  "packages_changed": 0,
+  "governor_writes": 0,
+  "processes_terminated": 0,
+  "root_elevation": "PM_EXACT_DIRECTORY_DISPOSITION_AND_CLEANUP_CHECKS",
+  "accepted_measurements": "21 PRESERVED",
+  "directories_removed": [],
+  "directory_dispositions": [
+    {
+      "path": "/usr/share/gdb/python/gdb/function",
+      "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+      "entries_including_hidden": [
+        "__pycache__"
+      ]
+    },
+    {
+      "path": "/usr/share/gdb/python/gdb/command",
+      "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+      "entries_including_hidden": [
+        "__pycache__"
+      ]
+    },
+    {
+      "path": "/usr/share/gdb/python/gdb",
+      "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+      "entries_including_hidden": [
+        "__pycache__  command  function"
+      ]
+    },
+    {
+      "path": "/usr/share/gdb",
+      "verdict": "REPORT_ONLY_PENDING_NONEMPTY",
+      "entries_including_hidden": [
+        "auto-load  python"
+      ]
+    }
+  ],
+  "preserved_image_directory": "/usr/share/gdb/python",
+  "foreign_process_policy": "REPORT_ONLY; do not stop or clear foreign processes",
+  "executor_commit": "c89c9abd1add883fd35850e805e9d4a7248b2eee",
+  "source_execution_sha256": "373282a0a93179a8f8563dd3a6889a6a9e6277df8d1149e49ada334e97711886",
+  "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+  "directory_identity_before": {
+    "/usr": [
+      "directory",
+      "45826",
+      "24",
+      "755",
+      "0:0"
+    ],
+    "/usr/share": [
+      "directory",
+      "45826",
+      "77",
+      "755",
+      "0:0"
+    ],
+    "/usr/share/gdb": [
+      "directory",
+      "45826",
+      "4725",
+      "755",
+      "0:0"
+    ],
+    "/usr/share/gdb/python": [
+      "directory",
+      "45826",
+      "14509",
+      "755",
+      "0:0"
+    ],
+    "/usr/share/gdb/python/gdb": [
+      "directory",
+      "45826",
+      "14522",
+      "755",
+      "0:0"
+    ],
+    "/usr/share/gdb/python/gdb/function": [
+      "directory",
+      "45826",
+      "14650",
+      "755",
+      "0:0"
+    ],
+    "/usr/share/gdb/python/gdb/command": [
+      "directory",
+      "45826",
+      "14535",
+      "755",
+      "0:0"
+    ]
+  },
+  "nonroot_sweep_completed_utc": "2026-09-11T06:39:28.622652+00:00",
+  "permission_denied_items": {},
+  "root_authorization": {
+    "approved_by": "PM",
+    "decision_date": "2026-09-11",
+    "scope": "four-directory disposition and listed post-disposition health checks only",
+    "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+    "root_off": "PASS_NONROOT",
+    "id_after_on": "uid=0(root) gid=0(root) groups=0(root),29(audio),44(video),201(display),1901(log),6505(pulse-access),6506(pulse-rt),6525(usb_device),10001(priv_externalstorage),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+    "off_attempts": [
+      {
+        "attempt": 1,
+        "start_utc": "2026-09-11T06:39:42.183587+00:00",
+        "id": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+        "end_utc": "2026-09-11T06:39:42.378121+00:00"
+      }
+    ]
+  },
+  "boot_id": "7a8e3b20-dc78-40b0-86a6-ba404f766752",
+  "process_observations": {
+    "START_PS": [
+      {
+        "pid": 667,
+        "ppid": 629,
+        "tty": "tty7",
+        "comm": "bash",
+        "args": "/bin/bash",
+        "raw": "  667   629 tty7     bash            /bin/bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      },
+      {
+        "pid": 1096,
+        "ppid": 469,
+        "tty": "ttyS0",
+        "comm": "bash",
+        "args": "-bash",
+        "raw": " 1096   469 ttyS0    bash            -bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      }
+    ],
+    "END_PS": [
+      {
+        "pid": 667,
+        "ppid": 629,
+        "tty": "tty7",
+        "comm": "bash",
+        "args": "/bin/bash",
+        "raw": "  667   629 tty7     bash            /bin/bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      },
+      {
+        "pid": 1096,
+        "ppid": 469,
+        "tty": "ttyS0",
+        "comm": "bash",
+        "args": "-bash",
+        "raw": " 1096   469 ttyS0    bash            -bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      }
+    ]
+  },
+  "process_views": {
+    "START_PS": {
+      "rows": 207,
+      "pid_1": true,
+      "target_498": true,
+      "context": "UID=0; ps -e all-system selection",
+      "foreign_is_report_only": true
+    },
+    "END_PS": {
+      "rows": 207,
+      "pid_1": true,
+      "target_498": true,
+      "context": "UID=0; ps -e all-system selection",
+      "foreign_is_report_only": true
+    }
+  },
+  "package_inventory_START": {
+    "before_count": 1263,
+    "current_count": 1263,
+    "added": [],
+    "removed": []
+  },
+  "stability_START": {
+    "count": 0,
+    "entries": []
+  },
+  "health_START": {
+    "oom_lmk_new": 0,
+    "zram_three_delta": [
+      0,
+      0,
+      0
+    ],
+    "attributable_alerts_new": 0,
+    "boot_unchanged": true,
+    "dmesg_prefix_retained": true,
+    "dmesg_increment_lines": 39
+  },
+  "package_inventory_END": {
+    "before_count": 1263,
+    "current_count": 1263,
+    "added": [],
+    "removed": []
+  },
+  "stability_END": {
+    "count": 0,
+    "entries": []
+  },
+  "health_END": {
+    "oom_lmk_new": 0,
+    "zram_three_delta": [
+      0,
+      0,
+      0
+    ],
+    "attributable_alerts_new": 0,
+    "boot_unchanged": true,
+    "dmesg_prefix_retained": true,
+    "dmesg_increment_lines": 39
+  },
+  "scope": "delayed cleanup only; directory rmdir exceptions explicitly recorded; no measurements",
+  "end_utc": "2026-09-11T06:39:42.378125+00:00"
+}

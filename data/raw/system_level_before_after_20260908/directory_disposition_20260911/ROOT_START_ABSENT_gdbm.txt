@@ -1,0 +1,4 @@
+package gdbm is not installed
+
+RC=1
+FAIL
