@@ -8,26 +8,15 @@ import pathlib
 import re
 import tempfile
 
-from publish_execution_log import no_symlink, render_public, sha
+from publish_execution_log import no_symlink, render_public, sha, redact_endpoints
 
 
 def network_endpoints(data, board_ip, host_ip):
     """Explicit routing aliases, including proc-net little-endian encodings."""
-    text=data.decode('utf-8')
-    edits=[]
-    for address,alias,label in ((board_ip,'<TEST_BOARD_IP>','BOARD_ENDPOINT_REPLACED'),
-                               (host_ip,'<HOST_IP>','HOST_ENDPOINT_REPLACED')):
-        value=ipaddress.IPv4Address(address)
-        little=value.packed[::-1].hex().upper()
-        for source in ('0000000000000000FFFF0000'+little,little):
-            text,n=re.subn(r'(?<![0-9A-Fa-f])'+source+r'(?=:[0-9A-Fa-f]{4}\b)',alias,text,flags=re.I)
-            if n and label not in edits:
-                edits.append(label)
-        if str(value) in text:
-            text=text.replace(str(value),alias)
-            if label not in edits:
-                edits.append(label)
-    return text.encode('utf-8'),edits
+    aliases={str(ipaddress.IPv4Address(board_ip)):'<TEST_BOARD_IP>',
+             str(ipaddress.IPv4Address(host_ip)):'<HOST_IP>'}
+    text,edits=redact_endpoints(data.decode('utf-8'),aliases)
+    return text.encode('utf-8'),['ENDPOINT_REPLACED_' + name for name in edits]
 
 
 def publish(run, output, ip, host_home, host_ip=None):
@@ -65,7 +54,7 @@ def publish(run, output, ip, host_home, host_ip=None):
         staged.mkdir()
         records = []
         for relative, data in captured.items():
-            public, edits = render_public(data, ip, host_home)
+            public, edits = render_public(data, ip, host_home, {host_ip:'<HOST_IP>'} if host_ip else None)
             if host_ip is not None:
                 public,network_edits=network_endpoints(public,ip,host_ip)
                 edits+=network_edits
@@ -76,8 +65,7 @@ def publish(run, output, ip, host_home, host_ip=None):
         (staged / "manifest.json").write_text(json.dumps({
             "schema": "system-before-after.delayed-cleanup-publication.v1",
             "verdict": receipt["verdict"], "scope": "cleanup only; no measurement rerun or changed measurement source",
-            "editing": "CR removed; board address and host home mapped; board runtime paths retained" + (
-                "; board/host proc-net hexadecimal endpoints mapped, ports/states retained" if host_ip else ""),
+            "editing": "CR removed; board address and host home mapped; encoded/text private endpoints mapped unconditionally, ports/states/line structure and board runtime paths retained",
             "files": records}, indent=2) + "\n")
         for relative, data in captured.items():
             if (run / relative).read_bytes() != data:

@@ -19,6 +19,10 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-11（09-12 至 09-14 周末批次）：三份 TCP 7 行定向脱敏、public 哈希链
+  更新与编码端点扫描硬门；原 21 格和历史不改，继续 v12 矩阵。
+  [处置记录](weekend_redaction_20260911.md)、[PM 授权](pm_decisions.md)。
+
 - 2026-09-11：host 合同身份修复后，clean main verify 与隔离候选两格通过；全仓扫描
   发现三份既有 TCP 原文 7 行编码地址未脱敏，按门中止矩阵，未发布 v12，demo-v11
   保持有效。[新停止清单](demo_v12_delivery_20260911.md)、[终态](twoday_summary_20260910.md)。

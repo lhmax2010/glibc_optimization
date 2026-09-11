@@ -1,0 +1,143 @@
+{
+  "schema": "endpoint-redaction-audit.v1",
+  "actual_utc": "2026-09-11T12:06:57.733010+00:00",
+  "batch": "2026-09-12..2026-09-14",
+  "source_commit": "dc36a57e5c0558fc459074225119bd0abda8a9c6",
+  "before_scan": {
+    "schema": "private-endpoint-scan.v1",
+    "files": 4409,
+    "findings": [
+      {
+        "path": "data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TCP.txt",
+        "line": 5,
+        "column": 7,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TCP.txt",
+        "line": 5,
+        "column": 45,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TCP.txt",
+        "line": 6,
+        "column": 7,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TCP.txt",
+        "line": 6,
+        "column": 45,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/execution/TCP.txt",
+        "line": 5,
+        "column": 7,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/execution/TCP.txt",
+        "line": 5,
+        "column": 45,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/execution/TCP.txt",
+        "line": 6,
+        "column": 7,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/execution/TCP.txt",
+        "line": 6,
+        "column": 45,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt",
+        "line": 5,
+        "column": 7,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt",
+        "line": 5,
+        "column": 45,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt",
+        "line": 6,
+        "column": 7,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt",
+        "line": 6,
+        "column": 45,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt",
+        "line": 7,
+        "column": 7,
+        "encoding": "ipv6-proc-words-le"
+      },
+      {
+        "path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt",
+        "line": 7,
+        "column": 45,
+        "encoding": "ipv6-proc-words-le"
+      }
+    ],
+    "count": 14,
+    "verdict": "FAIL",
+    "scope": "current tracked tree only; no historical rewrite; no address values in output"
+  },
+  "files": [
+    {
+      "path": "data/raw/system_level_before_after_20260908/execution/TCP.txt",
+      "lines": [
+        5,
+        6
+      ],
+      "endpoint_tokens": 4,
+      "old_public_sha256": "4ee51b7c006a6795f9f3fc1ac4903ee32ac80ccbe21115b54abbf73abb69ea9a",
+      "public_sha256": "1e6889588cfe48401f745624631b3cc5ba7baeb44c0e2c40b25b9457ca88a757",
+      "original_sha256": "4ee51b7c006a6795f9f3fc1ac4903ee32ac80ccbe21115b54abbf73abb69ea9a",
+      "manifest_before_sha256": "a4829daf2e9e107631fe536515f6a4587c78aa23f645da34200ead46f37d439c",
+      "manifest_after_sha256": "fff4312d50d9f933b9ce2d51aacb501d0b4f4d5a50d5122270f7aeb2c47707b5"
+    },
+    {
+      "path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt",
+      "lines": [
+        5,
+        6,
+        7
+      ],
+      "endpoint_tokens": 6,
+      "old_public_sha256": "172ebb13b88ad29a92eb0ff4a9f36f462cea4e60e15b4b90135f6cdd7b255274",
+      "public_sha256": "bad8dc6f2dc9da1f7916c45afcdd423e105369451732215d4c1f6e86e1ec49a3",
+      "original_sha256": "172ebb13b88ad29a92eb0ff4a9f36f462cea4e60e15b4b90135f6cdd7b255274",
+      "manifest_before_sha256": "f56a959e44eb83a0aa05517bc19333b13c39cfad7b012f12d928702740d62c96",
+      "manifest_after_sha256": "fe198d3fc8e3134c5a24a90e47d0eec2cbd720d8476e9364c2efeedab06a423c"
+    },
+    {
+      "path": "data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TCP.txt",
+      "lines": [
+        5,
+        6
+      ],
+      "endpoint_tokens": 4,
+      "old_public_sha256": "9eea785bec3d483f24375a110df4ac07a22548d768e544f0c15c515fcc62e596",
+      "public_sha256": "c491ad21b63982e02ec762537aeff66afc2d3648211a1e15619432e5df5f228c",
+      "original_sha256": "9eea785bec3d483f24375a110df4ac07a22548d768e544f0c15c515fcc62e596",
+      "manifest_before_sha256": "d35366fdc4ef60b9d18f9019829a657cbdd8f3ace3e8a0512ec462e0cd4fbf1d",
+      "manifest_after_sha256": "bcd61f10385253a1524823ab1de6d55bc70e8f0e8dd29714cef6ae992f1d92ef"
+    }
+  ],
+  "history": "not rewritten; old byte hashes identify the historical unredacted public objects; full originals remain local",
+  "measurement_data": "unchanged; only endpoint tokens and public transcription manifests edited"
+}

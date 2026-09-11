@@ -99,6 +99,11 @@ Without an override, `verify` requires `HEAD` to resolve to the delivery ref in
 
 ## Mandatory pre-delivery clone matrix
 
+Default host-tests also enforce the [current-tree endpoint gate](../privacy/README.md).
+It recognizes encoded proc endpoints and decimal IPv4, reports positions only,
+and fails closed without touching measurements or requiring tags/network access.
+Historical objects remain outside the current-tree gate and are documented separately.
+
 After cutting a frozen snapshot and before declaring it ready, run the remote-only
 pre-delivery gate:
 

@@ -47,6 +47,19 @@ class ExecutionLog(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertEqual(list(self.root.glob(".execution-log-publication-*")), [])
 
+    def test_board_literal_does_not_redact_another_address_prefix(self):
+        original=(self.ADDRESS+' '+self.ADDRESS+'0').encode()
+        result,_=publisher.render_public(original,self.ADDRESS,self.HOME)
+        self.assertEqual(result, ('<TEST_BOARD_IP> '+self.ADDRESS+'0').encode())
+
+    def test_encoded_private_endpoints_need_no_optional_host_parameter(self):
+        import ipaddress
+        address=ipaddress.IPv4Address(bytes((192,168,77,9)))
+        raw=('  1: '+address.packed[::-1].hex()+':65F5 00000000:0000 01\n').encode()
+        result,edits=publisher.render_public(raw,self.ADDRESS,self.HOME)
+        self.assertEqual(result,b'  1: <INTERNAL_ENDPOINT>:65F5 00000000:0000 01\n')
+        self.assertIn('ENDPOINT_REPLACED_ipv4-hex-le',edits)
+
     def test_pass_terminal_and_whitelist_selection(self):
         selected = ("UNAME_R.txt", "SHA_alloc_bench_observer.armv7l.txt", "CELL_G1_none_r1.txt",
                     "GDB_INSTALL.txt", "ROUND_BEFORE_DMESG.txt", "RESTORE_GOVERNORS.txt", "WORKDIR_ABSENT.txt",

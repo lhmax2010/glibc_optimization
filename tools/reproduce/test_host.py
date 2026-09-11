@@ -37,6 +37,18 @@ STARTUP_REJECTION_CHECKS = len(STARTUP_CONTEXTS) + len(REJECTION_FUNCTIONS) * le
 
 
 class ReproduceTests(unittest.TestCase):
+    def test_current_tree_private_endpoints_and_scanner_regressions(self) -> None:
+        # A hard host-test gate; not tied to optional GBS/RPM or a delivery tag.
+        # Keep the existing entrypoint/provenance bytes unchanged.
+        result = subprocess.run([sys.executable, str(REPO / 'tools/privacy/scan_endpoints.py'),
+                                 '--repo-root', str(REPO), '--json'],
+                                cwd=REPO, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(json.loads(result.stdout)['count'], 0)
+        tests = subprocess.run([sys.executable, '-m', 'unittest', 'tools.privacy.test_endpoints'],
+                               cwd=REPO, capture_output=True, text=True)
+        self.assertEqual(tests.returncode, 0, tests.stdout + tests.stderr)
+
     def _install_unexpected_command_stubs(
         self,
         directory: Path,

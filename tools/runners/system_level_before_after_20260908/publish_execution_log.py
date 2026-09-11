@@ -2,7 +2,7 @@
 """Publish a terminal execution's selected original logs, including STOP runs.
 
 This is a log transcription only, not measurement analysis or a completion claim.
-Only CR removal, board-address replacement and host-home replacement are applied.
+Only CR removal, endpoint replacement and host-home replacement are applied.
 Unselected XML, archives, media and full time series remain local.
 """
 import argparse
@@ -13,6 +13,10 @@ import json
 import pathlib
 import re
 import tempfile
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / 'privacy'))
+from scan_endpoints import redact_endpoints
 
 
 ROOT_NAMES = frozenset((
@@ -121,15 +125,22 @@ def select_files(run):
     return sorted(selected, key=lambda path: path.relative_to(run).as_posix())
 
 
-def render_public(original, board_address, host_home):
+def render_public(original, board_address, host_home, endpoint_aliases=None):
     text = original.decode("utf-8")  # No lossy replacement or silent byte edits.
     edits = []
     for old, new, label in (("\r", "", "CR_REMOVED"),
                             (board_address, "<TEST_BOARD_IP>", "BOARD_ADDRESS_REPLACED"),
                             (host_home, "<USER_HOME>", "HOST_HOME_REPLACED")):
-        if old in text:
+        if old == board_address:
+            text, count = re.subn(r'(?<![\w.])' + re.escape(old) + r'(?![\w.])', new, text)
+            if count:
+                edits.append(label)
+        elif old in text:
             edits.append(label)
             text = text.replace(old, new)
+    aliases = {board_address: '<TEST_BOARD_IP>', **(endpoint_aliases or {})}
+    text, endpoint_edits = redact_endpoints(text, aliases)
+    edits.extend('ENDPOINT_REPLACED_' + encoding for encoding in endpoint_edits)
     return text.encode("utf-8"), edits
 
 
@@ -157,7 +168,7 @@ def publish(run, output, board_address, host_home):
         "schema": "system-before-after.execution-log-publication.v1",
         "scope": "Original log transcription only; no measurement derivation. Full originals remain local and are available on request.",
         "verdict": receipt["verdict"], "cleanup": receipt["cleanup"], "execution_end_utc": receipt["end_utc"],
-        "editing": "Only CR removal, board address -> <TEST_BOARD_IP>, host home -> <USER_HOME>; board runtime paths retained.",
+        "editing": "CR removal, board address -> <TEST_BOARD_IP>, host home -> <USER_HOME>; encoded/text private endpoints -> irreversible aliases; ports, line structure and board runtime paths retained.",
         "commands_record_present": "commands.json" in snapshots,
         "files": [],
     }

@@ -2,7 +2,7 @@
   "schema": "system-before-after.delayed-cleanup-publication.v1",
   "verdict": "STOP",
   "scope": "cleanup only; no measurement rerun or changed measurement source",
-  "editing": "CR removed; board address and host home mapped; board runtime paths retained",
+  "editing": "CR removed; board address and host home mapped; board runtime paths retained 2026-09-11 correction: encoded private endpoints -> irreversible placeholders; original_sha256 retained; no measurement values changed.",
   "files": [
     {
       "path": "AUTH_ID_AFTER_OFF_1.txt",
@@ -181,8 +181,10 @@
     {
       "path": "TCP.txt",
       "original_sha256": "9eea785bec3d483f24375a110df4ac07a22548d768e544f0c15c515fcc62e596",
-      "public_sha256": "9eea785bec3d483f24375a110df4ac07a22548d768e544f0c15c515fcc62e596",
-      "edits": []
+      "public_sha256": "c491ad21b63982e02ec762537aeff66afc2d3648211a1e15619432e5df5f228c",
+      "edits": [
+        "2026-09-11: encoded endpoints replaced by irreversible mapped placeholders; row structure retained"
+      ]
     },
     {
       "path": "UPTIME.txt",

@@ -4,7 +4,7 @@
   "verdict": "STOP",
   "cleanup": "FAIL",
   "execution_end_utc": "2026-09-09T05:33:19.604651+00:00",
-  "editing": "Only CR removal, board address -> <TEST_BOARD_IP>, host home -> <USER_HOME>; board runtime paths retained.",
+  "editing": "Only CR removal, board address -> <TEST_BOARD_IP>, host home -> <USER_HOME>; board runtime paths retained. 2026-09-11 correction: encoded private endpoints -> irreversible placeholders; original_sha256 retained; no measurement values changed.",
   "commands_record_present": true,
   "files": [
     {
@@ -378,8 +378,10 @@
     {
       "path": "TCP.txt",
       "original_sha256": "172ebb13b88ad29a92eb0ff4a9f36f462cea4e60e15b4b90135f6cdd7b255274",
-      "public_sha256": "172ebb13b88ad29a92eb0ff4a9f36f462cea4e60e15b4b90135f6cdd7b255274",
-      "edits": []
+      "public_sha256": "bad8dc6f2dc9da1f7916c45afcdd423e105369451732215d4c1f6e86e1ec49a3",
+      "edits": [
+        "2026-09-11: encoded endpoints replaced by irreversible mapped placeholders; row structure retained"
+      ]
     },
     {
       "path": "UID.txt",
