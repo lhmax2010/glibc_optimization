@@ -1,0 +1,106 @@
+{
+  "schema": "system-before-after.delayed-cleanup-publication.v1",
+  "verdict": "STOP",
+  "scope": "cleanup only; no measurement rerun or changed measurement source",
+  "editing": "CR removed; board address and host home mapped; board runtime paths retained",
+  "files": [
+    {
+      "path": "CONNECT.txt",
+      "original_sha256": "a012d6e9a6151d87d8db3c8626781bed96b60068037f8dac0f22528263341400",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da",
+      "edits": [
+        "BOARD_ADDRESS_REPLACED"
+      ]
+    },
+    {
+      "path": "NONROOT_ALERTS_START.txt",
+      "original_sha256": "4040963b8c1b243c514db39b7e874b4cfea75f365900b52962e62cddcb5535b1",
+      "public_sha256": "4040963b8c1b243c514db39b7e874b4cfea75f365900b52962e62cddcb5535b1",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_BOOT_START.txt",
+      "original_sha256": "0dfde70d03852703a136aa07c175b8b831658612a498e925eb343efe8b05f198",
+      "public_sha256": "0dfde70d03852703a136aa07c175b8b831658612a498e925eb343efe8b05f198",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_DMESG_START.txt",
+      "original_sha256": "a6717a632aa440e8abc6985857371054dacf1556887f347273e29c80f813e51a",
+      "public_sha256": "a6717a632aa440e8abc6985857371054dacf1556887f347273e29c80f813e51a",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_GLIBC.txt",
+      "original_sha256": "8f0b036b1b810c4539b25979684a2f0ca423dc537561636714c2a026e8c3c988",
+      "public_sha256": "8f0b036b1b810c4539b25979684a2f0ca423dc537561636714c2a026e8c3c988",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_ID_BEFORE.txt",
+      "original_sha256": "1467cf6970c1fa2a2675ae53f8760e98c4f828da02fabb3e9c77fdbcbb3ebd12",
+      "public_sha256": "1467cf6970c1fa2a2675ae53f8760e98c4f828da02fabb3e9c77fdbcbb3ebd12",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_ID_FINAL.txt",
+      "original_sha256": "1467cf6970c1fa2a2675ae53f8760e98c4f828da02fabb3e9c77fdbcbb3ebd12",
+      "public_sha256": "1467cf6970c1fa2a2675ae53f8760e98c4f828da02fabb3e9c77fdbcbb3ebd12",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_MEMINFO.txt",
+      "original_sha256": "3cf814918091e1876faaba3fb73f58cc670633644e576ee1d0a846f17c9f114c",
+      "public_sha256": "3cf814918091e1876faaba3fb73f58cc670633644e576ee1d0a846f17c9f114c",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_OS_RELEASE.txt",
+      "original_sha256": "d38ff2c72874d4c1a7d0766dcd79e82db6cbb23ad8ce0e584a9ed8675bd25f1c",
+      "public_sha256": "d38ff2c72874d4c1a7d0766dcd79e82db6cbb23ad8ce0e584a9ed8675bd25f1c",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_PS_START.txt",
+      "original_sha256": "8c51d5aad0602df1514b2e8f699b8071d502f88053bfc366d2737ad8fbbe2fe4",
+      "public_sha256": "8c51d5aad0602df1514b2e8f699b8071d502f88053bfc366d2737ad8fbbe2fe4",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_UNAME_M.txt",
+      "original_sha256": "dbdcd555e3e0dcefaed439a3ce3b4d4839b2f79dcebf43807115482450c06129",
+      "public_sha256": "dbdcd555e3e0dcefaed439a3ce3b4d4839b2f79dcebf43807115482450c06129",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_UNAME_R.txt",
+      "original_sha256": "c1c8832a2314381d0f4e991e11479f1c9cbaa4f8157ba3e4de9616d16a1bdf19",
+      "public_sha256": "c1c8832a2314381d0f4e991e11479f1c9cbaa4f8157ba3e4de9616d16a1bdf19",
+      "edits": []
+    },
+    {
+      "path": "NONROOT_ZRAM_START.txt",
+      "original_sha256": "39a4794db9ab65232059c8b6cf49628540acb76e04c551ae207f432c5551cbf2",
+      "public_sha256": "39a4794db9ab65232059c8b6cf49628540acb76e04c551ae207f432c5551cbf2",
+      "edits": []
+    },
+    {
+      "path": "SDB_VERSION.txt",
+      "original_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "public_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "edits": []
+    },
+    {
+      "path": "audit.json",
+      "original_sha256": "aed15cfca2fc279619e7b7311d73279c0921fcff9569830deaccb1d24ddaec2d",
+      "public_sha256": "aed15cfca2fc279619e7b7311d73279c0921fcff9569830deaccb1d24ddaec2d",
+      "edits": []
+    },
+    {
+      "path": "commands.json",
+      "original_sha256": "986e0ef723b8e612cd39e02ee65398e010bd72dfce3ef2d01f71071c19a98ce0",
+      "public_sha256": "986e0ef723b8e612cd39e02ee65398e010bd72dfce3ef2d01f71071c19a98ce0",
+      "edits": []
+    }
+  ]
+}

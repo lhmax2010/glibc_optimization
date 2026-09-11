@@ -1,5 +1,47 @@
 # 两日批量执行汇总（2026-09-08 至 09-10）
 
+## 最新续报（2026-09-11 03:00 UTC）：单项收尾仍 STOP，demo-v11 有效
+
+执行器 `9f839b25e5b07fdbd489043050dd59969bd0497e` 先推 main；改为一项一请求，
+完整请求体超过 200 字节在本地拒绝，不再拼批次或探测长度。执行前 192 项 host 测试
+及默认 verify 通过。实际执行 03:00:51.873671–03:00:54.783703 UTC，
+[终态回执](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/audit.json)
+为 **STOP：process table missing PID 1**。
+
+| 段 | 状态 | 说明 |
+|---|---|---|
+| host 执行器修复 | 完成并已推 | 200 字节双重硬闸、单项检查、非 root 全扫后权限清单、受限单次 root round、故障回归；合同/analyzer 未变 |
+| 第 2 段收尾 | **STOP / 未闭合** | 12 个 shell 请求均有远端标志，正文 70–106 字节；ps RC=0 却缺 PID 1，进程/占用完整性未成立 |
+| 第 3 段 Demo 集成 | NOT_EXECUTED_STOP_GATE | 未新增优化效果一览、README 头条或指南数字 |
+| 第 4 段 demo-v12 | NOT_EXECUTED_STOP_GATE | 未切分支/标签，未运行 v12 交付矩阵 |
+| 第 5 段 brief | NOT_EXECUTED_STOP_GATE | 未生成 v12 review brief |
+
+**没有任何测量重跑、文件推送、包变更、governor 写入、进程清除、提权或重启。**
+起止 id 均 UID=5001。三重身份门、glibc、MemTotal 符合；原 boot 不变。
+开始 dmesg 的原前缀仍在、增量 39 行无 OOM/LMK；zram 三项 Δ=0。
+livedump 目录 RC=2/Permission denied，计数未取得；并非零告警。此后残留文件全清单、
+包清单、governor、df、结束健康均未执行，不能引用上一轮核验充作本次完成。
+
+仅已知权限拒绝项 `ALERTS_START` 保存在回执，完整非 root 全扫未完成，未进入 root round。
+`ps` 缺行不能推出“有他人占用”或“目标重启”；其原因尚未确诊。
+待 PM 决定是否将这个 **RC=0 但不完整** 的检查列入受限 root 清单，以及剩余单项扫描的
+续跑安排。没有清除任何已知或未知归属残留；“无确认待删项”不是“无残留”。
+
+原 18 格结果 `60bea7c63ca2c603351e0ef25df15546e78db05c`、G4 三格结果
+`ffd695ef345355da9f8fd9689442a70ffb59b392` 均原样保留；下节关键数字表仍有效，
+本轮只补审计、不新增 Demo 数字。G4 仍为堆 PD 下降 88/0/4 KiB，约 1899 ms 是含
+gdb/ptrace 的注入开销，不是约 1 ms 的 hook 代价，出处仍是下节原 TSV。
+
+见[报告 §10](system_level_before_after_20260908.md#10-2026-09-11-单项收尾进程清单完整性-stop)、
+[16 文件哈希清单](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/manifest.json)、
+[host 重放](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/host_replay.json)。
+停止结果与检查记录同批推 main；旧 STOP 全部保留，不改写为 PASS。
+
+**当前有效交付为 demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`；
+annotated tag 对象 `f1266c0be6c225a2ceb962836380c656758f9427`。本轮未创建 demo-v12。
+
+以下为此前续报，按时间保留，不代表本次已完成的核验项。
+
 ## 最新续报（2026-09-11）：21 格验收保留，补收尾再次 STOP
 
 PM 2026-09-10 续裁决已落实为“仅补收尾、不得重跑”。本次实际执行为

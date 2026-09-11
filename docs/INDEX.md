@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-11 03:00 UTC：[单项收尾审计](system_level_before_after_20260908.md#10-2026-09-11-单项收尾进程清单完整性-stop)：已改一项一请求/200 字节硬限；实际 12 条正文 70–106 字节均有远端标志，但非 root ps RC=0 缺 PID 1，完整性 STOP。未提权、起止 UID=5001，21 格不重跑；其余收尾及第 3–5 段停止，demo-v11 保持有效，见[最新汇总](twoday_summary_20260910.md)。
+
 - 2026-09-11: [仅补收尾审计](system_level_before_after_20260908.md#9-2026-09-11-只补收尾再次停止)：21 格获 PM 验收保留且未重跑；167 项 host 测试通过，但 3474 字节首批请求仍被 SDB 拒绝，收尾再次 STOP。身份/包清单/目录/进程/governor 与 audit_start 健康已记录；权限不足才提权，root-off 首次成功回到 UID=5001。未进入 Demo 集成/切库，demo-v11 不变，见[续报](twoday_summary_20260910.md)。
 
 - 2026-09-09（PM 方案 A 消息日期 09-10）：[授权 G4 续跑](system_level_before_after_20260908.md#8-pm-方案-a-授权续跑三格已观测收尾-stop)三格完成/校验通过；卸包后残留审计触发 SDB 请求过长 STOP，后置健康未核验。六包/目录/进程/governor 已清理，root-off 首次成功回到 UID=5001；旧 18 格不重跑，后续停止，demo-v11 不变。见[更新汇总](twoday_summary_20260910.md)。

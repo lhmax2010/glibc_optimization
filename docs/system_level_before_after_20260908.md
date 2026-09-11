@@ -1,6 +1,11 @@
 # 系统级前后对照补测（2026-09-08）
 
-**2026-09-11 最新状态：21 格已由 PM 验收保留，未重跑；只补收尾再次 STOP。**
+**2026-09-11 最新状态：21 格验收保留、未重跑；单项收尾因非 root 进程列表不完整 STOP。**
+新方法的完整请求体严格不超过 200 字节；本次 12 条正文 70–106 字节，均有远端标志，
+没有再次触发长度错误。但 `ps` RC=0 的列表缺少 PID 1，不能证明占用/残留检查完整。
+未提权，结束 UID=5001；第 3–5 段停止，demo-v11 继续有效。见 [§10](#10-2026-09-11-单项收尾进程清单完整性-stop)。
+
+2026-09-11 前次状态（保留）：21 格已由 PM 验收保留，未重跑；只补收尾再次 STOP。
 首条分批查询的服务请求为 3474 字节，仍被 SDB 拒绝；不是发现了残留。
 本次已核验的身份/包清单/目录/进程/governor 与读前健康快照原文见 [§9](#9-2026-09-11-只补收尾再次停止)。
 root-off 首次成功，回到 UID=5001；未继续 Demo 集成或切 demo-v12，demo-v11 有效。
@@ -654,3 +659,95 @@ main 再验：167 项 runner 测试、默认 verify OVERALL PASS、356 个关联
 未集成新头条、未生成 v12 brief、未运行 v12 交付矩阵或创建 demo-v12。
 当前有效快照 **demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，
 annotated tag 对象 `f1266c0be6c225a2ceb962836380c656758f9427`。
+
+## 10. 2026-09-11 单项收尾：进程清单完整性 STOP
+
+### 10.1 授权、方法与时间线
+
+PM 裁决日期为 2026-09-10；执行日以原始 UTC 为准。裁决要求一项检查一条请求、
+完整请求体超过 200 UTF-8 字节本地拒绝，禁止继续拼批次或试探长度；先完成 UID=5001
+只读全扫，权限拒绝项单列后才能按方案 A 做一次受限 root round。21 格永久保留，不重跑。
+详见[裁决台账](pm_decisions.md#2026-09-10-再续单项请求200-字节硬限2026-09-11-落地)。
+
+[执行器](../tools/runners/system_level_before_after_20260908/audit_single_cleanup_20260911.py)
+及 [200 字节硬闸](../tools/runners/system_level_before_after_20260908/single_request.py)
+先以 `9f839b25e5b07fdbd489043050dd59969bd0497e` 推 main。执行前 192 项 host 测试、
+默认 verify 均通过；这不代表板端读权限或全清单完整性已证明。合同 tag
+`system-before-after-contract-20260908` 与 analyzer 原字节未变。
+
+| UTC | 事项 | 结果与原文 |
+|---|---|---|
+| 03:00:51.873671 | 入口开始；检查干净、已推快照、原 G4 来源与冻结合同 | [audit.json](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/audit.json) |
+| 03:00:53.074443–53.082014 | sdb version / connect 各一次 | [版本](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/SDB_VERSION.txt)、[连接](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/CONNECT.txt) |
+| 03:00:53.082290–53.911018 | id、三重身份门、glibc、MemTotal，各一请求 | UID=5001、rpi4/armv7l/BUILD_ID 及环境均符合 |
+| 03:00:53.911541–54.641636 | boot、ps、dmesg、zram、livedump 列举，各一请求 | ps 清单不完整；livedump 权限拒绝；其余本时点原文已留存 |
+| 03:00:54.642842–54.783703 | 停止后的最后一条 id；入口结束 | UID=5001；未提权、未重试，此后无板端命令 |
+
+以上时间均来自[逐请求命令记录](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/commands.json)。
+共 14 个客户端调用，其中 12 个 shell 请求；每条一件检查，RC/DONE/FAIL 为必要记账，
+不是拼接第二项检查。正文最短 70、最长 106 字节；全部远端标志完整，11 条 RC=0、
+1 条 RC=2/FAIL（目录权限拒绝）。这些只是实发命令长度，不是对协议上限的探测。
+
+### 10.2 核验表、权限清单与观察
+
+| 核验项 | 本次状态 | 原文 / 边界 |
+|---|---|---|
+| UID 起止 | 5001→5001；无 root on/off | [起始 id](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_ID_BEFORE.txt)、[最终 id](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_ID_FINAL.txt) |
+| 三重身份门 | PASS | [uname -r](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_UNAME_R.txt)、[uname -m](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_UNAME_M.txt)、[完整 os-release](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_OS_RELEASE.txt) |
+| 环境未漂移 | glibc-2.40-1.6.armv7l、MemTotal 8117408 KiB | [glibc](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_GLIBC.txt)、[meminfo](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_MEMINFO.txt) |
+| boot | 与原 G4 一致 | [boot](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_BOOT_START.txt)；不能替代目标 PID/start tick 核验 |
+| 进程 / 占用 | **STOP / 完整性不成立** | [ps 原文](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_PS_START.txt)：148 行、RC=0，但缺 PID 1 和原目标 PID 498；不能判无人占用，也不能判目标已消失或重启 |
+| dmesg / zram 开始快照 | 原 dmesg 前缀保留；增量 39 行、OOM/LMK 零命中；zram 三项 Δ=0 | [dmesg](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_DMESG_START.txt)、[zram](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_ZRAM_START.txt)、[host 重放](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/host_replay.json)；只有开始时点，不是全审计后健康 PASS |
+| stability-monitor / livedump | **不可读，未取得计数** | [目录原文](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/NONROOT_ALERTS_START.txt)：`Permission denied`，RC=2/FAIL；不是计数为零 |
+| 工作/顶层残留、2570 包路径、完整包清单/六包、governor、df、结束健康 | **NOT_EVALUATED** | 非 root 全扫未完成即停止；不复制 §9 旧结果充作本次检查 |
+
+截至停止点的权限拒绝清单只有 `ALERTS_START`：
+
+```text
+ls: cannot access /opt/usr/share/crash/livedump: Permission denied
+
+RC=2
+FAIL
+```
+
+原始 [audit.json](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/audit.json)
+已保存此项；尚未形成全扫后的完整 `permission_denied.json`，所以没有发起 root round。
+回执初始枚举 `root_elevation=NOT_NEEDED` 仅表示本次没有尝试提权，**不表示已证明
+所有项目无需 root**；本次确有目录权限拒绝。非 root `ps` 的 RC=0 未被误当作全进程可见。
+
+我方残留处置清单：无已确认对象、无删除、无进程清除；**不是全部无残留**。
+非我方观察：可见列表中有 `login -- root` 与 `ttyS0 -bash`；没有归属依据，未清除。
+列表中的 pts/0 shell 与 ps 是本次采集命令自身，不能充作外部交互占用证据。
+没有新取 target stat 或挂载/访问策略，无法确诊静默缺行原因；可能与非 root 可见性
+有关，但这是待验证假说，不认定为 SMACK/hidepid 或进程消失。
+
+### 10.3 Host 复算、停止处置与待裁
+
+16 个原文/回执文件按[发布清单](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/manifest.json)
+保存编辑前后 SHA，原始件保持不变；仅按既有映射编辑路由地址、host home 和 CR。
+完整原始件本地留存，可按请求提供。复算不连接板：
+
+```sh
+python3 tools/runners/system_level_before_after_20260908/analyze_single_cleanup_stop.py \
+  data/raw/system_level_before_after_20260908/cleanup_single_20260911
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py'
+bash tools/reproduce/reproduce.sh verify
+```
+
+首条完整输出见 [host_replay.json](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/host_replay.json)：
+校验原文哈希、全部请求 ≤200、远端标志、ps 完整性拒绝及仅已采时点的健康。
+新增真实 RC=0/缺 PID 1 的 host 回归，**不修改停止判定、不增加板端重试**。
+本轮确定性/有效性检查是原文与字节硬限、RC 和可见性证明；无新容差项，无新测量数字。
+
+停止后 193 项 runner 测试通过，默认 verify `OVERALL PASS`（提交前显式 dirty override，
+未跳过测试）；391 个关联链接通过，脱敏扫描零命中。检查详情见
+[host_checks.tsv](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/host_checks.tsv)。
+这些是 host 检查，不是板端收尾或 demo-v12 交付矩阵通过。
+
+待 PM 裁决：是否允许把“RC=0 但已证明列表不完整”的进程检查单列为需要 root 的项目，
+以及如何完成剩余非 root 单项扫描后再做清单内 root 核验。本次未把它自行转成权限豁免，
+未改完整性门或在停止后继续试命令。200 字节/单项规则与 21 格不重跑均继续有效。
+
+**整轮仍 STOP，第 3–5 段不执行**：无新 Demo 头条、无 v12 brief、无交付矩阵或 demo-v12。
+当前有效 **demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated tag
+对象 `f1266c0be6c225a2ceb962836380c656758f9427`。旧 18 格与 G4 三格完全保留。

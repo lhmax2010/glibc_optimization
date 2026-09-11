@@ -1,0 +1,179 @@
+[
+  {
+    "label": "SDB_VERSION",
+    "start_utc": "2026-09-11T03:00:53.074443+00:00",
+    "end_utc": "2026-09-11T03:00:53.077650+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "CONNECT",
+    "start_utc": "2026-09-11T03:00:53.077861+00:00",
+    "end_utc": "2026-09-11T03:00:53.082014+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "NONROOT_ID_BEFORE",
+    "start_utc": "2026-09-11T03:00:53.082290+00:00",
+    "end_utc": "2026-09-11T03:00:53.219687+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_UNAME_R",
+    "start_utc": "2026-09-11T03:00:53.220368+00:00",
+    "end_utc": "2026-09-11T03:00:53.348171+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C uname -r;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_UNAME_M",
+    "start_utc": "2026-09-11T03:00:53.348436+00:00",
+    "end_utc": "2026-09-11T03:00:53.476143+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C uname -m;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_OS_RELEASE",
+    "start_utc": "2026-09-11T03:00:53.476496+00:00",
+    "end_utc": "2026-09-11T03:00:53.608670+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /etc/os-release;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_GLIBC",
+    "start_utc": "2026-09-11T03:00:53.608958+00:00",
+    "end_utc": "2026-09-11T03:00:53.780270+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C rpm -q glibc;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_MEMINFO",
+    "start_utc": "2026-09-11T03:00:53.780657+00:00",
+    "end_utc": "2026-09-11T03:00:53.911018+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/meminfo;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_BOOT_START",
+    "start_utc": "2026-09-11T03:00:53.911541+00:00",
+    "end_utc": "2026-09-11T03:00:54.047485+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /proc/sys/kernel/random/boot_id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_PS_START",
+    "start_utc": "2026-09-11T03:00:54.047765+00:00",
+    "end_utc": "2026-09-11T03:00:54.214797+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ps -ww -eo pid,ppid,tty,comm,args;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_DMESG_START",
+    "start_utc": "2026-09-11T03:00:54.215298+00:00",
+    "end_utc": "2026-09-11T03:00:54.377278+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C dmesg;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_ZRAM_START",
+    "start_utc": "2026-09-11T03:00:54.378022+00:00",
+    "end_utc": "2026-09-11T03:00:54.508308+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C cat /sys/block/zram0/mm_stat;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_ALERTS_START",
+    "start_utc": "2026-09-11T03:00:54.508788+00:00",
+    "end_utc": "2026-09-11T03:00:54.641636+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C ls -A -- /opt/usr/share/crash/livedump;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  },
+  {
+    "label": "NONROOT_ID_FINAL",
+    "start_utc": "2026-09-11T03:00:54.642842+00:00",
+    "end_utc": "2026-09-11T03:00:54.783253+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "LC_ALL=C id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"
+    ]
+  }
+]

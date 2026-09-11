@@ -1,0 +1,4 @@
+ls: cannot access /opt/usr/share/crash/livedump: Permission denied
+
+RC=2
+FAIL

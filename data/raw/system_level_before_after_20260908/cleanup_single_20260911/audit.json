@@ -1,0 +1,33 @@
+{
+  "schema": "system-before-after.single-cleanup.v1",
+  "start_utc": "2026-09-11T03:00:51.873671+00:00",
+  "verdict": "STOP",
+  "body_limit_bytes": 200,
+  "approved_by": "PM",
+  "pm_decision_date": "2026-09-10",
+  "measurement_cells_run": 0,
+  "board_files_pushed": 0,
+  "packages_changed": 0,
+  "governor_writes": 0,
+  "processes_terminated": 0,
+  "root_elevation": "NOT_NEEDED",
+  "accepted_measurements": "21 PRESERVED",
+  "executor_commit": "9f839b25e5b07fdbd489043050dd59969bd0497e",
+  "source_execution_sha256": "373282a0a93179a8f8563dd3a6889a6a9e6277df8d1149e49ada334e97711886",
+  "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+  "permission_denied_items": {
+    "ALERTS_START": {
+      "argv": [
+        "ls",
+        "-A",
+        "--",
+        "/opt/usr/share/crash/livedump"
+      ],
+      "reason": "ls: cannot access /opt/usr/share/crash/livedump: Permission denied",
+      "directory": "/opt/usr/share/crash/livedump"
+    }
+  },
+  "reason": "process table missing PID 1",
+  "id_final": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+  "end_utc": "2026-09-11T03:00:54.783703+00:00"
+}

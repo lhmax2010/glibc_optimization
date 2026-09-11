@@ -1,0 +1,27 @@
+{
+  "verdict": "STOP_NOT_CLEANUP_PASS",
+  "commands": 14,
+  "shell_requests": 12,
+  "body_min_bytes": 70,
+  "body_max_bytes": 106,
+  "remote_rc_zero": 11,
+  "ps_remote_rc": 0,
+  "ps_rows": 148,
+  "pid_1_visible": false,
+  "prior_target_visible": false,
+  "dmesg_prefix_retained": true,
+  "dmesg_increment_lines": 39,
+  "oom_lmk_increment": 0,
+  "zram_three_delta": [
+    0,
+    0,
+    0
+  ],
+  "permission_denied_labels": [
+    "ALERTS_START"
+  ],
+  "nonroot_sweep_complete": false,
+  "root_rounds": 0,
+  "final_uid": 5001,
+  "accepted_cells_rerun": 0
+}

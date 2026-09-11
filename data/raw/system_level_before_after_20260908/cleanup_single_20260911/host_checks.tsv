@@ -1,0 +1,14 @@
+check	result	detail
+preexecution_runner_tests	PASS	192 tests; 14.764 s; executor 9f839b25e5b07fdbd489043050dd59969bd0497e
+preexecution_default_verify	PASS	OVERALL PASS; explicit REPRODUCE_ALLOW_DIRTY=1 before commit; no test skip
+poststop_runner_tests	PASS	193 tests; 14.515 s; includes real nonroot RC=0 incomplete ps regression
+poststop_default_verify	PASS	OVERALL PASS; explicit REPRODUCE_ALLOW_DIRTY=1 before result commit; no test skip
+report_and_evidence_links	PASS	391 local links; report, summary, INDEX, PM decisions, runner README, evidence README
+original_public_logs	PASS	16 files checked against manifest public SHA-256 by analyze_single_cleanup_stop.py
+actual_request_limit	PASS	12 complete shell bodies, 70-106 UTF-8 bytes; maximum allowed 200; remote proofs all parsed
+frozen_contract_analyzer	PASS	git diff against system-before-after-contract-20260908 empty
+accepted_measurement_evidence	PASS	completed_prefix and g4_authorized_20260910 unchanged against 90c9ca4
+redaction_scan	PASS	zero raw test-board address, host home, CI host, invalid board-path replacement matches in new/updated deliverables
+root_rounds	NOT_EXECUTED	0; nonroot sweep incomplete, finally id=5001
+complete_cleanup	STOP	process table missing PID 1; not a health PASS or an occupancy finding
+demo_v12_matrix	NOT_EXECUTED	stop gate; effective delivery remains demo-v11

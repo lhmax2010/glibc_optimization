@@ -20,6 +20,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 with mock.patch.object(sys, "path", [str(HERE), *sys.path]):
     import single_request as wire
     import audit_single_cleanup_20260911 as single
+    import analyze_single_cleanup_stop as stopped
 
 HEAD = "a" * 40
 BOOT = "12345678-1234-1234-1234-123456789abc"
@@ -34,6 +35,18 @@ PS_TABLE = ("PID PPID TT COMMAND COMMAND\n1 0 ? init /sbin/init\n"
 
 
 class SingleCleanup(unittest.TestCase):
+    def test_observed_nonroot_ps_rc_zero_is_incomplete_not_an_occupancy_pass(self):
+        evidence = single.ROOT / 'data/raw/system_level_before_after_20260908/cleanup_single_20260911'
+        with mock.patch.object(subprocess, 'run', side_effect=AssertionError('no board access in replay')):
+            result = json.loads(stopped.analyze(evidence))
+        self.assertEqual(result, json.loads((evidence/'host_replay.json').read_text()))
+        self.assertEqual(result['ps_remote_rc'], 0)
+        self.assertFalse(result['pid_1_visible'])
+        self.assertFalse(result['prior_target_visible'])
+        self.assertEqual(result['verdict'], 'STOP_NOT_CLEANUP_PASS')
+        self.assertEqual(result['root_rounds'], 0)
+        self.assertEqual(result['accepted_cells_rerun'], 0)
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix="single-cleanup-host-test-")
         self.addCleanup(self.temporary.cleanup)
