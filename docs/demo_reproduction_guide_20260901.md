@@ -425,6 +425,19 @@ estimator outside=15/15 E4=2200-7976KiB measured=36KiB
 核验闭合；这不是一次不中断的连续运行。来源身份链见
 [composition.json](../data/raw/system_level_before_after_20260908/accepted_matrix/composition.json)。
 
+收尾重放以 [contract_refs.json](../tools/runners/system_level_before_after_20260908/contract_refs.json)
+中的固定 commit 与两份文件哈希核对原字节；机器不解析 tag 名。因此 Git 全量与
+`--no-tags` 克隆均可复算。浅克隆缺该对象时明确非零退出、不跳过；获取后执行同一命令：
+
+```sh
+git fetch --no-tags --unshallow origin
+# 或只获取固定 commit/tree，保留浅克隆边界：
+git fetch --no-tags origin 54ee2ba8d2819014f3e5656de023ffaf283b4a4a
+```
+
+此处仅是 host 校验对象的获取方式；板上新轮次 annotated tag、推送时间和可审计
+间隔门不变。[门分离裁决与验证](demo_v12_delivery_20260911.md)。
+
 ```sh
 system_out=$(mktemp -d)
 system_source=data/raw/system_level_before_after_20260908/accepted_matrix
@@ -458,7 +471,7 @@ PASS system-before-after compact replay cells=21 cycles=333 group_arms=7
 所有原始件 SHA/拉回完整性在 host 组合入口二次校验；完整原始件本地留存，可按请求
 提供。公开 L1 只重放解析后的点和 gst cycle 转录，不替代原始件独立来源审计。
 收尾原文与独立复核见[报告 §12.1](system_level_before_after_20260908.md#121-实际处置与收尾结果)：
-四个非空 GDB 目录按 PM 裁决保留待查，不将此项写成“零残留”。
+四个非空 GDB 目录按 PM 裁决作为已知残留保留，不将此项写成“零残留”。
 测试板量级不等于产品收益；整机/产品侧仍需另行验证，mixed 的负系统净效应保留原符号。
 
 ### Demo 数字到公开输入的总表

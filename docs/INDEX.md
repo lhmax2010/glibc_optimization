@@ -19,6 +19,10 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-11：PM 方向二闭合 host 合同 tag 依赖；固定 commit/双文件字节验证，full、
+  no-tags 与浅克隆对象缺失/补齐回归通过，板端 annotated 事前门不变；四非空目录为
+  已知非阻断残留。进入 [demo-v12 交付验收](demo_v12_delivery_20260911.md)，不重跑 21 格。
+
 - 2026-09-11：PM 五目录处置完成，四项非空保留待查、镜像目录不动、UID 恢复，
   [延期收尾通过](system_level_before_after_20260908.md#121-实际处置与收尾结果)。原 21 格
   不重跑；绝对值已集成，但[host 无 tag 克隆回归 STOP](demo_v12_delivery_blocker_20260911.md)，

@@ -243,9 +243,16 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 - 入口只新增 host 公开件复算/测试，不修改既有启动注入防护、GBS/held-out 结论或
   验收带；裁决依据见[PM 台账](pm_decisions.md)。
 
-2026-09-11 终态：以上是候选集成，**没有切出 demo-v12**。源码集成提交
+2026-09-11 前次停止状态（历史保留）：以上是候选集成，**当时没有切出 demo-v12**。源码集成提交
 `7093d8a60814b706f1f6809cf6b6d282a359c402`，HTML 构建提交/真实 GBS clean HEAD
 `4539139956b89d82864a93c57ce68b7b07bdc850`；[构建证明](../data/raw/demo_v12_delivery_20260911/gbs/README.md)
 通过，但新增收尾重放依赖命名合同 tag，交付身份无 tag fixture 的八个子用例失败。
 [停止报告](demo_v12_delivery_blocker_20260911.md)保留根因；未放宽测试、未执行远端矩阵。
 demo-v11 仍为当前有效交付，21 格与全部旧证据不受影响。
+
+2026-09-11 后续 PM 方向二闭合：`STOP_HOST_REPLAY_TAG_DEPENDENCY` 修复提交
+`b5dd9483548dcbe5827461e5da24d9bee9bf2977`，host 只读固定 commit、双文件 SHA-256
+并严格比较原字节；三种实际克隆形态和缺对象诊断回归通过，板端 annotated tag、
+事前提交/推送与时间间隔门未改。四个非空目录按 `SYSTEM-GDB-KNOWN-RESIDUE` 作为
+已知项保留，不删非我方文件。本次不连板、不改数据或结论；[交付验收记录](demo_v12_delivery_20260911.md)
+与 [PM 裁决](pm_decisions.md)衔接此后快照状态，旧停止报告保留。

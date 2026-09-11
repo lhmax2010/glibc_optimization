@@ -106,14 +106,14 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v11
+  --tag demo-v12
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v11 <url>
+git clone --branch demo-v12 <url>
 git clone <url>                 # remote default must be main
 ```
 
@@ -292,7 +292,10 @@ remains historical, as does the [v11 real build archive](../../data/raw/demo_v11
 The [v12 candidate real build archive](../../data/raw/demo_v12_delivery_20260911/gbs/README.md)
 binds the entrypoint including the accepted-system-matrix L1 replay and the other five
 committed files to current main bytes; publication copied the execution proof unchanged.
-It does not establish delivery readiness: the independent host-test gate stopped v12.
+It alone does not establish delivery readiness. The historical host-test stop and
+its fixed-commit replay closure are recorded in the
+[v12 delivery audit](../../docs/demo_v12_delivery_20260911.md); clone-matrix acceptance
+remains a separate hard gate.
 
 ### Provenance capability boundary
 

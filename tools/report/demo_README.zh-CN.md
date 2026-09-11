@@ -111,7 +111,7 @@ RSS 降幅中位 `0.033659%`（约 `0.03%`，分母是 RSS 而不是堆 PD）。
 哈希二进制，差别为运行时调用，不修改 ELF，二进制体积不变。
 [证据与 L1](docs/demo_reproduction_guide_20260901.md#l1-system-before-after)。
 
-延期收尾按授权规则通过，不等于零残留：四个非空 GDB 目录列举后保留待查，镜像 Python
+延期收尾按授权规则通过，不等于零残留：四个非空 GDB 目录列举后作为已知非阻断残留保留，镜像 Python
 目录保留，会话已回到 UID 5001。[处置原文](docs/system_level_before_after_20260908.md#121-实际处置与收尾结果)。
 
 唯一机器合同是 [`acceptance_bands.json`](tools/reproduce/acceptance_bands.json)。唯一

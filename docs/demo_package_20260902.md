@@ -4,9 +4,9 @@
 
 # glibc 内存优化 Demo 演示包
 
-2026-09-11 工程集成追注：main 已加入 21 格绝对值，但新增收尾复算的无 tag 克隆
-测试失败，v12 交付停止；[阻塞记录](demo_v12_delivery_blocker_20260911.md)。当前有效
-快照仍为 demo-v11，新增章节是待闭合的 main 预览，不代表已通过交付矩阵。
+2026-09-11 工程集成追注：main 已加入 21 格绝对值；无 tag 克隆的 host 合同身份依赖
+按 PM 方向二闭合，[修复与交付验收](demo_v12_delivery_20260911.md)记录各阶段结果。
+[旧阻塞记录](demo_v12_delivery_blocker_20260911.md)保留；矩阵完成前不宣告新快照有效。
 
 - 日期：2026-09-02
 - 用途：演示日入口说明；图文总入口是可离线发送的
@@ -32,7 +32,7 @@
 21 格的绝对值，输入为[组合点转录](../data/raw/system_level_before_after_20260908/accepted_matrix/point_source.json)，
 复算见[系统前后对照 L1](demo_reproduction_guide_20260901.md#l1-system-before-after)，
 workflow verify 同口径五文件 cmp。合同不改变；重启前 18 格、重启后 G4 三格与延期
-收尾分期保留，不补造一次连续运行。四个非空 GDB 目录按 PM 裁决保留待查，不能写零残留。
+收尾分期保留，不补造一次连续运行。四个非空 GDB 目录按 PM 裁决作为已知残留保留，不能写零残留。
 
 新增头条：mixed RSS 13.015625→7.718750 MiB / 40.696279%，medium-only
 13.152344→7.191406 MiB / 45.322245%，gst 8.671875→6.859375 MiB / 21.009919%。
@@ -55,6 +55,11 @@ none 的零仅指 RSS 下降，mixed 系统净效应为负；测试板量级不�
 缺少该事前提交/tag
 凭证的历史轮次只称“固定合同重放”，不得称“预登记”。
 
+2026-09-11 host/板端门分离：公开重放按仓内
+[固定 commit 与文件哈希](../tools/runners/system_level_before_after_20260908/contract_refs.json)
+验证合同原字节，不依赖 tag 名；浅克隆缺对象明确失败并提示 fetch。此项不修改本节
+板端 annotated tag、推送时间与至少 10 分钟间隔的任何要求。
+
 ### 0.2 交付快照强制自检
 
 自 `demo-v10` 起，切出快照后必须从 GitHub 远端按 HQ 实际方式做三种全新克隆，并把
@@ -62,7 +67,7 @@ none 的零仅指 RSS 下降，mixed 系统净效应为负；测试板量级不�
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v11 <url>
+git clone --branch demo-v12 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -72,7 +77,7 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v11
+  --tag demo-v12
 ```
 
 六种环境是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上

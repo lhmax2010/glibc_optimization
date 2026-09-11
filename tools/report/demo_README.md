@@ -134,7 +134,7 @@ The trim/none arms use the same hashed binary: this is a runtime call, with no E
 or binary-size change. [Evidence and L1](docs/demo_reproduction_guide_20260901.md#l1-system-before-after).
 
 Delayed cleanup passed under the authorized rule, not a zero-residue claim:
-four nonempty GDB directories were listed and left pending; the image's Python
+four nonempty GDB directories were listed and retained as known, nonblocking residue; the image's Python
 directory was preserved, and the session returned to UID 5001. [Disposition](docs/system_level_before_after_20260908.md#121-实际处置与收尾结果).
 
 [`acceptance_bands.json`](tools/reproduce/acceptance_bands.json) is the single
