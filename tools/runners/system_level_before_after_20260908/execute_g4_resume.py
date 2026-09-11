@@ -10,6 +10,7 @@ from close_approved_sessions import foreign_sessions  # parser only; never close
 from execute_contract import Executor, CONTRACT, ANALYSIS, ROOT, GDB_NAMES, STABILITY, git
 from publish_measurement import digest, verified_manifest
 from publish_stopped_measurement import completed_contract
+from sdb_request import residue_batches
 
 
 def accepted_prefix(run):
@@ -113,11 +114,8 @@ class G4Resume(Executor):
                 raise ValueError("package inventory not restored")
             residual = []
             paths = getattr(self, "package_paths", [])
-            for offset in range(0, len(paths), 200):
-                selected = " ".join(shlex.quote(p) for p in paths[offset:offset + 200])
-                text = self.remote("PACKAGE_RESIDUE_%04d" % offset,
-                    'for p in ' + selected + '; do if [ -e "$p" ] || [ -L "$p" ]; then '
-                    'printf "%s\\t" "$p"; stat -c "%F" "$p" || exit 1; fi; done')
+            for label, command in residue_batches(paths):
+                text = self.remote(label, command)
                 residual.extend(text.splitlines())
             self.receipt["package_residue_observations"] = residual
             self.receipt["package_warning_policy"] = "PM: warning text and remaining/shared paths recorded, inventory restored; nonblocking"

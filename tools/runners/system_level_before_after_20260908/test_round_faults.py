@@ -27,7 +27,8 @@ class RoundFaults(fixtures.ExecutorHost):
                         return "0 0 0" if label.endswith("_ZRAM") else "boot"
                     command = command.replace("/opt/usr/share/crash/livedump", str(crash))
                     doubles = 'find() { ' + ('return 31;' if failure == "find" else 'printf "%s\\n" ' + shlex.quote(str(archive)) + ';') + ' }\n'
-                    doubles += 'stat() { ' + ('return 32;' if failure == "stat" else 'printf "123\\n";') + ' }\n'
+                    doubles += 'stat() { ' + ('return 32;' if failure == "stat" else
+                        'if [ "$2" = %F ]; then printf "directory\\n"; else printf "123\\n"; fi;') + ' }\n'
                     doubles += 'sha256sum() { ' + ('return 33;' if failure == "sha256sum" else 'printf "%064d  file\\n" 0;') + ' }\n'
                     result = subprocess.run([shell, "-c", doubles + command], capture_output=True, text=True, timeout=5)
                     if result.returncode:

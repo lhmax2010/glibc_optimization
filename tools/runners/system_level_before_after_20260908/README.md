@@ -1,5 +1,7 @@
 # 系统级前后对照：事前合同与派生入口
 
+最新裁决：21 格全部验收保留，不得重跑；本轮只用[2026-09-11 收尾入口](#2026-09-11-只补收尾入口pm-2026-09-10-续裁决)。以下旧失败/续跑命令保留为历史出处。
+
 ## PM 2026-09-10 单轮授权包装层
 
 **执行结果追注：本轮已结束并 root-off 回到 UID=5001，不得直接再次运行。** G4 三格已观测
@@ -107,3 +109,32 @@ python3 tools/runners/system_level_before_after_20260908/execute_contract.py \
 `publish_measurement.py` / `replay_compact.py` 是完整 21 格的 host 发布/复算准备件，
 仅在合成 fixture 上通过五派生件 cmp；本次 STOP 被完整发布门拒绝，未对真实矩阵发布
 完整结果，也未进入 HQ 的 Demo L1 入口。它们的 host 测试通过不构成 G4 板上可用性证据。
+## 2026-09-11 只补收尾入口（PM 2026-09-10 续裁决）
+
+21 格测量均已验收保留，**禁止再调用任何测量入口重跑**。本次只运行：
+
+```sh
+python3 tools/runners/system_level_before_after_20260908/audit_cleanup_20260911.py \
+  --ip '<TEST_BOARD_IP>' \
+  --pm-authorization PM-G4-CLEANUP-20260910 \
+  --output-dir board_results/system_level_before_after_20260908/cleanup_audit_20260911
+```
+
+此 token 是本次 PM 显式授权，不是以后轮次的默认权限。读权限足够时不提权；
+只有证实权限拒绝才 root-on，最终 root-off 和非 root id 在 `finally` 中复核。
+入口没有测量、推送、安装/卸载或 governor 写入路径。新可归属 livedump 只在
+完整拉回/哈希核验、元数据归档后按确切路径清除并复核，且仍构成健康 STOP；
+非我方告警原样报告不动。其他归属不明残留不猜测删除。
+
+`sdb_request.py` 以包含 `shell:` 和完整远端 RC/DONE 包装的 UTF-8 **3500 字节**
+为保守预算，按实际编码长度分批。Gate 发送层再次校验，超长本地拒绝且零 SDB 调用。
+单路径超长或非法路径在任何批次发送之前拒绝。此预算不宣称是实测协议上限。
+每条短命令仍独立校验远端状态，不能以 host SDB 退出码证明成功。
+
+延期核验必须桥接原 G4 boot ID 与 dmesg 前缀、zram/包清单/告警状态；若日志丢失、
+状态漂移或其他停止门触发，保存本次 STOP，不能借本次静置快照证明过去的健康。
+执行器与测试必须先进入干净、已推 main，再连板。原合同及 analyzer 一字不改。
+
+`publish_cleanup_audit.py --run <terminal-audit> --output-dir <new-public-dir>
+--ip <TEST_BOARD_IP> --host-home <local-home>` 只转录终态收尾原文与编辑前后 SHA。
+原 STOP 与补核验记录分开，禁止重写前次执行回执；full livedump 原件本地留存，可按请求提供。

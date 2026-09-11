@@ -8,6 +8,7 @@ import pathlib
 import re
 import subprocess
 import time
+from sdb_request import check_request
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -48,6 +49,11 @@ class Gate:
         self.commands = []
 
     def run(self, label, argv, timeout=20):
+        if pathlib.Path(argv[0]).name == "sdb" and "shell" in argv:
+            index = argv.index("shell")
+            if len(argv) != index + 2:
+                raise ValueError("SDB shell requires one bounded request argument")
+            check_request(argv[index + 1])
         started = utc()
         try:
             p = subprocess.run(argv, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,

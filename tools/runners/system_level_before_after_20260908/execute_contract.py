@@ -14,6 +14,7 @@ import tarfile
 import time
 from preflight import Gate, TAG, git, utc
 from collect_cell import ANALYSIS, collect
+from sdb_request import framed
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -102,8 +103,7 @@ class Executor(Gate):
         # Inner controller has its own RC/DONE. Distinct outer framing avoids
         # counting those as transport success or rejecting two legitimate RCs.
         rc_marker, done = "WRAPPER_RC_" + label, "DONE_REMOTE_" + label
-        body = "( " + command + " ); rc=$?; printf '\\n" + rc_marker + "=%s\\n' \"$rc\"; "
-        body += "if [ \"$rc\" -eq 0 ]; then echo " + done + "; else echo FAIL_REMOTE_" + label + "; fi"
+        body = framed(label, command)
         _, output = self.run(label, ["sdb", "-s", self.serial, "shell", body])
         lines = output.splitlines()
         if lines.count(rc_marker + "=0") != 1 or lines.count(done) != 1 or "FAIL_REMOTE_" + label in lines:
@@ -207,12 +207,14 @@ class Executor(Gate):
             (path / (name + "_" + when + ".txt")).write_text(output + "\n")
         output = self.remote("ROUND_" + when.upper() + "_ALERTS", '''printf 'remote_path\tsize\tmtime_epoch\tsha256\n' || exit 1
 d=/opt/usr/share/crash/livedump
-test ! -L "$d" || exit 1
 files=
-if [ -e "$d" ]; then
-test -d "$d" || exit 1
+kind=$(LC_ALL=C stat -c %F "$d" 2>&1); code=$?
+if [ "$code" -eq 0 ]; then
+test "$kind" = directory && test -r "$d" && test -x "$d" || exit 1
 files=$(find "$d" -maxdepth 1 -name '*.zip') || exit 1
-fi
+elif [ "$code" -eq 1 ]; then
+case "$kind" in *': No such file or directory') :;; *) printf '%s\\n' "$kind"; exit 1;; esac
+else printf '%s\\n' "$kind"; exit 1; fi
 IFS='
 '
 for f in $files; do
