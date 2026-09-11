@@ -35,7 +35,10 @@ gdb/ptrace 的注入开销，不是约 1 ms 的 hook 代价，出处仍是下节
 见[报告 §10](system_level_before_after_20260908.md#10-2026-09-11-单项收尾进程清单完整性-stop)、
 [16 文件哈希清单](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/manifest.json)、
 [host 重放](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/host_replay.json)。
-停止结果与检查记录同批推 main；旧 STOP 全部保留，不改写为 PASS。
+停止结果已推 main：`204bf4f8e93421e6f34809aafb124137f8aee7d1`；旧 STOP 全部保留，
+不改写为 PASS。该提交从 GitHub 远端干净克隆后，193 项 runner 测试、默认 verify
+`OVERALL PASS`、391 个关联链接、host 重放逐字节 cmp 与脱敏扫描均通过；无 dirty/
+test-skip/expected-SHA override。后补检查记录只涉及 host，不是收尾闭合或 v12 验收。
 
 **当前有效交付为 demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`；
 annotated tag 对象 `f1266c0be6c225a2ceb962836380c656758f9427`。本轮未创建 demo-v12。

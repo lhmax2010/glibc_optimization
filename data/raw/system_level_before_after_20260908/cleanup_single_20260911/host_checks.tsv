@@ -12,3 +12,7 @@ redaction_scan	PASS	zero raw test-board address, host home, CI host, invalid boa
 root_rounds	NOT_EXECUTED	0; nonroot sweep incomplete, finally id=5001
 complete_cleanup	STOP	process table missing PID 1; not a health PASS or an occupancy finding
 demo_v12_matrix	NOT_EXECUTED	stop gate; effective delivery remains demo-v11
+github_clean_snapshot	PASS	git clone --branch main from GitHub; HEAD 204bf4f8e93421e6f34809aafb124137f8aee7d1; clean before and after
+github_clean_runner_tests	PASS	193 tests; 14.978 s; no board access
+github_clean_default_verify	PASS	OVERALL PASS; no dirty, test-skip or expected-SHA override; main identity REPORT_ONLY as specified
+github_clean_replay_cmp_links_scan	PASS	host_replay.json byte cmp silent; 391 links; redaction zero matches; offline HTML cmp via verify

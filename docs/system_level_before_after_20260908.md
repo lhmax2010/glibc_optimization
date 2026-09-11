@@ -744,6 +744,11 @@ bash tools/reproduce/reproduce.sh verify
 [host_checks.tsv](../data/raw/system_level_before_after_20260908/cleanup_single_20260911/host_checks.tsv)。
 这些是 host 检查，不是板端收尾或 demo-v12 交付矩阵通过。
 
+停止结果以 `204bf4f8e93421e6f34809aafb124137f8aee7d1` 推 main 后，从 GitHub 远端
+普通克隆 main 再验：193 项 runner 测试、默认 verify `OVERALL PASS`、391 个关联链接、
+host_replay 逐字节 cmp 与脱敏扫描均通过，克隆前后工作树干净。未设置 dirty、test-skip
+或 expected-SHA override；main 交付身份为正确的 REPORT_ONLY，仍不是 demo-v12 矩阵。
+
 待 PM 裁决：是否允许把“RC=0 但已证明列表不完整”的进程检查单列为需要 root 的项目，
 以及如何完成剩余非 root 单项扫描后再做清单内 root 核验。本次未把它自行转成权限豁免，
 未改完整性门或在停止后继续试命令。200 字节/单项规则与 21 格不重跑均继续有效。
