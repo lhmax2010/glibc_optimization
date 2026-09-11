@@ -17,6 +17,14 @@ EVIDENCE=HERE.parents[2]/'data/raw/system_level_before_after_20260908/cleanup_re
 
 
 class RestrictedCleanupReplay(unittest.TestCase):
+    def test_every_original_source_manifest_file_is_git_tracked(self):
+        root=HERE.parents[2]
+        relative=replay.SOURCE.relative_to(root)
+        tracked=set(subprocess.check_output(['git','ls-files','--full-name','--',str(relative)],
+            cwd=root,text=True).splitlines())
+        for row in json.loads((replay.SOURCE/'manifest.json').read_text())['files']:
+            self.assertIn(str(relative/row['path']),tracked,'manifest source missing from clean clone')
+
     def test_original_stop_replays_byte_exact_without_board_calls(self):
         real_run=subprocess.run
         def git_only(argv,**kwargs):

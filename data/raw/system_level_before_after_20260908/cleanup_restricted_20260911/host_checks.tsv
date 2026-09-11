@@ -10,3 +10,6 @@ after_stop	immutable-measurement-inputs	PASS	contract/analyzer and accepted 18+3
 after_stop	delivery-refs	PASS	origin demo and demo-v11 peel remain 0e8a2f731b13690009badf1ca2acbd57018e7bc8; no demo-v12
 not_executed	board-retry	NOT_EXECUTED	no board command after ROOT_ID_OFF_1
 not_executed	demo-v12-matrix	NOT_EXECUTED_STOP_GATE	unknown-directory disposition unresolved
+remote_clone_initial	default-verify	PASS	12f67f6; clean GitHub main clone; no overrides
+remote_clone_initial	runner-tests	FAIL	216 tests, 4 errors: original G4 manifest controller.log files were ignored/untracked
+host_archive_fix	original-controller-logs	PASS	three existing 851-byte logs match unchanged G4 manifest SHA; added to Git without byte edits

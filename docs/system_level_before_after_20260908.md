@@ -885,6 +885,14 @@ bash tools/reproduce/reproduce.sh verify
 [host_checks.tsv](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/host_checks.tsv)。
 这些检查验证归档和工具，不将目录处置 STOP 改成 PASS，也不是 v12 交付矩阵。
 
+推库后干净克隆发现并修复一项归档漏收：原 G4 manifest 中的三份 `controller.log`
+此前受全局 `*.log` 忽略规则影响，只在本地存在，导致新重放在克隆里缺文件。三份各
+851 字节，均与原 manifest 的 public SHA 完全相同；本次只补收既有字节，不修改原
+manifest、回执、XML、测量值或合同，也不连接板。新增“manifest 所列文件必须被 Git
+追踪”回归。该问题是 host 公开件完整性问题，独立于五目录的板端 STOP。
+该克隆的默认 verify 仍 `OVERALL PASS`；缺文件由另行执行的本轮 runner 全量测试发现，
+不能只拿既有 Demo verify 代替本轮新证据测试。
+
 **第 3–5 段 NOT_EXECUTED_STOP_GATE**：无新 Demo 头条、无 v12 brief、未运行 v12
 交付矩阵、不切 demo-v12。当前有效交付继续为 **demo-v11**，commit
 `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated tag 对象
