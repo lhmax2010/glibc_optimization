@@ -1,5 +1,30 @@
 # 两日批量执行汇总（2026-09-08 至 09-10）
 
+## 最新终态（2026-09-11）：SHA 修复通过，全仓 TCP 编码地址脱敏 STOP
+
+**当前有效交付仍为 demo-v11；未发布 demo-v12。** 原 tag 依赖已按 PM 方向二闭合，
+两次 clean main verify 通过；隔离候选 branch/tag 的两格 required verify 通过。
+随后的全仓扫描发现三份既有 TCP 原文共 7 行、14 个可逆 IPv4-mapped 端点未脱敏，
+立即中止余下矩阵；没有继续远端验收/切库/复审简报。不是新的测量失败。
+[新停止门与文件清单](demo_v12_delivery_20260911.md#4-新停止门既有-tcp-原文的编码地址未脱敏)、
+[机读摘要](../data/raw/demo_v12_delivery_20260911/tag_sha_closure/result.json)。
+
+| 段 | 最终状态 |
+|---|---|
+| 执行器 / G4 / 延期收尾 | 既有完成结果保留；四非空目录为 PM 已接受的非阻断已知项 |
+| host 合同 SHA 修复 | 完成；固定 commit/双文件哈希和原字节比较，板端 annotated 门不变 |
+| Demo 工程集成 | 已保存原 21 格绝对值；无新测量、无数据或验收带改动 |
+| demo-v12 与远端完整矩阵 | STOP_DELIVERY_REDACTION_TCP_IPV4_MAPPED；正式 refs 未动 |
+| v12 review brief | NOT_EXECUTED_STOP_GATE |
+
+已推 main：修复 `b5dd9483548dcbe5827461e5da24d9bee9bf2977`；文档/候选配置
+`2f0cb95745b9a8df6a6041a021b505e522f9809a`。本收线提交恢复交付配置为 v11；
+最终 main SHA 以 Git 提交记录与交付回复为准，不把未提交的自引用写成固定值。
+待 PM 裁决：三份旧 TCP 公开件的定向脱敏及 hash/manifest/来源链同步方式，历史
+可见性处理范围。未自行改写历史或旧证据。已知目录无需再次裁决或连板。
+有效 demo-v11 commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，tag 对象
+`f1266c0be6c225a2ceb962836380c656758f9427`；下列关键数字表原样保留。
+
 ## 最新续报（2026-09-11）：host tag/SHA 分离修复完成，进入交付验收
 
 PM 方向二已落实于 `b5dd9483548dcbe5827461e5da24d9bee9bf2977`：固定 commit +

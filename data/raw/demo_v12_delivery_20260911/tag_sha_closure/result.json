@@ -1,0 +1,53 @@
+{
+  "schema": "demo-v12.host-closure-stop.v1",
+  "date_utc": "2026-09-11",
+  "verdict": "STOP_DELIVERY_REDACTION_TCP_IPV4_MAPPED",
+  "original_blocker": "STOP_HOST_REPLAY_TAG_DEPENDENCY",
+  "original_blocker_status": "FIXED",
+  "implementation_commit": "b5dd9483548dcbe5827461e5da24d9bee9bf2977",
+  "candidate_main_commit": "2f0cb95745b9a8df6a6041a021b505e522f9809a",
+  "contract_commit": "54ee2ba8d2819014f3e5656de023ffaf283b4a4a",
+  "board_preflight_changed": false,
+  "board_operations": 0,
+  "measurement_reruns": 0,
+  "existing_measurement_files_changed": false,
+  "host_checks": {
+    "runner_tests": {"count": 244, "verdict": "PASS"},
+    "delivery_and_html_tests": {"count": 64, "verdict": "PASS"},
+    "clean_main_verify": {"commits": ["b5dd9483548dcbe5827461e5da24d9bee9bf2977", "2f0cb95745b9a8df6a6041a021b505e522f9809a"], "verdict": "PASS"},
+    "offline_html": {"bytes": 58184, "cmp": "PASS"},
+    "links": {"delivery_face": 559, "repository": 1454, "verdict": "PASS"}
+  },
+  "candidate_matrix": {
+    "remote_kind": "ISOLATED_LOCAL_FIXTURE_NOT_GITHUB",
+    "candidate_commit_not_published": "c05c8af503c96c82c04156be8cc22bb6c3b3b087",
+    "planned_full_verifies": 18,
+    "completed_passes": 2,
+    "completed_profile": "present-gbs+present-rpm",
+    "completed_shapes": ["branch", "tag"],
+    "identity": "REQUIRED",
+    "uncompleted_checks": 16,
+    "startup_rejection_checks_executed": 0,
+    "verdict": "INTERRUPTED_ON_INDEPENDENT_REDACTION_GATE",
+    "process_exit_code_after_term": 143
+  },
+  "github_delivery_matrix": "NOT_EXECUTED_STOP_GATE",
+  "new_tag_published": false,
+  "privacy": {
+    "incremental_files_hits": 0,
+    "repository_rows_with_unsanitized_mapped_endpoints": 7,
+    "mapped_endpoint_occurrences": 14,
+    "findings": [
+      {"path": "data/raw/system_level_before_after_20260908/execution/TCP.txt", "lines": [5, 6]},
+      {"path": "data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/TCP.txt", "lines": [5, 6, 7]},
+      {"path": "data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TCP.txt", "lines": [5, 6]}
+    ],
+    "addresses_intentionally_omitted": true
+  },
+  "effective_delivery": {
+    "tag": "demo-v11",
+    "tag_object": "f1266c0be6c225a2ceb962836380c656758f9427",
+    "commit": "0e8a2f731b13690009badf1ca2acbd57018e7bc8"
+  },
+  "record_kind": "transcription_of_host_checks_not_new_measurement"
+}

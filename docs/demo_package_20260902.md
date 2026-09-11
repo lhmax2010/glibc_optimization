@@ -6,7 +6,8 @@
 
 2026-09-11 工程集成追注：main 已加入 21 格绝对值；无 tag 克隆的 host 合同身份依赖
 按 PM 方向二闭合，[修复与交付验收](demo_v12_delivery_20260911.md)记录各阶段结果。
-[旧阻塞记录](demo_v12_delivery_blocker_20260911.md)保留；矩阵完成前不宣告新快照有效。
+[旧阻塞记录](demo_v12_delivery_blocker_20260911.md)保留；随后全仓 TCP 编码地址脱敏门
+STOP，v12 未发布，当前有效快照仍为 v11；完整矩阵未完成，不宣告新快照有效。
 
 - 日期：2026-09-02
 - 用途：演示日入口说明；图文总入口是可离线发送的
@@ -67,7 +68,7 @@ none 的零仅指 RSS 下降，mixed 系统净效应为负；测试板量级不�
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v12 <url>
+git clone --branch demo-v11 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -77,7 +78,7 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v12
+  --tag demo-v11
 ```
 
 六种环境是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上

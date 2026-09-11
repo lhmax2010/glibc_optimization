@@ -1,0 +1,4 @@
+PREDELIVERY	repo=<LOCAL_CANDIDATE_REMOTE> branch=demo tag=demo-v12 default=main
+PASS	profile=present-gbs+present-rpm shape=branch	ref=demo head=c05c8af503c96c82c04156be8cc22bb6c3b3b087 identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=present-gbs+present-rpm shape=tag	ref=demo-v12 head=c05c8af503c96c82c04156be8cc22bb6c3b3b087 identity=REQUIRED host-tests=PASS OVERALL=PASS
+Terminated

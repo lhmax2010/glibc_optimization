@@ -2,7 +2,7 @@
 
 This repository is the long-term, sanitized workspace for source audits, controlled benchmarks, board measurements, and implementation evidence related to reducing glibc runtime memory and image footprint on 32-bit ARM Tizen systems.
 
-Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v12` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v12) — readiness is recorded in the [delivery audit](docs/demo_v12_delivery_20260911.md).
+Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v11` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v11) — v12 remains blocked; see the [delivery audit](docs/demo_v12_delivery_20260911.md).
 
 The HQ packaging path is [`packaging/glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec):
 `bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>` uses

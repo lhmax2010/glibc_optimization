@@ -19,6 +19,10 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-11：host 合同身份修复后，clean main verify 与隔离候选两格通过；全仓扫描
+  发现三份既有 TCP 原文 7 行编码地址未脱敏，按门中止矩阵，未发布 v12，demo-v11
+  保持有效。[新停止清单](demo_v12_delivery_20260911.md)、[终态](twoday_summary_20260910.md)。
+
 - 2026-09-11：PM 方向二闭合 host 合同 tag 依赖；固定 commit/双文件字节验证，full、
   no-tags 与浅克隆对象缺失/补齐回归通过，板端 annotated 事前门不变；四非空目录为
   已知非阻断残留。进入 [demo-v12 交付验收](demo_v12_delivery_20260911.md)，不重跑 21 格。
