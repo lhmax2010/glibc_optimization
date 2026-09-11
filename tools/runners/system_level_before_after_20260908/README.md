@@ -111,6 +111,11 @@ python3 tools/runners/system_level_before_after_20260908/execute_contract.py \
 完整结果，也未进入 HQ 的 Demo L1 入口。它们的 host 测试通过不构成 G4 板上可用性证据。
 ## 2026-09-11 只补收尾入口（PM 2026-09-10 续裁决）
 
+**执行后 STOP 追注：不得直接再运行。** 3500 字节本地预算仍高于本次客户端可接受范围；
+首批服务请求 3474 字节返回 `service name too long`，无远端 RC/DONE。root-off 首次成功，
+后续停止；未调整预算重试。以下命令仅为已失败执行的出处，须 PM 再裁决才能补核验。
+见[报告 §9](../../../docs/system_level_before_after_20260908.md#9-2026-09-11-只补收尾再次停止)。
+
 21 格测量均已验收保留，**禁止再调用任何测量入口重跑**。本次只运行：
 
 ```sh

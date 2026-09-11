@@ -1,5 +1,11 @@
 # 系统级前后对照补测（2026-09-08）
 
+**2026-09-11 最新状态：21 格已由 PM 验收保留，未重跑；只补收尾再次 STOP。**
+首条分批查询的服务请求为 3474 字节，仍被 SDB 拒绝；不是发现了残留。
+本次已核验的身份/包清单/目录/进程/governor 与读前健康快照原文见 [§9](#9-2026-09-11-只补收尾再次停止)。
+root-off 首次成功，回到 UID=5001；未继续 Demo 集成或切 demo-v12，demo-v11 有效。
+以下旧终态按日期保留，不改写为新结果。
+
 当日续跑最终状态：**STOP_G4_M7_ASSIGNMENT**。G1/G2/G3 共 18 格通过，G4 首格在
 M7 的 GDB 赋值处失败，后续两格未执行。第 2、3 段不执行，不切 demo-v12，当前有效
 交付仍为 demo-v11。目录/包登记/辅助进程/governor 清理检查通过，但目标内部可能的
@@ -556,3 +562,90 @@ host 保留件可用 [publish_g4_observations.py](../tools/runners/system_level_
 矩阵头条。[日志发布器](../tools/runners/system_level_before_after_20260908/publish_execution_log.py)
 同时要求最终降权回执，原文编辑/逐文件哈希见[manifest](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/execution/manifest.json)。
 下一步须 PM 裁决是否仅授权修复短命令分批并补齐收尾核验，**无需且不得重跑已有三格或旧 18 格**。
+
+## 9. 2026-09-11 只补收尾：再次停止
+
+### 9.1 裁决、执行范围与时间线
+
+[PM 2026-09-10 续裁决](pm_decisions.md#2026-09-10-续21-格验收保留只补收尾2026-09-11-落地)
+验收保留原 18 格及 G4 三格，禁止任何重跑；仅授权修复请求长度、补只读收尾，
+确因读权限不足才提权，最后必须降权。合同 tag 仍为
+`system-before-after-contract-20260908`（对象 `0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3`），
+合同与 analyzer 字节未改，也未重新打 tag。
+
+执行器先以 [b583821a12314abe21570963418922b409b6024b](https://github.com/lhmax2010/glibc_optimization/commit/b583821a12314abe21570963418922b409b6024b)
+推 main，随后在该干净提交执行一次补审计。实际 host 时间 **2026-09-11
+02:22:37.086295–02:22:43.678378 UTC**，不是裁决日期；全部命令顺序、字节正文、
+host 状态及时间见 [commands.json](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/commands.json)，
+最终状态见 [audit.json](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/audit.json)。
+本次 0 格测量、0 次注入、0 文件推送、0 包改动、0 governor 写入、0 次进程清除，
+未执行 reboot/poweroff。原 21 格数据及原 STOP 回执保持字节不变。
+
+### 9.2 已补齐项与仍未闭合项
+
+| 核验项 | 本次事实 / 判定 | 原文 |
+|---|---|---|
+| 身份三项 | `6.12.80-arm-rpi4-v7l` / `armv7l` / BUILD_ID 与合同完全相同；提权前后均通过 | [内核](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/ROOT_UNAME_R.txt)、[架构](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/ROOT_UNAME_M.txt)、[完整镜像身份](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/ROOT_OS_RELEASE.txt) |
+| 环境 | `glibc-2.40-1.6.armv7l`、MemTotal 8117408 KiB，不变 | [glibc](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/ROOT_GLIBC.txt)、[meminfo](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/ROOT_MEMINFO.txt) |
+| 本次提权必要性 | UID=5001 时 livedump 目录 `Permission denied`，读权限确实不足；按本轮方案 A 提权，id=0 | [提权前 id 全文](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/ID_BEFORE.txt)、[权限拒绝](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/READ_ACCESS.txt)、[root on](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/AUTH_ROOT_ON.txt)、[提权后 id](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/AUTH_ID_AFTER_ON.txt) |
+| 启动与目标连续性 | boot ID 与原 G4 相同；enlightenment PID=498、start tick=1489，未重启 | [boot](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/BOOT_ID.txt)、[目标 stat](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TARGET_STAT.txt) |
+| 占用/残留进程 | 未检出额外交互会话及匹配 alloc/gst/gdb/采样负载；未终止任何进程 | [完整会话](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/SESSIONS.txt)、[进程名称与命令行](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/PROCESS_NAMES.txt)、[TCP](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/TCP.txt) |
+| governor / 工作目录 | 四核 schedutil；本轮工作目录及 `/opt/usr/glibc_memopt` 不存在 | [governor](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/GOVERNORS.txt)、[目录独立 RC/DONE](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/WORKDIR.txt) |
+| 空间 | `/` 1789104 KiB、`/opt/usr` 115421416 KiB 可用 | [df](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/SPACE.txt) |
+| 卸包后清单 | 原/current 均 1263 包，added/removed 均空；六个 GDB/依赖均未安装；本次无新增包 | [全清单](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/PACKAGE_INVENTORY_CURRENT.txt)、[六包逐项查询](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/PACKAGES_ABSENT.txt)、[汇总回执](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/audit.json) |
+| 已采到的卸包后健康快照 | audit_start：zram 三项 4096/74/4096 B，与原 G4 相同；告警 0。停止后仅在 host 复核：dmesg 仍含原前缀，增量 29 行，OOM/LMK 零命中。**仅此时点，不是完整审计后健康通过** | [zram](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/raw/round_health/zram_audit_start.txt)、[告警快照](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/raw/round_health/stability_audit_start.tsv)、[dmesg](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/raw/round_health/dmesg_audit_start.txt) |
+| 包文件残留清单 | **FAIL / 未执行**：首批请求仍过长，没有 RC/DONE；后面 52 批未发出，无残留/归属清单可供判定 | [失败原文](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/PACKAGE_RESIDUE_0000.txt) |
+| audit_end 健康 / 最终 boot | **NOT_EVALUATED**：停止门短路，不能由 audit_start 填充 | [终态与命令顺序](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/audit.json) |
+| root off / 非 root 复核 | 首次 root-off 成功，UID=5001；没有重试，此后没有板端命令 | [root off](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/AUTH_ROOT_OFF_1.txt)、[最终 id 全文](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/AUTH_ID_AFTER_OFF_1.txt) |
+
+我方残留处置清单：**无已确认待清除项**；已查的目录/进程不存在，包文件清单尚未执行，
+不能说“全部无残留”。非我方观察：当前包清单无新增/删除；没有删除任何归属未知文件。
+旧卸包警告仍按 §8.4/PM 裁决只记录，不是本次阻断原因。此次无需且未安装/卸载 gdb。
+
+### 9.3 长度修复为何仍未闭合
+
+实现已把原按 200 路径分批改为 **UTF-8 服务请求字节分批**：3500 字节本地预算包含
+`shell:` 与独立 RC/DONE 包装；旧 11800 字节正文可完整分为 53 批，最大 3498 字节。
+这些是本地构造/测试事实，**不能证明板端可接受这一预算**。
+
+实发首批 `PACKAGE_RESIDUE_0000` 正文 **3468 字节**、含 `shell:` **3474 字节**，
+host RC=1，原文只有：
+
+```text
+error: service name too long
+```
+
+没有远端 RC/DONE，查询没有成功执行。此前本次最长成功请求为
+`ROOT_READ_ACCESS`：含 `shell:` **1116 字节**。这两个点不定位精确协议上限；
+本轮选择 3500 的保守预算假设被实际客户端结果否定，**不把 167 项 host 测试通过
+写成长度问题已解决**。发送层本地超长拒绝与分批无遗漏测试有效，但缺少对真实客户端
+长度边界的保证。停止后未改预算、未追加探测、未重连或重试，更没有重跑任何测量。
+
+下一步需 PM 再授权仅补收尾，可选逐路径短请求或已批准范围内的只读脚本方案；
+不得重跑 21 格，不以缺失的残留清单/审计后快照作通过推断。当前入口只作为失败记录，
+**不得直接再次执行**。这是执行器传输缺口，不是新测量偏差、包卸载失败或健康事件。
+
+### 9.4 归档、复核与交付状态
+
+[原文发布清单](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/manifest.json)
+包含 39 个文件的原始/公开 SHA；仅删除 CR、按既有映射处理测试板地址与 host home，
+板端运行路径保留。完整原始件本地留存，可按请求提供。
+[发布器](../tools/runners/system_level_before_after_20260908/publish_cleanup_audit.py)
+校验终态及降权完成，原始文件未改写。host 检查见
+[检查记录](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/host_checks.tsv)。
+
+“复现”在此仅指 **host 重放/故障回归**：
+
+```sh
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py' -v
+bash tools/reproduce/reproduce.sh verify
+```
+
+前者 167 项 PASS；后者 OVERALL PASS（提交前显式 dirty override，未跳过测试）。
+确定性/有效性门为命令字节预算、远端标志、原文哈希与 root-off；容差项无新增，
+沿用 §1 且不执行新格。host 通过不能闭合本节板端 STOP。
+
+**整轮仍 STOP，21 格数据已验收保留但收尾未闭合；第 3–5 段停止。**
+未集成新头条、未生成 v12 brief、未运行 v12 交付矩阵或创建 demo-v12。
+当前有效快照 **demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，
+annotated tag 对象 `f1266c0be6c225a2ceb962836380c656758f9427`。

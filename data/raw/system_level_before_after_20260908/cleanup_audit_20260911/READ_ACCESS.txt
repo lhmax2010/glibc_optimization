@@ -1,0 +1,5 @@
+stat: cannot stat `/opt/usr/share/crash/livedump': Permission denied
+NEEDS_ROOT
+
+WRAPPER_RC_READ_ACCESS=0
+DONE_REMOTE_READ_ACCESS

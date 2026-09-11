@@ -1,0 +1,439 @@
+[
+  {
+    "label": "sdb_version",
+    "start_utc": "2026-09-11T02:22:38.205064+00:00",
+    "end_utc": "2026-09-11T02:22:38.208166+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "version"
+    ]
+  },
+  {
+    "label": "connect",
+    "start_utc": "2026-09-11T02:22:38.208393+00:00",
+    "end_utc": "2026-09-11T02:22:38.212712+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "connect",
+      "<TEST_BOARD_IP>"
+    ]
+  },
+  {
+    "label": "PRE_UNAME_R",
+    "start_utc": "2026-09-11T02:22:38.212988+00:00",
+    "end_utc": "2026-09-11T02:22:38.343017+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nWRAPPER_RC_PRE_UNAME_R=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PRE_UNAME_R; else echo FAIL_REMOTE_PRE_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "PRE_UNAME_M",
+    "start_utc": "2026-09-11T02:22:38.343307+00:00",
+    "end_utc": "2026-09-11T02:22:38.473034+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nWRAPPER_RC_PRE_UNAME_M=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PRE_UNAME_M; else echo FAIL_REMOTE_PRE_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "PRE_OS_RELEASE",
+    "start_utc": "2026-09-11T02:22:38.473477+00:00",
+    "end_utc": "2026-09-11T02:22:38.603937+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nWRAPPER_RC_PRE_OS_RELEASE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PRE_OS_RELEASE; else echo FAIL_REMOTE_PRE_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "PRE_GLIBC",
+    "start_utc": "2026-09-11T02:22:38.604279+00:00",
+    "end_utc": "2026-09-11T02:22:38.775636+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q glibc ); rc=$?; printf '\\nWRAPPER_RC_PRE_GLIBC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PRE_GLIBC; else echo FAIL_REMOTE_PRE_GLIBC; fi"
+    ]
+  },
+  {
+    "label": "PRE_MEMINFO",
+    "start_utc": "2026-09-11T02:22:38.776090+00:00",
+    "end_utc": "2026-09-11T02:22:38.905077+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/meminfo ); rc=$?; printf '\\nWRAPPER_RC_PRE_MEMINFO=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PRE_MEMINFO; else echo FAIL_REMOTE_PRE_MEMINFO; fi"
+    ]
+  },
+  {
+    "label": "ID_BEFORE",
+    "start_utc": "2026-09-11T02:22:38.905550+00:00",
+    "end_utc": "2026-09-11T02:22:39.050841+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id ); rc=$?; printf '\\nWRAPPER_RC_ID_BEFORE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ID_BEFORE; else echo FAIL_REMOTE_ID_BEFORE; fi"
+    ]
+  },
+  {
+    "label": "READ_ACCESS",
+    "start_utc": "2026-09-11T02:22:39.051352+00:00",
+    "end_utc": "2026-09-11T02:22:39.204847+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( LC_ALL=C; export LC_ALL\nresult=PASS_READ_ACCESS\nprobe=$(dmesg 2>&1); code=$?\nif [ \"$code\" -ne 0 ]; then\nprintf 'DMESG_READ_RC=%s\\n%s\\n' \"$code\" \"$probe\"\ncase \"$probe\" in *'Permission denied'*|*'Operation not permitted'*) result=NEEDS_ROOT;; *) result=ACCESS_ERROR;; esac\nfi\nd=/opt/usr/share/crash/livedump\nkind=$(stat -c %F \"$d\" 2>&1); code=$?\nif [ \"$code\" -eq 0 ]; then\nif [ \"$kind\" != directory ]; then echo CRASH_DIRECTORY_BAD_TYPE; result=ACCESS_ERROR\nelif [ ! -r \"$d\" ] || [ ! -x \"$d\" ]; then\necho CRASH_DIRECTORY_NOT_READABLE; if [ \"$result\" != ACCESS_ERROR ]; then result=NEEDS_ROOT; fi; fi\nelif [ \"$code\" -eq 1 ]; then\ncase \"$kind\" in *': No such file or directory') :;;\n*'Permission denied'*|*'Operation not permitted'*) printf '%s\\n' \"$kind\"; if [ \"$result\" != ACCESS_ERROR ]; then result=NEEDS_ROOT; fi;;\n*) printf '%s\\n' \"$kind\"; result=ACCESS_ERROR;; esac\nelse printf '%s\\n' \"$kind\"; result=ACCESS_ERROR; fi\nprintf '%s\\n' \"$result\" ); rc=$?; printf '\\nWRAPPER_RC_READ_ACCESS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_READ_ACCESS; else echo FAIL_REMOTE_READ_ACCESS; fi"
+    ]
+  },
+  {
+    "label": "AUTH_ROOT_ON",
+    "start_utc": "2026-09-11T02:22:39.205321+00:00",
+    "end_utc": "2026-09-11T02:22:39.254594+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "root",
+      "on"
+    ]
+  },
+  {
+    "label": "AUTH_ID_AFTER_ON",
+    "start_utc": "2026-09-11T02:22:39.255069+00:00",
+    "end_utc": "2026-09-11T02:22:39.396212+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id ); rc=$?; printf '\\nWRAPPER_RC_AUTH_ID_AFTER_ON=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_ID_AFTER_ON; else echo FAIL_REMOTE_AUTH_ID_AFTER_ON; fi"
+    ]
+  },
+  {
+    "label": "ROOT_UNAME_R",
+    "start_utc": "2026-09-11T02:22:39.396867+00:00",
+    "end_utc": "2026-09-11T02:22:39.529918+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -r ); rc=$?; printf '\\nWRAPPER_RC_ROOT_UNAME_R=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROOT_UNAME_R; else echo FAIL_REMOTE_ROOT_UNAME_R; fi"
+    ]
+  },
+  {
+    "label": "ROOT_UNAME_M",
+    "start_utc": "2026-09-11T02:22:39.530630+00:00",
+    "end_utc": "2026-09-11T02:22:39.665475+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( uname -m ); rc=$?; printf '\\nWRAPPER_RC_ROOT_UNAME_M=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROOT_UNAME_M; else echo FAIL_REMOTE_ROOT_UNAME_M; fi"
+    ]
+  },
+  {
+    "label": "ROOT_OS_RELEASE",
+    "start_utc": "2026-09-11T02:22:39.666824+00:00",
+    "end_utc": "2026-09-11T02:22:39.799820+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /etc/os-release ); rc=$?; printf '\\nWRAPPER_RC_ROOT_OS_RELEASE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROOT_OS_RELEASE; else echo FAIL_REMOTE_ROOT_OS_RELEASE; fi"
+    ]
+  },
+  {
+    "label": "ROOT_GLIBC",
+    "start_utc": "2026-09-11T02:22:40.345128+00:00",
+    "end_utc": "2026-09-11T02:22:40.509587+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( rpm -q glibc ); rc=$?; printf '\\nWRAPPER_RC_ROOT_GLIBC=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROOT_GLIBC; else echo FAIL_REMOTE_ROOT_GLIBC; fi"
+    ]
+  },
+  {
+    "label": "ROOT_MEMINFO",
+    "start_utc": "2026-09-11T02:22:40.509957+00:00",
+    "end_utc": "2026-09-11T02:22:40.640684+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/meminfo ); rc=$?; printf '\\nWRAPPER_RC_ROOT_MEMINFO=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROOT_MEMINFO; else echo FAIL_REMOTE_ROOT_MEMINFO; fi"
+    ]
+  },
+  {
+    "label": "ROOT_READ_ACCESS",
+    "start_utc": "2026-09-11T02:22:40.640939+00:00",
+    "end_utc": "2026-09-11T02:22:40.795442+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( LC_ALL=C; export LC_ALL\nresult=PASS_READ_ACCESS\nprobe=$(dmesg 2>&1); code=$?\nif [ \"$code\" -ne 0 ]; then\nprintf 'DMESG_READ_RC=%s\\n%s\\n' \"$code\" \"$probe\"\ncase \"$probe\" in *'Permission denied'*|*'Operation not permitted'*) result=NEEDS_ROOT;; *) result=ACCESS_ERROR;; esac\nfi\nd=/opt/usr/share/crash/livedump\nkind=$(stat -c %F \"$d\" 2>&1); code=$?\nif [ \"$code\" -eq 0 ]; then\nif [ \"$kind\" != directory ]; then echo CRASH_DIRECTORY_BAD_TYPE; result=ACCESS_ERROR\nelif [ ! -r \"$d\" ] || [ ! -x \"$d\" ]; then\necho CRASH_DIRECTORY_NOT_READABLE; if [ \"$result\" != ACCESS_ERROR ]; then result=NEEDS_ROOT; fi; fi\nelif [ \"$code\" -eq 1 ]; then\ncase \"$kind\" in *': No such file or directory') :;;\n*'Permission denied'*|*'Operation not permitted'*) printf '%s\\n' \"$kind\"; if [ \"$result\" != ACCESS_ERROR ]; then result=NEEDS_ROOT; fi;;\n*) printf '%s\\n' \"$kind\"; result=ACCESS_ERROR;; esac\nelse printf '%s\\n' \"$kind\"; result=ACCESS_ERROR; fi\nprintf '%s\\n' \"$result\" ); rc=$?; printf '\\nWRAPPER_RC_ROOT_READ_ACCESS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROOT_READ_ACCESS; else echo FAIL_REMOTE_ROOT_READ_ACCESS; fi"
+    ]
+  },
+  {
+    "label": "BOOT_ID",
+    "start_utc": "2026-09-11T02:22:40.796002+00:00",
+    "end_utc": "2026-09-11T02:22:40.922647+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/sys/kernel/random/boot_id ); rc=$?; printf '\\nWRAPPER_RC_BOOT_ID=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_BOOT_ID; else echo FAIL_REMOTE_BOOT_ID; fi"
+    ]
+  },
+  {
+    "label": "SESSIONS",
+    "start_utc": "2026-09-11T02:22:40.923203+00:00",
+    "end_utc": "2026-09-11T02:22:41.111129+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf \"COLLECTOR_PID=%s\\n\" \"$$\"; ps -ww -eo pid,ppid,tty,lstart,etime,args ); rc=$?; printf '\\nWRAPPER_RC_SESSIONS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SESSIONS; else echo FAIL_REMOTE_SESSIONS; fi"
+    ]
+  },
+  {
+    "label": "PROCESS_NAMES",
+    "start_utc": "2026-09-11T02:22:41.112104+00:00",
+    "end_utc": "2026-09-11T02:22:41.278656+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( ps -ww -eo pid,comm,args ); rc=$?; printf '\\nWRAPPER_RC_PROCESS_NAMES=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PROCESS_NAMES; else echo FAIL_REMOTE_PROCESS_NAMES; fi"
+    ]
+  },
+  {
+    "label": "TARGET_STAT",
+    "start_utc": "2026-09-11T02:22:41.279406+00:00",
+    "end_utc": "2026-09-11T02:22:41.409652+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/498/stat ); rc=$?; printf '\\nWRAPPER_RC_TARGET_STAT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TARGET_STAT; else echo FAIL_REMOTE_TARGET_STAT; fi"
+    ]
+  },
+  {
+    "label": "TCP",
+    "start_utc": "2026-09-11T02:22:41.410162+00:00",
+    "end_utc": "2026-09-11T02:22:41.539825+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /proc/net/tcp /proc/net/tcp6 ); rc=$?; printf '\\nWRAPPER_RC_TCP=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_TCP; else echo FAIL_REMOTE_TCP; fi"
+    ]
+  },
+  {
+    "label": "GOVERNORS",
+    "start_utc": "2026-09-11T02:22:41.540109+00:00",
+    "end_utc": "2026-09-11T02:22:41.685332+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for n in 0 1 2 3; do cat /sys/devices/system/cpu/cpu$n/cpufreq/scaling_governor || exit 1; done ); rc=$?; printf '\\nWRAPPER_RC_GOVERNORS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_GOVERNORS; else echo FAIL_REMOTE_GOVERNORS; fi"
+    ]
+  },
+  {
+    "label": "SPACE",
+    "start_utc": "2026-09-11T02:22:41.685754+00:00",
+    "end_utc": "2026-09-11T02:22:41.818419+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( df -k / /opt/usr ); rc=$?; printf '\\nWRAPPER_RC_SPACE=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_SPACE; else echo FAIL_REMOTE_SPACE; fi"
+    ]
+  },
+  {
+    "label": "UPTIME",
+    "start_utc": "2026-09-11T02:22:41.818874+00:00",
+    "end_utc": "2026-09-11T02:22:41.961974+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( date -u && uptime && cat /proc/swaps ); rc=$?; printf '\\nWRAPPER_RC_UPTIME=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_UPTIME; else echo FAIL_REMOTE_UPTIME; fi"
+    ]
+  },
+  {
+    "label": "WORKDIR",
+    "start_utc": "2026-09-11T02:22:41.962471+00:00",
+    "end_utc": "2026-09-11T02:22:42.103419+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /opt/usr/glibc_memopt /opt/usr/glibc_memopt/system_level_before_after_20260908; do info=$(LC_ALL=C stat -c \"%F\" \"$p\" 2>&1); code=$?; if [ \"$code\" -eq 0 ]; then printf \"%s\\t%s\\n\" \"$p\" \"$info\" || exit 1; elif [ \"$code\" -eq 1 ]; then case \"$info\" in *\": No such file or directory\") :;; *) printf \"STAT_ERROR %s\\n%s\\n\" \"$p\" \"$info\"; exit 1;; esac; else printf \"STAT_ERROR_RC=%s %s\\n%s\\n\" \"$code\" \"$p\" \"$info\"; exit 1; fi; done ); rc=$?; printf '\\nWRAPPER_RC_WORKDIR=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_WORKDIR; else echo FAIL_REMOTE_WORKDIR; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AUDIT_START_DMESG",
+    "start_utc": "2026-09-11T02:22:42.104004+00:00",
+    "end_utc": "2026-09-11T02:22:42.249962+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( dmesg ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AUDIT_START_DMESG=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AUDIT_START_DMESG; else echo FAIL_REMOTE_ROUND_AUDIT_START_DMESG; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AUDIT_START_ZRAM",
+    "start_utc": "2026-09-11T02:22:42.250695+00:00",
+    "end_utc": "2026-09-11T02:22:42.378960+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( cat /sys/block/zram0/mm_stat ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AUDIT_START_ZRAM=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AUDIT_START_ZRAM; else echo FAIL_REMOTE_ROUND_AUDIT_START_ZRAM; fi"
+    ]
+  },
+  {
+    "label": "ROUND_AUDIT_START_ALERTS",
+    "start_utc": "2026-09-11T02:22:42.379766+00:00",
+    "end_utc": "2026-09-11T02:22:42.524023+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( printf 'remote_path\tsize\tmtime_epoch\tsha256\n' || exit 1\nd=/opt/usr/share/crash/livedump\nfiles=\nkind=$(LC_ALL=C stat -c %F \"$d\" 2>&1); code=$?\nif [ \"$code\" -eq 0 ]; then\ntest \"$kind\" = directory && test -r \"$d\" && test -x \"$d\" || exit 1\nfiles=$(find \"$d\" -maxdepth 1 -name '*.zip') || exit 1\nelif [ \"$code\" -eq 1 ]; then\ncase \"$kind\" in *': No such file or directory') :;; *) printf '%s\\n' \"$kind\"; exit 1;; esac\nelse printf '%s\\n' \"$kind\"; exit 1; fi\nIFS='\n'\nfor f in $files; do\ntest -f \"$f\" && test ! -L \"$f\" || exit 1\nsize=$(stat -c %s \"$f\") || exit 1\nstamp=$(stat -c %Y \"$f\") || exit 1\nhash=$(sha256sum \"$f\") || exit 1\nprintf '%s\t%s\t%s\t%s\n' \"$f\" \"$size\" \"$stamp\" \"${hash%% *}\" || exit 1\ndone ); rc=$?; printf '\\nWRAPPER_RC_ROUND_AUDIT_START_ALERTS=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_ROUND_AUDIT_START_ALERTS; else echo FAIL_REMOTE_ROUND_AUDIT_START_ALERTS; fi"
+    ]
+  },
+  {
+    "label": "PACKAGE_INVENTORY_CURRENT",
+    "start_utc": "2026-09-11T02:22:42.524574+00:00",
+    "end_utc": "2026-09-11T02:22:43.074038+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( LC_ALL=C rpm -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}.%{ARCH}\\n' ); rc=$?; printf '\\nWRAPPER_RC_PACKAGE_INVENTORY_CURRENT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGE_INVENTORY_CURRENT; else echo FAIL_REMOTE_PACKAGE_INVENTORY_CURRENT; fi"
+    ]
+  },
+  {
+    "label": "PACKAGES_ABSENT",
+    "start_utc": "2026-09-11T02:22:43.075578+00:00",
+    "end_utc": "2026-09-11T02:22:43.427510+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in libgmp gdbm libpython3_141_0 python3-base python3 gdb; do\ntext=$(LC_ALL=C rpm -q \"$p\" 2>&1); code=$?\nprintf '%s\\n' \"$text\"\n[ \"$code\" -eq 1 ] && [ \"$text\" = \"package $p is not installed\" ] || exit 1\ndone ); rc=$?; printf '\\nWRAPPER_RC_PACKAGES_ABSENT=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGES_ABSENT; else echo FAIL_REMOTE_PACKAGES_ABSENT; fi"
+    ]
+  },
+  {
+    "label": "PACKAGE_RESIDUE_0000",
+    "start_utc": "2026-09-11T02:22:43.427788+00:00",
+    "end_utc": "2026-09-11T02:22:43.478414+00:00",
+    "host_rc": 1,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( for p in /etc/profile.d/python3.csh /etc/profile.d/python3.sh /etc/python3start /etc/rpm/macros.python3 /usr/bin/gcore /usr/bin/gdb /usr/bin/gdb-add-index /usr/bin/gdbserver /usr/bin/gstack /usr/bin/pydoc3 /usr/bin/pydoc3.14 /usr/bin/python3 /usr/bin/python3.14 /usr/lib/libgdbm.so.3 /usr/lib/libgdbm.so.3.0.0 /usr/lib/libgmp.so.3 /usr/lib/libgmp.so.3.4.1 /usr/lib/libpython3.14.so.1.0 /usr/lib/python3.14 /usr/lib/python3.14/LICENSE.txt /usr/lib/python3.14/__future__.py /usr/lib/python3.14/__hello__.py /usr/lib/python3.14/__phello__ /usr/lib/python3.14/__phello__/__init__.py /usr/lib/python3.14/__phello__/__pycache__ /usr/lib/python3.14/__phello__/__pycache__/__init__.cpython-314.opt-1.pyc /usr/lib/python3.14/__phello__/__pycache__/__init__.cpython-314.opt-2.pyc /usr/lib/python3.14/__phello__/__pycache__/__init__.cpython-314.pyc /usr/lib/python3.14/__phello__/__pycache__/spam.cpython-314.opt-1.pyc /usr/lib/python3.14/__phello__/__pycache__/spam.cpython-314.opt-2.pyc /usr/lib/python3.14/__phello__/__pycache__/spam.cpython-314.pyc /usr/lib/python3.14/__phello__/spam.py /usr/lib/python3.14/__pycache__ /usr/lib/python3.14/__pycache__/__future__.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/__future__.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/__future__.cpython-314.pyc /usr/lib/python3.14/__pycache__/__hello__.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/__hello__.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/__hello__.cpython-314.pyc /usr/lib/python3.14/__pycache__/_aix_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_aix_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_aix_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_android_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_android_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_android_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_apple_support.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_apple_support.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_apple_support.cpython-314.pyc /usr/lib/python3.14/__pycache__/_ast_unparse.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_ast_unparse.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_ast_unparse.cpython-314.pyc /usr/lib/python3.14/__pycache__/_collections_abc.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_collections_abc.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_collections_abc.cpython-314.pyc /usr/lib/python3.14/__pycache__/_colorize.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_colorize.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_colorize.cpython-314.pyc /usr/lib/python3.14/__pycache__/_compat_pickle.cpython-314.opt-1.pyc /usr/lib/python3.14/__pycache__/_compat_pickle.cpython-314.opt-2.pyc /usr/lib/python3.14/__pycache__/_compat_pickle.cpython-314.pyc /usr/lib/python3.14/__pycache__/_ios_support.cpython-314.opt-1.pyc; do info=$(LC_ALL=C stat -c \"%F\" \"$p\" 2>&1); code=$?; if [ \"$code\" -eq 0 ]; then printf \"%s\\t%s\\n\" \"$p\" \"$info\" || exit 1; elif [ \"$code\" -eq 1 ]; then case \"$info\" in *\": No such file or directory\") :;; *) printf \"STAT_ERROR %s\\n%s\\n\" \"$p\" \"$info\"; exit 1;; esac; else printf \"STAT_ERROR_RC=%s %s\\n%s\\n\" \"$code\" \"$p\" \"$info\"; exit 1; fi; done ); rc=$?; printf '\\nWRAPPER_RC_PACKAGE_RESIDUE_0000=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_PACKAGE_RESIDUE_0000; else echo FAIL_REMOTE_PACKAGE_RESIDUE_0000; fi"
+    ]
+  },
+  {
+    "label": "AUTH_ROOT_OFF_1",
+    "start_utc": "2026-09-11T02:22:43.479101+00:00",
+    "end_utc": "2026-09-11T02:22:43.530790+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "root",
+      "off"
+    ]
+  },
+  {
+    "label": "AUTH_ID_AFTER_OFF_1",
+    "start_utc": "2026-09-11T02:22:43.531370+00:00",
+    "end_utc": "2026-09-11T02:22:43.677325+00:00",
+    "host_rc": 0,
+    "argv": [
+      "sdb",
+      "-s",
+      "<TEST_BOARD_IP>:26101",
+      "shell",
+      "( id ); rc=$?; printf '\\nWRAPPER_RC_AUTH_ID_AFTER_OFF_1=%s\\n' \"$rc\"; if [ \"$rc\" -eq 0 ]; then echo DONE_REMOTE_AUTH_ID_AFTER_OFF_1; else echo FAIL_REMOTE_AUTH_ID_AFTER_OFF_1; fi"
+    ]
+  }
+]

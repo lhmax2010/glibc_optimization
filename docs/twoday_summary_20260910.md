@@ -1,6 +1,64 @@
 # 两日批量执行汇总（2026-09-08 至 09-10）
 
-## 最新续跑终态：G4 已观测三格，收尾审计 STOP
+## 最新续报（2026-09-11）：21 格验收保留，补收尾再次 STOP
+
+PM 2026-09-10 续裁决已落实为“仅补收尾、不得重跑”。本次实际执行为
+2026-09-11 02:22:37.086295–02:22:43.678378 UTC，
+[终态回执](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/audit.json)
+记录 **0 格测量、0 推送、0 包变更、0 governor 写入、0 进程清除**。
+原 G1/G2/G3 18 格与 G4 三格全部验收保留，未改字节。
+
+| 段 | 本次状态 | 原因 / 边界 |
+|---|---|---|
+| host 修复 | 已推 main；真实长度缺陷仍未闭合 | 字节分批、防超长发送与安全测试 167 项 PASS；默认 verify OVERALL PASS。但 3500 本地预算被真实客户端否定 |
+| 第 2 段收尾 | **STOP / 未闭合** | 首批 3474 字节服务请求仍返回 `service name too long`，没有 RC/DONE；不得把未执行查询写作无残留 |
+| 第 3 段 Demo 集成 | NOT_EXECUTED_STOP_GATE | 不新增 HTML/README/指南头条 |
+| 第 4 段 demo-v12 | NOT_EXECUTED_STOP_GATE | 不切 demo、不打 v12、不运行新交付矩阵 |
+| 第 5 段复审 brief | NOT_EXECUTED_STOP_GATE | 无 v12，不生成其 brief |
+
+本次已核验：身份/镜像/glibc/MemTotal 不变、原 boot/PID/start tick 连续、无额外交互
+会话/匹配负载、工作目录不存在、四核 schedutil；包清单 1263→1263、六个 GDB/依赖均
+未安装。audit_start 快照 zram 三项 4096/74/4096 B、告警 0；host 停止后复核原 dmesg
+前缀仍在、增量 29 行无 OOM/LMK。**未闭合：包文件残留全清单与 audit_end 健康/boot。**
+这些部分核验不是整轮完成，详见[报告 §9](system_level_before_after_20260908.md#9-2026-09-11-只补收尾再次停止)。
+
+UID=5001 无权读取 livedump 目录，因此本次才按方案 A 提权；结束首次 root-off 成功，
+最终 UID=5001，无重试、无重启、此后没有板端命令。
+[提权必要性](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/READ_ACCESS.txt)、
+[最终 id](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/AUTH_ID_AFTER_OFF_1.txt)。
+没有已确认待清除我方残留，也没有删除归属未知项；未执行的清单不能填“空”。
+
+### 已验收数字保留（无新测量，尚未集成 Demo）
+
+| 组 / cycle=1 三重复中位 | RSS 下降 MiB / % | MemAvailable 配对净效应 MiB | 耗时 ms | none RSS 下降 MiB |
+|---|---|---|---|---|
+| G1 mixed | 5.296875 / 40.696279% | **-0.167969** | 1.458574（hook） | 0 |
+| G2 medium-only | 5.960938 / 45.322245% | +5.304688 | 1.478167（hook） | 0 |
+| G3 解码循环 | 1.820312 / 21.009919% | +1.855469 | 0.843612（hook） | 0 |
+| G4 enlightenment | 0.003906 / 0.033659% | NA（无 none） | **1899.209517（含 gdb/ptrace 注入，不是 hook）** | NA |
+
+G1–G3 来自[已验收 TSV](../data/raw/system_level_before_after_20260908/completed_prefix/completed_cycles.tsv)；
+G4 来自[逐格 TSV](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_cycles.tsv)
+与[汇总](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_summary.tsv)。
+G4 堆 PD 下降 **88/0/4 KiB**；约 0.03% 是 **RSS 下降百分比中位**，不能误作堆 PD 的
+百分比分母。与 [B/B2 272 KiB / 36 KiB / 8–20 KiB](tizen_native_evidence_20260904.md)
+共同限定当前证据范围，不外推任意常驻服务永远无收益。G1 系统净效应为负，不得写净增；
+none 的“0”只指本表 RSS 下降，不指 MemAvailable 背景波动。全部仍为测试板量级，非产品收益。
+
+### 推库与待裁
+
+执行器先推：`b583821a12314abe21570963418922b409b6024b`；原 18 格结果
+`60bea7c63ca2c603351e0ef25df15546e78db05c`，原 G4 结果
+`ffd695ef345355da9f8fd9689442a70ffb59b392` 均未重写。
+本次原文与编辑前后 SHA 见[39 文件 manifest](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/manifest.json)，
+host 检查见[回执](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/host_checks.tsv)。
+
+需 PM 裁决：是否再次授权只补收尾（逐路径短请求或只读脚本），以完成包文件清单和
+审计后健康核验。**不需且不得重跑任何已验收格**；本次没有追加尝试，也未改预算规避停止门。
+**当前有效交付仍是 demo-v11**：peel commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`；
+annotated tag 对象 `f1266c0be6c225a2ceb962836380c656758f9427`。没有 demo-v12。
+
+## 历史：方案 A 续跑终态（G4 已观测三格，收尾审计 STOP）
 
 PM 方案 A 的消息日期为 **2026-09-10**，实际 host 命令时间为 **2026-09-09
 05:26:22.230806–05:33:19.602955 UTC**；文件名为交付窗口，不倒填日期。

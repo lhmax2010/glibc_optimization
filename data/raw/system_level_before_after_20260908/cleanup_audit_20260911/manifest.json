@@ -1,0 +1,244 @@
+{
+  "schema": "system-before-after.delayed-cleanup-publication.v1",
+  "verdict": "STOP",
+  "scope": "cleanup only; no measurement rerun or changed measurement source",
+  "editing": "CR removed; board address and host home mapped; board runtime paths retained",
+  "files": [
+    {
+      "path": "AUTH_ID_AFTER_OFF_1.txt",
+      "original_sha256": "564be388cc242f76c71a4bb754068c8fb30aa789a608f5f2d1ba2f61cf91758a",
+      "public_sha256": "564be388cc242f76c71a4bb754068c8fb30aa789a608f5f2d1ba2f61cf91758a",
+      "edits": []
+    },
+    {
+      "path": "AUTH_ID_AFTER_ON.txt",
+      "original_sha256": "2297c6483d953f9f701793df84fab3e00816799beab5265e1fd3f90afbe4d104",
+      "public_sha256": "2297c6483d953f9f701793df84fab3e00816799beab5265e1fd3f90afbe4d104",
+      "edits": []
+    },
+    {
+      "path": "AUTH_ROOT_OFF_1.txt",
+      "original_sha256": "6667042b629240d444116555b8f98368ba464e672980623c2dbdb02741c0089d",
+      "public_sha256": "6667042b629240d444116555b8f98368ba464e672980623c2dbdb02741c0089d",
+      "edits": []
+    },
+    {
+      "path": "AUTH_ROOT_ON.txt",
+      "original_sha256": "525daa895e41827b8cef29d3387114916a532c2624880a49c1614e6c987b6477",
+      "public_sha256": "525daa895e41827b8cef29d3387114916a532c2624880a49c1614e6c987b6477",
+      "edits": []
+    },
+    {
+      "path": "BOOT_ID.txt",
+      "original_sha256": "ac328df1a534d9dc0de21a1673d13eb617c3d1c292c66780777e371d8620c034",
+      "public_sha256": "ac328df1a534d9dc0de21a1673d13eb617c3d1c292c66780777e371d8620c034",
+      "edits": []
+    },
+    {
+      "path": "GOVERNORS.txt",
+      "original_sha256": "efa7fcd077c6e192fcd923c6e876472bf007882cd8c7ac2ca08a642d8c80cef3",
+      "public_sha256": "efa7fcd077c6e192fcd923c6e876472bf007882cd8c7ac2ca08a642d8c80cef3",
+      "edits": []
+    },
+    {
+      "path": "ID_BEFORE.txt",
+      "original_sha256": "07df896b1f3a29076aea1b02e3132d85918019d5da759ff8928755ac50af98a5",
+      "public_sha256": "07df896b1f3a29076aea1b02e3132d85918019d5da759ff8928755ac50af98a5",
+      "edits": []
+    },
+    {
+      "path": "PACKAGES_ABSENT.txt",
+      "original_sha256": "5f2719c6a7d10e08920a9e40184c10d93bc1b01a03554bdc96cf58ab46472ae7",
+      "public_sha256": "5f2719c6a7d10e08920a9e40184c10d93bc1b01a03554bdc96cf58ab46472ae7",
+      "edits": []
+    },
+    {
+      "path": "PACKAGE_INVENTORY_CURRENT.txt",
+      "original_sha256": "9845b17d22d65ed8c9c1e9d7ba75de6f6e39da8a779bb0336f3879e32dab6bd1",
+      "public_sha256": "9845b17d22d65ed8c9c1e9d7ba75de6f6e39da8a779bb0336f3879e32dab6bd1",
+      "edits": []
+    },
+    {
+      "path": "PACKAGE_RESIDUE_0000.txt",
+      "original_sha256": "34ee6558335709c98730907902607fedb577258ee9db6cd2e557b72932179cea",
+      "public_sha256": "34ee6558335709c98730907902607fedb577258ee9db6cd2e557b72932179cea",
+      "edits": []
+    },
+    {
+      "path": "PRE_GLIBC.txt",
+      "original_sha256": "700b53d416e92d1b09688d4a7b73263daff84760f04a8e1760fa6310711087d7",
+      "public_sha256": "700b53d416e92d1b09688d4a7b73263daff84760f04a8e1760fa6310711087d7",
+      "edits": []
+    },
+    {
+      "path": "PRE_MEMINFO.txt",
+      "original_sha256": "28f3ccb2f5c8e774452b36ff6f414b8b637a92159e876a17a64fcf30da34e2b0",
+      "public_sha256": "28f3ccb2f5c8e774452b36ff6f414b8b637a92159e876a17a64fcf30da34e2b0",
+      "edits": []
+    },
+    {
+      "path": "PRE_OS_RELEASE.txt",
+      "original_sha256": "2016ded47ea1b274e992359e4caa3e5de8674ddec1a9123e3951b28b32ddbec2",
+      "public_sha256": "2016ded47ea1b274e992359e4caa3e5de8674ddec1a9123e3951b28b32ddbec2",
+      "edits": []
+    },
+    {
+      "path": "PRE_UNAME_M.txt",
+      "original_sha256": "8c005854ff220139575280a490198b7df9423c9d5504589cc9bebdd40678a8d2",
+      "public_sha256": "8c005854ff220139575280a490198b7df9423c9d5504589cc9bebdd40678a8d2",
+      "edits": []
+    },
+    {
+      "path": "PRE_UNAME_R.txt",
+      "original_sha256": "eec29863bd8d0c5b727b792151f7770b8bc1cff688a4d280458426a96eabca14",
+      "public_sha256": "eec29863bd8d0c5b727b792151f7770b8bc1cff688a4d280458426a96eabca14",
+      "edits": []
+    },
+    {
+      "path": "PROCESS_NAMES.txt",
+      "original_sha256": "3b7388908ba5420535a15050a7a1f2d91fae7a233f8c88b1561684495854f890",
+      "public_sha256": "3b7388908ba5420535a15050a7a1f2d91fae7a233f8c88b1561684495854f890",
+      "edits": []
+    },
+    {
+      "path": "READ_ACCESS.txt",
+      "original_sha256": "b1fdda02e170d432e98fd6a68c083e047dd1fcf096683b885cdd2345ed23be6b",
+      "public_sha256": "b1fdda02e170d432e98fd6a68c083e047dd1fcf096683b885cdd2345ed23be6b",
+      "edits": []
+    },
+    {
+      "path": "ROOT_GLIBC.txt",
+      "original_sha256": "87542b1311523b1826efbe2f686a6863c0ef0237be2791f749a4ccc99019f4c7",
+      "public_sha256": "87542b1311523b1826efbe2f686a6863c0ef0237be2791f749a4ccc99019f4c7",
+      "edits": []
+    },
+    {
+      "path": "ROOT_MEMINFO.txt",
+      "original_sha256": "8e01a70fbba1ba5ac76af2e864df800fe8180fdb822526dda602cf8e86492fcb",
+      "public_sha256": "8e01a70fbba1ba5ac76af2e864df800fe8180fdb822526dda602cf8e86492fcb",
+      "edits": []
+    },
+    {
+      "path": "ROOT_OS_RELEASE.txt",
+      "original_sha256": "e9ac387fda587fcd54bd6a0799abbf74a78ed76022c2aabf13d3417f9e452ce2",
+      "public_sha256": "e9ac387fda587fcd54bd6a0799abbf74a78ed76022c2aabf13d3417f9e452ce2",
+      "edits": []
+    },
+    {
+      "path": "ROOT_READ_ACCESS.txt",
+      "original_sha256": "0618b9c980dfcc015c7cb746867117ec9cfedc3cee63dc9b920fa1f9394fe8c9",
+      "public_sha256": "0618b9c980dfcc015c7cb746867117ec9cfedc3cee63dc9b920fa1f9394fe8c9",
+      "edits": []
+    },
+    {
+      "path": "ROOT_UNAME_M.txt",
+      "original_sha256": "2302eaffd2e55af3b622df62fe679cfca6f08380f07ceb19549b1f29a7bfc6d6",
+      "public_sha256": "2302eaffd2e55af3b622df62fe679cfca6f08380f07ceb19549b1f29a7bfc6d6",
+      "edits": []
+    },
+    {
+      "path": "ROOT_UNAME_R.txt",
+      "original_sha256": "61890127b8e954abde4cc6cc0400461b2a659b15ff612f1a961c067ad036ad69",
+      "public_sha256": "61890127b8e954abde4cc6cc0400461b2a659b15ff612f1a961c067ad036ad69",
+      "edits": []
+    },
+    {
+      "path": "ROUND_AUDIT_START_ALERTS.txt",
+      "original_sha256": "70a2434e1e536ede5eb2e7d722048343d84b664e226366a650e2f31725fc5939",
+      "public_sha256": "70a2434e1e536ede5eb2e7d722048343d84b664e226366a650e2f31725fc5939",
+      "edits": []
+    },
+    {
+      "path": "ROUND_AUDIT_START_DMESG.txt",
+      "original_sha256": "3af92f922a867bc057d891b52fc6774f06a4002f82c9b7ab9039872edf934e51",
+      "public_sha256": "3af92f922a867bc057d891b52fc6774f06a4002f82c9b7ab9039872edf934e51",
+      "edits": []
+    },
+    {
+      "path": "ROUND_AUDIT_START_ZRAM.txt",
+      "original_sha256": "7fbff25a544e30dc0003d07bf9d94b8adbd2a175e4addb24bb4244c711eceeff",
+      "public_sha256": "7fbff25a544e30dc0003d07bf9d94b8adbd2a175e4addb24bb4244c711eceeff",
+      "edits": []
+    },
+    {
+      "path": "SESSIONS.txt",
+      "original_sha256": "d0dd925f5fe8e0efd19acf1a4bc87031febb06388757742c2b4a8f04f5d17f41",
+      "public_sha256": "d0dd925f5fe8e0efd19acf1a4bc87031febb06388757742c2b4a8f04f5d17f41",
+      "edits": []
+    },
+    {
+      "path": "SPACE.txt",
+      "original_sha256": "5dd4c986cbc40b7db54b08d76678521f1c29956c21177acc99a62061b3a88e7b",
+      "public_sha256": "5dd4c986cbc40b7db54b08d76678521f1c29956c21177acc99a62061b3a88e7b",
+      "edits": []
+    },
+    {
+      "path": "TARGET_STAT.txt",
+      "original_sha256": "39c6e9db128ebf8d08ef692d41a167de91acd0ecd83bb80a8d72d969442a28e7",
+      "public_sha256": "39c6e9db128ebf8d08ef692d41a167de91acd0ecd83bb80a8d72d969442a28e7",
+      "edits": []
+    },
+    {
+      "path": "TCP.txt",
+      "original_sha256": "9eea785bec3d483f24375a110df4ac07a22548d768e544f0c15c515fcc62e596",
+      "public_sha256": "9eea785bec3d483f24375a110df4ac07a22548d768e544f0c15c515fcc62e596",
+      "edits": []
+    },
+    {
+      "path": "UPTIME.txt",
+      "original_sha256": "bdc052ba56650fcd21d3955866ec8110caca78214ddc4011562b908e55342f6f",
+      "public_sha256": "bdc052ba56650fcd21d3955866ec8110caca78214ddc4011562b908e55342f6f",
+      "edits": []
+    },
+    {
+      "path": "WORKDIR.txt",
+      "original_sha256": "edc18a16d4a34772f032164e2dca492a578a0732c2af6aac2e6530b1eb45461c",
+      "public_sha256": "edc18a16d4a34772f032164e2dca492a578a0732c2af6aac2e6530b1eb45461c",
+      "edits": []
+    },
+    {
+      "path": "audit.json",
+      "original_sha256": "601a4a7dfa9baeea5c2773907e611c62629bec5e7ee513cf91a7f750518d665c",
+      "public_sha256": "601a4a7dfa9baeea5c2773907e611c62629bec5e7ee513cf91a7f750518d665c",
+      "edits": []
+    },
+    {
+      "path": "commands.json",
+      "original_sha256": "f8d93a1ed21d2952a025dd7ad00ecc68fb961b57a548520ba421e635821678f2",
+      "public_sha256": "f8d93a1ed21d2952a025dd7ad00ecc68fb961b57a548520ba421e635821678f2",
+      "edits": []
+    },
+    {
+      "path": "connect.txt",
+      "original_sha256": "a012d6e9a6151d87d8db3c8626781bed96b60068037f8dac0f22528263341400",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da",
+      "edits": [
+        "BOARD_ADDRESS_REPLACED"
+      ]
+    },
+    {
+      "path": "raw/round_health/dmesg_audit_start.txt",
+      "original_sha256": "8c279f80e79dbbd479527ac582f5665a9f88a04d2fa845dc9f6e42b147da188d",
+      "public_sha256": "8c279f80e79dbbd479527ac582f5665a9f88a04d2fa845dc9f6e42b147da188d",
+      "edits": []
+    },
+    {
+      "path": "raw/round_health/stability_audit_start.tsv",
+      "original_sha256": "04fc1100296836f3802a3c2765bc0a563ac4d6c727f0250b991857916ac9601e",
+      "public_sha256": "04fc1100296836f3802a3c2765bc0a563ac4d6c727f0250b991857916ac9601e",
+      "edits": []
+    },
+    {
+      "path": "raw/round_health/zram_audit_start.txt",
+      "original_sha256": "e04dc70a761070f65af7f32a17c13806f5ffa777c53100a30d65598908b437b5",
+      "public_sha256": "e04dc70a761070f65af7f32a17c13806f5ffa777c53100a30d65598908b437b5",
+      "edits": []
+    },
+    {
+      "path": "sdb_version.txt",
+      "original_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "public_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "edits": []
+    }
+  ]
+}

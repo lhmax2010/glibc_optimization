@@ -1,0 +1,13 @@
+check	result	detail
+runner-host-tests	PASS	167 tests; fresh post-fixture-fix run; no board invocation
+default-verify	PASS	OVERALL PASS; precommit REPRODUCE_ALLOW_DIRTY=1; no test skip; main delivery identity REPORT_ONLY
+contract-and-analyzer	PASS	byte-identical to system-before-after-contract-20260908
+accepted-measurements	PASS	original 18 cells and three G4 cells unchanged; zero cells rerun
+public-log-integrity	PASS	39 selected original/public SHA pairs in manifest.json
+changed-document-links	PASS	356 local links checked across report/summary/INDEX/PM/runner and archive README
+sanitization	PASS	47 result/document paths scanned; explicit board IP/host home/CI host/invalid runtime path zero hits
+request-byte-budget-host	PASS	53 preflighted batches; largest 3498 bytes including shell prefix and RC/DONE
+request-byte-budget-board	FAIL	first batch service bytes=3474; body bytes=3468; host RC=1; service name too long; no remote RC/DONE
+partial-audit-start-health	PASS_PARTIAL_ONLY	original G4 dmesg prefix retained; 29 new lines, OOM/LMK zero; zram first three values unchanged; no audit_end snapshot
+root-off	PASS_NONROOT	first attempt; UID=5001; no subsequent board command
+demo-v12	NOT_EXECUTED_STOP_GATE	keep demo-v11; no delivery matrix run

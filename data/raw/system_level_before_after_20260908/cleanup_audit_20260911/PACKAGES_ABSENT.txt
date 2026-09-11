@@ -1,0 +1,9 @@
+package libgmp is not installed
+package gdbm is not installed
+package libpython3_141_0 is not installed
+package python3-base is not installed
+package python3 is not installed
+package gdb is not installed
+
+WRAPPER_RC_PACKAGES_ABSENT=0
+DONE_REMOTE_PACKAGES_ABSENT
