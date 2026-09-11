@@ -222,3 +222,11 @@ python3 tools/runners/system_level_before_after_20260908/analyze_restricted_clea
 [L1](../../../docs/demo_reproduction_guide_20260901.md#l1-system-before-after)、
 [完成报告](../../../docs/system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果)。
 全部 21 格禁止重跑。任何未来板端复测须另行授权和事前合同，root 不是默认行为。
+# 2026-09-11 host 合同身份校验追注
+
+[`contract_refs.json`](contract_refs.json) 固定合同 commit 与 contract/analyzer 两份 SHA。
+host `sources()` 用 commit 对象读取原字节，再严格比对哈希及工作文件字节，不需要任何
+命名 tag。`0ef26e51…` 是 tag 对象，实际 commit 为 `54ee2ba8…`，不能混填。
+缺对象的浅克隆会明确失败，按诊断 `git fetch --no-tags --unshallow origin` 或获取固定
+commit 后再复算，不会 SKIP。板端 `preflight.py` 的 annotated tag/推送/600 s 门不变。
+四个非空 GDB 目录作为已知残留保留，不授权进一步删除；本修复无板端操作。

@@ -214,3 +214,19 @@ G4 注入开销与残留待查状态必须披露。交付仍以完整矩阵和�
 克隆不能解析新增收尾重放的合同 tag，八个子用例失败；按原停止门不继续修复/切库，
 不生成 demo-v12，demo-v11 保持有效。下一轮 host 兼容性修复待 PM 裁决，不能用跳过
 测试替代闭合。[阻塞记录](demo_v12_delivery_blocker_20260911.md)。
+
+## 2026-09-11：host 合同身份与板端事前凭证分离
+
+| 发现编号 | 日期 | 裁决 | 理由 | 批准人 |
+|---|---|---|---|---|
+| STOP_HOST_REPLAY_TAG_DEPENDENCY | 2026-09-11 | 采用方向二：host 重放只以固定合同 commit SHA、两份文件 SHA-256 与逐字节比较校验；无命名 tag 不应阻断可达对象的重放；对象缺失必须明确失败并提示 fetch | 不可篡改性来自固定对象及字节，不来自可缺失的 ref 名；不跳过校验 | PM |
+| SYSTEM-CONTRACT-BOARD-GATE | 2026-09-11 | 板端 annotated tag、推送留痕和可审计间隔门原样保留，不把 host 校验代替开跑门 | 校验历史内容与证明事前登记是不同职责，两者均不得弱化 | PM |
+| SYSTEM-GDB-KNOWN-RESIDUE | 2026-09-11 | 四个非空目录记为已知残留，已归档内容清单，不清除非我方文件、不阻断交付 | 沿用目录归属及非空只报告裁决；本次不连板、不新增清理授权 | PM |
+
+对象核对说明：PM 提示中的 `0ef26e51…` 为 annotated **tag 对象**
+`0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3`，其 `object` 指向实际 **commit**
+`54ee2ba8d2819014f3e5656de023ffaf283b4a4a`。依“tag 所指的 commit”执行，
+二者分字段记录在 [contract_refs.json](../tools/runners/system_level_before_after_20260908/contract_refs.json)，
+未改合同、tag 或历史时间戳。机器 host 查询仅使用 `contract_commit`；tag 名/对象是人工凭证。
+现有交付脚本已含 3 克隆 × 6 环境（额外损坏工具形态），继续保留 18 次完整 verify 与
+129 次启动拒绝探针，不因本次“3×5”简写删除既有检查。

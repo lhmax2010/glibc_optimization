@@ -14,7 +14,7 @@ import re
 import shlex
 import subprocess
 
-from preflight import Gate, ROOT, TAG, git, utc
+from preflight import Gate, ROOT, git, utc
 from audit_cleanup_20260911 import SOURCE, original_body, health_delta
 from execute_contract import CONTRACT, ANALYSIS, GDB_NAMES, WORK, STABILITY
 from single_request import request, check_body, parse, permission, absent, absent_listing
@@ -36,15 +36,55 @@ def stat_op(path):
     return ['stat', '-c', STAT_FORMAT, '--', file_path(path)]
 
 
+def verify_contract_sources(root):
+    """Host identity is commit + SHA + exact bytes, never a named Git ref.
+
+    The independent board preflight still requires its annotated tag and push
+    receipt/600-second interval. This reader neither fetches nor changes Git.
+    """
+    relative = 'tools/runners/system_level_before_after_20260908/'
+    refs_path = root / relative / 'contract_refs.json'
+    if refs_path.is_symlink():
+        raise ValueError('contract refs must not be a symlink')
+    refs = json.loads(refs_path.read_text())
+    if not isinstance(refs, dict) or refs.get('schema') != 'system-before-after.contract-refs.v1':
+        raise ValueError('unsupported contract refs schema')
+    commit = refs.get('contract_commit')
+    if not isinstance(commit, str) or not re.fullmatch(r'[0-9a-f]{40}', commit):
+        raise ValueError('contract commit must be a full 40-character SHA, not a tag name')
+    hashes = refs.get('files_sha256')
+    paths = {relative + name for name in ('contract.json', 'analyze_system_level.py')}
+    if not isinstance(hashes, dict) or set(hashes) != paths or any(
+            not isinstance(value, str) or not re.fullmatch(r'[0-9a-f]{64}', value)
+            for value in hashes.values()):
+        raise ValueError('contract refs require exactly two valid file SHA-256 values')
+    kind = subprocess.run(['git', 'cat-file', '-t', commit], cwd=root, capture_output=True)
+    if kind.returncode:
+        raise ValueError('contract-source-unavailable: commit ' + commit +
+            '; no PASS/SKIP. In a shallow clone run git fetch --no-tags --unshallow origin '
+            '(or git fetch --no-tags --deepen <depth> origin). To fetch only the pinned object: '
+            'git fetch --no-tags origin ' + commit + '; then rerun host replay.')
+    if kind.stdout.strip() != b'commit':
+        raise ValueError('contract_commit must identify a commit object, not an annotated tag object')
+    for path in sorted(paths):
+        frozen = subprocess.run(['git', 'show', commit + ':' + path], cwd=root, capture_output=True)
+        if frozen.returncode:
+            raise ValueError('contract-file-unavailable: ' + commit + ':' + path +
+                             '; restore the pinned Git object before replay; no PASS/SKIP')
+        if hashlib.sha256(frozen.stdout).hexdigest() != hashes[path]:
+            raise ValueError('contract committed file hash mismatch: ' + path)
+        local = root / path
+        if local.is_symlink() or local.read_bytes() != frozen.stdout:
+            raise ValueError('contract/analyzer bytes changed: ' + path)
+    return refs
+
+
 def sources():
+    verify_contract_sources(ROOT)
     for item in json.loads((SOURCE / 'manifest.json').read_text())['files']:
         p = SOURCE / item['path']
         if p.is_symlink() or hashlib.sha256(p.read_bytes()).hexdigest() != item['public_sha256']:
             raise ValueError('immutable source mismatch: ' + item['path'])
-    for name in ('contract.json', 'analyze_system_level.py'):
-        rel = 'tools/runners/system_level_before_after_20260908/' + name
-        if subprocess.check_output(['git', 'show', TAG + ':' + rel], cwd=ROOT) != (ROOT / rel).read_bytes():
-            raise ValueError('contract/analyzer bytes changed')
     prior = json.loads((SOURCE / 'execution.json').read_text())
     if prior['completed_cells'] != ['G4_trim_r1', 'G4_trim_r2', 'G4_trim_r3']:
         raise ValueError('three accepted G4 required')

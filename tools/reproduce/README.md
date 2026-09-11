@@ -151,11 +151,23 @@ matrix pass by itself does not establish the actual GBS build path.
 
 ## Default host-test dependency audit
 
-2026-09-11 candidate status: the new system-cleanup replay requires a contract
-tag by name, but the no-tag delivery-identity fixtures intentionally omit it.
-Eight subcases failed; v12 delivery is stopped and demo-v11 remains effective.
-This is an unresolved host-replay dependency, not a failed board measurement.
-Do not skip these tests to obtain PASS. See the [blocker record](../../docs/demo_v12_delivery_blocker_20260911.md).
+2026-09-11 correction: the system-cleanup replay now binds the fixed **commit** and
+both file hashes in [`contract_refs.json`](../runners/system_level_before_after_20260908/contract_refs.json),
+then compares committed and working file bytes exactly. It never resolves the
+documentary tag name. Full and `--no-tags` clones pass when that object is present.
+A shallow clone missing it fails explicitly (no PASS/SKIP) and prints these remedies:
+
+```sh
+git fetch --no-tags --unshallow origin
+# Or fetch only the pinned commit and its tree, retaining the shallow boundary:
+git fetch --no-tags origin 54ee2ba8d2819014f3e5656de023ffaf283b4a4a
+```
+
+Run the same replay again after fetching; the workflow never silently fetches.
+The independent **board pre-run annotated-tag, push receipt and audited interval**
+gates are unchanged. The [historical blocker](../../docs/demo_v12_delivery_blocker_20260911.md)
+is retained; new regression cases cover missing/present objects in shallow clones,
+full/no-tag clones, wrong object types, mutated hashes and changed file bytes.
 
 The current entrypoint executes thirteen test files (the original eleven groups
 plus the accepted-matrix and directory-disposition groups). Their external-command boundary is:

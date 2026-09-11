@@ -1,0 +1,13 @@
+{
+  "schema": "system-before-after.contract-refs.v1",
+  "contract_commit": "54ee2ba8d2819014f3e5656de023ffaf283b4a4a",
+  "human_evidence": {
+    "annotated_tag": "system-before-after-contract-20260908",
+    "tag_object": "0ef26e51ac9efd18a9dd460b7fefd212ef2d78f3",
+    "scope": "Historical pre-run credential; host replay resolves only contract_commit. The separate board annotated-tag and audited 600-second interval gates remain mandatory."
+  },
+  "files_sha256": {
+    "tools/runners/system_level_before_after_20260908/contract.json": "11456d72dcf489194e11478e016aa6202c8a26c2d77e5eaeead64c305975446b",
+    "tools/runners/system_level_before_after_20260908/analyze_system_level.py": "c9acb5569382dd029860c801b55ce0f361949c0ad0a8f3b4575eb42b431db2b8"
+  }
+}

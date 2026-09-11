@@ -138,7 +138,11 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('directory',type=pathlib.Path)
     args=p.parse_args()
-    print(json.dumps(replay(args.directory),indent=2)+'')
+    try:
+        result = replay(args.directory)
+    except (ValueError, OSError) as error:
+        p.exit(2, 'FAIL directory-disposition-replay: ' + str(error) + '\n')
+    print(json.dumps(result,indent=2)+'')
 
 
 if __name__=='__main__':

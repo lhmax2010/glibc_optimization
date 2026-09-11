@@ -28,7 +28,7 @@ class RestrictedCleanupReplay(unittest.TestCase):
     def test_original_stop_replays_byte_exact_without_board_calls(self):
         real_run=subprocess.run
         def git_only(argv,**kwargs):
-            self.assertEqual(argv[:2],['git','show'])
+            self.assertIn(argv[:2], (['git','show'], ['git','cat-file']))
             return real_run(argv,**kwargs)
         with mock.patch('subprocess.run',side_effect=git_only):
             self.assertEqual(replay.analyze(EVIDENCE),(EVIDENCE/'host_replay.json').read_text())
