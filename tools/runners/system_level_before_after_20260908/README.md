@@ -181,3 +181,21 @@ finally 至多两次 root-off，并以 id=5001 复核；入口无测量、推文
 
 host 回归覆盖 200/201（含多字节）、SDB 发送前拒绝、缺失/矛盾 RC、全部路径逐项覆盖、
 权限清单及 root 范围、身份/占用/健康停止门、降权失败、ZIP 归档及精确清理故障。
+
+## 2026-09-11 受限 root 续审入口
+
+PM 新授权将缺 PID 1 的进程视图纳入 root 清单；前述旧入口不得重跑。
+21 格禁止重测。本次入口只用于已归档 STOP 的延期收尾：
+
+```sh
+python3 tools/runners/system_level_before_after_20260908/audit_restricted_resume_20260911.py \
+  --ip '<TEST_BOARD_IP>' --pm-authorization PM-ROOT-PROCESS-20260910 \
+  --output-dir board_results/system_level_before_after_20260908/cleanup_restricted_20260911
+```
+
+八项已成功的非 root 证据经哈希验证后复用，不再发送；未完成项先非 root 扫描，
+完整权限/不可证明完整性清单先落盘，再执行一次 root round。root 只读清单项，
+不重复已通过检查。非我方进程/连接仅 REPORT_ONLY；我方残留须精确匹配原 G4
+PID/start tick、解释器与脚本完整路径，归档及再核对后 TERM/复核。
+每条完整请求 ≤200 字节，远端 RC/DONE/FAIL 必须匹配；finally root off/UID=5001。
+没有默认提权、测量、包变更或重启；详见[报告 §11](../../../docs/system_level_before_after_20260908.md#11-2026-09-11-受限-root-续审执行前登记)。

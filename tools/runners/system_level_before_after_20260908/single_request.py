@@ -18,7 +18,7 @@ def check_body(body):
 def request(argv):
     # One argv -> one operation. No shell programs, loops, pipelines, or eval.
     if not argv or argv[0] not in {'id', 'uname', 'cat', 'rpm', 'stat', 'ps', 'df',
-                                  'ls', 'dmesg', 'date', 'uptime', 'sha256sum', 'base64', 'readlink', 'rm', 'rmdir'}:
+                                  'ls', 'dmesg', 'date', 'uptime', 'sha256sum', 'base64', 'readlink', 'rm', 'rmdir', 'kill'}:
         raise ValueError('single-operation executable not allowed')
     if any(not isinstance(x, str) or any(c in x for c in '\0\r\n') for x in argv):
         raise ValueError('invalid single-operation argument')

@@ -94,6 +94,27 @@ def process_check(text):
 
 
 class SingleAudit(Gate):
+    authorization_token = TOKEN
+
+    def inspect_processes(self, label, text):
+        process_check(text)
+
+    def inspect_connections(self, connections):
+        if len(connections) > 1:
+            raise ValueError('multiple SDB clients; no clearing')
+
+    def allow_signal(self, argv):
+        return False
+
+    def allow_scoped_root(self, scope, argv):
+        if not scope or scope not in self.pending:
+            return False
+        directory = self.pending[scope]['directory']
+        if not directory or argv[-1] != directory + '/' + pathlib.PurePosixPath(argv[-1]).name:
+            return False
+        return argv[0] in ('stat','sha256sum','base64') or (
+            argv == ['rm','--',argv[-1]] and argv[-1] in self.authorized_removals)
+
     def __init__(self, args):
         args.output_dir.mkdir(parents=True, exist_ok=False)
         super().__init__(args.ip, args.output_dir)
@@ -128,6 +149,8 @@ class SingleAudit(Gate):
 
     def op(self, label, argv, defer=True, scope=None):
         body = request(argv)
+        if argv[0] == 'kill' and not self.allow_signal(argv):
+            raise ValueError('signal requires archived exact process attribution')
         if argv[0] in ('rm','rmdir') and (argv != ['rm','--',argv[-1]] or
                 argv[-1] not in self.authorized_removals or 'nonroot_sweep_completed_utc' not in self.receipt):
             raise ValueError('removal requires exact archived attribution after nonroot sweep')
@@ -137,14 +160,8 @@ class SingleAudit(Gate):
         if self.phase == 'ROOT' and not identity_label:
             registered = self.pending.get(label)
             if registered is None or registered['argv'] != argv:
-                if not scope or scope not in self.pending:
-                    raise ValueError('root read outside pre-recorded denied list')
-                directory = self.pending[scope]['directory']
-                if not directory or argv[-1] != directory + '/' + pathlib.PurePosixPath(argv[-1]).name:
-                    raise ValueError('root child read outside registered directory')
-                if argv[0] not in ('stat','sha256sum','base64') and not (
-                        argv == ['rm','--',argv[-1]] and argv[-1] in self.authorized_removals):
-                    raise ValueError('root directory scope permits metadata/archive reads only')
+                if not self.allow_scoped_root(scope, argv):
+                    raise ValueError('root read outside pre-recorded denied list; root directory scope permits metadata/archive reads only')
         _, text = self.run(self.phase + '_' + label, ['sdb', '-s', self.serial, 'shell', body])
         rc, payload = parse(text)
         if self.phase == 'NONROOT' and defer and permission(rc, payload):
@@ -205,7 +222,7 @@ class SingleAudit(Gate):
     def nonroot(self, prior, paths):
         self.snapshot('START')
         if 'PS_START' in self.results and self.results['PS_START'][0] == 0:
-            process_check(self.results['PS_START'][1])
+            self.inspect_processes('PS_START', self.results['PS_START'][1])
         self.ok('TARGET_STAT', ['cat', '/proc/%d/stat' % prior['preflight']['enlightenment_pid']])
         for n in range(4):
             self.ok('GOV_%d' % n, ['cat', '/sys/devices/system/cpu/cpu%d/cpufreq/scaling_governor' % n])
@@ -250,7 +267,7 @@ class SingleAudit(Gate):
                 raise ValueError('boot changed since accepted G4')
             value = available('PS_'+when)
             if value is not None:
-                process_check(value)
+                self.inspect_processes('PS_'+when, value)
             dm, zr = available('DMESG_'+when), available('ZRAM_'+when)
             old_dm=(SOURCE/'raw/round_health/dmesg_before.txt').read_text()
             old_zr=(SOURCE/'raw/round_health/zram_before.txt').read_text()
@@ -288,8 +305,7 @@ class SingleAudit(Gate):
                     f=line.split()
                     if len(f)>3 and f[1].upper().endswith(':65F5') and f[3]=='01':
                         connections.append(line)
-        if len(connections)>1:
-            raise ValueError('multiple SDB clients; no clearing')
+        self.inspect_connections(connections)
         for label,result in self.results.items():
             if label.endswith('_OWNER') and result[0] != 0:
                 if result[0] != 1 or not (result[1].startswith('file ') and
@@ -310,11 +326,11 @@ class SingleAudit(Gate):
         if not self.pending:
             self.receipt['id_final'] = self.ok('ID_FINAL', ['id'], False)
             return
-        if self.args.pm_authorization != TOKEN:
+        if self.args.pm_authorization != self.authorization_token:
             raise ValueError('permission list requires explicit PM-A authorization')
         self.receipt['root_elevation'] = 'DENIED_LIST_ONLY'
         self.receipt['root_authorization'] = dict(approved_by='PM', decision_date='2026-09-10',
-            scope='single round; pre-recorded unreadable cleanup items only',
+            scope='single round; pre-recorded unreadable/incomplete cleanup items only',
             id_before=self.ok('ID_BEFORE_ROOT', ['id'], False), root_off='NOT-EVALUATED')
         if not self.receipt['root_authorization']['id_before'].startswith('uid=5001('):
             raise ValueError('session changed before root round')
@@ -354,7 +370,7 @@ class SingleAudit(Gate):
         for when in ('START', 'END'):
             if good('BOOT_' + when) != prior['preflight']['boot_id']:
                 raise ValueError('boot changed since accepted G4')
-            process_check(good('PS_' + when))
+            self.inspect_processes('PS_' + when, good('PS_' + when))
             increment = health_delta(old_dmesg, good('DMESG_' + when), old_zram, good('ZRAM_' + when))
             (self.out / ('dmesg_increment_' + when + '.txt')).write_text('\n'.join(increment) + '\n')
             code, listing = get('ALERTS_' + when)
@@ -406,8 +422,7 @@ class SingleAudit(Gate):
                 f = line.split()
                 if len(f)>3 and f[1].upper().endswith(':65F5') and f[3]=='01':
                     connections.append(line)
-        if len(connections)>1:
-            raise ValueError('multiple SDB clients; no clearing')
+        self.inspect_connections(connections)
         self.receipt['health'] = dict(oom_lmk_new=0, zram_three_delta=[0,0,0],
             attributable_alerts_new=0, boot_unchanged=True, dmesg_prefix_retained=True)
         self.receipt['verdict'] = 'PASS_READONLY_CLEANUP'

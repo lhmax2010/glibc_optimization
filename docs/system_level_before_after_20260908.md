@@ -756,3 +756,36 @@ host_replay 逐字节 cmp 与脱敏扫描均通过，克隆前后工作树干净
 **整轮仍 STOP，第 3–5 段不执行**：无新 Demo 头条、无 v12 brief、无交付矩阵或 demo-v12。
 当前有效 **demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated tag
 对象 `f1266c0be6c225a2ceb962836380c656758f9427`。旧 18 格与 G4 三格完全保留。
+
+## 11. 2026-09-11 受限 root 续审（执行前登记）
+
+PM 于 2026-09-10 续裁批准：将 §10 中 RC=0 但缺 PID 1 的进程检查纳入受限
+root 清单；板已专供本项目，非我方进程只报告、不清除，也不因此停止。此裁决
+闭合的是权限范围问题，不预先声明收尾通过。§10 STOP 原文与原始回执保持不变。
+
+本次使用[独立续审入口](../tools/runners/system_level_before_after_20260908/audit_restricted_resume_20260911.py)，
+先校验 §10 原文清单哈希，复用已通过的三重身份、glibc、MemTotal、开始 boot/dmesg/zram
+共八项证据，**不再次发送这些检查**。先以 UID=5001 完成此前未执行的非 root 单项扫描。
+已有证据不完整的 ps、同视图不可见的原目标 stat，以及已证实不可读的 livedump 目录
+直接登记；新遇到的权限拒绝逐项加入清单。结束 boot/dmesg/zram 是续审结束的新时点，
+用于桥接 G4 原始执行，不冒充测量当时快照。清单写入本地后才执行一次授权 root round。
+
+root 内只执行登记项与其精确归属/归档/复核子项。进程门须 UID=0、`ps -e` 全系统选择、
+PID 1/init 与原 enlightenment PID/start tick 相符；这证明本次操作层面的完整视图，
+不外推底层访问控制原因。非我方会话或负载原样报告；仅当已验收 G4 helper 的 PID、
+start tick、解释器及工作目录内精确脚本 argv 同时吻合，才归档元数据、再次核对身份、
+TERM 并验证消失。PID 复用不归我方。可归因新告警仍是健康停止门，不作豁免。
+
+每条只有一个操作，完整请求体（含 RC/DONE/FAIL）≤200 UTF-8 字节；超限本地拒绝，
+不发送、不试探。finally 执行 root off 并复核 UID=5001，失败至多一次重试。
+没有测量、文件推送、包变更、governor 写入、reboot/poweroff；原合同、analyzer 和
+21 格数据不改。执行器与故障测试先提交并推 main，再连板；结果另行追加。
+
+复现本次 host 安全检查（不连接板）：
+
+```sh
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py'
+```
+
+本节为获批方法登记，不是新测量合同；没有新的确定性 payload 或容差指标。
+验收仍为原文/远端状态/请求字节硬限、受限 root 范围、残留归属与健康核验。
