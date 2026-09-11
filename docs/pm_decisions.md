@@ -4,6 +4,18 @@
 
 # PM 裁决台账
 
+## 2026-09-10 再续：单项请求、200 字节硬限（2026-09-11 落地）
+
+| 发现编号 | 日期 | 裁决 | 理由 | 批准人 |
+|---|---|---|---|---|
+| SYSTEM-CLEANUP-SINGLE | 2026-09-10 | 一项检查一条 SDB 请求；包含 RC/DONE 的完整请求体超过 200 UTF-8 字节本地报错且不发出；不得继续试长度或拼批次 | 停止预算假设；只修收尾方法，不改合同，不重跑 21 格 | PM |
+| SYSTEM-CLEANUP-NONROOT-FIRST | 2026-09-10 | UID=5001 先做完整只读清单；单列真实权限拒绝项，才做一次方案 A root round，只跑清单，结束 root-off 并验证 UID | 最小权限；不得因一项不可读把其余检查一并提权 | PM |
+| SYSTEM-CLEANUP-SINGLE-STOP | 2026-09-10 | 我方残留先归档元数据再清除并复核，非我方仅报告；再次命中停止门则停止后续、保持 demo-v11；禁止 reboot/poweroff | 21 格验收不替代收尾健康门；不扩大清理授权 | PM |
+
+现行入口：[单项收尾](../tools/runners/system_level_before_after_20260908/audit_single_cleanup_20260911.py)，
+[协议硬闸](../tools/runners/system_level_before_after_20260908/single_request.py)。
+下节 3500 字节实施及失败保留为历史，不能再当作执行方法。执行结论随后按原始 UTC 回执追注。
+
 ## 2026-09-10 续：21 格验收保留、只补收尾（2026-09-11 落地）
 
 | 发现编号 | 日期 | 裁决 | 理由 | 批准人 |

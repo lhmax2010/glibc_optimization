@@ -111,6 +111,8 @@ python3 tools/runners/system_level_before_after_20260908/execute_contract.py \
 完整结果，也未进入 HQ 的 Demo L1 入口。它们的 host 测试通过不构成 G4 板上可用性证据。
 ## 2026-09-11 只补收尾入口（PM 2026-09-10 续裁决）
 
+以下是历史失败入口，已由文末的单项请求入口替代。禁止再使用分批或预算推断的方法。
+
 **执行后 STOP 追注：不得直接再运行。** 3500 字节本地预算仍高于本次客户端可接受范围；
 首批服务请求 3474 字节返回 `service name too long`，无远端 RC/DONE。root-off 首次成功，
 后续停止；未调整预算重试。以下命令仅为已失败执行的出处，须 PM 再裁决才能补核验。
@@ -143,3 +145,31 @@ python3 tools/runners/system_level_before_after_20260908/audit_cleanup_20260911.
 `publish_cleanup_audit.py --run <terminal-audit> --output-dir <new-public-dir>
 --ip <TEST_BOARD_IP> --host-home <local-home>` 只转录终态收尾原文与编辑前后 SHA。
 原 STOP 与补核验记录分开，禁止重写前次执行回执；full livedump 原件本地留存，可按请求提供。
+
+## 2026-09-11 单项请求收尾（现行入口）
+
+PM 2026-09-10 再续裁决：只补收尾，21 格结果不重跑。先提交并推送执行器，再执行：
+
+```sh
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py'
+python3 tools/runners/system_level_before_after_20260908/audit_single_cleanup_20260911.py \
+  --ip '<TEST_BOARD_IP>' --pm-authorization PM-SINGLE-CLEANUP-20260910 \
+  --output-dir board_results/system_level_before_after_20260908/cleanup_single_20260911
+```
+
+[single_request.py](single_request.py) 把一个 argv 编码为一个检查操作；只附必要的
+远端 RC/DONE/FAIL 记录，不拼检查、不用管道/循环。**完整请求体 UTF-8 超过 200 字节
+即本地拒绝、零发送**；发送层再次检查。200 是 PM 硬限，不是探测出的协议上限。
+本地预校验公开原清单的 2570 个去重包路径，逐路径 stat；仅对现存/不可读项另发
+独立包归属查询。非 root 全扫结束后，把权限拒绝项写入 `permission_denied.json`，
+只对这张清单执行一次显式授权 root round；不可读目录的具体子项逐个登记/归档，
+仍一项一请求。不得通过 root 重做已成功的非 root 检查。
+
+原文逐请求落盘；host 退出码不替代远端证明。包清单、boot、dmesg 前缀与原 G4 桥接；
+可归属 livedump 须先 base64 回收、逐字节大小/SHA 验证与元数据归档，再精确删除及复核，
+但可归因新告警仍是健康 STOP。非我方条目只报告，不动。未知归属不会猜测删除。
+finally 至多两次 root-off，并以 id=5001 复核；入口无测量、推文件、包变更、governor
+写入或进程终止路径。合同/analyzer 与已验收证据保持原字节。
+
+host 回归覆盖 200/201（含多字节）、SDB 发送前拒绝、缺失/矛盾 RC、全部路径逐项覆盖、
+权限清单及 root 范围、身份/占用/健康停止门、降权失败、ZIP 归档及精确清理故障。
