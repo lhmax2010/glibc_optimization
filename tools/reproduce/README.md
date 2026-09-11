@@ -111,14 +111,14 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v11
+  --tag demo-v12
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v11 <url>
+git clone --branch demo-v12 <url>
 git clone <url>                 # remote default must be main
 ```
 

@@ -232,6 +232,18 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
 绑定新入口字节，旧 proof 留作对应执行提交的历史。没有板端连接或新的实验数据。
 ## v11 → v12：已验收系统前后对照与延期收尾集成
 
+周末续跑（2026-09-11 实施；09-12 至 09-14 批次）：
+
+| 发现/授权编号 | 修复提交/入口 | 闭合内容 |
+|---|---|---|
+| TCP-REDACTION / WEEKEND-A/D | `0518993f3e905eb6e3f32996bd88288187492134` | 三份 TCP 7 行/14 端点不可逆占位，public 哈希链更新，原始哈希与历史保留 |
+| ENDPOINT-SCANNER | 同上；[扫描器](../tools/privacy/README.md) | proc IPv4/IPv6/mapped、整数检测；CIDR/JSON/数字歧义负控；默认 verify 全树硬门 |
+| WEEKEND-B / SYSTEM-OVERVIEW | [核对说明](weekend_redaction_20260911.md#3-文案核对预授权-b) | 保留原 21 格数字、mixed 负系统净效应、G4 ptrace 边界；不以提示近似值覆盖证据 |
+| HOST-CONTRACT-SHA / KNOWN-RESIDUE | `b5dd9483548dcbe5827461e5da24d9bee9bf2977`；[台账](pm_decisions.md) | host 固定 commit+双文件哈希；板端 annotated 门不变；四非空目录已知项 |
+| V12-DELIVERY | 新 main 的完整快照 + 双语 README | v11 保留，v12 必须 annotated；三克隆×六环境及 GitHub 远端验证结果另行归档 |
+
+仅公开日志脱敏、host 门与交付材料收口，不改已验收测量、合同、验收带或派生指标。
+
 - SYSTEM-CLEANUP-BOUNDS / PM-GDB-DIRECTORIES-20260911：受限目录执行器与故障回归，
   [c89c9abd1add883fd35850e805e9d4a7248b2eee](https://github.com/lhmax2010/glibc_optimization/commit/c89c9abd1add883fd35850e805e9d4a7248b2eee)；
   四个非空目录实际全部保留，UID 恢复，健康核验闭合。[证据](system_level_before_after_20260908.md#121-实际处置与收尾结果)。

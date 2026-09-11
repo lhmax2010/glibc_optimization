@@ -69,7 +69,7 @@ none 的零仅指 RSS 下降，mixed 系统净效应为负；测试板量级不�
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v11 <url>
+git clone --branch demo-v12 <url>
 git clone <url>                 # 远端默认分支必须为 main
 ```
 
@@ -79,7 +79,7 @@ git clone <url>                 # 远端默认分支必须为 main
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v11
+  --tag demo-v12
 ```
 
 六种环境是原 `{GBS 可发现/不可发现} × {RPM 工具链可发现/不可发现}` 四格，加上
