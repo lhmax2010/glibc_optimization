@@ -184,6 +184,11 @@ host 回归覆盖 200/201（含多字节）、SDB 发送前拒绝、缺失/矛�
 
 ## 2026-09-11 受限 root 续审入口
 
+**执行后 STOP：不得再运行下面的板端入口。** 受限 root 进程/告警核验通过，root off
+首次成功恢复 UID=5001；2570 条包路径中五个无 RPM 归属的 GDB 目录内容/归属未闭合，
+执行器停止且未删除。后续只能 host 重放，若需继续板端处置须 PM 新裁决。
+见[结果 §11.1](../../../docs/system_level_before_after_20260908.md#111-执行结果与原文)。
+
 PM 新授权将缺 PID 1 的进程视图纳入 root 清单；前述旧入口不得重跑。
 21 格禁止重测。本次入口只用于已归档 STOP 的延期收尾：
 
@@ -199,3 +204,11 @@ python3 tools/runners/system_level_before_after_20260908/audit_restricted_resume
 PID/start tick、解释器与脚本完整路径，归档及再核对后 TERM/复核。
 每条完整请求 ≤200 字节，远端 RC/DONE/FAIL 必须匹配；finally root off/UID=5001。
 没有默认提权、测量、包变更或重启；详见[报告 §11](../../../docs/system_level_before_after_20260908.md#11-2026-09-11-受限-root-续审执行前登记)。
+
+已归档 STOP 的 host-only 复算（检查所有公开原文哈希、请求、root 范围、进程/包/健康及
+残留全表，不调用 sdb；输出仍为 STOP，不改原回执）：
+
+```sh
+python3 tools/runners/system_level_before_after_20260908/analyze_restricted_cleanup.py \
+  data/raw/system_level_before_after_20260908/cleanup_restricted_20260911
+```

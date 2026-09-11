@@ -1,0 +1,4 @@
+stat: cannot stat `/etc/rpm/macros.python3': No such file or directory
+
+RC=1
+FAIL

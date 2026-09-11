@@ -3,13 +3,34 @@
 import argparse
 import datetime
 import json
+import ipaddress
 import pathlib
+import re
 import tempfile
 
 from publish_execution_log import no_symlink, render_public, sha
 
 
-def publish(run, output, ip, host_home):
+def network_endpoints(data, board_ip, host_ip):
+    """Explicit routing aliases, including proc-net little-endian encodings."""
+    text=data.decode('utf-8')
+    edits=[]
+    for address,alias,label in ((board_ip,'<TEST_BOARD_IP>','BOARD_ENDPOINT_REPLACED'),
+                               (host_ip,'<HOST_IP>','HOST_ENDPOINT_REPLACED')):
+        value=ipaddress.IPv4Address(address)
+        little=value.packed[::-1].hex().upper()
+        for source in ('0000000000000000FFFF0000'+little,little):
+            text,n=re.subn(r'(?<![0-9A-Fa-f])'+source+r'(?=:[0-9A-Fa-f]{4}\b)',alias,text,flags=re.I)
+            if n and label not in edits:
+                edits.append(label)
+        if str(value) in text:
+            text=text.replace(str(value),alias)
+            if label not in edits:
+                edits.append(label)
+    return text.encode('utf-8'),edits
+
+
+def publish(run, output, ip, host_home, host_ip=None):
     run, output = pathlib.Path(run).absolute(), pathlib.Path(output).absolute()
     for path in (run, output):
         no_symlink(path)
@@ -45,6 +66,9 @@ def publish(run, output, ip, host_home):
         records = []
         for relative, data in captured.items():
             public, edits = render_public(data, ip, host_home)
+            if host_ip is not None:
+                public,network_edits=network_endpoints(public,ip,host_ip)
+                edits+=network_edits
             path = staged / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(public)
@@ -52,7 +76,8 @@ def publish(run, output, ip, host_home):
         (staged / "manifest.json").write_text(json.dumps({
             "schema": "system-before-after.delayed-cleanup-publication.v1",
             "verdict": receipt["verdict"], "scope": "cleanup only; no measurement rerun or changed measurement source",
-            "editing": "CR removed; board address and host home mapped; board runtime paths retained",
+            "editing": "CR removed; board address and host home mapped; board runtime paths retained" + (
+                "; board/host proc-net hexadecimal endpoints mapped, ports/states retained" if host_ip else ""),
             "files": records}, indent=2) + "\n")
         for relative, data in captured.items():
             if (run / relative).read_bytes() != data:
@@ -69,8 +94,9 @@ def main():
     parser.add_argument("--output-dir", required=True, type=pathlib.Path)
     parser.add_argument("--ip", required=True)
     parser.add_argument("--host-home", required=True)
+    parser.add_argument("--host-ip", help="explicit host routing alias; also redact proc-net hexadecimal endpoints")
     args = parser.parse_args()
-    publish(args.run, args.output_dir, args.ip, args.host_home)
+    publish(args.run, args.output_dir, args.ip, args.host_home, args.host_ip)
 
 
 if __name__ == "__main__":

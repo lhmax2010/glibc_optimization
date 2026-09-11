@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/share/gdb/syscalls/gdb-syscalls.dtd': No such file or directory
+
+RC=1
+FAIL

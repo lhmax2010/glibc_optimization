@@ -1,0 +1,208 @@
+  PID  PPID TT       COMMAND         COMMAND
+    1     0 ?        systemd         /sbin/init
+    2     0 ?        kthreadd        [kthreadd]
+    3     2 ?        pool_workqueue_ [pool_workqueue_release]
+    4     2 ?        kworker/R-kvfre [kworker/R-kvfree_rcu_reclaim]
+    5     2 ?        kworker/R-rcu_g [kworker/R-rcu_gp]
+    6     2 ?        kworker/R-sync_ [kworker/R-sync_wq]
+    7     2 ?        kworker/R-slub_ [kworker/R-slub_flushwq]
+    8     2 ?        kworker/R-netns [kworker/R-netns]
+   13     2 ?        kworker/R-mm_pe [kworker/R-mm_percpu_wq]
+   14     2 ?        rcu_tasks_rude_ [rcu_tasks_rude_kthread]
+   15     2 ?        rcu_tasks_trace [rcu_tasks_trace_kthread]
+   16     2 ?        ksoftirqd/0     [ksoftirqd/0]
+   17     2 ?        rcu_sched       [rcu_sched]
+   18     2 ?        rcu_exp_par_gp_ [rcu_exp_par_gp_kthread_worker/0]
+   19     2 ?        rcu_exp_gp_kthr [rcu_exp_gp_kthread_worker]
+   20     2 ?        migration/0     [migration/0]
+   21     2 ?        cpuhp/0         [cpuhp/0]
+   22     2 ?        cpuhp/1         [cpuhp/1]
+   23     2 ?        migration/1     [migration/1]
+   24     2 ?        ksoftirqd/1     [ksoftirqd/1]
+   27     2 ?        cpuhp/2         [cpuhp/2]
+   28     2 ?        migration/2     [migration/2]
+   29     2 ?        ksoftirqd/2     [ksoftirqd/2]
+   32     2 ?        cpuhp/3         [cpuhp/3]
+   33     2 ?        migration/3     [migration/3]
+   34     2 ?        ksoftirqd/3     [ksoftirqd/3]
+   41     2 ?        kdevtmpfs       [kdevtmpfs]
+   42     2 ?        kworker/R-inet_ [kworker/R-inet_frag_wq]
+   43     2 ?        kauditd         [kauditd]
+   44     2 ?        khungtaskd      [khungtaskd]
+   45     2 ?        oom_reaper      [oom_reaper]
+   47     2 ?        kworker/R-write [kworker/R-writeback]
+   48     2 ?        kcompactd0      [kcompactd0]
+   49     2 ?        kworker/R-crypt [kworker/R-cryptd]
+   50     2 ?        kworker/R-kbloc [kworker/R-kblockd]
+   51     2 ?        kworker/R-blkcg [kworker/R-blkcg_punt_bio]
+   55     2 ?        watchdogd       [watchdogd]
+   57     2 ?        kworker/1:1H-kb [kworker/1:1H-kblockd]
+   58     2 ?        kworker/R-rpcio [kworker/R-rpciod]
+   59     2 ?        kworker/R-xprti [kworker/R-xprtiod]
+   60     2 ?        kworker/R-cfg80 [kworker/R-cfg80211]
+   62     2 ?        kswapd0         [kswapd0]
+   63     2 ?        kworker/R-nfsio [kworker/R-nfsiod]
+   64     2 ?        kworker/u21:0-h [kworker/u21:0-hci0]
+   65     2 ?        kworker/u22:0   [kworker/u22:0]
+   66     2 ?        kworker/u23:0   [kworker/u23:0]
+   67     2 ?        kworker/u24:0   [kworker/u24:0]
+   68     2 ?        kworker/u25:0   [kworker/u25:0]
+   69     2 ?        kworker/R-kthro [kworker/R-kthrotld]
+   76     2 ?        hwrng           [hwrng]
+   77     2 ?        kworker/R-iscsi [kworker/R-iscsi_conn_cleanup]
+   79     2 ?        kworker/R-uas   [kworker/R-uas]
+   81     2 ?        kworker/R-dm_bu [kworker/R-dm_bufio_cache]
+   83     2 ?        vchiq-slot/0    [vchiq-slot/0]
+   84     2 ?        vchiq-recy/0    [vchiq-recy/0]
+   85     2 ?        vchiq-sync/0    [vchiq-sync/0]
+   86     2 ?        vchiq-keep/0    [vchiq-keep/0]
+   88     2 ?        kworker/3:1H-kb [kworker/3:1H-kblockd]
+   89     2 ?        SMIO            [SMIO]
+   90     2 ?        kworker/R-mmal- [kworker/R-mmal-vchiq]
+   91     2 ?        kworker/R-mmal- [kworker/R-mmal-vchiq]
+   92     2 ?        kworker/R-mmal- [kworker/R-mmal-vchiq]
+   93     2 ?        kworker/R-mmal- [kworker/R-mmal-vchiq]
+   94     2 ?        kworker/R-mmal- [kworker/R-mmal-vchiq]
+   95     2 ?        kworker/R-mmal- [kworker/R-mmal-vchiq]
+   96     2 ?        kworker/R-mmal- [kworker/R-mmal-vchiq]
+   97     2 ?        kworker/R-mld   [kworker/R-mld]
+   98     2 ?        kworker/R-ipv6_ [kworker/R-ipv6_addrconf]
+  100     2 ?        krfcommd        [krfcommd]
+  103     2 ?        irq/54-vc4 hdmi [irq/54-vc4 hdmi hpd connected]
+  104     2 ?        irq/55-vc4 hdmi [irq/55-vc4 hdmi hpd disconnected]
+  105     2 ?        cec-vc4-hdmi-0  [cec-vc4-hdmi-0]
+  106     2 ?        irq/56-vc4 hdmi [irq/56-vc4 hdmi cec rx]
+  107     2 ?        irq/57-vc4 hdmi [irq/57-vc4 hdmi cec tx]
+  108     2 ?        irq/58-vc4 hdmi [irq/58-vc4 hdmi hpd connected]
+  109     2 ?        irq/59-vc4 hdmi [irq/59-vc4 hdmi hpd disconnected]
+  110     2 ?        cec-vc4-hdmi-1  [cec-vc4-hdmi-1]
+  111     2 ?        irq/60-vc4 hdmi [irq/60-vc4 hdmi cec rx]
+  112     2 ?        irq/61-vc4 hdmi [irq/61-vc4 hdmi cec tx]
+  113     2 ?        card0-crtc0     [card0-crtc0]
+  114     2 ?        card0-crtc1     [card0-crtc1]
+  115     2 ?        card0-crtc2     [card0-crtc2]
+  116     2 ?        card0-crtc3     [card0-crtc3]
+  117     2 ?        card0-crtc4     [card0-crtc4]
+  118     2 ?        card0-crtc5     [card0-crtc5]
+  121     2 ?        kworker/R-sdhci [kworker/R-sdhci]
+  122     2 ?        kworker/R-v3d_b [kworker/R-v3d_bin]
+  123     2 ?        irq/68-mmc0     [irq/68-mmc0]
+  125     2 ?        kworker/R-v3d_r [kworker/R-v3d_render]
+  126     2 ?        kworker/R-v3d_t [kworker/R-v3d_tfu]
+  127     2 ?        kworker/R-v3d_c [kworker/R-v3d_csd]
+  128     2 ?        kworker/R-v3d_c [kworker/R-v3d_cache_clean]
+  129     2 ?        kworker/R-v3d_c [kworker/R-v3d_cpu]
+  145     2 ?        kworker/R-mmc_c [kworker/R-mmc_complete]
+  146     2 ?        kworker/0:1H-mm [kworker/0:1H-mmc_complete]
+  189     2 ?        jbd2/mmcblk0p6- [jbd2/mmcblk0p6-8]
+  190     2 ?        kworker/R-ext4- [kworker/R-ext4-rsv-conversion]
+  197     2 ?        kworker/2:1H-kb [kworker/2:1H-kblockd]
+  225     2 ?        jbd2/mmcblk0p2- [jbd2/mmcblk0p2-8]
+  226     2 ?        kworker/R-ext4- [kworker/R-ext4-rsv-conversion]
+  230     2 ?        jbd2/mmcblk0p3- [jbd2/mmcblk0p3-8]
+  231     2 ?        kworker/R-ext4- [kworker/R-ext4-rsv-conversion]
+  233     2 ?        jbd2/mmcblk0p10 [jbd2/mmcblk0p10-8]
+  234     2 ?        kworker/R-ext4- [kworker/R-ext4-rsv-conversion]
+  272     2 ?        jbd2/mmcblk0p9- [jbd2/mmcblk0p9-8]
+  273     2 ?        kworker/R-ext4- [kworker/R-ext4-rsv-conversion]
+  276     1 ?        systemd-journal /usr/lib/systemd/systemd-journald
+  281     2 ?        f2fs_ckpt-179:5 [f2fs_ckpt-179:5]
+  282     2 ?        f2fs_flush-179: [f2fs_flush-179:5]
+  283     2 ?        f2fs_discard-17 [f2fs_discard-179:5]
+  300     2 ?        f2fs_gc-179:5   [f2fs_gc-179:5]
+  320     1 ?        systemd-udevd   /usr/lib/systemd/systemd-udevd
+  377     2 ?        kworker/u21:1-h [kworker/u21:1-hci0]
+  385     1 ?        hal-backend-ser /usr/bin/hal/hal-backend-service --stub-proc-name d::hal-backend-service device-display device-led device-battery device-bezel device-external-connection
+  400     1 ?        actd            /usr/sbin/actd
+  401     1 ?        buxton2d        /usr/sbin/buxton2d -f
+  404     1 ?        key-manager     /usr/bin/key-manager
+  405     1 ?        esd             /usr/bin/esd
+  406     1 ?        pkginfo-server  /usr/bin/pkginfo-server
+  411     1 ?        resourced       /usr/bin/resourced
+  412     1 ?        dlog_logger     /usr/bin/dlog_logger
+  423     1 ?        sensord         /usr/bin/sensord
+  433     1 ?        amd             /usr/bin/amd
+  435     1 ?        cynara          /usr/bin/cynara
+  437     1 ?        dbus-daemon     /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  439     1 ?        deviced         /usr/bin/deviced
+  443     1 ?        license-manager /usr/bin/license-manager-agent
+  445     1 ?        media-server    /usr/bin/media-server
+  456     1 ?        pushd           /usr/bin/pushd
+  469     1 ?        login           login -- root
+  470     1 ?        net-config      /usr/bin/net-config
+  474     1 ?        stability-monit /usr/sbin/stability-monitor
+  498     1 ?        enlightenment   /usr/bin/enlightenment
+  511     1 ?        pulseaudio      /usr/bin/pulseaudio
+  512     1 ?        systemd-logind  /usr/lib/systemd/systemd-logind
+  513     1 ?        connmand        /usr/bin/connmand -n --nobacktrace --noplugin vpn
+  520     1 ?        rscmgr-service  /usr/bin/rscmgr-service
+  523     1 ?        update-manager  /usr/bin/update-manager
+  566     2 ?        psimon          [psimon]
+  573     1 ?        contextd        /usr/bin/contextd
+  582     2 ?        kworker/R-ext4- [kworker/R-ext4-rsv-conversion]
+  592     1 ?        storaged        /usr/bin/storaged
+  612     2 ?        kworker/R-ext4- [kworker/R-ext4-rsv-conversion]
+  615     1 ?        tlm             /usr/bin/tlm
+  629   615 ?        tlm-sessiond    /usr/bin/tlm-sessiond
+  641     1 ?        focus_server    /usr/bin/focus_server -S
+  656     1 ?        systemd         /usr/lib/systemd/systemd --user
+  658   656 ?        (sd-pam)        (sd-pam)
+  667   629 tty7     bash            /bin/bash
+  730   656 ?        launchpad-proce /usr/bin/launchpad-process-pool
+  753   730 ?        ise-default     /usr/apps/ise-default/bin/ise-default `zaybxcwdveuftgsh` __APP_SVC_OP_TYPE__ UgAAAAEEAAAUAAAAX19BUFBfU1ZDX09QX1RZUEVfXwAuAAAAaHR0cDovL3RpemVuLm9yZy9hcHBjb250cm9sL29wZXJhdGlvbi9kZWZhdWx0AA== __AUL_TARGET_UID__ KAAAAAEEAAATAAAAX19BVUxfVEFSR0VUX1VJRF9fAAUAAAA1MDAxAA== __AUL_APPID__ KgAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAMAAAAaXNlLWRlZmF1bHQA __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADE3LzYzMDYyNjM0MQA= __AUL_SOCKET_TIMEOUT__ LQAAAAEEAAAXAAAAX19BVUxfU09DS0VUX1RJTUVPVVRfXwAGAAAAMTAwMDAA __APP_SVC_PKG_NAME__ MQAAAAEEAAAVAAAAX19BUFBfU1ZDX1BLR19OQU1FX18ADAAAAGlzZS1kZWZhdWx0AA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA3NTgA __AUL_CALLER_UID__ KAAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAUAAAA1MDAxAA== __AUL_ALLOWED_BG__ LgAAAAEEAAATAAAAX19BVUxfQUxMT1dFRF9CR19fAAsAAABBTExPV0VEX0JHAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAU1lTAA== __AUL_ROOT_PATH__ OAAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18AFgAAAC91c3IvYXBwcy9pc2UtZGVmYXVsdAA= __AUL_EXEC__ QwAAAAEEAAANAAAAX19BVUxfRVhFQ19fACYAAAAvdXNyL2FwcHMvaXNlLWRlZmF1bHQvYmluL2lzZS1kZWZhdWx0AA== __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAcnBtAA== __AUL_PKGID_ KQAAAAEEAAANAAAAX19BVUxfUEtHSURfAAwAAABpc2UtZGVmYXVsdAA= __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KAAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABgAAAHVpYXBwAA== __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KAAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAEAAAANC4wAA== __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+  758   656 ?        isf             /usr/bin/isf
+  760     1 ?        bash            bash /usr/bin/enlightenment_mon.sh
+  775     1 ?        muse-server     /usr/bin/muse-server -D
+  786     1 ?        pass            /usr/bin/pass
+  788     1 ?        security-manage /usr/bin/security-manager
+  801   788 ?        security-manage /usr/bin/security-manager
+  820     1 ?        lbs-server      /usr/bin/lbs-server
+  845   656 ?        dbus-daemon     /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+  852   656 ?        starter         /usr/bin/starter
+  865   730 ?        dotnet-hydra-lo /usr/bin/dotnet-hydra-loader 1 0 1 NDA2NWIwMGMxODg2NTIxYWM3MDRlNWZlZDM5ODYyNzAhAAAAAQQAAAoAAAAtLWFwcFR5cGUABwAAAGRvdG5ldAAfAAAAAQQAAAsAAABUSVpFTl9VSUZXAAQAAABOVUkAHwAAAAEEAAAKAAAALS1wcm9maWxlAAUAAAB0cnVlAB8AAAABBAAACgAAAC0tcHJlZm9yawAFAAAAdHJ1ZQAhAAAAAQQAAA8AAABTQ0hFRF9QUklPUklUWQACAAAAMAA=                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+  873   730 ?        org.tizen.multi /usr/apps/org.tizen.multi-assistant-service/bin/org.tizen.multi-assistant-service `zaybxcwdveuftgsh` __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADE4Lzk2NTM0ODcyOQA= __AUL_APPID__ QAAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAiAAAAb3JnLnRpemVuLm11bHRpLWFzc2lzdGFudC1zZXJ2aWNlAA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA0MzMA __AUL_CALLER_UID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAQAAAAzMDEA __AUL_ALLOWED_BG__ LgAAAAEEAAATAAAAX19BVUxfQUxMT1dFRF9CR19fAAsAAABBTExPV0VEX0JHAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAU1lTAA== __AUL_ROOT_PATH__ TgAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18ALAAAAC91c3IvYXBwcy9vcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_EXEC__ bwAAAAEEAAANAAAAX19BVUxfRVhFQ19fAFIAAAAvdXNyL2FwcHMvb3JnLnRpemVuLm11bHRpLWFzc2lzdGFudC1zZXJ2aWNlL2Jpbi9vcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAcnBtAA== __AUL_PKGID_ PwAAAAEEAAANAAAAX19BVUxfUEtHSURfACIAAABvcmcudGl6ZW4ubXVsdGktYXNzaXN0YW50LXNlcnZpY2UA __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KQAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABwAAAHN2Y2FwcAA= __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KAAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAEAAAANS4wAA== __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+  878     1 ?        ise-engine-load /usr/bin/ise-engine-loader
+  938   656 ?        at-spi-bus-laun /usr/libexec/at-spi-bus-launcher
+  960     1 ?        mtp-responder   /usr/bin/mtp-responder
+  962     1 ?        sdbd            /usr/sbin/sdbd
+  978   730 ?        runner          /usr/apps/org.tizen.homescreen/bin/runner `zaybxcwdveuftgsh` __APP_SVC_OP_TYPE__ UgAAAAEEAAAUAAAAX19BUFBfU1ZDX09QX1RZUEVfXwAuAAAAaHR0cDovL3RpemVuLm9yZy9hcHBjb250cm9sL29wZXJhdGlvbi9kZWZhdWx0AA== __AUL_TARGET_UID__ KAAAAAEEAAATAAAAX19BVUxfVEFSR0VUX1VJRF9fAAUAAAA1MDAxAA== __AUL_APPID__ MwAAAAEEAAAOAAAAX19BVUxfQVBQSURfXwAVAAAAb3JnLnRpemVuLmhvbWVzY3JlZW4A __AUL_STARTTIME__ LwAAAAEEAAASAAAAX19BVUxfU1RBUlRUSU1FX18ADQAAADIzLzI1MzY5NTExNQA= __AUL_SOCKET_TIMEOUT__ LQAAAAEEAAAXAAAAX19BVUxfU09DS0VUX1RJTUVPVVRfXwAGAAAAMTAwMDAA __APP_SVC_PKG_NAME__ OgAAAAEEAAAVAAAAX19BUFBfU1ZDX1BLR19OQU1FX18AFQAAAG9yZy50aXplbi5ob21lc2NyZWVuAA== __AUL_CALLER_PID__ JwAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1BJRF9fAAQAAAA4NTIA __AUL_CALLER_UID__ KAAAAAEEAAATAAAAX19BVUxfQ0FMTEVSX1VJRF9fAAUAAAA1MDAxAA== __AUL_HWACC__ IgAAAAEEAAAOAAAAX19BVUxfSFdBQ0NfXwAEAAAAVVNFAA== __AUL_ROOT_PATH__ QQAAAAEEAAASAAAAX19BVUxfUk9PVF9QQVRIX18AHwAAAC91c3IvYXBwcy9vcmcudGl6ZW4uaG9tZXNjcmVlbgA= __AUL_EXEC__ RwAAAAEEAAANAAAAX19BVUxfRVhFQ19fACoAAAAvdXNyL2FwcHMvb3JnLnRpemVuLmhvbWVzY3JlZW4vYmluL3J1bm5lcgA= __AUL_PACKAGETYPE__ KAAAAAEEAAAUAAAAX19BVUxfUEFDS0FHRVRZUEVfXwAEAAAAdHBrAA== __AUL_PKGID_ MgAAAAEEAAANAAAAX19BVUxfUEtHSURfABUAAABvcmcudGl6ZW4uaG9tZXNjcmVlbgA= __AUL_INTERNAL_POOL__ LAAAAAEEAAAWAAAAX19BVUxfSU5URVJOQUxfUE9PTF9fAAYAAABmYWxzZQA= __AUL_COMP_TYPE__ KAAAAAEEAAASAAAAX19BVUxfQ09NUF9UWVBFX18ABgAAAHVpYXBwAA== __AUL_APP_TYPE__ JgAAAAEEAAARAAAAX19BVUxfQVBQX1RZUEVfXwAFAAAAY2FwcAA= __AUL_API_VERSION__ KQAAAAEEAAAUAAAAX19BVUxfQVBJX1ZFUlNJT05fXwAFAAAAMTAuMAA= __AUL_IS_GLOBAL__ JwAAAAEEAAASAAAAX19BVUxfSVNfR0xPQkFMX18ABQAAAHRydWUA __AUL_INSTALLED_STORAGE__ MwAAAAEEAAAaAAAAX19BVUxfSU5TVEFMTEVEX1NUT1JBR0VfXwAJAAAAaW50ZXJuYWwA __AUL_ENV_LANG__ LQAAAAEEAAARAAAAX19BVUxfRU5WX0xBTkdfXwAMAAAAZW5fVVMuVVRGLTgA __AUL_ENV_REGION_FORMAT__ NgAAAAEEAAAaAAAAX19BVUxfRU5WX1JFR0lPTl9GT1JNQVRfXwAMAAAAZW5fVVMuVVRGLTgA
+ 1008   865 ?        dotnet-hydra-lo /usr/bin/dotnet-hydra-loader candidate                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+ 1009   865 ?        SystemUI.dll    /usr/apps/org.tizen.systemui/bin/SystemUI.dll                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+ 1024   865 ?        dotnet-hydra-lo /usr/bin/process-pool <hydra-loader>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+ 1032     1 ?        theme-provider  /usr/bin/theme-provider
+ 1096   469 ttyS0    bash            -bash
+ 1767     2 ?        kworker/u18:0-k [kworker/u18:0-kvfree_rcu_reclaim]
+ 2298     2 ?        kworker/0:0H    [kworker/0:0H]
+ 2657     2 ?        kworker/2:2H    [kworker/2:2H]
+ 2822     2 ?        kworker/u19:3-e [kworker/u19:3-ext4-rsv-conversion]
+ 3075     2 ?        kworker/u17:2-e [kworker/u17:2-ext4-rsv-conversion]
+ 3604     2 ?        kworker/1:1-eve [kworker/1:1-events]
+ 4627     2 ?        kworker/u18:3-e [kworker/u18:3-events_unbound]
+ 5535     2 ?        kworker/3:1-eve [kworker/3:1-events]
+ 7196     2 ?        kworker/1:2H    [kworker/1:2H]
+ 7491     2 ?        kworker/u16:2-v [kworker/u16:2-v3d_bin]
+ 9549     2 ?        kworker/0:1-mm_ [kworker/0:1-mm_percpu_wq]
+11091     2 ?        kworker/1:2-eve [kworker/1:2-events]
+11094     2 ?        kworker/u19:1-e [kworker/u19:1-events_unbound]
+11938     2 ?        kworker/u16:1-v [kworker/u16:1-v3d_render]
+12336     2 ?        kworker/3:2-eve [kworker/3:2-events]
+12562     2 ?        kworker/0:0-eve [kworker/0:0-events_power_efficient]
+12604     2 ?        kworker/2:1-eve [kworker/2:1-events_freezable_pwr_efficient]
+12733     2 ?        kworker/u20:0   [kworker/u20:0]
+13147     2 ?        kworker/u20:1-e [kworker/u20:1-events_unbound]
+14470     2 ?        kworker/u18:1-e [kworker/u18:1-events_unbound]
+18115     2 ?        kworker/u16:0-v [kworker/u16:0-v3d_render]
+20524     2 ?        kworker/3:0H    [kworker/3:0H]
+20837     2 ?        kworker/u19:2-e [kworker/u19:2-events_unbound]
+22941     2 ?        kworker/0:2-eve [kworker/0:2-events]
+24306     2 ?        sugov:0         [sugov:0]
+25223     2 ?        kworker/2:2-mm_ [kworker/2:2-mm_percpu_wq]
+25553     2 ?        kworker/u17:1-e [kworker/u17:1-events_unbound]
+27487   760 ?        sleep           sleep 3
+27536     1 pts/0    sh              /bin/sh -c LC_ALL=C ps -ww -eo pid,ppid,tty,comm,args;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL
+27538 27536 pts/0    ps              ps -ww -eo pid,ppid,tty,comm,args
+29162     2 ?        kworker/u17:0-e [kworker/u17:0-events_unbound]
+31579     2 ?        kworker/u20:2-e [kworker/u20:2-events_unbound]
+
+RC=0
+DONE

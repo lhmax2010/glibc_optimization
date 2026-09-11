@@ -1,0 +1,7 @@
+  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
+   0: 00000000000000000000000000000000:65F5 00000000000000000000000000000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 4831 1 d5806f48 100 0 0 10 0
+   1: <TEST_BOARD_IP>:65F5 <HOST_IP>:9F3A 01 00000018:00000000 01:00000014 00000000   901        0 16631 4 3f52e3be 21 4 1 10 18
+   2: <TEST_BOARD_IP>:65F5 <HOST_IP>:9CE0 05 00000000:00000000 03:000016D1 00000000     0        0 0 3 3aa6dcbc
+
+RC=0
+DONE

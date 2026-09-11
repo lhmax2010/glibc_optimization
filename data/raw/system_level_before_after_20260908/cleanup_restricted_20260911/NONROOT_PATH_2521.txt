@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/share/gdb/python/gdb/function/as_string.py': No such file or directory
+
+RC=1
+FAIL

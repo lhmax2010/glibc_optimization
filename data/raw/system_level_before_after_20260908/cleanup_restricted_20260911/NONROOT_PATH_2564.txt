@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/share/licenses/libpython3_141_0': No such file or directory
+
+RC=1
+FAIL

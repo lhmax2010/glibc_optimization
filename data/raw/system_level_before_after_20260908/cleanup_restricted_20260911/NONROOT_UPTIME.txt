@@ -1,0 +1,4 @@
+ 13:59:08 up 2 days,  2:20,  1 user,  load average: 0.07, 0.22, 0.13
+
+RC=0
+DONE

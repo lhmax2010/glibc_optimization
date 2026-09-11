@@ -1,0 +1,12 @@
+phase	check	verdict	detail
+before_board	runner-tests	PASS	209 tests; committed executor 418181e8b3766343e434fe04d86117a371faf6a9
+before_board	default-verify	PASS	OVERALL PASS; precommit REPRODUCE_ALLOW_DIRTY=1; no test skip
+after_stop	runner-tests	PASS	216 tests; 16.632 seconds; existing tarfile DeprecationWarning only
+after_stop	default-verify	PASS	OVERALL PASS; precommit REPRODUCE_ALLOW_DIRTY=1; no test skip
+after_stop	restricted-cleanup-replay	PASS	byte-identical host_replay.json; STOP_NOT_CLEANUP_PASS retained
+after_stop	selected-local-links	PASS	442 links; report/summary/PM decisions/INDEX/runner README/evidence README
+after_stop	sanitization	PASS	zero hits; dotted and proc-net hexadecimal routing addresses included
+after_stop	immutable-measurement-inputs	PASS	contract/analyzer and accepted 18+3 public evidence unchanged against 418181e
+after_stop	delivery-refs	PASS	origin demo and demo-v11 peel remain 0e8a2f731b13690009badf1ca2acbd57018e7bc8; no demo-v12
+not_executed	board-retry	NOT_EXECUTED	no board command after ROOT_ID_OFF_1
+not_executed	demo-v12-matrix	NOT_EXECUTED_STOP_GATE	unknown-directory disposition unresolved

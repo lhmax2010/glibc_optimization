@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/lib/python3.14/_sysconfig_vars__linux_arm-linux-gnueabi.json': No such file or directory
+
+RC=1
+FAIL

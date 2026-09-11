@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/bin/pydoc3': No such file or directory
+
+RC=1
+FAIL

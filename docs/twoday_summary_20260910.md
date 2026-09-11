@@ -1,5 +1,45 @@
 # 两日批量执行汇总（2026-09-08 至 09-10）
 
+## 最新续报（2026-09-11 05:04 UTC）：受限 root 门闭合，五目录归属仍 STOP
+
+PM 于 2026-09-10 新授权进程全系统视图可纳入一次受限 root round，非我方进程只报告、
+不清除、不据此停止。本次执行器先以 `418181e8b3766343e434fe04d86117a371faf6a9` 推 main；
+209 项 runner 测试、默认 verify 均通过。板端只做延期收尾，没有重跑任何一格。
+
+| 段 | 状态 | 结果 / 原因 |
+|---|---|---|
+| host 修复 | 完成并已推 | 八项成功证据复用、精确受限 root 清单、PID/start tick/完整脚本参数归属、200 字节硬闸及故障回归 |
+| 第 2 段收尾 | **STOP：目录内容/归属/处置未闭合** | 2570 条包路径均已检查，2565 不存在，5 个 GDB 相关目录无当前 RPM 归属；元数据原文保存，未删除 |
+| 第 3 段 Demo 集成 | NOT_EXECUTED_STOP_GATE | 不新增 HTML/README/指南数字；21 格保持已验收事实，不改成零观测 |
+| 第 4 段 demo-v12 | NOT_EXECUTED_STOP_GATE | 不切快照、未运行 v12 矩阵 |
+| 第 5 段 review brief | NOT_EXECUTED_STOP_GATE | 无 v12，不生成 brief |
+
+受限 root 核验完成：两个 ps 均 204 行、含 PID 1 和原 enlightenment PID 498，原
+start tick=1489、boot 不变。告警计数 0→0；结束 dmesg 保留原前缀、增量 39 行无 OOM/LMK，
+zram 三项 Δ=0。完整包清单 1263→1263，六包未安装，无新增包；工作目录及父目录不存在、
+四核 schedutil。root on 一次，root off 首次成功，**5001→0→5001**，无删除、无重启。
+原文与全部口径边界见[报告 §11.1](system_level_before_after_20260908.md#111-执行结果与原文)。
+
+五项待处置路径：`/usr/share/gdb`、`/usr/share/gdb/python`、`/usr/share/gdb/python/gdb`、
+其下 `command` 与 `function`。都是目录，stat/rpm -qf 原文已归档；未列子项，不能证明空、
+创建者或是否包含非我方内容，未擅自递归删除。进程 PID 667/tty7、1096/ttyS0 只报告，
+不是本次停止原因。旧卸包警告依原裁决不阻断，包卸载与健康指标本次已核验；
+**停止项是未知目录残留归属，不是卸包失败或测量失败**。
+
+待 PM 裁决：五目录按卸包残留观察接受，还是另行授权逐项内容/归属核验及我方条目归档
+清理。本次按“再次停止即停”保留终态，不再连板，不重复提权或重测。
+审计实际 UTC 04:58:37.178265–05:04:40.881497；2610 条 shell 正文 70–189 字节，
+全部有匹配 RC/DONE/FAIL。见[终态](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/audit.json)、
+[2619 文件清单](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/manifest.json)、
+[host 重放](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/host_replay.json)。
+
+关键数字仍见下文“已验收数字保留”表：G1/G2/G3 原 18 格与 G4 堆 PD 88/0/4 KiB 均不变；
+G4 1899 ms 包含 gdb/ptrace，不能混作约 1 ms 钩子代价。没有新的 Demo 数字。
+**当前有效交付仍为 demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`；
+annotated tag 对象 `f1266c0be6c225a2ceb962836380c656758f9427`。demo-v12 未创建。
+
+以下为此前续报，保留其当时判定。
+
 ## 最新续报（2026-09-11 03:00 UTC）：单项收尾仍 STOP，demo-v11 有效
 
 执行器 `9f839b25e5b07fdbd489043050dd59969bd0497e` 先推 main；改为一项一请求，

@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/share/gdb/python/gdb/command/pretty_printers.py': No such file or directory
+
+RC=1
+FAIL

@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/lib/python3.14/lib-dynload/_posixshmem.cpython-314-arm-linux-gnueabi.so': No such file or directory
+
+RC=1
+FAIL

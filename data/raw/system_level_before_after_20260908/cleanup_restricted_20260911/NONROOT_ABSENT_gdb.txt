@@ -1,0 +1,4 @@
+package gdb is not installed
+
+RC=1
+FAIL

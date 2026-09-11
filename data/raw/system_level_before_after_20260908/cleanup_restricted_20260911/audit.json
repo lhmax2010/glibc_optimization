@@ -1,0 +1,199 @@
+{
+  "schema": "system-before-after.restricted-cleanup.v2",
+  "start_utc": "2026-09-11T04:58:37.178265+00:00",
+  "verdict": "STOP",
+  "body_limit_bytes": 200,
+  "approved_by": "PM",
+  "pm_decision_date": "2026-09-10",
+  "measurement_cells_run": 0,
+  "board_files_pushed": 0,
+  "packages_changed": 0,
+  "governor_writes": 0,
+  "processes_terminated": 0,
+  "root_elevation": "DENIED_LIST_ONLY",
+  "accepted_measurements": "21 PRESERVED",
+  "preceding_audit": "data/raw/system_level_before_after_20260908/cleanup_single_20260911/audit.json",
+  "preceding_audit_sha256": "aed15cfca2fc279619e7b7311d73279c0921fcff9569830deaccb1d24ddaec2d",
+  "reused_nonroot_checks": {
+    "UNAME_R": "NONROOT_UNAME_R.txt",
+    "UNAME_M": "NONROOT_UNAME_M.txt",
+    "OS_RELEASE": "NONROOT_OS_RELEASE.txt",
+    "GLIBC": "NONROOT_GLIBC.txt",
+    "MEMINFO": "NONROOT_MEMINFO.txt",
+    "BOOT_START": "NONROOT_BOOT_START.txt",
+    "DMESG_START": "NONROOT_DMESG_START.txt",
+    "ZRAM_START": "NONROOT_ZRAM_START.txt"
+  },
+  "foreign_process_policy": "REPORT_ONLY; no stopping or termination",
+  "executor_commit": "418181e8b3766343e434fe04d86117a371faf6a9",
+  "source_execution_sha256": "373282a0a93179a8f8563dd3a6889a6a9e6277df8d1149e49ada334e97711886",
+  "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+  "permission_denied_items": {
+    "PS_START": {
+      "argv": [
+        "ps",
+        "-ww",
+        "-eo",
+        "pid,ppid,tty,comm,args"
+      ],
+      "reason": "PM: predecessor ps RC=0 omits PID 1; full-system view requires root",
+      "directory": null
+    },
+    "ALERTS_START": {
+      "argv": [
+        "ls",
+        "-A",
+        "--",
+        "/opt/usr/share/crash/livedump"
+      ],
+      "reason": "predecessor NONROOT_ALERTS_START: Permission denied; no repeat nonroot probe",
+      "directory": "/opt/usr/share/crash/livedump"
+    },
+    "TARGET_STAT": {
+      "argv": [
+        "cat",
+        "/proc/498/stat"
+      ],
+      "reason": "PM process scope: predecessor full-system view incomplete and PID 498 not visible",
+      "directory": null
+    },
+    "PS_END": {
+      "argv": [
+        "ps",
+        "-ww",
+        "-eo",
+        "pid,ppid,tty,comm,args"
+      ],
+      "reason": "PM: predecessor ps RC=0 omits PID 1; full-system view requires root",
+      "directory": null
+    },
+    "ALERTS_END": {
+      "argv": [
+        "ls",
+        "-A",
+        "--",
+        "/opt/usr/share/crash/livedump"
+      ],
+      "reason": "predecessor NONROOT_ALERTS_START: Permission denied; no repeat nonroot probe",
+      "directory": "/opt/usr/share/crash/livedump"
+    }
+  },
+  "nonroot_sweep_completed_utc": "2026-09-11T05:04:39.447383+00:00",
+  "other_sdb_connections": {
+    "established_count": 1,
+    "verdict": "REPORT_ONLY_NOT_CLEARED",
+    "rows": [
+      "   1: <TEST_BOARD_IP>:65F5 <HOST_IP>:9F3A 01 00000018:00000000 01:00000014 00000000   901        0 16631 4 3f52e3be 21 4 1 10 18"
+    ]
+  },
+  "root_authorization": {
+    "approved_by": "PM",
+    "decision_date": "2026-09-10",
+    "scope": "single round; pre-recorded unreadable/incomplete cleanup items only",
+    "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+    "root_off": "PASS_NONROOT",
+    "id_after_on": "uid=0(root) gid=0(root) groups=0(root),29(audio),44(video),201(display),1901(log),6505(pulse-access),6506(pulse-rt),6525(usb_device),10001(priv_externalstorage),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+    "off_attempts": [
+      {
+        "attempt": 1,
+        "start_utc": "2026-09-11T05:04:40.660235+00:00",
+        "id": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+        "end_utc": "2026-09-11T05:04:40.881478+00:00"
+      }
+    ]
+  },
+  "process_observations": {
+    "PS_START": [
+      {
+        "pid": 667,
+        "ppid": 629,
+        "tty": "tty7",
+        "comm": "bash",
+        "args": "/bin/bash",
+        "raw": "  667   629 tty7     bash            /bin/bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      },
+      {
+        "pid": 1096,
+        "ppid": 469,
+        "tty": "ttyS0",
+        "comm": "bash",
+        "args": "-bash",
+        "raw": " 1096   469 ttyS0    bash            -bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      }
+    ],
+    "PS_END": [
+      {
+        "pid": 667,
+        "ppid": 629,
+        "tty": "tty7",
+        "comm": "bash",
+        "args": "/bin/bash",
+        "raw": "  667   629 tty7     bash            /bin/bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      },
+      {
+        "pid": 1096,
+        "ppid": 469,
+        "tty": "ttyS0",
+        "comm": "bash",
+        "args": "-bash",
+        "raw": " 1096   469 ttyS0    bash            -bash",
+        "verdict": "REPORT_ONLY_NONPROJECT_OR_UNATTRIBUTED_NOT_CLEARED"
+      }
+    ]
+  },
+  "process_views": {
+    "PS_START": {
+      "rows": 204,
+      "pid_1": true,
+      "target_498": true,
+      "command": [
+        "ps",
+        "-ww",
+        "-eo",
+        "pid,ppid,tty,comm,args"
+      ],
+      "context": "UID=0; ps -e all-system selection",
+      "foreign_is_report_only": true
+    },
+    "PS_END": {
+      "rows": 204,
+      "pid_1": true,
+      "target_498": true,
+      "command": [
+        "ps",
+        "-ww",
+        "-eo",
+        "pid,ppid,tty,comm,args"
+      ],
+      "context": "UID=0; ps -e all-system selection",
+      "foreign_is_report_only": true
+    }
+  },
+  "stability_START": {
+    "count": 0,
+    "entries": []
+  },
+  "stability_END": {
+    "count": 0,
+    "entries": []
+  },
+  "package_inventory": {
+    "before_count": 1263,
+    "current_count": 1263,
+    "added": [],
+    "removed": []
+  },
+  "package_residue_observations": [
+    {
+      "path": "/usr/share/gdb",
+      "metadata": "directory|4096|1788932023|0:0",
+      "owner_rc": 1,
+      "owner": "file /usr/share/gdb is not owned by any package"
+    }
+  ],
+  "reason": "unowned/unknown residue; metadata archived, not removed: /usr/share/gdb",
+  "end_utc": "2026-09-11T05:04:40.881497+00:00"
+}

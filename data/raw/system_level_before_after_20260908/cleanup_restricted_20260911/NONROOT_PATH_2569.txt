@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/share/licenses/python3/LICENSE': No such file or directory
+
+RC=1
+FAIL

@@ -42,6 +42,21 @@ class CleanupPublication(unittest.TestCase):
             self.assertEqual(row["original_sha256"], publisher.sha((self.run / row["path"]).read_bytes()))
             self.assertEqual(row["public_sha256"], publisher.sha((self.out / row["path"]).read_bytes()))
 
+    def test_network_endpoints_redacted_in_raw_and_json_with_port_state_retained(self):
+        line='0000000000000000FFFF0000010200C0:65F5 020200C0:ABCD 01'
+        (self.run/'TCP.txt').write_text(line)
+        self.receipt['connections']=[line]
+        self.write()
+        with contextlib.redirect_stdout(io.StringIO()):
+            publisher.publish(self.run,self.out,'192.0.2.1','/fixture/home','192.0.2.2')
+        self.assertEqual((self.out/'TCP.txt').read_text(),'<TEST_BOARD_IP>:65F5 <HOST_IP>:ABCD 01')
+        self.assertEqual(json.loads((self.out/'audit.json').read_text())['connections'],
+                         ['<TEST_BOARD_IP>:65F5 <HOST_IP>:ABCD 01'])
+        self.assertEqual((self.run/'TCP.txt').read_text(),line)
+        for row in json.loads((self.out/'manifest.json').read_text())['files']:
+            self.assertEqual(row['original_sha256'],publisher.sha((self.run/row['path']).read_bytes()))
+            self.assertEqual(row['public_sha256'],publisher.sha((self.out/row['path']).read_bytes()))
+
     def test_active_and_falsely_successful_root_receipts_rejected(self):
         for receipt in ({"verdict": "STOP"},
                         {**self.receipt, "root_authorization": {"root_off": "NOT-EVALUATED"}},

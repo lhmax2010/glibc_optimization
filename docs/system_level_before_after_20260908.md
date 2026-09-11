@@ -1,6 +1,12 @@
 # 系统级前后对照补测（2026-09-08）
 
-**2026-09-11 最新状态：21 格验收保留、未重跑；单项收尾因非 root 进程列表不完整 STOP。**
+**2026-09-11 05:04 UTC 最新状态：受限 root 进程/告警核验通过，残留目录处置仍 STOP。**
+全系统 ps 含 PID 1 与原 enlightenment；root off 首次成功，UID=5001。2570 条包路径已
+逐项查完：2565 不存在，5 个 GDB 相关目录存在且无当前 RPM 归属；内容/创建来源/是否空
+尚未证明，未删除。包清单无变动、六包未安装、已采健康量无异常；这不是卸包失败或
+测量失败。21 格保留，不重跑；第 3–5 段不执行，demo-v11 有效。见 [§11.1](#111-执行结果与原文)。
+
+2026-09-11 03:00 UTC 前次状态（保留）：21 格验收保留、未重跑；单项收尾因非 root 进程列表不完整 STOP。
 新方法的完整请求体严格不超过 200 字节；本次 12 条正文 70–106 字节，均有远端标志，
 没有再次触发长度错误。但 `ps` RC=0 的列表缺少 PID 1，不能证明占用/残留检查完整。
 未提权，结束 UID=5001；第 3–5 段停止，demo-v11 继续有效。见 [§10](#10-2026-09-11-单项收尾进程清单完整性-stop)。
@@ -789,3 +795,97 @@ python3 -m unittest discover -s tools/runners/system_level_before_after_20260908
 
 本节为获批方法登记，不是新测量合同；没有新的确定性 payload 或容差指标。
 验收仍为原文/远端状态/请求字节硬限、受限 root 范围、残留归属与健康核验。
+
+### 11.1 执行结果与原文
+
+执行器以 `418181e8b3766343e434fe04d86117a371faf6a9` 先推 main；执行前 209 项 runner
+测试、默认 verify 通过。实际执行 **2026-09-11 04:58:37.178265–05:04:40.881497 UTC**，
+共 363.703232 s（审计耗时，不进入 Demo 代价数字）。
+[终态回执](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/audit.json)
+保持 **STOP**，失败原文为：
+
+```text
+unowned/unknown residue; metadata archived, not removed: /usr/share/gdb
+```
+
+2614 个 SDB 客户端调用中有 2610 个 shell 请求，完整正文 70–189 UTF-8 字节，全部
+有匹配 RC/DONE/FAIL。32 条 RC=0；2578 条 RC=1 分别为 2565 个路径不存在、5 次目录无
+RPM 归属、6 包未安装、2 个工作目录不存在，不能把这些预期查询状态当作卸包失败。
+来源为[commands.json](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/commands.json)
+及[独立 host 重放](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/host_replay.json)。
+
+| 核验项 | 结果 | 原文 / 范围 |
+|---|---|---|
+| 旧证据复用 | 八项成功记录校验哈希后复用；没有重发 | [回执 reused_nonroot_checks](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/audit.json)，出处仍为 §10 |
+| root round | 5001 → 0 → 5001；root off 一次成功，无重试 | [提权前](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_ID_BEFORE_ROOT.txt)、[提权后](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/ROOT_ID_ROOT.txt)、[降权后](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/ROOT_ID_OFF_1.txt) |
+| 受限清单 | 只有 PS_START、ALERTS_START、TARGET_STAT、PS_END、ALERTS_END；没有新增非 root 权限拒绝 | [提权前落盘清单](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/permission_denied.json)；其余 root shell 仅身份记账 |
+| 全系统进程 | 两份均 204 行、包含 PID 1/init 与 enlightenment PID 498；没有匹配的我方残留负载/helper | [开始 ps](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/ROOT_PS_START.txt)、[结束 ps](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/ROOT_PS_END.txt) |
+| 原目标与 boot | PID 498/start tick 1489 不变；boot 与原 G4 相同 | [stat](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/ROOT_TARGET_STAT.txt)、[boot](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_BOOT_END.txt) |
+| stability-monitor | 两次目录计数 0→0，无归档/删除对象 | [开始](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/ROOT_ALERTS_START.txt)、[结束](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/ROOT_ALERTS_END.txt) |
+| 卸包后健康 | 结束 dmesg 仍含原 G4 前缀，增量 39 行，无 OOM/LMK；zram 三项 Δ=0 | [dmesg](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_DMESG_END.txt)、[zram](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_ZRAM_END.txt)；采于非 root 扫描结束、root-off 之前，不外推未采时点 |
+| 包清单 / 六包 | 1263→1263、added/removed 均空；gdb/libgmp/gdbm/libpython3_141_0/python3-base/python3 均 not installed | [完整清单](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PACKAGES.txt)、[六包复算](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/host_replay.json) |
+| 工作目录 | 本轮工作目录及父目录均不存在 | [WORK](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_WORK.txt)、[WORK_PARENT](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_WORK_PARENT.txt) |
+| governor | 四核均 schedutil；本次无写入 | [核 0](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_GOV_0.txt)、[核 1](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_GOV_1.txt)、[核 2](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_GOV_2.txt)、[核 3](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_GOV_3.txt) |
+| df 可用 | 根 1789104 KiB，/opt/usr 115421416 KiB | [根](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_DF_ROOT.txt)、[/opt/usr](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_DF_OPTUSR.txt) |
+
+### 11.2 残留清单、归属边界与停止处置
+
+2570 条原包路径均执行一次 stat；只有下列五项现存，逐项另做 rpm -qf。执行器在首个
+无 RPM 归属项终止判定；**五项原文在停止前均已采到**，此处全表为离线整理，不是
+停止后又连板。每项类型为 directory、stat 大小 4096、UID:GID=0:0；目录大小不是
+所含文件字节数，不能据此认定空目录或总残留体积。
+
+| 路径 | mtime UTC（原始 epoch 换算） | 当前 RPM 归属 / 处置 | 原文 |
+|---|---|---|---|
+| /usr/share/gdb | 2026-09-09 05:33:43 | 无；未删除 | [stat](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2477.txt)、[owner](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2477_OWNER.txt) |
+| /usr/share/gdb/python | 2026-08-14 07:46:09 | 无；未删除 | [stat](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2478.txt)、[owner](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2478_OWNER.txt) |
+| /usr/share/gdb/python/gdb | 2026-09-09 05:33:43 | 无；未删除 | [stat](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2479.txt)、[owner](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2479_OWNER.txt) |
+| /usr/share/gdb/python/gdb/command | 2026-09-09 05:33:43 | 无；未删除 | [stat](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2483.txt)、[owner](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2483_OWNER.txt) |
+| /usr/share/gdb/python/gdb/function | 2026-09-09 05:33:43 | 无；未删除 | [stat](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2519.txt)、[owner](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/NONROOT_PATH_2519_OWNER.txt) |
+
+这些路径列在原 GDB 包文件表中，四项 mtime 接近卸包时段，但这只是关联，不足以证明
+现存内容全由本轮创建。另有一项 mtime 为镜像日期；mtime 本身不能证明创建者或内容。
+本次未列举这五个目录的子项，不能把它们定性成可直接删除的我方文件，也不能称其
+一定是 Python 缓存。未用递归删除，未补发命令探查内容，未开始第二次 root round。
+
+已确认我方残留处置：无进程/告警/工作目录删除对象；以上五个**未完成归属的包路径目录**
+单列，不混同为“无残留”。非我方进程观察：PID 667/tty7 `/bin/bash`、PID 1096/ttyS0
+`-bash`，按 PM 本次裁决只报告，未清除、未据此停止。
+
+§8.4 的卸包警告仍依原裁决不构成阻断；六包已卸载且无新增包的条件此次再次证明。
+**本次 STOP 是执行器的未知残留归属门，不是卸包警告升级为失败，也不是健康门失败。**
+受限清单已执行完、root-off 也已闭合，但残留内容/归属/处置仍未闭合，不能将整轮
+改为完成。需 PM 决定是否将这五目录按卸包残留观察接受，或另行授权其逐项内容/归属
+核验与可证明我方条目的归档清理。未自行扩大 root 清单或放宽此门。
+
+### 11.3 Host 重放与交付状态
+
+2619 个原文/命令/终态文件转录入[发布清单](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/manifest.json)，
+编辑前后 SHA 同存；使用 CR、路由地址、host home 编辑，另将原始 TCP 表及回执内可还原
+IP 的小端十六进制端点同步映射为 `<TEST_BOARD_IP>` / `<HOST_IP>`，保留端口/状态；
+该编辑逐文件记录在 manifest，板端路径原样保留，本地原始件不改。
+完整原始件本地留存，可按请求提供。以下只在 host 读取公开证据：
+
+```sh
+python3 tools/runners/system_level_before_after_20260908/analyze_restricted_cleanup.py \
+  data/raw/system_level_before_after_20260908/cleanup_restricted_20260911
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py'
+bash tools/reproduce/reproduce.sh verify
+```
+
+第一条输出与[host_replay.json](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/host_replay.json)
+逐字节相同：重查哈希、全部正文硬限、受限 root 操作、UID、204 行全系统视图、原目标、
+健康前缀、包清单及 2570 个路径，明确输出 `STOP_NOT_CLEANUP_PASS`，不篡改旧 STOP。
+原合同/analyzer、已验收 18+3 格均未变；本次没有测量、文件推送、包变更、governor
+写入、文件删除、进程终止或重启。root-off 后不再调用板端。
+
+停止后 host 验证：216 项 runner 测试通过；默认 verify `OVERALL PASS`（提交前显式
+`REPRODUCE_ALLOW_DIRTY=1`，未跳过测试）；442 个相关链接通过；原文哈希/复算输出逐字节
+核验通过；含 TCP 十六进制端点的脱敏扫描零命中。详见
+[host_checks.tsv](../data/raw/system_level_before_after_20260908/cleanup_restricted_20260911/host_checks.tsv)。
+这些检查验证归档和工具，不将目录处置 STOP 改成 PASS，也不是 v12 交付矩阵。
+
+**第 3–5 段 NOT_EXECUTED_STOP_GATE**：无新 Demo 头条、无 v12 brief、未运行 v12
+交付矩阵、不切 demo-v12。当前有效交付继续为 **demo-v11**，commit
+`0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated tag 对象
+`f1266c0be6c225a2ceb962836380c656758f9427`。

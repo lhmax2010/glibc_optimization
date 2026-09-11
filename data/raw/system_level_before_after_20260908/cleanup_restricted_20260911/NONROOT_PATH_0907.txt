@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/lib/python3.14/compression/zstd/__pycache__/__init__.cpython-314.opt-2.pyc': No such file or directory
+
+RC=1
+FAIL

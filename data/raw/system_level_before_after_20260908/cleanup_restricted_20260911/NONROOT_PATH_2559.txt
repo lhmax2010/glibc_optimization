@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/share/licenses/gdb/COPYING.LIB': No such file or directory
+
+RC=1
+FAIL

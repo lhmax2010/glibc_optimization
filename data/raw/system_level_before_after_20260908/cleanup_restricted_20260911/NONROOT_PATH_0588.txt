@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/lib/python3.14/_opcode_metadata.py': No such file or directory
+
+RC=1
+FAIL

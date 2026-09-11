@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/lib/python3.14/html/__pycache__': No such file or directory
+
+RC=1
+FAIL

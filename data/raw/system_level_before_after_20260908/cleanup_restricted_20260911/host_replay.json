@@ -1,0 +1,150 @@
+{
+  "verdict": "STOP_NOT_CLEANUP_PASS",
+  "reason": "unowned/unknown residue; metadata archived, not removed: /usr/share/gdb",
+  "elapsed_seconds": 363.703232,
+  "commands": 2614,
+  "shell_requests": 2610,
+  "body_min_bytes": 70,
+  "body_max_bytes": 189,
+  "remote_rc_counts": {
+    "0": 32,
+    "1": 2578
+  },
+  "reused_checks": [
+    "UNAME_R",
+    "UNAME_M",
+    "OS_RELEASE",
+    "GLIBC",
+    "MEMINFO",
+    "BOOT_START",
+    "DMESG_START",
+    "ZRAM_START"
+  ],
+  "root_scope": [
+    "PS_START",
+    "ALERTS_START",
+    "TARGET_STAT",
+    "PS_END",
+    "ALERTS_END"
+  ],
+  "root_rounds": 1,
+  "root_off_attempts": 1,
+  "final_uid": 5001,
+  "process_views": {
+    "START": {
+      "rows": 204,
+      "pid_1": true,
+      "original_target_visible": true
+    },
+    "END": {
+      "rows": 204,
+      "pid_1": true,
+      "original_target_visible": true
+    }
+  },
+  "target_starttime": 1489,
+  "governors": [
+    "schedutil",
+    "schedutil",
+    "schedutil",
+    "schedutil"
+  ],
+  "stability_counts": [
+    0,
+    0
+  ],
+  "dmesg_increment_lines": {
+    "START": 39,
+    "END": 39
+  },
+  "zram_three_delta": [
+    0,
+    0,
+    0
+  ],
+  "oom_lmk_increment": 0,
+  "package_count": 1263,
+  "packages_added": [],
+  "packages_removed": [],
+  "six_packages_absent": [
+    "libgmp",
+    "gdbm",
+    "libpython3_141_0",
+    "python3-base",
+    "python3",
+    "gdb"
+  ],
+  "path_count": 2570,
+  "absent_paths": 2565,
+  "unowned_directories": [
+    {
+      "path": "/usr/share/gdb",
+      "kind": "directory",
+      "size": 4096,
+      "mtime_epoch": 1788932023,
+      "uid_gid": "0:0",
+      "mtime_utc": "2026-09-09T05:33:43+00:00",
+      "owner_rc": 1,
+      "owner": "file /usr/share/gdb is not owned by any package",
+      "source": "NONROOT_PATH_2477.txt",
+      "owner_source": "NONROOT_PATH_2477_OWNER.txt",
+      "disposition": "NOT_REMOVED; contents/creator/emptiness not proven"
+    },
+    {
+      "path": "/usr/share/gdb/python",
+      "kind": "directory",
+      "size": 4096,
+      "mtime_epoch": 1786693569,
+      "uid_gid": "0:0",
+      "mtime_utc": "2026-08-14T07:46:09+00:00",
+      "owner_rc": 1,
+      "owner": "file /usr/share/gdb/python is not owned by any package",
+      "source": "NONROOT_PATH_2478.txt",
+      "owner_source": "NONROOT_PATH_2478_OWNER.txt",
+      "disposition": "NOT_REMOVED; contents/creator/emptiness not proven"
+    },
+    {
+      "path": "/usr/share/gdb/python/gdb",
+      "kind": "directory",
+      "size": 4096,
+      "mtime_epoch": 1788932023,
+      "uid_gid": "0:0",
+      "mtime_utc": "2026-09-09T05:33:43+00:00",
+      "owner_rc": 1,
+      "owner": "file /usr/share/gdb/python/gdb is not owned by any package",
+      "source": "NONROOT_PATH_2479.txt",
+      "owner_source": "NONROOT_PATH_2479_OWNER.txt",
+      "disposition": "NOT_REMOVED; contents/creator/emptiness not proven"
+    },
+    {
+      "path": "/usr/share/gdb/python/gdb/command",
+      "kind": "directory",
+      "size": 4096,
+      "mtime_epoch": 1788932023,
+      "uid_gid": "0:0",
+      "mtime_utc": "2026-09-09T05:33:43+00:00",
+      "owner_rc": 1,
+      "owner": "file /usr/share/gdb/python/gdb/command is not owned by any package",
+      "source": "NONROOT_PATH_2483.txt",
+      "owner_source": "NONROOT_PATH_2483_OWNER.txt",
+      "disposition": "NOT_REMOVED; contents/creator/emptiness not proven"
+    },
+    {
+      "path": "/usr/share/gdb/python/gdb/function",
+      "kind": "directory",
+      "size": 4096,
+      "mtime_epoch": 1788932023,
+      "uid_gid": "0:0",
+      "mtime_utc": "2026-09-09T05:33:43+00:00",
+      "owner_rc": 1,
+      "owner": "file /usr/share/gdb/python/gdb/function is not owned by any package",
+      "source": "NONROOT_PATH_2519.txt",
+      "owner_source": "NONROOT_PATH_2519_OWNER.txt",
+      "disposition": "NOT_REMOVED; contents/creator/emptiness not proven"
+    }
+  ],
+  "measurement_cells_rerun": 0,
+  "files_removed": 0,
+  "processes_terminated": 0,
+  "limitation": "health samples precede root-off; no mutations except authorized privilege round"
+}

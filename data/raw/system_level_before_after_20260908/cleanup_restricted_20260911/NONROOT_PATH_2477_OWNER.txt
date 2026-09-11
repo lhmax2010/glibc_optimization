@@ -1,0 +1,4 @@
+file /usr/share/gdb is not owned by any package
+
+RC=1
+FAIL

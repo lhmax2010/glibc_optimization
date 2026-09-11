@@ -1,0 +1,4 @@
+stat: cannot stat `/usr/lib/python3.14/__pycache__/base64.cpython-314.opt-1.pyc': No such file or directory
+
+RC=1
+FAIL

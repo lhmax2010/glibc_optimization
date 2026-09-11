@@ -1,0 +1,50 @@
+{
+  "PS_START": {
+    "argv": [
+      "ps",
+      "-ww",
+      "-eo",
+      "pid,ppid,tty,comm,args"
+    ],
+    "reason": "PM: predecessor ps RC=0 omits PID 1; full-system view requires root",
+    "directory": null
+  },
+  "ALERTS_START": {
+    "argv": [
+      "ls",
+      "-A",
+      "--",
+      "/opt/usr/share/crash/livedump"
+    ],
+    "reason": "predecessor NONROOT_ALERTS_START: Permission denied; no repeat nonroot probe",
+    "directory": "/opt/usr/share/crash/livedump"
+  },
+  "TARGET_STAT": {
+    "argv": [
+      "cat",
+      "/proc/498/stat"
+    ],
+    "reason": "PM process scope: predecessor full-system view incomplete and PID 498 not visible",
+    "directory": null
+  },
+  "PS_END": {
+    "argv": [
+      "ps",
+      "-ww",
+      "-eo",
+      "pid,ppid,tty,comm,args"
+    ],
+    "reason": "PM: predecessor ps RC=0 omits PID 1; full-system view requires root",
+    "directory": null
+  },
+  "ALERTS_END": {
+    "argv": [
+      "ls",
+      "-A",
+      "--",
+      "/opt/usr/share/crash/livedump"
+    ],
+    "reason": "predecessor NONROOT_ALERTS_START: Permission denied; no repeat nonroot probe",
+    "directory": "/opt/usr/share/crash/livedump"
+  }
+}
