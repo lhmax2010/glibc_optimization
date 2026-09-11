@@ -903,3 +903,42 @@ test-skip/expected-SHA override。初次漏件失败仍保留记录，不掩写�
 交付矩阵、不切 demo-v12。当前有效交付继续为 **demo-v11**，commit
 `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated tag 对象
 `f1266c0be6c225a2ceb962836380c656758f9427`。
+
+## 12. 2026-09-11 PM 五目录裁决与限定处置（执行前登记）
+
+裁决人 PM，日期 2026-09-11，依据为 §11.2 的原始目录时间戳和镜像/安装时间线：
+`/usr/share/gdb/python` 定为镜像自带，不动；其余四目录定为我方卸包后的目录残留。
+此为 PM 归属裁决，不把时间戳相关性改称内容级来源证明；§11 的原 STOP 保留。
+原合同及 annotated tag `system-before-after-contract-20260908` 不变，已验收 21 格
+全部保留，绝不重跑。处置结果另记，不改写旧 G4 执行回执。
+
+执行入口为 [dispose_gdb_dirs_20260911.py](../tools/runners/system_level_before_after_20260908/dispose_gdb_dirs_20260911.py)：
+先重新核验身份/环境，逐项 `stat` 与 `ls -A`（包含隐藏项）存 host 原文。
+一次显式方案 A root round：记录 UID=5001 → UID=0；只执行四目录处置及所列收尾检查；
+finally 降权并核验 UID=5001，root-off 至多重试一次。无需任何板端临时文件。
+
+仅在重新核验目录及祖先为原 inode 的真实目录、且列举为空后，用非递归 `rmdir`
+按 function → command → python/gdb → /usr/share/gdb 顺序处理，每删一个立即核验不存在。
+镜像 python 必须保留；其父 gdb 若仍包含 python，一并保留。非空目录（含隐藏项，或
+检查后出现子项而内核拒绝 rmdir）登记 `REPORT_ONLY_PENDING_NONEMPTY`，不删、不重试
+删除，继续后续检查。符号链接、身份变化、异常远端返回等仍停止，不扩展清理名单。
+祖先/目标身份核验是分条、非原子的检查，不声称抵御恶意并发替换；非递归 rmdir
+由内核拒绝删除非空目录，确保不会递归清除其内容。
+
+每条检查单独一条请求，完整 RC/DONE/FAIL 正文不超过 200 UTF-8 字节；本地硬拒绝
+超限，不试探长度。收尾检查为目录、包含 PID 1 的 root 全系统进程、governor、完整
+包清单/原六包缺席、stability-monitor、dmesg 增量、zram 与 df。非我方进程仅报告。
+本次不带入历史进程 TERM 或文件 rm 通道；如发现需额外处置的我方对象，归档后停止。
+禁止 reboot/poweroff、测量、推送文件、安装卸载包或 governor 写入。
+
+```sh
+python3 -m unittest discover -s tools/runners/system_level_before_after_20260908 -p 'test_*.py'
+python3 tools/runners/system_level_before_after_20260908/dispose_gdb_dirs_20260911.py \
+  --ip '<TEST_BOARD_IP>' \
+  --output-dir board_results/system_level_before_after_20260908/directory_disposition_20260911 \
+  --pm-authorization PM-GDB-DIRECTORIES-20260911
+```
+
+执行器要求自身为已推 main 的干净提交后才可连接板。确定性验收：一操作一请求、
+完整请求 ≤200 字节、远端证明匹配、非 root 复原；健康/有效性门沿用原 G4；本次只做
+目录处置，不新增性能容差或测量值。非空项按本次 PM 裁决单列，不视为性能/健康失败。
