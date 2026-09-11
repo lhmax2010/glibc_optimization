@@ -893,6 +893,12 @@ manifest、回执、XML、测量值或合同，也不连接板。新增“manife
 该克隆的默认 verify 仍 `OVERALL PASS`；缺文件由另行执行的本轮 runner 全量测试发现，
 不能只拿既有 Demo verify 代替本轮新证据测试。
 
+漏件修复已以 `03d32a5d7445bef3a799be04d8267ca7af3a82a6` 推 main。GitHub 远端普通 main
+克隆保持干净，ff 同步该提交后复验：217 项 runner 测试通过、host_replay 逐字节 cmp
+静默、443 个相关链接通过、脱敏零命中；默认 verify `OVERALL PASS`，没有 dirty/
+test-skip/expected-SHA override。初次漏件失败仍保留记录，不掩写为一次成功。
+这仅闭合公开归档自包含问题；五目录处置 STOP 和 demo-v11 状态不变。
+
 **第 3–5 段 NOT_EXECUTED_STOP_GATE**：无新 Demo 头条、无 v12 brief、未运行 v12
 交付矩阵、不切 demo-v12。当前有效交付继续为 **demo-v11**，commit
 `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated tag 对象

@@ -13,3 +13,10 @@ not_executed	demo-v12-matrix	NOT_EXECUTED_STOP_GATE	unknown-directory dispositio
 remote_clone_initial	default-verify	PASS	12f67f6; clean GitHub main clone; no overrides
 remote_clone_initial	runner-tests	FAIL	216 tests, 4 errors: original G4 manifest controller.log files were ignored/untracked
 host_archive_fix	original-controller-logs	PASS	three existing 851-byte logs match unchanged G4 manifest SHA; added to Git without byte edits
+remote_clone_fixed	source	PASS	03d32a5d7445bef3a799be04d8267ca7af3a82a6; clean GitHub main clone fast-forwarded; no overrides
+remote_clone_fixed	runner-tests	PASS	217 tests; 15.633 seconds; existing tarfile DeprecationWarning only
+remote_clone_fixed	default-verify	PASS	OVERALL PASS; delivery identity correctly REPORT_ONLY; no dirty/test-skip/expected-SHA override
+remote_clone_fixed	compact-replay-cmp	PASS	byte-identical host_replay.json; STOP retained
+remote_clone_fixed	selected-local-links	PASS	443 links
+remote_clone_fixed	sanitization	PASS	2639 changed files; zero hits including dotted/hex routing endpoints
+remote_clone_fixed	worktree	PASS	clean before and after checks
