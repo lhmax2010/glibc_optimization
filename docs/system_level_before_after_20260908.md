@@ -645,6 +645,11 @@ bash tools/reproduce/reproduce.sh verify
 确定性/有效性门为命令字节预算、远端标志、原文哈希与 root-off；容差项无新增，
 沿用 §1 且不执行新格。host 通过不能闭合本节板端 STOP。
 
+发布停止结果 `7f2d4e1f89f110dad1c3cf463480f4a59915537f` 后，从 GitHub 远端干净克隆
+main 再验：167 项 runner 测试、默认 verify OVERALL PASS、356 个关联链接均通过。
+未启用 dirty/test-skip/expected-SHA override；main 身份为 REPORT_ONLY，并非新交付快照
+的 required 矩阵。原 ps 输出行尾空格原样保留，不以格式清理改变日志哈希。
+
 **整轮仍 STOP，21 格数据已验收保留但收尾未闭合；第 3–5 段停止。**
 未集成新头条、未生成 v12 brief、未运行 v12 交付矩阵或创建 demo-v12。
 当前有效快照 **demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，

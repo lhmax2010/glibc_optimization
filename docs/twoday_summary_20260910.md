@@ -53,6 +53,11 @@ none 的“0”只指本表 RSS 下降，不指 MemAvailable 背景波动。全�
 本次原文与编辑前后 SHA 见[39 文件 manifest](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/manifest.json)，
 host 检查见[回执](../data/raw/system_level_before_after_20260908/cleanup_audit_20260911/host_checks.tsv)。
 
+本次停止结果已推 main：`7f2d4e1f89f110dad1c3cf463480f4a59915537f`。随后从 GitHub 远端
+干净克隆该提交：167 项 runner 测试通过，默认 verify OVERALL PASS，356 个关联链接通过，
+部分 audit_start 健康的 host 重放输出与文档逐字一致；没有 dirty/test-skip/expected-SHA
+override。main 身份正确为 REPORT_ONLY，不冒充 demo required 验收，也不替代板端 STOP。
+
 需 PM 裁决：是否再次授权只补收尾（逐路径短请求或只读脚本），以完成包文件清单和
 审计后健康核验。**不需且不得重跑任何已验收格**；本次没有追加尝试，也未改预算规避停止门。
 **当前有效交付仍是 demo-v11**：peel commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`；

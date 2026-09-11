@@ -11,3 +11,8 @@ request-byte-budget-board	FAIL	first batch service bytes=3474; body bytes=3468; 
 partial-audit-start-health	PASS_PARTIAL_ONLY	original G4 dmesg prefix retained; 29 new lines, OOM/LMK zero; zram first three values unchanged; no audit_end snapshot
 root-off	PASS_NONROOT	first attempt; UID=5001; no subsequent board command
 demo-v12	NOT_EXECUTED_STOP_GATE	keep demo-v11; no delivery matrix run
+github-clean-clone	PASS	git clone --branch main from origin at 7f2d4e1f89f110dad1c3cf463480f4a59915537f; clean worktree; no dirty/test-skip/expected-SHA override
+github-clone-runner-tests	PASS	167 tests; full log retained locally; SHA256 d8e881b8afc43fa237143647612dfd1807db51a4987e609aedd8277fde7a6a98
+github-clone-default-verify	PASS	OVERALL PASS; main delivery identity correctly REPORT_ONLY; not delivery required matrix; full log SHA256 59468be0984c3f5c4b41ada42961789db6dc92bf27ae6f77a8953994bb3955f8
+github-clone-linked-evidence	PASS	356 local links; partial audit_start health replay matched exact expected output
+raw-whitespace	PRESERVED	process-table trailing spaces retained to preserve source bytes; code/docs whitespace check passes
