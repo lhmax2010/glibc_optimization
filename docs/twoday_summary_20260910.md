@@ -1,6 +1,13 @@
 # 两日批量执行汇总（2026-09-08 至 09-10）
 
-## 当前续报（2026-09-11）：延期收尾完成，21 格进入 Demo 集成
+## 当前终态（2026-09-11）：延期收尾完成，host 交付门 STOP
+
+**当前有效交付快照仍为 demo-v11；未切 demo-v12。**
+新增收尾 L1 重放在无 tag 的克隆 fixture 中无法解析原合同 tag，64 项 host/report
+测试出现 8 个子用例失败；按停止门不再修复/重试，不执行远端交付矩阵和 v12 brief。
+[阻塞原因与命令原文节录](demo_v12_delivery_blocker_20260911.md)；
+[测试结果转录](../data/raw/demo_v12_delivery_20260911/host_gate_result.json)。
+这不是数据、合同或板上健康失败；所有已验收测量保持原样。
 
 PM 五目录裁决已按一次受限 root round 执行，详见[报告 §12.1](system_level_before_after_20260908.md#121-实际处置与收尾结果)。
 实际四目录均非空，含 __pycache__/auto-load 等；全部保留待查，镜像 python 不动。
@@ -12,9 +19,9 @@ PM 五目录裁决已按一次受限 root round 执行，详见[报告 §12.1](s
 |---|---|
 | 1 执行器闭合 | 完成；限定目录执行器以 c89c9ab 先推 main，232 项 host 测试通过 |
 | 2 G4/延期收尾 | 完成；旧 STOP 回执保留，新独立收尾证明闭合，非空项 REPORT_ONLY |
-| 3 Demo 集成 | 已生成完整 21 格/333 对点的合成证据，更新 HTML/双语入口/L1；交付验证进行中 |
-| 4 demo-v12 | 尚未宣告通过；完整远端矩阵与构建证明结束后另记 |
-| 5 复审 brief | 仅在 v12 切出后写入，不联系第三方 |
+| 3 Demo 集成 | 已生成完整 21 格/333 对点的合成证据，更新 HTML/双语入口/L1；克隆隔离测试 STOP，产物仅为 main 工程预览 |
+| 4 demo-v12 | NOT_EXECUTED_STOP_GATE；未重切 demo，未创建 tag，18 次远端矩阵未执行 |
+| 5 复审 brief | NOT_EXECUTED_STOP_GATE；无 v12，不创建简报、不联系第三方 |
 
 关键数字均为 cycle=1 三重复中位，来源与极差见
 [summary.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)与
@@ -33,9 +40,23 @@ gst p99 −1.652834 ms 对离散 11.794149 ms，固定门未检出，不等于�
 [判定](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json)。
 测试板量级、非产品或整机收益；mixed 系统净效应为负，none 的零仅指 RSS。
 
-已推执行器 SHA：`c89c9abd1add883fd35850e805e9d4a7248b2eee`。后续提交/交付 SHA
-待验证后追加。待查非空目录不阻断本次交付；若未来需查其内容或清除，须另行授权，
-不外推本次 root round。**矩阵正式通过前有效快照仍为 demo-v11**。
+提交清单：
+
+| 内容 | SHA / 记录 |
+|---|---|
+| 受限目录执行器（先推后执行） | `c89c9abd1add883fd35850e805e9d4a7248b2eee` |
+| 21 格原始证据组合、绝对值与 L1 工程集成 | `7093d8a60814b706f1f6809cf6b6d282a359c402` |
+| 从提交源码重建 HTML；真实 GBS clean HEAD | `4539139956b89d82864a93c57ce68b7b07bdc850` |
+| 构建原样证明与 host STOP 收线 | 本汇总所在后续提交（推送完成后追加具体 SHA） |
+
+[GBS 构建](../data/raw/demo_v12_delivery_20260911/gbs/README.md)本身 PASS，268.052634 s，
+三 ELF 与 manifest 相同，但不抵消 host 测试停止门；root 属主 host buildroot 残留
+已记录 REPORT_ONLY，未擅自 sudo 清理。原始件本地留存，可按请求提供。
+
+需 PM 裁决的阻塞项仅为新增 host 重放的无命名 tag 兼容性闭合授权；不需要任何测量
+重跑。四个非空目录依原裁决不阻断；若未来查其内容/清除须另行授权，不外推本次 root round。
+**有效快照 demo-v11**：commit `0e8a2f731b13690009badf1ca2acbd57018e7bc8`，annotated
+tag 对象 `f1266c0be6c225a2ceb962836380c656758f9427`；demo-v12 不存在。
 
 以下历次停止记录全部保留，不代表本节之后的最新终态。
 

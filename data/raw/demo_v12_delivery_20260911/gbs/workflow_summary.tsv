@@ -1,0 +1,17 @@
+PASS	python-runtime	3.12.3
+MODE	explicit GBS build
+PASS	gbs-spec-static	name/version/BuildRequires/%files
+PASS	gbs-spec-syntax	rpmspec -P
+PASS	gbs-build-lock	acquired /tmp/glibc-memopt-gbs-build.lock pid=3939591
+PASS	gbs-execution-provenance	HEAD=4539139956b89d82864a93c57ce68b7b07bdc850 dirty=false
+INFO	gbs-buildroot	/tmp/glibc-memopt-gbs-3939591-10_sqp_z/buildroot
+INFO	gbs-command	/usr/bin/gbs -c /tmp/glibc-memopt-gbs-3939591-10_sqp_z/gbs.conf build -A armv7l --overwrite -c 20ab8c80d7b357254542dd841212ed8d7e7085c8
+REPORT_ONLY	gbs-rpm-wrapper-sha	recorded=efad4a0d202785f8c201977fd8aef35752af1bddde163f1063151621e0ac4e0e observed=8d9ff18a3ffef8ef6acce4e7c727a373ac5b7fd8963a9d2000522bff789714ef; GBS/RPM archive metadata is not a reproducibility gate
+PASS	gbs-elf	alloc_bench.armv7l sha256=88667139f69aac0e2b729a5ea62d7d6d14ba400dd9eb609fc25dfc5824efcffa
+PASS	gbs-elf	gst_loop_decode.armv7l sha256=7549f309fd26da2d2aff3e36772fecdceb9394931b0f74d597788dc645fcc034
+PASS	gbs-elf	reclaim_probe.armv7l sha256=e71d4aa59dffe9027ec58c2cef88a899facdbf295df82a882a58e611daef4d31
+PASS	gbs-output	<HOST_REPO>/board_results/demo_v12_delivery_20260911/bundle
+REPORT_ONLY	gbs-buildroot-residue	/tmp/glibc-memopt-gbs-3939591-10_sqp_z; [Errno 13] Permission denied: 'lock'
+PASS	gbs-build	glibc-memopt-tools-1.0.0-1.armv7l sha256=8d9ff18a3ffef8ef6acce4e7c727a373ac5b7fd8963a9d2000522bff789714ef
+INFO	gbs-elapsed-seconds	268.052634
+OVERALL	PASS

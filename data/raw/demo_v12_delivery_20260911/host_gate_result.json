@@ -1,0 +1,31 @@
+{
+  "schema": "demo-candidate-host-gate-transcription.v1",
+  "date_utc": "2026-09-11",
+  "record_kind": "transcription of observed unittest terminal output; not a board measurement",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tools.reproduce.test_host tools.report.test_build_demo_report",
+  "fixture_source_head": "4539139956b89d82864a93c57ce68b7b07bdc850",
+  "working_tree_context": "candidate proof publication and host-test/document updates staged after the clean GBS build",
+  "exit_code": 1,
+  "tests_run": 64,
+  "elapsed_seconds": 39.143,
+  "failures": 8,
+  "errors": 0,
+  "failure_groups": [
+    {"test": "test_delivery_identity_fixture_accepts_all_source_head_shapes", "source_shapes": ["main", "demo", "tag"], "identities": ["main", "demo"], "failed_subcases": 6},
+    {"test": "test_delivery_snapshot_required_identity_passes", "failed_subcases": 1},
+    {"test": "test_main_clone_without_delivery_tag_is_report_only_and_passes", "failed_subcases": 1}
+  ],
+  "observed_diagnostics": [
+    "FAIL\tsystem-before-after-public-replay-cmp\tRC=1",
+    "PASS system-before-after compact replay cells=21 cycles=333 group_arms=7",
+    "fatal: invalid object name 'system-before-after-contract-20260908'.",
+    "OVERALL\tFAIL\titems=1",
+    "Ran 64 tests in 39.143s",
+    "FAILED (failures=8)"
+  ],
+  "same_run_report_tests": "PASS",
+  "predelivery_remote_matrix": "NOT_EXECUTED_STOP_GATE",
+  "candidate_tag": "NOT_CREATED",
+  "effective_delivery_tag": "demo-v11",
+  "verdict": "STOP_HOST_REPLAY_TAG_DEPENDENCY"
+}

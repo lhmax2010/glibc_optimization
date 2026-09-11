@@ -1,5 +1,9 @@
 # demo-v11 显式 GBS 构建自证
 
+2026-09-11 追注：本归档作为 v11 执行历史原样保留（superseded for current entrypoint）。
+v12 新增系统级 L1 复算入口，已由 [v12 新构建](../../demo_v12_delivery_20260911/gbs/README.md)
+重新绑定当前入口；本目录 JSON/TSV 未改写，仅按原执行提交验证。
+
 2026-09-08，host-only；干净提交 `3fe95c18a52e86ef45ad97ab0b6323737eecd311`
 实际执行 `bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>`，RC=0 / OVERALL PASS。
 本次绑定 N10-01 修复后的入口：真实 Python 最终调用传回拒绝状态，枚举失败关闭。

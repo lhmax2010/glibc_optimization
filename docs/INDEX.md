@@ -19,6 +19,11 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-11：PM 五目录处置完成，四项非空保留待查、镜像目录不动、UID 恢复，
+  [延期收尾通过](system_level_before_after_20260908.md#121-实际处置与收尾结果)。原 21 格
+  不重跑；绝对值已集成，但[host 无 tag 克隆回归 STOP](demo_v12_delivery_blocker_20260911.md)，
+  不切 v12，demo-v11 保持有效；见[两日终态](twoday_summary_20260910.md)。
+
 - 2026-09-11 05:04 UTC: [受限 root 续审](system_level_before_after_20260908.md#111-执行结果与原文)：PM 批准进程完整性项提权；两份全系统 ps 均含 PID 1，原目标与 boot 不变，告警零、root-off 首次恢复 UID=5001。2570 路径逐项核验发现 5 个无 RPM 归属目录，内容/归属处置仍 STOP；六包未安装且包清单不变，未重测 21 格、不切 v12，demo-v11 继续有效。见[两日汇总](twoday_summary_20260910.md)。
 
 - 2026-09-11 03:00 UTC：[单项收尾审计](system_level_before_after_20260908.md#10-2026-09-11-单项收尾进程清单完整性-stop)：已改一项一请求/200 字节硬限；实际 12 条正文 70–106 字节均有远端标志，但非 root ps RC=0 缺 PID 1，完整性 STOP。未提权、起止 UID=5001，21 格不重跑；其余收尾及第 3–5 段停止，demo-v11 保持有效，见[最新汇总](twoday_summary_20260910.md)。
@@ -98,7 +103,7 @@ M7 赋值失败而停止；[停止与恢复边界](system_level_before_after_202
 2026-09-11：PM 非空目录 REPORT_ONLY 裁决执行、延期收尾闭合，已验收 21 格不重跑；
 [系统前后对照与原文](system_level_before_after_20260908.md#121-实际处置与收尾结果)、
 [优化效果一览](demo_report.html#system-effect)、[L1 复算](demo_reproduction_guide_20260901.md#l1-system-before-after)、
-[两日续报](twoday_summary_20260910.md)。交付矩阵通过后另记 v12 身份，不提前宣告。
+[两日续报](twoday_summary_20260910.md)。后续 host 交付门 STOP，无 v12，demo-v11 有效。
 
 - Allocator benchmark contracts: [`alloc_bench_spec_v1_zh.md`](alloc_bench_spec_v1_zh.md), [`alloc_bench_spec_v1_1_delta_zh.md`](alloc_bench_spec_v1_1_delta_zh.md), [`alloc_bench_spec_v1_1a_zh.md`](alloc_bench_spec_v1_1a_zh.md).
 - Batch 1 matrix: [`ab_matrix_batch1_zh.md`](ab_matrix_batch1_zh.md).

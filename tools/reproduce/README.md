@@ -151,8 +151,14 @@ matrix pass by itself does not establish the actual GBS build path.
 
 ## Default host-test dependency audit
 
-The current entrypoint executes eleven test files (the ten analysis/report groups
-plus the mocked board-workflow group). Their external-command boundary is:
+2026-09-11 candidate status: the new system-cleanup replay requires a contract
+tag by name, but the no-tag delivery-identity fixtures intentionally omit it.
+Eight subcases failed; v12 delivery is stopped and demo-v11 remains effective.
+This is an unresolved host-replay dependency, not a failed board measurement.
+Do not skip these tests to obtain PASS. See the [blocker record](../../docs/demo_v12_delivery_blocker_20260911.md).
+
+The current entrypoint executes thirteen test files (the original eleven groups
+plus the accepted-matrix and directory-disposition groups). Their external-command boundary is:
 
 | Test file | Commands beyond Python code | Default-verify treatment |
 |---|---|---|
@@ -265,14 +271,16 @@ match before publishing the unchanged summary containing its hash; raw logs rema
 local because they may contain host paths. Missing/altered/symlinked logs fail.
 The filtered `workflow_summary.tsv` is not the raw log and cannot substitute for it.
 Delivery host tests compare the current execution record with its recorded Git
-objects and delivery bytes. Older v8/v9/v10 proof stays immutable and is checked against
-its recorded commit, not represented as a v11 execution. The historical
+objects and delivery bytes. Older v8/v9/v10/v11 proof stays immutable and is checked against
+its recorded commit, not represented as a v12 execution. The historical
 [v9 real build archive](../../data/raw/demo_v9_delivery_20260907/gbs/README.md)
 binds that execution's six files; raw logs stay local and are available on request.
 The [v10 real build archive](../../data/raw/demo_v10_delivery_20260908/gbs/README.md)
-remains historical. The [v11 real build archive](../../data/raw/demo_v11_delivery_20260908/gbs/README.md)
-binds the final-Python entrypoint and the other five committed files to the current
-delivery bytes; publication copied the execution proof unchanged.
+remains historical, as does the [v11 real build archive](../../data/raw/demo_v11_delivery_20260908/gbs/README.md).
+The [v12 candidate real build archive](../../data/raw/demo_v12_delivery_20260911/gbs/README.md)
+binds the entrypoint including the accepted-system-matrix L1 replay and the other five
+committed files to current main bytes; publication copied the execution proof unchanged.
+It does not establish delivery readiness: the independent host-test gate stopped v12.
 
 ### Provenance capability boundary
 

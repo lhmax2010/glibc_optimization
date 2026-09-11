@@ -1,0 +1,18 @@
+{
+  "schema": "glibc-memopt-gbs-execution.v2",
+  "workflow_commit": "4539139956b89d82864a93c57ce68b7b07bdc850",
+  "dirty": false,
+  "git_status_porcelain": "",
+  "python_version": "3.12.3",
+  "captured_utc": "2026-09-11T07:02:43.890192+00:00",
+  "entrypoint_sha256": "006ab1b9e5a0e533e1e4760f6e274492c1756ded7ecf6735be7422072318723a",
+  "checker_sha256": "6cdbb42997069bb8f24cd37aa350b66a1bedba88bf30afff0998e205b2b9da55",
+  "committed_file_sha256": {
+    "config/gbs.conf": "d25a937ce1617c244224aed491ceefbeea039919ec1a840c23135f996b5648bc",
+    "config/gbs_llvm.conf": "d83fbe416ec1c93a45b0e8a130d0d0622b5fbb33c1ffef354537693b293f0ff6",
+    "packaging/glibc-memopt-tools.spec": "b12cd4547a99b86368d364ec7201d8002882d404156bd29f86f823cd30e3eec1",
+    "tools/reproduce/check_gbs_package.py": "6cdbb42997069bb8f24cd37aa350b66a1bedba88bf30afff0998e205b2b9da55",
+    "tools/reproduce/deliverables_manifest.json": "c56cf9a1a17dd7a9e121706e2158967f3d30b5f88ab4ea94e397fda390d8cdba",
+    "tools/reproduce/reproduce.sh": "006ab1b9e5a0e533e1e4760f6e274492c1756ded7ecf6735be7422072318723a"
+  }
+}

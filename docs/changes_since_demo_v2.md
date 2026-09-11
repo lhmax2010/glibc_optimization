@@ -241,4 +241,11 @@ V4-1 的关闭逻辑是：v4 数值继续只是由 frozen/GBS 建带样本形成
   跨载体数字断言；[新章节](demo_report.html#system-effect)、[复算](demo_reproduction_guide_20260901.md#l1-system-before-after)。
   保留 mixed 系统净效应为负、G4 含 ptrace、非空目录待查及非产品收益的边界。
 - 入口只新增 host 公开件复算/测试，不修改既有启动注入防护、GBS/held-out 结论或
-  验收带；交付将执行原完整远端矩阵。裁决依据见[PM 台账](pm_decisions.md)。
+  验收带；裁决依据见[PM 台账](pm_decisions.md)。
+
+2026-09-11 终态：以上是候选集成，**没有切出 demo-v12**。源码集成提交
+`7093d8a60814b706f1f6809cf6b6d282a359c402`，HTML 构建提交/真实 GBS clean HEAD
+`4539139956b89d82864a93c57ce68b7b07bdc850`；[构建证明](../data/raw/demo_v12_delivery_20260911/gbs/README.md)
+通过，但新增收尾重放依赖命名合同 tag，交付身份无 tag fixture 的八个子用例失败。
+[停止报告](demo_v12_delivery_blocker_20260911.md)保留根因；未放宽测试、未执行远端矩阵。
+demo-v11 仍为当前有效交付，21 格与全部旧证据不受影响。
