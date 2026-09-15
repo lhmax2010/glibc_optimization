@@ -75,7 +75,7 @@ uses pinned commit bytes, not tag names; full verify also requires delivery
 identity plus the historical objects checked by host tests. In a no-tags clone,
 use `REPRODUCE_EXPECTED_SHA=<trusted-delivery-commit> bash tools/reproduce/reproduce.sh verify`
 to supply the expected identity, or fetch the delivery tag with
-`git fetch origin tag demo-v12` for the current snapshot. For each missing historical object, run
+`git fetch origin tag demo-v13` for the current snapshot. For each missing historical object, run
 `git fetch --no-tags origin <sha>` as the failure diagnostic specifies.
 The override does not bypass missing-object, contract, or identity checks. See
 [Git requirements](tools/reproduce/README.md#public-replay-versus-full-verify).
@@ -95,6 +95,13 @@ Without that internal bundle, board mode cannot start. The media asset has no
 established redistributable provenance and is delivered outside this repository.
 
 ### Default HQ L2 path: GBS build (alloc_bench held-out 4/4 validated)
+
+Availability note (2026-09-15): the fixed Base `20260813.050338` repomd is HTTP 404;
+Unified remains available. This affects creating new GBS builds/proofs, not the
+existing SHA-verified bundle, execution proofs or published numbers. Do not repin
+the source silently. PM withdrew the N12-05 display nit and retained the v12
+entrypoint/proof checks; this source outage is not a v13 delivery condition.
+See the [decision and release follow-up](docs/demo_v13_delivery_20260915.md#4-2026-09-15-续裁决撤回显示项解除构建源阻塞).
 
 For the three ELF files, GBS can be evaluated from a real `git clone` with
 `bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`. This explicit path requires repository

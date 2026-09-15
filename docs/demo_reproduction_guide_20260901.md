@@ -482,7 +482,7 @@ PASS system-before-after compact replay cells=21 cycles=333 group_arms=7
 详见[字段注释及输入](../data/raw/system_level_before_after_20260908/accepted_matrix/README.md#display-scope-correction-2026-09-15-n12-0102-v12-5)。
 
 本节公开复算不依赖 tag 名，但完整 verify 另有交付身份与历史对象门；缺 tag 可取
-`git fetch origin tag demo-v12`（当前快照）或用可信 commit 的 `REPRODUCE_EXPECTED_SHA` 指定身份，
+`git fetch origin tag demo-v13`（当前快照）或用可信 commit 的 `REPRODUCE_EXPECTED_SHA` 指定身份，
 缺历史对象按诊断 `git fetch --no-tags origin <sha>` 获取，不跳过任何校验。
 [完整 Git 要求](../tools/reproduce/README.md#public-replay-versus-full-verify)。
 
@@ -576,6 +576,12 @@ scratch root/sysroot 路径。媒体资产的自产/可再分发 provenance 尚�
 
 <a id="l2-gbs-build"></a>
 ### HQ 默认 L2 路径：GBS 构建三项 ELF（经 held-out 4/4 验证）
+
+2026-09-15 可用性追注：固定 Base `20260813.050338` repomd 已 HTTP 404，Unified
+仍可用；新建 GBS 构建/证明受阻，不影响既有执行证明、已交付 SHA 核验产物或已发布
+数字。不得自行换源。PM 撤回 N12-05 显示 nit，入口/current-proof 保持 v12 原字节，
+源失效不再作为本轮交付条件；正式 release 建议长期可得源或内部 repodata/产物归档。
+见[裁决记录](demo_v13_delivery_20260915.md#4-2026-09-15-续裁决撤回显示项解除构建源阻塞)。
 
 对三项 ELF，可从真实 `git clone` 使用仓库内 spec 和固定快照配置构建。真实 GBS
 构建不属于分钟级 host verify；推荐通过显式入口执行：

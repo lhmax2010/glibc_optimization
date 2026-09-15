@@ -19,7 +19,7 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
-- 2026-09-15 — [demo-v13 对客口径修正](demo_v13_delivery_20260915.md)：G3 首周期/全周期、系统净效应 NOT-DETECTED、字段与 Git 依赖说明；不改测量数据。验证状态见交付记录。
+- 2026-09-15 — [demo-v13 对客口径修正](demo_v13_delivery_20260915.md)：G3 首周期/全周期、系统净效应 NOT-DETECTED、字段与 Git 依赖说明；N12-05 WITHDRAWN-BY-PM、固定 Base 404 仅记新构建限制，入口/证明门保持 v12 原字节。不改测量数据，交付矩阵与远端状态见记录。
 
 - 2026-09-11（周末批次收线）：demo-v12 已发布；隔离与 GitHub 远端各 18/18 verify、
   129/129 注入拒绝，额外 full/no-tags/shallow 公开复算通过；当前树脱敏零命中。

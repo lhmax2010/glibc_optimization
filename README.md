@@ -2,9 +2,9 @@
 
 This repository is the long-term, sanitized workspace for source audits, controlled benchmarks, board measurements, and implementation evidence related to reducing glibc runtime memory and image footprint on 32-bit ARM Tizen systems.
 
-Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v12` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v12) — see the [delivery audit](docs/demo_v12_delivery_20260911.md) for validation status; v11 is retained.
+Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v13` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v13) — see the [delivery audit](docs/demo_v13_delivery_20260915.md) for validation status; v12 is retained.
 
-2026-09-15: v13 customer-scope corrections are on main, but delivery is blocked by the pinned Base repository returning HTTP 404; no v13 tag has been cut. See the [corrections and blocker](docs/demo_v13_delivery_20260915.md).
+2026-09-15: PM withdrew the N12-05 display nit; the entrypoint and current-proof gate retain v12 bytes. The pinned Base repository HTTP 404 affects new GBS build/proof creation, not existing proofs or published data, and is no longer a v13 delivery condition. See the [corrections and decision](docs/demo_v13_delivery_20260915.md).
 
 The HQ packaging path is [`packaging/glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec):
 `bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>` uses

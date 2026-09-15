@@ -105,7 +105,7 @@ historical commit objects referenced by host tests. Passing public replay alone
 does not establish full delivery identity or timing provenance.
 
 For a no-tags clone, either fetch the expected delivery tag
-(`git fetch origin tag demo-v12` for the current snapshot) or supply a trusted commit explicitly:
+(`git fetch origin tag demo-v13` for the current snapshot) or supply a trusted commit explicitly:
 
 ```sh
 REPRODUCE_EXPECTED_SHA=<trusted-delivery-commit> bash tools/reproduce/reproduce.sh verify
@@ -116,10 +116,11 @@ git fetch --no-tags origin <sha>
 These are object/identity recovery alternatives, not gate bypasses: the override
 still requires HEAD equality and does not satisfy missing historical objects.
 `main` remains REPORT_ONLY for delivery identity; use the delivery snapshot for
-required acceptance. The requested N12-05 parent PASS plus SKIPPED-child display
-change is held pending a new entrypoint build proof: the pinned Base repository
-returned HTTP 404 on 2026-09-15. The existing entrypoint and proof gate remain
-unchanged; see the [blocker record](../../docs/demo_v13_delivery_20260915.md#3-交付验证记录).
+required acceptance. PM withdrew the N12-05 parent PASS plus SKIPPED-child display
+change on 2026-09-15 (WITHDRAWN-BY-PM). The entrypoint and current-proof gate retain
+v12 bytes. The pinned Base repository HTTP 404 affects new GBS build/proof creation,
+not existing proofs or published data, and no longer blocks this delivery. See the
+[decision](../../docs/demo_v13_delivery_20260915.md#4-2026-09-15-续裁决撤回显示项解除构建源阻塞).
 
 ## Mandatory pre-delivery clone matrix
 
@@ -135,14 +136,14 @@ pre-delivery gate:
 bash tools/reproduce/predelivery_check.sh \
   --repo-url "$(git remote get-url origin)" \
   --branch demo \
-  --tag demo-v12
+  --tag demo-v13
 ```
 
 The script performs three fresh HQ-shaped clones from the supplied remote:
 
 ```sh
 git clone --branch demo <url>
-git clone --branch demo-v12 <url>
+git clone --branch demo-v13 <url>
 git clone <url>                 # remote default must be main
 ```
 
@@ -177,6 +178,16 @@ Delivery also requires one actual `reproduce.sh gbs --output-dir <new-dir>` pass
 separate from the PATH fixtures. Archive its summary in `data/raw/`, including RPM
 NVR/SHA, all three ELF hashes, elapsed time, and any buildroot residue. A verify
 matrix pass by itself does not establish the actual GBS build path.
+
+For this documentation-only v13 correction, PM confirmed on 2026-09-15 that the
+existing [v12 successful execution proof](../../data/raw/demo_v12_delivery_20260911/gbs/README.md)
+remains applicable: all six protected files and the current-proof check retain
+their v12 bytes. No new build is required or claimed. A future change to those
+inputs still requires a matching successful execution proof; no gate is skipped.
+The fixed Base `20260813.050338` repomd is now HTTP 404 while Unified remains
+available. New builds may therefore be unavailable; do not substitute another
+snapshot silently. Durable sources/internal repodata and artifact archiving are
+formal-release follow-ups, not changes to this delivery.
 
 ## Default host-test dependency audit
 

@@ -37,7 +37,7 @@ G4 RSS 降幅 0.003906 MiB 对极差 0.089844 MiB，同样 NOT-DETECTED；
 公开复算与完整 verify 的 Git 要求不同：前者校验固定 commit 字节、不依赖 tag 名；
 后者还要求交付身份与 host 测试涉及的历史对象。无 tag 克隆可用
 `REPRODUCE_EXPECTED_SHA=<可信交付提交> bash tools/reproduce/reproduce.sh verify`
-提供预期身份，或 `git fetch origin tag demo-v12` 获取当前交付标签。历史对象缺失时，按
+提供预期身份，或 `git fetch origin tag demo-v13` 获取当前交付标签。历史对象缺失时，按
 错误提示逐个执行 `git fetch --no-tags origin <sha>`；override 不绕过对象、合同或
 身份门。见[Git 要求](tools/reproduce/README.md#public-replay-versus-full-verify)。
 
@@ -77,6 +77,11 @@ G4 RSS 降幅 0.003906 MiB 对极差 0.089844 MiB，同样 NOT-DETECTED；
 渠道交付，不进入公开仓库。
 
 ### HQ 默认 L2 路径：GBS 构建（alloc_bench 经 held-out 4/4 验证）
+
+可用性追注（2026-09-15）：固定 Base `20260813.050338` repomd 已 HTTP 404，Unified
+仍可用；影响新建 GBS 构建/证明，不影响既有 SHA 核验 bundle、执行证明与已发布数字。
+不得自行换源。PM 撤回 N12-05 显示项、保留 v12 入口/证明校验，此源失效不再是 v13
+交付条件。见[裁决与正式 release 建议](docs/demo_v13_delivery_20260915.md#4-2026-09-15-续裁决撤回显示项解除构建源阻塞)。
 
 三项 ELF 的 GBS 默认路径是真实 `git clone` 后执行
 `bash tools/reproduce/reproduce.sh gbs --output-dir /path/to/new-gbs-bundle`。该显式模式需要仓库网络访问、可执行 root
