@@ -1,5 +1,7 @@
 {
   "schema": "demo-v13-partial-host-verification.v1",
+  "superseded_by": "verification.json",
+  "supersession_note": "2026-09-15 PM N13-01/V13-1: retained historical partial result; current complete matrix receipt is verification.json",
   "tested_commit": "e4ee10e6057058bddaad2e7050e7cdb2af42b7fb",
   "command": "bash tools/reproduce/reproduce.sh verify",
   "returncode": 0,

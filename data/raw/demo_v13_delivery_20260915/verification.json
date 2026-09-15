@@ -1,76 +1,231 @@
 {
-  "schema": "demo-v13-delivery-verification.v1",
-  "recorded_utc": "2026-09-15T10:20:13.966568+00:00",
-  "main_at_cut": "2bf46f2680fa52f9a61d47a620880311c28a4dcf",
+  "schema": "demo-v13-delivery-verification.v2",
+  "recorded_utc": "2026-09-15T14:27:05.669656+00:00",
+  "purpose": "CC N13-01 / Kimi V13-1: fresh self-executed full matrix of unchanged demo-v13 before v14 documentation delivery",
+  "command": "bash tools/reproduce/predelivery_check.sh --repo-url https://github.com/lhmax2010/glibc_optimization.git --branch demo --tag demo-v13",
+  "runner_head": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
+  "runner_predelivery_sha256": "5d59d4397ec433c09a3be9ba53d430ca6c1400a96c383404f5abcfd3ffe5d932",
+  "runner_script_unchanged_from_HEAD": true,
+  "default_main_commit": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
   "demo_commit": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
   "demo_v13_annotated_tag_object": "0353ad46ef83e9f46c305c2cb8a023256514bf52",
   "demo_v13_peeled_commit": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
-  "preserved_demo_v12_tag_object": "26e46c46fdc32c04da08fa31b317800dda25d560",
-  "matrices": {
-    "isolated_matrix.txt": {
-      "complete_verify_pass": 18,
-      "clone_shapes": 3,
-      "environment_profiles": 6,
-      "expected_startup_rejection_pass": 129,
-      "default_main_identity": "REPORT_ONLY",
-      "demo_and_tag_identity": "REQUIRED"
-    },
-    "github_matrix.txt": {
-      "complete_verify_pass": 18,
-      "clone_shapes": 3,
-      "environment_profiles": 6,
-      "expected_startup_rejection_pass": 129,
-      "default_main_identity": "REPORT_ONLY",
-      "demo_and_tag_identity": "REQUIRED"
-    }
-  },
-  "additional_github_hq_clones": {
-    "demo": {
-      "rc": 0,
-      "identity": "REQUIRED",
-      "overall": "PASS"
-    },
-    "demo-v13": {
-      "rc": 0,
-      "identity": "REQUIRED",
-      "overall": "PASS",
-      "checkout": "detached HEAD"
-    }
-  },
-  "html_rebuild_cmp": "silent",
-  "delivery_links_checked": 605,
-  "repository_links_checked": 1579,
-  "root_relative_templates": "checked as actual root README files, exempt only at template source paths",
-  "snapshot_privacy": {
-    "files": 4431,
-    "findings": 0,
-    "scope": "current tracked tree"
-  },
-  "targeted_tests": {
-    "report": 13,
-    "privacy_and_contract_clones": 25
-  },
-  "baseline_tsv_json_xml_files_byte_identical": 250,
-  "v12_protected_file_sha256": {
-    "tools/reproduce/reproduce.sh": "006ab1b9e5a0e533e1e4760f6e274492c1756ded7ecf6735be7422072318723a",
-    "tools/reproduce/check_gbs_package.py": "6cdbb42997069bb8f24cd37aa350b66a1bedba88bf30afff0998e205b2b9da55",
-    "config/gbs.conf": "d25a937ce1617c244224aed491ceefbeea039919ec1a840c23135f996b5648bc",
-    "config/gbs_llvm.conf": "d83fbe416ec1c93a45b0e8a130d0d0622b5fbb33c1ffef354537693b293f0ff6",
-    "tools/reproduce/deliverables_manifest.json": "c56cf9a1a17dd7a9e121706e2158967f3d30b5f88ab4ea94e397fda390d8cdba",
-    "packaging/glibc-memopt-tools.spec": "b12cd4547a99b86368d364ec7201d8002882d404156bd29f86f823cd30e3eec1"
-  },
-  "current_proof_methods_byte_identical_to_v12": [
-    "test_candidate_v12_public_execution_proof_matches_commit_and_current_files",
-    "_check_public_execution_proof"
+  "rc": 0,
+  "overall": "PASS",
+  "complete_verify_pass": 18,
+  "clone_shapes": 3,
+  "environment_profiles": [
+    "present-gbs+present-rpm",
+    "absent-gbs+present-rpm",
+    "present-gbs+absent-rpm",
+    "minimal-whitelist",
+    "broken-tools",
+    "startup-injection"
   ],
-  "N12-05": "WITHDRAWN-BY-PM",
-  "new_gbs_build_executed": false,
+  "startup_rejection_pass": 129,
+  "matrix_cases": [
+    {
+      "profile": "present-gbs+present-rpm",
+      "shape": "branch",
+      "ref": "demo",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "present-gbs+present-rpm",
+      "shape": "tag",
+      "ref": "demo-v13",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "present-gbs+present-rpm",
+      "shape": "default",
+      "ref": "main",
+      "head": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
+      "identity": "REPORT_ONLY",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "absent-gbs+present-rpm",
+      "shape": "branch",
+      "ref": "demo",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "absent-gbs+present-rpm",
+      "shape": "tag",
+      "ref": "demo-v13",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "absent-gbs+present-rpm",
+      "shape": "default",
+      "ref": "main",
+      "head": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
+      "identity": "REPORT_ONLY",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "present-gbs+absent-rpm",
+      "shape": "branch",
+      "ref": "demo",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "present-gbs+absent-rpm",
+      "shape": "tag",
+      "ref": "demo-v13",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "present-gbs+absent-rpm",
+      "shape": "default",
+      "ref": "main",
+      "head": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
+      "identity": "REPORT_ONLY",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "minimal-whitelist",
+      "shape": "branch",
+      "ref": "demo",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "minimal-whitelist",
+      "shape": "tag",
+      "ref": "demo-v13",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "minimal-whitelist",
+      "shape": "default",
+      "ref": "main",
+      "head": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
+      "identity": "REPORT_ONLY",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "broken-tools",
+      "shape": "branch",
+      "ref": "demo",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "broken-tools",
+      "shape": "tag",
+      "ref": "demo-v13",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "broken-tools",
+      "shape": "default",
+      "ref": "main",
+      "head": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
+      "identity": "REPORT_ONLY",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "startup-injection",
+      "shape": "branch",
+      "ref": "demo",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "startup-injection",
+      "shape": "tag",
+      "ref": "demo-v13",
+      "head": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+      "identity": "REQUIRED",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    },
+    {
+      "profile": "startup-injection",
+      "shape": "default",
+      "ref": "main",
+      "head": "d744e4051d0ec0b90af873cd3d968b7f3af3b9e1",
+      "identity": "REPORT_ONLY",
+      "host-tests": "PASS",
+      "OVERALL": "PASS"
+    }
+  ],
+  "startup_rejections": [
+    {
+      "shape": "branch",
+      "variants": 43,
+      "rc": 2,
+      "diagnostic": "nonempty",
+      "spoof_calls": 0,
+      "MODE_or_OVERALL_PASS": false
+    },
+    {
+      "shape": "tag",
+      "variants": 43,
+      "rc": 2,
+      "diagnostic": "nonempty",
+      "spoof_calls": 0,
+      "MODE_or_OVERALL_PASS": false
+    },
+    {
+      "shape": "default",
+      "variants": 43,
+      "rc": 2,
+      "diagnostic": "nonempty",
+      "spoof_calls": 0,
+      "MODE_or_OVERALL_PASS": false
+    }
+  ],
+  "default_main_identity": "REPORT_ONLY (existing main policy; full host tests executed)",
+  "demo_and_tag_identity": "REQUIRED",
+  "optional_tools": "controlled presence/failure stubs; no real GBS build",
+  "REPRODUCE_SKIP_TESTS": false,
   "board_connection_or_measurement": false,
+  "new_gbs_build_executed": false,
   "artifacts_sha256": {
-    "isolated_matrix.txt": "6d27247a74a2151fc7645033976af4b40de5fe025c27ce1b16a15e8ca3e73f9f",
-    "github_matrix.txt": "bb63be85fa2a647da034c5ffb6a95b27a90f970548bb1c2af67358d843d6aa7c",
-    "hq_demo_verify.txt": "1d5585198ef7413fb518e6dcea65b2c94dae752a24cd72ceb21673fb0a510034",
-    "hq_tag_verify.txt": "1d5585198ef7413fb518e6dcea65b2c94dae752a24cd72ceb21673fb0a510034"
+    "github_matrix_rerun.txt": "18d85f7163fee1459eac70d65dbb2762dab7c483a8b181de75b08d52571c2506",
+    "verification_first_run.json": "bc9e46805c7864d25a72db13a7de3f9fea1d1d46cd6ff007db043f085e4c766e"
   },
-  "note": "Post-cut verification receipts are appended on main; the frozen tag is not rewritten."
+  "supersedes": [
+    "partial_verification.json",
+    "verification_first_run.json"
+  ],
+  "history": "Prior partial and first full receipts remain available; this file records only this run. The v14 candidate matrix is a separate test object and receipt."
 }

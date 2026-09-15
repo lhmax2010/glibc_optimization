@@ -2,7 +2,7 @@
 
 This repository is the long-term, sanitized workspace for source audits, controlled benchmarks, board measurements, and implementation evidence related to reducing glibc runtime memory and image footprint on 32-bit ARM Tizen systems.
 
-Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v13` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v13) — see the [delivery audit](docs/demo_v13_delivery_20260915.md) for validation status; v12 is retained.
+Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v14` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v14) — see the [delivery audit](docs/demo_v13_delivery_20260915.md) for validation status; v13 is retained.
 
 2026-09-15: PM withdrew the N12-05 display nit; the entrypoint and current-proof gate retain v12 bytes. The pinned Base repository HTTP 404 affects new GBS build/proof creation, not existing proofs or published data, and is no longer a v13 delivery condition. See the [corrections and decision](docs/demo_v13_delivery_20260915.md).
 

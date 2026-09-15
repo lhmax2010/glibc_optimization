@@ -32,6 +32,10 @@ results, not a product-memory-benefit promise.
 Absolute-value rows use cycle 1, with three-repeat medians computed separately for
 before, after and the paired percentage; subtracting the two medians need not give
 the median drop. None's zero refers to process RSS, not system MemAvailable.
+All-cycle scope is 41.8% / 45.2% / 16.0% for G1/G2/G3. G2 is `45.322245%` for
+cycle=1 but `45.177290%` across both cycles × three repeats (six observations);
+these windows must not be conflated. See the [cycle inputs](data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)
+and [L1 replay](docs/demo_reproduction_guide_20260901.md#l1-system-before-after).
 These are test-board scales, not product benefit. See the [definitions](docs/system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果).
 
 Scope clarification (2026-09-15): the G3 all-cycle statistic pools 153 observations
@@ -75,7 +79,7 @@ uses pinned commit bytes, not tag names; full verify also requires delivery
 identity plus the historical objects checked by host tests. In a no-tags clone,
 use `REPRODUCE_EXPECTED_SHA=<trusted-delivery-commit> bash tools/reproduce/reproduce.sh verify`
 to supply the expected identity, or fetch the delivery tag with
-`git fetch origin tag demo-v13` for the current snapshot. For each missing historical object, run
+`git fetch origin tag demo-v14` for the current snapshot. For each missing historical object, run
 `git fetch --no-tags origin <sha>` as the failure diagnostic specifies.
 The override does not bypass missing-object, contract, or identity checks. See
 [Git requirements](tools/reproduce/README.md#public-replay-versus-full-verify).

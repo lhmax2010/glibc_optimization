@@ -43,8 +43,9 @@ python3 -m unittest tools.runners.system_level_before_after_20260908.test_accept
 
 ## 3. 文案核对（预授权 B）
 
-2026-09-15 订正（N12-07）：RSS 41.8% / 45.3% / 16.0% 对应全周期合并中位口径，
-并非数值有误；此前“同口径不一致”的判断撤销。
+2026-09-15 续订正（Codex N13-01）：RSS 全周期口径应为 41.8% / 45.2% / 16.0%。
+此前 N12-07 把 G2 首周期 45.322245% 混入全周期说明，现改为全周期 45.177290%；
+仅更正文案，不改数据，也不恢复此前“同口径不一致”的判断。
 按[summary](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)
 与[原合同复算](demo_reproduction_guide_20260901.md#l1-system-before-after)，保持
 本交付头条 cycle=1 口径 40.696279% / 45.322245% / 21.009919%。G3 为 51 周期负载，

@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-15 — [v13→v14 minor 收口](demo_v13_delivery_20260915.md)：本轮自行重跑交付矩阵并登记机器回执/partial superseded；G2 首周期与全周期窗口订正；1 ulp 极差差异仅台账记录，不改测量、机制或入口。状态见交付续节。
+
 - 2026-09-15 — [demo-v13 对客口径修正与交付](demo_v13_delivery_20260915.md)：G3 首周期/全周期、系统净效应 NOT-DETECTED、字段与 Git 依赖说明；N12-05 WITHDRAWN-BY-PM、固定 Base 404 仅记新构建限制，入口/证明门保持 v12 原字节。不改测量数据；隔离/远端各 18/18 verify、129/129 拒绝探针及额外两种 HQ 克隆通过，v13 已发布、v12 保留。
 
 - 2026-09-11（周末批次收线）：demo-v12 已发布；隔离与 GitHub 远端各 18/18 verify、

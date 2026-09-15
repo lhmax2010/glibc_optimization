@@ -1,0 +1,76 @@
+{
+  "schema": "demo-v13-delivery-verification.v1",
+  "recorded_utc": "2026-09-15T10:20:13.966568+00:00",
+  "main_at_cut": "2bf46f2680fa52f9a61d47a620880311c28a4dcf",
+  "demo_commit": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+  "demo_v13_annotated_tag_object": "0353ad46ef83e9f46c305c2cb8a023256514bf52",
+  "demo_v13_peeled_commit": "1e8378adbab9acf937b4a51d3348b8f0bde2ff5f",
+  "preserved_demo_v12_tag_object": "26e46c46fdc32c04da08fa31b317800dda25d560",
+  "matrices": {
+    "isolated_matrix.txt": {
+      "complete_verify_pass": 18,
+      "clone_shapes": 3,
+      "environment_profiles": 6,
+      "expected_startup_rejection_pass": 129,
+      "default_main_identity": "REPORT_ONLY",
+      "demo_and_tag_identity": "REQUIRED"
+    },
+    "github_matrix.txt": {
+      "complete_verify_pass": 18,
+      "clone_shapes": 3,
+      "environment_profiles": 6,
+      "expected_startup_rejection_pass": 129,
+      "default_main_identity": "REPORT_ONLY",
+      "demo_and_tag_identity": "REQUIRED"
+    }
+  },
+  "additional_github_hq_clones": {
+    "demo": {
+      "rc": 0,
+      "identity": "REQUIRED",
+      "overall": "PASS"
+    },
+    "demo-v13": {
+      "rc": 0,
+      "identity": "REQUIRED",
+      "overall": "PASS",
+      "checkout": "detached HEAD"
+    }
+  },
+  "html_rebuild_cmp": "silent",
+  "delivery_links_checked": 605,
+  "repository_links_checked": 1579,
+  "root_relative_templates": "checked as actual root README files, exempt only at template source paths",
+  "snapshot_privacy": {
+    "files": 4431,
+    "findings": 0,
+    "scope": "current tracked tree"
+  },
+  "targeted_tests": {
+    "report": 13,
+    "privacy_and_contract_clones": 25
+  },
+  "baseline_tsv_json_xml_files_byte_identical": 250,
+  "v12_protected_file_sha256": {
+    "tools/reproduce/reproduce.sh": "006ab1b9e5a0e533e1e4760f6e274492c1756ded7ecf6735be7422072318723a",
+    "tools/reproduce/check_gbs_package.py": "6cdbb42997069bb8f24cd37aa350b66a1bedba88bf30afff0998e205b2b9da55",
+    "config/gbs.conf": "d25a937ce1617c244224aed491ceefbeea039919ec1a840c23135f996b5648bc",
+    "config/gbs_llvm.conf": "d83fbe416ec1c93a45b0e8a130d0d0622b5fbb33c1ffef354537693b293f0ff6",
+    "tools/reproduce/deliverables_manifest.json": "c56cf9a1a17dd7a9e121706e2158967f3d30b5f88ab4ea94e397fda390d8cdba",
+    "packaging/glibc-memopt-tools.spec": "b12cd4547a99b86368d364ec7201d8002882d404156bd29f86f823cd30e3eec1"
+  },
+  "current_proof_methods_byte_identical_to_v12": [
+    "test_candidate_v12_public_execution_proof_matches_commit_and_current_files",
+    "_check_public_execution_proof"
+  ],
+  "N12-05": "WITHDRAWN-BY-PM",
+  "new_gbs_build_executed": false,
+  "board_connection_or_measurement": false,
+  "artifacts_sha256": {
+    "isolated_matrix.txt": "6d27247a74a2151fc7645033976af4b40de5fe025c27ce1b16a15e8ca3e73f9f",
+    "github_matrix.txt": "bb63be85fa2a647da034c5ffb6a95b27a90f970548bb1c2af67358d843d6aa7c",
+    "hq_demo_verify.txt": "1d5585198ef7413fb518e6dcea65b2c94dae752a24cd72ceb21673fb0a510034",
+    "hq_tag_verify.txt": "1d5585198ef7413fb518e6dcea65b2c94dae752a24cd72ceb21673fb0a510034"
+  },
+  "note": "Post-cut verification receipts are appended on main; the frozen tag is not rewritten."
+}

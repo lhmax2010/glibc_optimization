@@ -181,6 +181,19 @@ def build(repo: Path, source_commit: str) -> str:
     system_g4 = [r for r in system_cycles if r['group']=='G4']
     # N12 positive controls: independently recompute display scopes from rows,
     # never change the fixed analyzer or its byte-identical derived TSVs.
+    # N13 positive controls: allocator profiles use both cycles across three
+    # repeats; assert integer-KiB-derived ratios, not the cycle=1 summary label.
+    alloc_full = {}
+    for group, expected in {'G1': '41.807953', 'G2': '45.177290'}.items():
+        rows = [r for r in system_cycles if r['group']==group and r['arm']=='trim']
+        assert len(rows) == 6 and {r['cycle'] for r in rows} == {'1', '2'}
+        drops = [100 * int(r['rss_drop_kib']) / int(r['rss_pre_kib']) for r in rows]
+        alloc_full[group] = statistics.median(drops)
+        assert f'{alloc_full[group]:.6f}' == expected
+        first = [100 * int(r['rss_drop_kib']) / int(r['rss_pre_kib'])
+                 for r in rows if r['cycle']=='1']
+        assert len(first) == 3
+        assert f'{statistics.median(first):.6f}' == system_summary[group, 'trim']['rss_drop_pct_median']
     g3_rows = [r for r in system_cycles if r['group']=='G3' and r['arm']=='trim']
     g3_drops = [100 * int(r['rss_drop_kib']) / int(r['rss_pre_kib']) for r in g3_rows]
     g3_full = (statistics.median(g3_drops), min(g3_drops), max(g3_drops))
@@ -511,6 +524,7 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <span class="pill">优化效果一览</span><h2>释放后的进程内存，实际降了多少？</h2>
   <p class="lead">测试板负载的进程 RSS 明显下降，但系统背景波动不能忽略。这是测试板合成/解码工具负载量级，不等于产品收益。</p>
   <p>下表沿用合同的 cycle=1、每臂三重复口径：前值、后值、降幅各自取中位；中位前值减中位后值不一定等于降幅中位。RSS 是进程驻留内存，不等于 glibc 堆 PD。</p>
+  <p>全周期口径为 G1 {alloc_full['G1']:.6f}% / G2 {alloc_full['G2']:.6f}% / G3 {g3_full[0]:.6f}%（约 {alloc_full['G1']:.1f}% / {alloc_full['G2']:.1f}% / {g3_full[0]:.1f}%）：G1/G2 各取两周期 × 三重复的 6 点，G3 取 51 周期 × 三重复的 153 点。G2 首周期是 45.322245%，全周期是 45.177290%，不可混称。{system_links}</p>
   <table><thead><tr><th>目标</th><th>RSS 前 → 后（MiB）</th><th>RSS 降幅 MiB / %</th><th>配对 MemAvailable 净效应（MiB）</th><th>耗时中位（ms）</th><th>证据 / 复算</th></tr></thead><tbody>{''.join(system_table)}</tbody></table>
   <p>G1/G2/G3 不调用 trim 的对照臂 RSS 下降均为 0；这个 0 不指系统 MemAvailable。系统净效应按同重复、同周期的顺序 none 格相减，非同时并行对照。mixed 为 −0.167969 MiB，不能宣传为系统净增。每格极差、堆 PD/other-anon/total PD、memps 与 faults 见完整 TSV。{system_links}</p>
   <p>可检出规则与 gst p99 使用同一幅度/离散原则：双向量仅当 |中位| &gt; 重复极差才可见，gst 原正向劣化规则不变。三组系统净效应及 G4 RSS 降幅均为 NOT-DETECTED，不是已证明的整机净增；该规则不是统计显著性检验。G3 全周期统计合并三重复的 153 个点（范围 13.282648–21.043165%）；首周期中位在 51 个周期中位中最高。收益头条沿用合同 cycle=1，而业务代价沿用 gst 分析器 primary_cycles="2-51"，排除首周期；两者窗口不同，不能把首周期收益当成持续周期的典型收益。{system_links}</p>

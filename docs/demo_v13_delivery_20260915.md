@@ -14,7 +14,7 @@ PM 裁决见[台账](pm_decisions.md#2026-09-15demo-v12-demo-v13-对客口径订
 | N12-04/V12-3 | 缺 commit 提示 fetch；README 区分公开复算与完整 verify，override 不绕过对象校验 | 缺对象诊断负控；完整克隆矩阵 |
 | N12-05 | **WITHDRAWN-BY-PM**（2026-09-15 续裁决），不再实施显示项 | 入口与 current-proof 校验保持 v12 原字节，不为 nit 更换已钉源或重建产物 |
 | V12-5 | 冻结 gst_arms 旧 max 字段加解释，不改 TSV | 从各重复最大值重算中位 1.097408 ms，独立核对全池最大 1.376555 ms |
-| V12-6、N12-07 | 扫描器最终 13 项；周末 41.8/45.3/16.0 明示全周期口径 | 测试计数、文档核对 |
+| V12-6、N12-07 | 扫描器最终 13 项；周末全周期口径续订正为 41.8/45.2/16.0（Codex N13-01） | G2 首周期 45.322245%、全周期 45.177290%；测试计数、文档核对 |
 | 台账已知项 | 仅记录正式 release 建议，不改变门或数据 | PM 台账逐项保留理由与批准人 |
 
 ## 2. 数字与判读
@@ -134,3 +134,56 @@ ModuleNotFoundError，更正为实际 `tools.privacy.test_endpoints` 后 25 项�
 
 追加回执后的 main 当前树再次核验：4436 个跟踪文件脱敏零命中，全仓链接 1521 条
 零失败，HTML 重建 cmp 静默。上表的 4431 / 1579 是冻结 demo 快照口径，两者不混用。
+
+## 6. 2026-09-15 minor 收口：本轮重新执行完整 v13 矩阵
+
+CC N13-01 / Kimi V13-1：本轮从 GitHub 自行重新执行，未引用他人代跑数据。
+§5 与 `verification_first_run.json` 是首次切库的历史记录；本节及
+[`verification.json`](../data/raw/demo_v13_delivery_20260915/verification.json) 是新的独立执行回执。
+测试对象保持为冻结的 v13，不把它当成尚未切出的 v14 修正验证。
+
+```sh
+bash tools/reproduce/predelivery_check.sh \
+  --repo-url https://github.com/lhmax2010/glibc_optimization.git \
+  --branch demo --tag demo-v13
+```
+
+| PATH 形态 | demo 分支 | demo-v13 detached tag | 默认 main |
+|---|---|---|---|
+| present-gbs + present-rpm | PASS | PASS | PASS |
+| absent-gbs + present-rpm | PASS | PASS | PASS |
+| present-gbs + absent-rpm | PASS | PASS | PASS |
+| minimal-whitelist | PASS | PASS | PASS |
+| broken-tools | PASS | PASS | PASS |
+| startup-injection 后完整 verify | PASS；43 拒绝变体 | PASS；43 拒绝变体 | PASS；43 拒绝变体 |
+
+原始结尾（RC=0）：
+
+```text
+OVERALL	PASS	checks=18 clone_shapes=3 environment_profiles=6 startup_rejection_checks=129
+```
+
+三克隆 × 五 PATH 外加启动注入形态，共 18 次完整 verify；129 项注入变体均为
+RC=2、非空拒绝诊断、零冒充调用、无 MODE/OVERALL PASS。demo/tag 全部 REQUIRED；
+默认 main 仍按既有策略 REPORT_ONLY，完整 host 测试没有跳过。可选工具可发现性
+使用受控桩，不代表真实 GBS 构建；不连板、不改任何验收或拒绝门。
+
+本次默认 main / runner HEAD：`d744e4051d0ec0b90af873cd3d968b7f3af3b9e1`；
+demo / v13 peel：`1e8378adbab9acf937b4a51d3348b8f0bde2ff5f`；annotated tag 对象
+`0353ad46ef83e9f46c305c2cb8a023256514bf52`。未改写冻结 v13。
+执行脚本字节与 runner HEAD 一致；逐格引用、身份、UTC 登记时间和哈希见机器回执。
+[`github_matrix_rerun.txt`](../data/raw/demo_v13_delivery_20260915/github_matrix_rerun.txt)
+SHA-256：`18d85f7163fee1459eac70d65dbb2762dab7c483a8b181de75b08d52571c2506`。
+
+旧 [`partial_verification.json`](../data/raw/demo_v13_delivery_20260915/partial_verification.json)
+保留结果，新增 `superseded_by` 指向新完整回执；首次 verification 逐字节另存为
+[`verification_first_run.json`](../data/raw/demo_v13_delivery_20260915/verification_first_run.json)。
+本次回执将在 v14 切库前进入 main，从而随 v14 快照交付。
+
+Codex N13-01：全周期概述改为 G1/G2/G3 的 41.8/45.2/16.0。G2 首周期
+45.322245%，全周期 45.177290%；[公开输入](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)
+与[复算命令](demo_reproduction_guide_20260901.md#l1-system-before-after)可独立核对。
+builder 对 G1/G2 六点全周期、首周期三点作整数 KiB 正控，G3 原正控不变；
+变异负控和七载体窗口一致性测试通过。Kimi V13-2 的 1 ulp 极差双舍入差仅记
+[PM 台账](pm_decisions.md#2026-09-15demo-v13-demo-v14-minor-收口)，不改数值。
+250 份既有 TSV/JSON/XML、入口、构建证明校验、合同及验收带均保持原字节。

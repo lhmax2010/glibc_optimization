@@ -37,11 +37,15 @@ G4 RSS 降幅 0.003906 MiB 对极差 0.089844 MiB，同样 NOT-DETECTED；
 公开复算与完整 verify 的 Git 要求不同：前者校验固定 commit 字节、不依赖 tag 名；
 后者还要求交付身份与 host 测试涉及的历史对象。无 tag 克隆可用
 `REPRODUCE_EXPECTED_SHA=<可信交付提交> bash tools/reproduce/reproduce.sh verify`
-提供预期身份，或 `git fetch origin tag demo-v13` 获取当前交付标签。历史对象缺失时，按
+提供预期身份，或 `git fetch origin tag demo-v14` 获取当前交付标签。历史对象缺失时，按
 错误提示逐个执行 `git fetch --no-tags origin <sha>`；override 不绕过对象、合同或
 身份门。见[Git 要求](tools/reproduce/README.md#public-replay-versus-full-verify)。
 
-绝对值行沿用 cycle=1、每臂三重复；前值、后值、配对降幅分别取中位，前后中位相减
+绝对值行沿用 cycle=1、每臂三重复；前值、后值、配对降幅分别取中位。
+全周期口径为 G1/G2/G3 的 41.8% / 45.2% / 16.0%；G2 首周期
+为 `45.322245%`，两周期 × 三重复的 6 点全周期为 `45.177290%`，不得混称。
+见[逐周期输入](data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)与
+[L1 复算](docs/demo_reproduction_guide_20260901.md#l1-system-before-after)。前后中位相减
 不一定等于降幅中位。none 的零指进程 RSS，不指系统 MemAvailable。这里只是测试板
 量级，非产品收益。[口径](docs/system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果)。
 

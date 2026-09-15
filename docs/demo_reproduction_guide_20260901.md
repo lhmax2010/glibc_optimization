@@ -477,12 +477,35 @@ PASS system-before-after compact replay cells=21 cycles=333 group_arms=7
 原则，系统判双向 |中位| > 极差，gst 原正向劣化规则不变；不是显著性检验或已证实整机收益。
 以上可从 cycles 的 rss_pre/drop_kib、memavailable_net_kib 复算，builder 独立断言。
 
+2026-09-15 续订正（Codex N13-01）：全周期口径为 G1/G2/G3 的 41.8% / 45.2% / 16.0%。
+G2 首周期 45.322245%，全周期 45.177290%（两周期 × 三重复的 6 点）；不可混称。
+输入仍是[原 cycles.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)，
+从整数 KiB 独立复算，不修改任何已发布 TSV/JSON：
+
+```sh
+python3 - <<'PY'
+import csv, statistics
+with open('data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv') as f:
+    rows = [r for r in csv.DictReader(f, delimiter='\t') if r['group']=='G2' and r['arm']=='trim']
+for label, selected in [('cycle=1', [r for r in rows if r['cycle']=='1']), ('all cycles', rows)]:
+    value = statistics.median(100 * int(r['rss_drop_kib']) / int(r['rss_pre_kib']) for r in selected)
+    print(f'G2 {label}: {value:.6f}%')
+PY
+```
+
+预期原文：
+
+```text
+G2 cycle=1: 45.322245%
+G2 all cycles: 45.177290%
+```
+
 `gst_arms.tsv` 的旧字段 `trim_max_ms_across_repeats` 实为“逐重复最大值的重复中位”
 1.097408 ms；全池真实最大 1.376555 ms。冻结字段不改名以保留五项逐字节 cmp，
 详见[字段注释及输入](../data/raw/system_level_before_after_20260908/accepted_matrix/README.md#display-scope-correction-2026-09-15-n12-0102-v12-5)。
 
 本节公开复算不依赖 tag 名，但完整 verify 另有交付身份与历史对象门；缺 tag 可取
-`git fetch origin tag demo-v13`（当前快照）或用可信 commit 的 `REPRODUCE_EXPECTED_SHA` 指定身份，
+`git fetch origin tag demo-v14`（当前快照）或用可信 commit 的 `REPRODUCE_EXPECTED_SHA` 指定身份，
 缺历史对象按诊断 `git fetch --no-tags origin <sha>` 获取，不跳过任何校验。
 [完整 Git 要求](../tools/reproduce/README.md#public-replay-versus-full-verify)。
 

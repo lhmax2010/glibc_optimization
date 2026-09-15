@@ -18,6 +18,22 @@ BUILDER = HERE / "build_demo_report.py"
 
 
 class DemoReportTests(unittest.TestCase):
+    def test_n13_g2_first_and_all_cycle_scopes_are_distinct(self) -> None:
+        import csv
+        with (REPO / 'data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv').open() as stream:
+            rows = [r for r in csv.DictReader(stream, delimiter='\t') if r['group']=='G2' and r['arm']=='trim']
+        self.assertEqual(len(rows), 6)
+        ratio = lambda r: 100 * int(r['rss_drop_kib']) / int(r['rss_pre_kib'])
+        self.assertEqual(f'{statistics.median(map(ratio, rows)):.6f}', '45.177290')
+        self.assertEqual(f'{statistics.median(ratio(r) for r in rows if r["cycle"]=="1"):.6f}', '45.322245')
+        for relative in ('docs/demo_report.html', 'docs/system_level_before_after_20260908.md',
+                         'docs/demo_narrative_20260901.md', 'docs/demo_package_20260902.md',
+                         'docs/demo_reproduction_guide_20260901.md',
+                         'tools/report/demo_README.md', 'tools/report/demo_README.zh-CN.md'):
+            document = (REPO / relative).read_text()
+            for value in ('45.177290', '45.322245'):
+                self.assertIn(value, document, (relative, value))
+
     def test_n12_customer_scopes_and_not_detected_are_consistent(self) -> None:
         for relative in ('docs/demo_report.html', 'docs/system_level_before_after_20260908.md',
                          'docs/demo_narrative_20260901.md', 'docs/demo_package_20260902.md',
@@ -39,11 +55,15 @@ class DemoReportTests(unittest.TestCase):
         builder = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(builder)
         original = builder.read_tsv
-        for target in ('g3-range', 'system-spread', 'g4-spread'):
+        for target in ('g1-full', 'g2-full', 'g3-range', 'system-spread', 'g4-spread'):
             def changed(path):
                 rows = original(path)
                 if path.name == 'cycles.tsv' and path.parent.name == 'accepted_matrix':
-                    if target == 'g3-range':
+                    if target in ('g1-full', 'g2-full'):
+                        for row in rows:
+                            if row['group']==target[:2].upper() and row['arm']=='trim' and row['cycle']=='2':
+                                row['rss_drop_kib'] = '0'
+                    elif target == 'g3-range':
                         row = next(r for r in rows if r['group']=='G3' and r['arm']=='trim' and r['cycle']=='2')
                         row['rss_drop_kib'] = '0'
                     elif target == 'system-spread':
