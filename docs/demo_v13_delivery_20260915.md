@@ -57,5 +57,15 @@ main 的入口及 current-proof 校验保持原 v12 字节/要求，N12-05 改�
 当前源与构建配置不擅改。源恢复后先启用候选 N12-05、在干净提交真实构建并归档，
 再跑完整三克隆×六环境（含启动拒绝）矩阵，全部通过后才能切 demo-v13。
 
-本轮可合入部分的 host verify、HTML cmp、链接与脱敏结果将随验证完成后追记；
-不能把局部通过写成 demo-v13 交付门通过。
+可合入部分验证（`e4ee10e6057058bddaad2e7050e7cdb2af42b7fb`）：完整
+`bash tools/reproduce/reproduce.sh verify` 为 OVERALL PASS，13 个 host 模块正常执行，
+只对缺少显式 ARM 环境与默认排除真实 GBS 的子项显示 SKIPPED；main 身份为既定
+REPORT_ONLY，不是交付快照 required 验收。HTML 重建 cmp 静默，全仓链接 1504 项、
+模板根入口链接 102 项通过，4429 文件当前树扫描零命中。报告 13 项、扫描器与合同
+克隆 25 项专项测试通过。14 个固定输入/证据/入口文件与基线逐字节相同，HTML
+boundaries 节原文不动。[机器记录](../data/raw/demo_v13_delivery_20260915/partial_verification.json)。
+
+候选修复 `9b8cdfc`、N12-05 暂缓/阻塞记录 `a77293d`、生成 HTML `e4ee10e`；
+最终记录提交以本文件的 `git log -1 --format=%H` 定位，不写自引用伪 SHA。
+完整三克隆×六环境交付矩阵 **NOT_EXECUTED**，不可把上述通过写成 demo-v13
+交付门通过。未创建 demo-v13，未移动 demo 或既有标签。

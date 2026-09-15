@@ -1,0 +1,26 @@
+{
+  "schema": "demo-v13-partial-host-verification.v1",
+  "tested_commit": "e4ee10e6057058bddaad2e7050e7cdb2af42b7fb",
+  "command": "bash tools/reproduce/reproduce.sh verify",
+  "returncode": 0,
+  "overall": "PASS",
+  "delivery_identity": "REPORT_ONLY main; not delivery snapshot acceptance",
+  "host_tests": "PASS; all 13 modules selected by the unmodified entrypoint",
+  "optional_skips": [
+    "reproducible-build-paths: missing DEMO_TOOLCHAIN_ROOT,DEMO_GST_SYSROOT",
+    "gbs-build: real build excluded from default verify; explicit attempt failed separately"
+  ],
+  "verify_log_sha256": "14da260676f0108072323aa7a19411b37b9aa0bb77ace7d96a11212042cb7847",
+  "html_rebuild_cmp": "silent, RC=0",
+  "whole_repository_links": {"checked": 1504, "failures": 0, "template_root_semantics_checked_separately": true},
+  "bilingual_template_root_links": {"checked": 102, "failures": 0},
+  "privacy_scan": {"files": 4429, "count": 0, "scope": "current tracked tree at tested commit"},
+  "privacy_and_contract_clone_tests": {"tests": 25, "result": "OK"},
+  "report_tests": {"tests": 13, "result": "OK"},
+  "frozen_bytes": "14 pinned input/accepted data/entrypoint files equal e8f37f7; all measurement data unchanged",
+  "boundaries_html_section": "byte-identical to e8f37f7",
+  "delivery_matrix": "NOT_EXECUTED; N12-05 current-entrypoint GBS proof blocked by pinned Base 404",
+  "demo_v13": "NOT_CREATED",
+  "existing_demo_commit": "9ff3fe9c0e91b6be6b599fd6abab6276e8556ade",
+  "existing_demo_v12_tag_object": "26e46c46fdc32c04da08fa31b317800dda25d560"
+}
