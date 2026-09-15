@@ -4,6 +4,8 @@ This repository is the long-term, sanitized workspace for source audits, control
 
 Frozen Demo delivery: [`demo` branch](https://github.com/lhmax2010/glibc_optimization/tree/demo) / [`demo-v12` tag](https://github.com/lhmax2010/glibc_optimization/tree/demo-v12) — see the [delivery audit](docs/demo_v12_delivery_20260911.md) for validation status; v11 is retained.
 
+2026-09-15: v13 customer-scope corrections are on main, but delivery is blocked by the pinned Base repository returning HTTP 404; no v13 tag has been cut. See the [corrections and blocker](docs/demo_v13_delivery_20260915.md).
+
 The HQ packaging path is [`packaging/glibc-memopt-tools.spec`](packaging/glibc-memopt-tools.spec):
 `bash tools/reproduce/reproduce.sh gbs --output-dir <new-dir>` uses
 [`config/gbs_llvm.conf`](config/gbs_llvm.conf) to build the three ARM

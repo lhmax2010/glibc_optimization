@@ -75,7 +75,7 @@ uses pinned commit bytes, not tag names; full verify also requires delivery
 identity plus the historical objects checked by host tests. In a no-tags clone,
 use `REPRODUCE_EXPECTED_SHA=<trusted-delivery-commit> bash tools/reproduce/reproduce.sh verify`
 to supply the expected identity, or fetch the delivery tag with
-`git fetch origin tag demo-v13`. For each missing historical object, run
+`git fetch origin tag demo-v12` for the current snapshot. For each missing historical object, run
 `git fetch --no-tags origin <sha>` as the failure diagnostic specifies.
 The override does not bypass missing-object, contract, or identity checks. See
 [Git requirements](tools/reproduce/README.md#public-replay-versus-full-verify).

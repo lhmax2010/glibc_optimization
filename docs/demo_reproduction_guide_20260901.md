@@ -482,7 +482,7 @@ PASS system-before-after compact replay cells=21 cycles=333 group_arms=7
 详见[字段注释及输入](../data/raw/system_level_before_after_20260908/accepted_matrix/README.md#display-scope-correction-2026-09-15-n12-0102-v12-5)。
 
 本节公开复算不依赖 tag 名，但完整 verify 另有交付身份与历史对象门；缺 tag 可取
-`git fetch origin tag demo-v13` 或用可信 commit 的 `REPRODUCE_EXPECTED_SHA` 指定身份，
+`git fetch origin tag demo-v12`（当前快照）或用可信 commit 的 `REPRODUCE_EXPECTED_SHA` 指定身份，
 缺历史对象按诊断 `git fetch --no-tags origin <sha>` 获取，不跳过任何校验。
 [完整 Git 要求](../tools/reproduce/README.md#public-replay-versus-full-verify)。
 

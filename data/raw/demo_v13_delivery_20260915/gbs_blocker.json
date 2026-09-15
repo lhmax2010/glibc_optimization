@@ -1,0 +1,41 @@
+{
+  "schema": "demo-v13-delivery-blocker.v1",
+  "date_utc": "2026-09-15",
+  "status": "STOP_GBS_PINNED_BASE_UNAVAILABLE",
+  "workflow_commit": "9b8cdfc421615cacc4f55880f7b14bb604bbd36c",
+  "execution": "one real clean-snapshot reproduce.sh gbs invocation; no retry",
+  "source_commit": "20ab8c80d7b357254542dd841212ed8d7e7085c8",
+  "entrypoint_output": [
+    "PASS\tgbs-build-lock\tacquired <HOST_GBS_LOCK> pid=767331",
+    "PASS\tgbs-execution-provenance\tHEAD=9b8cdfc421615cacc4f55880f7b14bb604bbd36c dirty=false",
+    "glibc-memopt-tools:",
+    "  nothing provides clang",
+    "  nothing provides pkg-config",
+    "  nothing provides glibc-devel",
+    "=== Total succeeded built packages: (0) ===",
+    "NOT-EVALUATED\tgbs-build-unknown\tgbs build returned RC=1; no unambiguous source compiler diagnostic; environment unavailable or unknown cause, package correctness not adjudicated",
+    "FAIL\tgbs-build\tmanual second judgment required; no verified bundle",
+    "OVERALL\tFAIL\tRC=2"
+  ],
+  "entrypoint_rc": 2,
+  "raw_host_log_sha256": "9b3edd6545bcad79d13d451dfa93e1b44eb66bc8af2eeceb7279a596fab40067",
+  "raw_log_policy": "complete local original retained and available on request; public lines are excerpts with host-path placeholders",
+  "repo_checks": [
+    {
+      "url": "https://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20260813.050338/repos/standard/packages/repodata/repomd.xml",
+      "http_status": 404
+    },
+    {
+      "url": "https://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Unified-Toolchain/tizen-unified-toolchain_20260814.092727/repos/standard/packages/repodata/repomd.xml",
+      "http_status": 200,
+      "bytes": 4476,
+      "sha256": "e7af3f222f0ce958678d964589f2d156e8b47ba463ac0b3b0b96c74663382200",
+      "revision": "1786721500"
+    }
+  ],
+  "repository_configuration_changed": false,
+  "measurement_data_changed": false,
+  "board_connected": false,
+  "v13_tag_created": false,
+  "current_existing_snapshot": "demo-v12"
+}

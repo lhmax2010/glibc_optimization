@@ -37,7 +37,7 @@ G4 RSS 降幅 0.003906 MiB 对极差 0.089844 MiB，同样 NOT-DETECTED；
 公开复算与完整 verify 的 Git 要求不同：前者校验固定 commit 字节、不依赖 tag 名；
 后者还要求交付身份与 host 测试涉及的历史对象。无 tag 克隆可用
 `REPRODUCE_EXPECTED_SHA=<可信交付提交> bash tools/reproduce/reproduce.sh verify`
-提供预期身份，或 `git fetch origin tag demo-v13` 获取交付标签。历史对象缺失时，按
+提供预期身份，或 `git fetch origin tag demo-v12` 获取当前交付标签。历史对象缺失时，按
 错误提示逐个执行 `git fetch --no-tags origin <sha>`；override 不绕过对象、合同或
 身份门。见[Git 要求](tools/reproduce/README.md#public-replay-versus-full-verify)。
 

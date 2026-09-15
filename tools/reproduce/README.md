@@ -105,7 +105,7 @@ historical commit objects referenced by host tests. Passing public replay alone
 does not establish full delivery identity or timing provenance.
 
 For a no-tags clone, either fetch the expected delivery tag
-(`git fetch origin tag demo-v13`) or supply a trusted commit explicitly:
+(`git fetch origin tag demo-v12` for the current snapshot) or supply a trusted commit explicitly:
 
 ```sh
 REPRODUCE_EXPECTED_SHA=<trusted-delivery-commit> bash tools/reproduce/reproduce.sh verify
@@ -116,8 +116,10 @@ git fetch --no-tags origin <sha>
 These are object/identity recovery alternatives, not gate bypasses: the override
 still requires HEAD equality and does not satisfy missing historical objects.
 `main` remains REPORT_ONLY for delivery identity; use the delivery snapshot for
-required acceptance. `check()` prints `PASS <label>` for a successful parent even
-when optional children emit `SKIPPED`; the child labels and reasons remain visible.
+required acceptance. The requested N12-05 parent PASS plus SKIPPED-child display
+change is held pending a new entrypoint build proof: the pinned Base repository
+returned HTTP 404 on 2026-09-15. The existing entrypoint and proof gate remain
+unchanged; see the [blocker record](../../docs/demo_v13_delivery_20260915.md#3-交付验证记录).
 
 ## Mandatory pre-delivery clone matrix
 

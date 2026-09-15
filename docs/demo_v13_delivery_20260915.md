@@ -12,10 +12,10 @@ PM 裁决见[台账](pm_decisions.md#2026-09-15demo-v12-demo-v13-对客口径订
 | N12-02 | 系统三组及 G4 RSS 邻列极差与 NOT-DETECTED，不宣称系统净增已证实 | 从 cycles 独立复算中位/极差；断言与负控；原 gst 有向规则未改 |
 | N12-03 | 守护同目标只引用 272/36；8–20 明示官方 GST 工具；HTML boundaries 原文不动 | 归属检索、章节字节比较 |
 | N12-04/V12-3 | 缺 commit 提示 fetch；README 区分公开复算与完整 verify，override 不绕过对象校验 | 缺对象诊断负控；完整克隆矩阵 |
-| N12-05 | check 父项 PASS 保留，SKIPPED/REPORT_ONLY 子项与原因同步输出 | 成功含 SKIPPED / 非零失败回归；完整 verify |
+| N12-05 | **BLOCKED，未启用**：实现与成功/失败回归已验证，但新入口真实 GBS 证明缺失，main 入口恢复原字节 | 本地候选 `9b8cdfc` 保留；不将旧证明用于新入口；待固定源恢复 |
 | V12-5 | 冻结 gst_arms 旧 max 字段加解释，不改 TSV | 从各重复最大值重算中位 1.097408 ms，独立核对全池最大 1.376555 ms |
 | V12-6、N12-07 | 扫描器最终 13 项；周末 41.8/45.3/16.0 明示全周期口径 | 测试计数、文档核对 |
-| 台账六类已知项 | 仅记录正式 release 建议，不改变门或数据 | PM 台账逐项保留理由与批准人 |
+| 台账已知项 | 仅记录正式 release 建议，不改变门或数据 | PM 台账逐项保留理由与批准人 |
 
 ## 2. 数字与判读
 
@@ -37,5 +37,25 @@ PM 裁决见[台账](pm_decisions.md#2026-09-15demo-v12-demo-v13-对客口径订
 
 ## 3. 交付验证记录
 
-修复提交与最终 SHA、完整矩阵、HTML cmp、全树脱敏结果在执行完成后追记于本节。
-未完成前仍以 demo-v12 为既有快照；不提前声明 demo-v13 可交付。
+状态：**STOP_GBS_PINNED_BASE_UNAVAILABLE**。N12-01/02/03 及文档项已修；N12-05
+未闭合，不切 demo-v13，不执行候选交付矩阵。demo/demo-v12 仍指向 `9ff3fe9`，
+annotated tag 对象 `26e46c4` 未动；这不是宣称 v12 已解决本轮对客发现。
+
+执行顺序：先提交候选 `9b8cdfc421615cacc4f55880f7b14bb604bbd36c`，对该 clean HEAD
+实际执行一次 `bash tools/reproduce/reproduce.sh gbs --output-dir <NEW_HOST_BUNDLE>`。
+取锁与启动指纹通过，依赖解析失败，未生成 RPM/ELF，未重试。输出为
+NOT-EVALUATED gbs-build-unknown、OVERALL FAIL、RC=2；不将未建成误报为包缺陷。
+随后的只读固定源核查确认 Base repomd HTTP 404，Unified HTTP 200。
+[公开阻塞证据](../data/raw/demo_v13_delivery_20260915/gbs_blocker.json)。
+
+失败入口改动没有取得新自证归档；为避免把当前文件不匹配的旧证明当作新证明，
+main 的入口及 current-proof 校验保持原 v12 字节/要求，N12-05 改动连同回归留在
+上述历史候选及本地 `n12-05-pending-gbs-proof`。没有跳过测试、降低门、修改源配置、
+使用不同 snapshot、重新发布旧 proof 或重跑板上测量。
+
+需 PM 裁决：恢复已钉 Base snapshot，或批准具有可核验同源身份的镜像替代路径。
+当前源与构建配置不擅改。源恢复后先启用候选 N12-05、在干净提交真实构建并归档，
+再跑完整三克隆×六环境（含启动拒绝）矩阵，全部通过后才能切 demo-v13。
+
+本轮可合入部分的 host verify、HTML cmp、链接与脱敏结果将随验证完成后追记；
+不能把局部通过写成 demo-v13 交付门通过。
