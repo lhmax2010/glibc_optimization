@@ -89,3 +89,48 @@ boundaries 节原文不动。[机器记录](../data/raw/demo_v13_delivery_202609
 
 后续重新执行完整交付矩阵、HTML cmp、链接与脱敏门；结果在下节追加。板端合同、
 测量 TSV/JSON、验收带、入口与 current-proof 校验不因解除显示项而弱化或改写。
+
+## 5. 最终交付核验：PASS
+
+2026-09-15 续跑完成，当前交付快照为 **demo-v13**；demo-v12 原对象保留。N12-05
+已撤回，不是待修复项；固定 Base 失效是新建构建证明的已知限制，不再阻断本次交付。
+
+| 核验 | 隔离候选远端 | GitHub 远端 |
+|---|---|---|
+| 三克隆 × 六环境完整 verify | 18/18 PASS | 18/18 PASS |
+| 启动注入拒绝（RC=2、非空诊断、零冒充调用、无 MODE/PASS） | 129/129 PASS | 129/129 PASS |
+| demo / annotated tag 身份 | REQUIRED，全部通过 | REQUIRED，全部通过 |
+| 默认 main 身份 | 既定 REPORT_ONLY，完整 verify PASS | 既定 REPORT_ONLY，完整 verify PASS |
+| HTML 重建 | cmp 静默 | cmp 静默 |
+| 交付面 / 全仓链接 | 605 / 1579，零失败 | 605 / 1579，零失败 |
+| 当前树脱敏 | 4431 文件、零命中 | 4431 文件、零命中 |
+
+六环境为 GBS/RPM 均可发现、仅 RPM、仅 GBS、最小白名单、损坏工具、启动注入。
+可选工具存在性用受控桩，GBS 真实构建从默认 verify 排除；未伪装成实际 GBS 重建。
+每次完整 verify 均实际运行全部 13 个 host 测试模块。模板按根入口语义检查，
+全仓扫描豁免模板源路径的相对链接，实际双语 README 与模板 cmp 均静默。
+
+切库后另按普通 HQ 方式从 GitHub 分别 `git clone --branch demo` 与
+`git clone --branch demo-v13`，两份默认 host 环境完整 verify 均 RC=0、
+`PASS host-tests`、`OVERALL PASS`，无交付身份 REPORT_ONLY 降级。
+原文及文件哈希见[公开回执](../data/raw/demo_v13_delivery_20260915/README.md)。
+
+| 引用 | SHA |
+|---|---|
+| 切库 main | `2bf46f2680fa52f9a61d47a620880311c28a4dcf` |
+| demo / demo-v13 peel 后 commit | `1e8378adbab9acf937b4a51d3348b8f0bde2ff5f` |
+| demo-v13 annotated tag 对象 | `0353ad46ef83e9f46c305c2cb8a023256514bf52` |
+| 保留的 demo-v12 annotated tag 对象 | `26e46c46fdc32c04da08fa31b317800dda25d560` |
+
+快照相对切库 main 仅替换/新增两份 README。main 使用普通快进推送；demo 使用精确
+旧 SHA lease 更新，不重写 main 历史。本节与远端回执是切库后追加到 main 的记录，
+不回写冻结标签；最终回执提交可由 `git log -1 --format=%H -- <本报告路径>` 定位。
+
+不变性：基线已有的 250 份 TSV/JSON/XML 逐字节未变；六个 provenance 保护文件、
+current-proof 校验方法、冻结合同/分析器/验收带和 HTML boundaries 原文保持不变。
+报告专项 13 项与脱敏/合同克隆专项 25 项通过。一次手工专项命令误写模块名导致
+ModuleNotFoundError，更正为实际 `tools.privacy.test_endpoints` 后 25 项通过；
+这是命令笔误，未改代码、未跳过测试。全程无板端连接、无测量或新 GBS 构建。
+
+追加回执后的 main 当前树再次核验：4436 个跟踪文件脱敏零命中，全仓链接 1521 条
+零失败，HTML 重建 cmp 静默。上表的 4431 / 1579 是冻结 demo 快照口径，两者不混用。

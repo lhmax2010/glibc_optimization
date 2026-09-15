@@ -1,0 +1,23 @@
+PREDELIVERY	repo=<ISOLATED_CANDIDATE_REMOTE> branch=demo tag=demo-v13 default=main
+PASS	profile=present-gbs+present-rpm shape=branch	ref=demo head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=present-gbs+present-rpm shape=tag	ref=demo-v13 head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=present-gbs+present-rpm shape=default	ref=main head=2bf46f2680fa52f9a61d47a620880311c28a4dcf identity=REPORT_ONLY host-tests=PASS OVERALL=PASS
+PASS	profile=absent-gbs+present-rpm shape=branch	ref=demo head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=absent-gbs+present-rpm shape=tag	ref=demo-v13 head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=absent-gbs+present-rpm shape=default	ref=main head=2bf46f2680fa52f9a61d47a620880311c28a4dcf identity=REPORT_ONLY host-tests=PASS OVERALL=PASS
+PASS	profile=present-gbs+absent-rpm shape=branch	ref=demo head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=present-gbs+absent-rpm shape=tag	ref=demo-v13 head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=present-gbs+absent-rpm shape=default	ref=main head=2bf46f2680fa52f9a61d47a620880311c28a4dcf identity=REPORT_ONLY host-tests=PASS OVERALL=PASS
+PASS	profile=minimal-whitelist shape=branch	ref=demo head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=minimal-whitelist shape=tag	ref=demo-v13 head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=minimal-whitelist shape=default	ref=main head=2bf46f2680fa52f9a61d47a620880311c28a4dcf identity=REPORT_ONLY host-tests=PASS OVERALL=PASS
+PASS	profile=broken-tools shape=branch	ref=demo head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=broken-tools shape=tag	ref=demo-v13 head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	profile=broken-tools shape=default	ref=main head=2bf46f2680fa52f9a61d47a620880311c28a4dcf identity=REPORT_ONLY host-tests=PASS OVERALL=PASS
+PASS	startup-rejection shape=branch	43 variants RC=2; explicit diagnostic; zero spoof calls; no MODE/PASS; clean verify follows
+PASS	profile=startup-injection shape=branch	ref=demo head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	startup-rejection shape=tag	43 variants RC=2; explicit diagnostic; zero spoof calls; no MODE/PASS; clean verify follows
+PASS	profile=startup-injection shape=tag	ref=demo-v13 head=1e8378adbab9acf937b4a51d3348b8f0bde2ff5f identity=REQUIRED host-tests=PASS OVERALL=PASS
+PASS	startup-rejection shape=default	43 variants RC=2; explicit diagnostic; zero spoof calls; no MODE/PASS; clean verify follows
+PASS	profile=startup-injection shape=default	ref=main head=2bf46f2680fa52f9a61d47a620880311c28a4dcf identity=REPORT_ONLY host-tests=PASS OVERALL=PASS
+OVERALL	PASS	checks=18 clone_shapes=3 environment_profiles=6 startup_rejection_checks=129

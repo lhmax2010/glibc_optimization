@@ -302,3 +302,9 @@ repomd 404、Unified 仍可用，仅新建 GBS 构建证明受影响，既有证
 正式 release 建议采用长期可得源或内部 repodata/产物归档。本轮不改源、不重建。
 `9b8cdfc` 已进入此前历史，其中显示项已由 `a77293d` 撤回，本轮不重新合入、不重写
 历史。全矩阵与远端交付结果见[本轮核验](demo_v13_delivery_20260915.md)。
+
+交付收线：切库 main `2bf46f2`，demo-v13 commit `1e8378a`，annotated tag 对象
+`0353ad4`；v12 保留。隔离与 GitHub 远端各 18/18 完整 verify、129/129 启动拒绝
+通过，额外 demo/tag 两种 HQ 克隆通过；HTML 重建 cmp、链接、脱敏均通过。
+[切库后回执](../data/raw/demo_v13_delivery_20260915/README.md) 随后追加到 main，
+不回写冻结标签。本轮仅对客口径订正与文档、N12-05 撤回及源可用性记录，测量不变。
