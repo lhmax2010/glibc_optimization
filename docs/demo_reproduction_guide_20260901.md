@@ -468,6 +468,24 @@ PASS system-before-after compact replay cells=21 cycles=333 group_arms=7
 | gst p99 −1.652834 ms 对 none 离散 11.794149 ms，未检出 | [gst_cycles.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_cycles.tsv) → [gst_comparison.json](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json) | 原 nearest-rank 与固定规则；方向 REPORT_ONLY，不等于零代价，不与旧 gst 轮混池 |
 | major fault 0；G4 静置 minflt 1/0/1 | cycles 的 capture_majflt、next_cycle_majflt、idle_120s_minflt/majflt | 最后周期 next-cycle NA，不宣称首启任意窗口无 faults |
 
+2026-09-15 口径补充（N12-01/02、V12-5）：G3 为 51 周期负载，头条为 cycle=1；
+全周期三重复共 153 点的 RSS 降幅中位 16.038164%（13.28–21.04%，完整范围
+13.282648–21.043165%）。收益首周期与业务代价 primary_cycles="2-51"（排除首周期）
+窗口不同，首周期不代表持续周期典型收益。G1/G2/G3 的系统净效应重复极差分别为
+9.394531/8.136719/2.816406 MiB；中位均未超过极差，NOT-DETECTED。G4 RSS 下降
+0.003906 MiB 对极差 0.089844 MiB，同样 NOT-DETECTED。沿用 gst p99 的幅度/离散
+原则，系统判双向 |中位| > 极差，gst 原正向劣化规则不变；不是显著性检验或已证实整机收益。
+以上可从 cycles 的 rss_pre/drop_kib、memavailable_net_kib 复算，builder 独立断言。
+
+`gst_arms.tsv` 的旧字段 `trim_max_ms_across_repeats` 实为“逐重复最大值的重复中位”
+1.097408 ms；全池真实最大 1.376555 ms。冻结字段不改名以保留五项逐字节 cmp，
+详见[字段注释及输入](../data/raw/system_level_before_after_20260908/accepted_matrix/README.md#display-scope-correction-2026-09-15-n12-0102-v12-5)。
+
+本节公开复算不依赖 tag 名，但完整 verify 另有交付身份与历史对象门；缺 tag 可取
+`git fetch origin tag demo-v13` 或用可信 commit 的 `REPRODUCE_EXPECTED_SHA` 指定身份，
+缺历史对象按诊断 `git fetch --no-tags origin <sha>` 获取，不跳过任何校验。
+[完整 Git 要求](../tools/reproduce/README.md#public-replay-versus-full-verify)。
+
 所有原始件 SHA/拉回完整性在 host 组合入口二次校验；完整原始件本地留存，可按请求
 提供。公开 L1 只重放解析后的点和 gst cycle 转录，不替代原始件独立来源审计。
 收尾原文与独立复核见[报告 §12.1](system_level_before_after_20260908.md#121-实际处置与收尾结果)：

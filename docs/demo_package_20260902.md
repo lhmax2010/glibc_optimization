@@ -42,7 +42,11 @@ workflow verify 同口径五文件 cmp。合同不改变；重启前 18 格、�
 
 新增头条：mixed RSS 13.015625→7.718750 MiB / 40.696279%，medium-only
 13.152344→7.191406 MiB / 45.322245%，gst 8.671875→6.859375 MiB / 21.009919%。
-系统配对净效应依次 −0.167969/+5.304688/+1.855469 MiB；调用中位
+2026-09-15 口径补充：G3 为 51 周期负载，此处 cycle=1；全周期降幅中位
+16.038164%（13.28–21.04%，完整范围 13.282648–21.043165%，三重复共 153 点）。
+收益首周期与代价 primary_cycles="2-51" 不同，后者按原规则排除首周期。
+系统配对净效应依次 −0.167969/+5.304688/+1.855469 MiB，重复极差分别
+9.394531/8.136719/2.816406 MiB，均 NOT-DETECTED；调用中位
 1.458574/1.478167/0.843612 ms。数据和极差均见
 [summary](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)与
 [复算](demo_reproduction_guide_20260901.md#l1-system-before-after)。前后/降幅各取三重复中位。
@@ -51,6 +55,9 @@ workflow verify 同口径五文件 cmp。合同不改变；重启前 18 格、�
 G4 仅 88/0/4 KiB heap PD，RSS 0.033659%，1899.209517 ms 含 gdb/ptrace，不是
 释放点钩子代价；[逐周期](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)。
 none 的零仅指 RSS 下降，mixed 系统净效应为负；测试板量级不是产品或整机收益。
+G4 RSS 降幅中位 0.003906 MiB 对极差 0.089844 MiB，同样 NOT-DETECTED。
+可见 iff |中位| > 重复极差，采用 gst p99 的幅度/离散原则；系统双向判读不改变
+gst 正向劣化规则。这不是统计显著性检验，不能宣传系统侧已证明净增。
 
 ### 0.1 板上轮次证据顺序（长期规则）
 

@@ -97,6 +97,28 @@ These overrides do not bypass the explicit GBS clean-execution provenance gate.
 Without an override, `verify` requires `HEAD` to resolve to the delivery ref in
 [`delivery_refs.json`](delivery_refs.json).
 
+## Public replay versus full verify
+
+Public system-before-after replay validates pinned contract commit bytes; a tag
+name is not required. Full `verify` additionally checks delivery identity and the
+historical commit objects referenced by host tests. Passing public replay alone
+does not establish full delivery identity or timing provenance.
+
+For a no-tags clone, either fetch the expected delivery tag
+(`git fetch origin tag demo-v13`) or supply a trusted commit explicitly:
+
+```sh
+REPRODUCE_EXPECTED_SHA=<trusted-delivery-commit> bash tools/reproduce/reproduce.sh verify
+# Restore each historical object named by a test diagnostic:
+git fetch --no-tags origin <sha>
+```
+
+These are object/identity recovery alternatives, not gate bypasses: the override
+still requires HEAD equality and does not satisfy missing historical objects.
+`main` remains REPORT_ONLY for delivery identity; use the delivery snapshot for
+required acceptance. `check()` prints `PASS <label>` for a successful parent even
+when optional children emit `SKIPPED`; the child labels and reasons remain visible.
+
 ## Mandatory pre-delivery clone matrix
 
 Default host-tests also enforce the [current-tree endpoint gate](../privacy/README.md).

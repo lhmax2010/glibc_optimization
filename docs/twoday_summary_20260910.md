@@ -244,7 +244,8 @@ G1–G3 来自[已验收 TSV](../data/raw/system_level_before_after_20260908/com
 G4 来自[逐格 TSV](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_cycles.tsv)
 与[汇总](../data/raw/system_level_before_after_20260908/g4_authorized_20260910/observations/g4_summary.tsv)。
 G4 堆 PD 下降 **88/0/4 KiB**；约 0.03% 是 **RSS 下降百分比中位**，不能误作堆 PD 的
-百分比分母。与 [B/B2 272 KiB / 36 KiB / 8–20 KiB](tizen_native_evidence_20260904.md)
+百分比分母。与 [B/B2 同目标 enlightenment 的 272 KiB / 36 KiB](tizen_native_evidence_20260904.md)
+同向（2026-09-15 N12-03 订正：8–20 KiB 属官方 GST 工具进程）；
 共同限定当前证据范围，不外推任意常驻服务永远无收益。G1 系统净效应为负，不得写净增；
 none 的“0”只指本表 RSS 下降，不指 MemAvailable 背景波动。全部仍为测试板量级，非产品收益。
 

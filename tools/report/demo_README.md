@@ -26,13 +26,24 @@ results, not a product-memory-benefit promise.
 | Gated valley trim vs none | `80.18%–85.45%` of released payload; median call mixed `1.233269 ms` / medium-only `1.218361 ms`; next-cycle `+1351/+1465 minflt`, `majflt=0` | [S4 effect](docs/demo_report.html#s4) | [`b_cycles.tsv`](data/raw/s4_retention_20260901/b_cycles.tsv), [`b_cells.tsv`](data/raw/s4_retention_20260901/b_cells.tsv) |
 | gst trim vs none | p99 `+6.228611 ms` vs none dispersion `6.784167 ms`: margin `0.555556 ms`, 91.8% of threshold, `REPORT_ONLY` not visible; the same p50 rule is visible (`+1.870462` vs `0.173927 ms`); `+359 minflt/cycle` | [Real concurrency](docs/demo_report.html#gst) | [`comparison.json`](data/raw/gst_trim_cost_20260901/comparison.json), [`cycles.tsv`](data/raw/gst_trim_cost_20260901/cycles.tsv) |
 | Tizen native cross-witness | Historical enlightenment cells: about `5.84 MiB` rest and `272/4/4 KiB` reclaim. B2: official gst `5/5`, reclaim `8/16/16/20/16 KiB`; five verified UI cycles then E4′ rest `6019572 B`, reclaim `36 KiB`. Project heap PD and Tizen `memps` match exactly | [Native process evidence](docs/demo_report.html#native) | [`B2 cells`](data/raw/tizen_native_evidence_b2_20260904/cells_derived.tsv), [`B2 summary`](data/raw/tizen_native_evidence_b2_20260904/summary.json), [`historical summary`](data/raw/tizen_native_evidence_20260904/summary.json) |
-| Absolute RSS: allocation loads | mixed `13.015625 → 7.718750 MiB`, drop `40.696279%`; medium-only `13.152344 → 7.191406 MiB`, drop `45.322245%`; paired system available-memory effects `−0.167969 / +5.304688 MiB`, respectively | [Effect overview](docs/demo_report.html#system-effect), [L1 replay](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [Three-repeat summary](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv), [cycle-level inputs](data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv) |
-| Absolute RSS: decoder vs none | gst `8.671875 → 6.859375 MiB`, drop median `21.009919%`; paired system effect `+1.855469 MiB`; call median `0.843612 ms`; none RSS drop `0`; p99 change `−1.652834 ms` vs repeat dispersion `11.794149 ms`, not detected by the fixed rule | [Effect overview](docs/demo_report.html#system-effect), [L1 replay](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [Summary](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv), [p99](data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json) |
+| Absolute RSS: allocation loads | mixed `13.015625 → 7.718750 MiB`, drop `40.696279%`; medium-only `13.152344 → 7.191406 MiB`, drop `45.322245%`; paired system effects `−0.167969 / +5.304688 MiB`, repeat ranges `9.394531 / 8.136719 MiB`: both `NOT-DETECTED` | [Effect overview](docs/demo_report.html#system-effect), [L1 replay](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [Three-repeat summary](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv), [cycle-level inputs](data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv) |
+| Absolute RSS: decoder vs none | gst `8.671875 → 6.859375 MiB`, drop median `21.009919%`: G3 is a 51-cycle load; this is cycle=1; all-cycle drop median `16.038164% (13.28–21.04%)`; paired system effect `+1.855469 MiB`, repeat range `2.816406 MiB`: `NOT-DETECTED`; call median `0.843612 ms`; none RSS drop `0`; p99 change `−1.652834 ms` vs repeat dispersion `11.794149 ms`, not detected by the fixed rule | [Effect overview](docs/demo_report.html#system-effect), [L1 replay](docs/demo_reproduction_guide_20260901.md#l1-system-before-after) | [Summary](data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv), [p99](data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json) |
 
 Absolute-value rows use cycle 1, with three-repeat medians computed separately for
 before, after and the paired percentage; subtracting the two medians need not give
 the median drop. None's zero refers to process RSS, not system MemAvailable.
 These are test-board scales, not product benefit. See the [definitions](docs/system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果).
+
+Scope clarification (2026-09-15): the G3 all-cycle statistic pools 153 observations
+(51 cycles × 3 repeats; full range 13.282648–21.043165%). Cycle 1 has the highest
+three-repeat median among the 51 cycles. The benefit headline follows contract
+cycle=1, while cost uses `primary_cycles="2-51"`, excluding the first cycle; the
+headline is not typical sustained-cycle benefit. System visibility uses the same
+magnitude-versus-repeat-dispersion principle as gst p99: visible iff absolute
+median exceeds repeat range (not a significance test; gst's positive-degradation
+direction is unchanged). All three system effects are NOT-DETECTED, not proven
+system gains. G4 RSS drop `0.003906 MiB` vs range `0.089844 MiB` is also
+NOT-DETECTED; its `1899.209517 ms` includes gdb/ptrace, not hook cost.
 
 The batch release reference `48.9% / 1.36 MiB × 8 processes` comes from
 `<TEST_IMAGE_B>` / `glibc-2.40-2.8`; it is a compatibility comparison, not part of
@@ -56,6 +67,18 @@ the frozen matrix ([evidence](data/raw/demo_reproduction_20260901/batch_release_
    `bash tools/reproduce/reproduce.sh board --ip <addr>` only after the prerequisites
    below and the [L2 guide](docs/demo_reproduction_guide_20260901.md#l2-prerequisites)
    are satisfied.
+
+### Public replay and full verify
+
+Public replay and full verify have different Git requirements. Public replay
+uses pinned commit bytes, not tag names; full verify also requires delivery
+identity plus the historical objects checked by host tests. In a no-tags clone,
+use `REPRODUCE_EXPECTED_SHA=<trusted-delivery-commit> bash tools/reproduce/reproduce.sh verify`
+to supply the expected identity, or fetch the delivery tag with
+`git fetch origin tag demo-v13`. For each missing historical object, run
+`git fetch --no-tags origin <sha>` as the failure diagnostic specifies.
+The override does not bypass missing-object, contract, or identity checks. See
+[Git requirements](tools/reproduce/README.md#public-replay-versus-full-verify).
 
 ### L2 prerequisites
 

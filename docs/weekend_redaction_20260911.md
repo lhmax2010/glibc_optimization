@@ -38,15 +38,18 @@ python3 -m unittest tools.privacy.test_endpoints
 python3 -m unittest tools.runners.system_level_before_after_20260908.test_accepted_composition
 ```
 
-相关 34 项测试通过，最小 PATH 的扫描器 12 项通过；完整/无 tag/浅克隆公开组合
+最终相关 47 项测试通过，其中最小 PATH 扫描器 13 项；完整/无 tag/浅克隆公开组合
 12 项通过。当前树复扫零命中。合同严格字节门、板端 annotated tag 门均未削弱。
 
 ## 3. 文案核对（预授权 B）
 
-提示中的 RSS 41.8% / 45.3% / 16.0% 与同口径公开三重复中位不一致。
+2026-09-15 订正（N12-07）：RSS 41.8% / 45.3% / 16.0% 对应全周期合并中位口径，
+并非数值有误；此前“同口径不一致”的判断撤销。
 按[summary](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)
 与[原合同复算](demo_reproduction_guide_20260901.md#l1-system-before-after)，保持
-40.696279% / 45.322245% / 21.009919%，不以提示近似值覆盖数据。
+本交付头条 cycle=1 口径 40.696279% / 45.322245% / 21.009919%。G3 为 51 周期负载，
+三重复 153 点的全周期中位为 16.038164%（13.282648–21.043165%）；代价排除首周期，
+详见[口径追注](system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果)。数据不变。
 mixed 系统净效应为负；none 零仅指 RSS 下降；G4 的 1899.209517 ms 含 gdb/ptrace，
 不与毫秒量级业务内钩子混列；量级只代表测试板，不是产品收益。
 
@@ -58,5 +61,5 @@ mixed 系统净效应为负；none 零仅指 RSS 下降；G4 的 1899.209517 ms 
 
 收线追注：两套完整矩阵均 PASS，v12 已发布并经 GitHub 复核；
 [周末汇总](weekend_summary_20260914.md)与[最终当前树扫描](../data/raw/demo_v12_delivery_20260911/weekend/after_scan.json)
-记录结果。新增哈希链断言后针对性测试为 47 项，其中扫描器 13 项；上面的 34/12
-为断言补充前的执行记录，不冒充最终计数。
+记录结果。2026-09-15 计数订正（V12-6）：新增哈希链断言后针对性测试为 47 项，
+其中扫描器 13 项；早期 34/12 只属断言补充前的执行记录，正文采用最终计数。

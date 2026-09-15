@@ -155,12 +155,8 @@ check()
     shift
     log="$tmp/$(printf '%s' "$label" | tr -c 'A-Za-z0-9._-' '_').log"
     if "$@" >"$log" 2>&1; then
-        if grep -Eq '^SKIPPED[[:space:]]' "$log"; then
-            grep -E '^SKIPPED[[:space:]]' "$log"
-        else
-            printf 'PASS\t%s\n' "$label"
-            grep -E '^(REPORT_ONLY|INFO)[[:space:]]' "$log" || true
-        fi
+        printf 'PASS\t%s\n' "$label"
+        grep -E '^(SKIPPED|REPORT_ONLY|INFO)[[:space:]]' "$log" || true
     else
         rc=$?
         printf 'FAIL\t%s\tRC=%s\n' "$label" "$rc"

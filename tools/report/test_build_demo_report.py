@@ -4,9 +4,12 @@
 from __future__ import annotations
 
 import subprocess
+import importlib.util
+import statistics
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 HERE = Path(__file__).resolve().parent
@@ -15,6 +18,61 @@ BUILDER = HERE / "build_demo_report.py"
 
 
 class DemoReportTests(unittest.TestCase):
+    def test_n12_customer_scopes_and_not_detected_are_consistent(self) -> None:
+        for relative in ('docs/demo_report.html', 'docs/system_level_before_after_20260908.md',
+                         'docs/demo_narrative_20260901.md', 'docs/demo_package_20260902.md',
+                         'docs/demo_reproduction_guide_20260901.md',
+                         'tools/report/demo_README.md', 'tools/report/demo_README.zh-CN.md'):
+            document = (REPO / relative).read_text()
+            for value in ('16.038164', '13.282648', '21.043165', '9.394531',
+                          '8.136719', '2.816406', '0.089844', 'NOT-DETECTED', '2-51'):
+                self.assertIn(value, document, (relative, value))
+        html = (REPO / 'docs/demo_report.html').read_text().split('<section id="system-effect">')[1].split('</section>')[0]
+        g3 = html.split('<tr><td>G3 ')[1].split('</tr>')[0]
+        self.assertIn('cycle=1', g3)
+        self.assertIn('16.038164%', g3)
+        self.assertIn('NOT-DETECTED', g3)
+        self.assertNotIn('36 KiB / 8–20 KiB 同向', html)
+
+    def test_n12_builder_rejects_changed_display_inputs(self) -> None:
+        spec = importlib.util.spec_from_file_location('n12_builder', BUILDER)
+        builder = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(builder)
+        original = builder.read_tsv
+        for target in ('g3-range', 'system-spread', 'g4-spread'):
+            def changed(path):
+                rows = original(path)
+                if path.name == 'cycles.tsv' and path.parent.name == 'accepted_matrix':
+                    if target == 'g3-range':
+                        row = next(r for r in rows if r['group']=='G3' and r['arm']=='trim' and r['cycle']=='2')
+                        row['rss_drop_kib'] = '0'
+                    elif target == 'system-spread':
+                        row = next(r for r in rows if r['group']=='G2' and r['arm']=='trim' and r['cycle']=='1')
+                        row['memavailable_net_kib'] = '999999'
+                    else:
+                        row = next(r for r in rows if r['group']=='G4')
+                        row['rss_drop_kib'] = '0'
+                return rows
+            with self.subTest(target=target), patch.object(builder, 'read_tsv', side_effect=changed):
+                with self.assertRaises(AssertionError):
+                    builder.build(REPO, 'TEST-COMMIT')
+
+    def test_gst_legacy_max_field_is_documented_without_data_change(self) -> None:
+        import csv
+        root = REPO / 'data/raw/system_level_before_after_20260908/accepted_matrix'
+        def rows(name):
+            with (root / name).open() as stream:
+                return list(csv.DictReader(stream, delimiter='\t'))
+        trim = [r for r in rows('gst_cycles.tsv') if r['arm']=='trim-at-loop-release']
+        maxima = [max(float(r['trim_elapsed_ms']) for r in trim if r['rep']==rep)
+                  for rep in sorted({r['rep'] for r in trim})]
+        arm = next(r for r in rows('gst_arms.tsv') if r['arm']=='trim-at-loop-release')
+        self.assertEqual(statistics.median(maxima), float(arm['trim_max_ms_across_repeats']))
+        self.assertEqual(max(maxima), 1.376555)
+        note = (root / 'README.md').read_text()
+        for value in ('median of', 'per-repeat maxima', '1.097408', '1.376555'):
+            self.assertIn(value, note)
+
     def test_system_absolute_values_agree_across_customer_surfaces(self) -> None:
         paths = ['docs/demo_report.html','docs/demo_narrative_20260901.md',
             'docs/demo_package_20260902.md','docs/demo_reproduction_guide_20260901.md',

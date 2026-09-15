@@ -39,7 +39,6 @@ STARTUP_REJECTION_CHECKS = len(STARTUP_CONTEXTS) + len(REJECTION_FUNCTIONS) * le
 class ReproduceTests(unittest.TestCase):
     def test_current_tree_private_endpoints_and_scanner_regressions(self) -> None:
         # A hard host-test gate; not tied to optional GBS/RPM or a delivery tag.
-        # Keep the existing entrypoint/provenance bytes unchanged.
         result = subprocess.run([sys.executable, str(REPO / 'tools/privacy/scan_endpoints.py'),
                                  '--repo-root', str(REPO), '--json'],
                                 cwd=REPO, capture_output=True, text=True)
@@ -1248,7 +1247,37 @@ elif name == "cpio":
                 ["git", "rev-parse", "--verify", f"{commit}^{{commit}}"], cwd=REPO,
                 text=True, capture_output=True, check=False,
             )
-            self.assertEqual(result.returncode, 0, f"unresolvable commit {commit}: {result.stderr}")
+            self.assertEqual(result.returncode, 0,
+                             f"unresolvable commit {commit}: {result.stderr}\n"
+                             f"Restore the required object: git fetch --no-tags origin {commit}")
+
+    def test_check_keeps_parent_pass_and_skipped_children(self) -> None:
+        source = (HERE / "reproduce.sh").read_text()
+        check_function = source.split("\ncheck()\n", 1)[1].split("\nclean_environment()", 1)[0]
+        with tempfile.TemporaryDirectory() as directory:
+            for child_rc in (0, 7):
+                with self.subTest(child_rc=child_rc):
+                    script = ('tmp=$1\nfailures=0\ncheck()\n' + check_function
+                              + '\nchild() { printf "SKIPPED\\toptional\\treason\\nREPORT_ONLY\\tnote\\tkept\\n"; return '
+                              + str(child_rc) + '; }\ncheck fixture child\nprintf "failures=%s\\n" "$failures"\n')
+                    result = subprocess.run(["sh", "-c", script, "fixture", directory],
+                                            capture_output=True, text=True, check=False)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertIn("SKIPPED\toptional\treason", result.stdout)
+                    self.assertIn("REPORT_ONLY\tnote\tkept", result.stdout)
+                    if child_rc == 0:
+                        self.assertIn("PASS\tfixture\n", result.stdout)
+                        self.assertIn("failures=0", result.stdout)
+                    else:
+                        self.assertNotIn("PASS\tfixture\n", result.stdout)
+                        self.assertIn("FAIL\tfixture\tRC=7", result.stdout)
+                        self.assertIn("failures=1", result.stdout)
+
+    def test_missing_changes_commit_diagnostic_has_fetch_remedy(self) -> None:
+        failed = subprocess.CompletedProcess(["git"], 128, "", "unknown revision")
+        with patch("subprocess.run", return_value=failed):
+            with self.assertRaisesRegex(AssertionError, r"git fetch --no-tags origin [0-9a-f]{40}"):
+                self.test_changes_document_commit_ids_resolve()
 
     def test_delivery_closure_has_no_unqualified_preregistration_or_stale_b2_round(self) -> None:
         result = subprocess.run(

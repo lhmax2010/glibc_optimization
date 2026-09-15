@@ -54,7 +54,8 @@ next-cycle 为 NA，不能改写成零。再激活 minor faults 保留在逐周�
 G4：[逐格](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)堆 PD
 88/0/4 KiB，RSS 降幅中位 0.033659%；注入中位 1899.209517 ms **含 gdb/ptrace**，
 不是上表钩子代价。无 none，系统净效应 NA；静置 minflt 1/0/1 独立标注，不当作下周期代价。
-与原生 [B/B2](tizen_native_evidence_20260904.md)的 272 / 36 / 8–20 KiB 同向，
+与原生 [B/B2](tizen_native_evidence_20260904.md)同目标 enlightenment 的 272 / 36 KiB 同向，
+8–20 KiB 属官方 GST 工具进程，非守护进程（2026-09-15 N12-03 订正）；
 说明常驻守护进程收益很小，不支持外推产品收益。
 
 gst [固定规则复算](../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json)：

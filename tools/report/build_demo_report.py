@@ -179,6 +179,30 @@ def build(repo: Path, source_commit: str) -> str:
             assert system_summary[group, 'none']['rss_drop_mib_median'] == '0.000000'
             assert all(float(r['rss_drop_mib']) == 0 for r in system_cycles if r['group']==group and r['arm']=='none')
     system_g4 = [r for r in system_cycles if r['group']=='G4']
+    # N12 positive controls: independently recompute display scopes from rows,
+    # never change the fixed analyzer or its byte-identical derived TSVs.
+    g3_rows = [r for r in system_cycles if r['group']=='G3' and r['arm']=='trim']
+    g3_drops = [100 * int(r['rss_drop_kib']) / int(r['rss_pre_kib']) for r in g3_rows]
+    g3_full = (statistics.median(g3_drops), min(g3_drops), max(g3_drops))
+    assert len(g3_rows) == 153 and len({r['cycle'] for r in g3_rows}) == 51
+    assert tuple(f'{v:.6f}' for v in g3_full) == ('16.038164','13.282648','21.043165')
+    g3_cycle_medians = {cycle: statistics.median([100 * int(r['rss_drop_kib']) / int(r['rss_pre_kib'])
+        for r in g3_rows if r['cycle']==cycle]) for cycle in {r['cycle'] for r in g3_rows}}
+    assert g3_cycle_medians['1'] == max(g3_cycle_medians.values())
+    assert system_gst['primary_cycles'] == '2-51'
+    system_net = {}
+    for group, expected in {'G1':('-0.167969','9.394531'), 'G2':('5.304688','8.136719'),
+                            'G3':('1.855469','2.816406')}.items():
+        values = [int(r['memavailable_net_kib']) / 1024 for r in system_cycles
+                  if r['group']==group and r['arm']=='trim' and r['cycle']=='1']
+        assert len(values) == 3
+        median, spread = statistics.median(values), max(values)-min(values)
+        assert (f'{median:.6f}', f'{spread:.6f}') == expected
+        assert abs(median) <= spread
+        system_net[group] = f'{median:+.6f}；极差 {spread:.6f}；NOT-DETECTED'
+    g4_rss = [int(r['rss_drop_kib']) / 1024 for r in system_g4]
+    assert (f'{statistics.median(g4_rss):.6f}', f'{max(g4_rss)-min(g4_rss):.6f}') == ('0.003906','0.089844')
+    assert abs(statistics.median(g4_rss)) <= max(g4_rss)-min(g4_rss)
     assert [int(r['heap_drop_kib']) for r in system_g4] == [88,0,4]
     assert all(r['capture_majflt']=='0' for r in system_cycles)
     assert all(r['next_cycle_majflt'] in ('0','NA') for r in system_cycles)
@@ -193,10 +217,13 @@ def build(repo: Path, source_commit: str) -> str:
     system_table = []
     for group, label in (('G1','mixed'),('G2','medium-only'),('G3','gst 解码循环'),('G4','enlightenment 常驻对照')):
         r = system_summary[group,'trim']
-        net = 'NA（无 none 臂）' if group=='G4' else f"{float(r['memavailable_net_mb_median']) / 1.048576:+.6f}"
+        net = 'NA（无 none 臂）' if group=='G4' else system_net[group]
+        scope = (f'；G3 为 51 周期负载，此处为 cycle=1；全周期降幅中位 {g3_full[0]:.6f}%'
+                 f'（{g3_full[1]:.2f}–{g3_full[2]:.2f}%）' if group=='G3' else '')
+        rss_note = '；极差 0.089844 MiB；NOT-DETECTED' if group=='G4' else ''
         cost = r['trim_elapsed_ms_median'] + ('（含 gdb/ptrace）' if group=='G4' else '（释放点调用）')
         system_table.append(f'<tr><td>{group} {label}</td><td>{float(r["rss_pre_kib_median"])/1024:.6f} → {float(r["rss_post_kib_median"])/1024:.6f}</td>'
-            f'<td>{r["rss_drop_mib_median"]} / {r["rss_drop_pct_median"]}%</td><td>{net}</td><td>{cost}</td><td>{system_links}</td></tr>')
+            f'<td>{r["rss_drop_mib_median"]} / {r["rss_drop_pct_median"]}%{scope}{rss_note}</td><td>{net}</td><td>{cost}</td><td>{system_links}</td></tr>')
 
     expected_docs = (
         "docs/demo_narrative_20260901.md",
@@ -486,9 +513,10 @@ code{{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}
   <p>下表沿用合同的 cycle=1、每臂三重复口径：前值、后值、降幅各自取中位；中位前值减中位后值不一定等于降幅中位。RSS 是进程驻留内存，不等于 glibc 堆 PD。</p>
   <table><thead><tr><th>目标</th><th>RSS 前 → 后（MiB）</th><th>RSS 降幅 MiB / %</th><th>配对 MemAvailable 净效应（MiB）</th><th>耗时中位（ms）</th><th>证据 / 复算</th></tr></thead><tbody>{''.join(system_table)}</tbody></table>
   <p>G1/G2/G3 不调用 trim 的对照臂 RSS 下降均为 0；这个 0 不指系统 MemAvailable。系统净效应按同重复、同周期的顺序 none 格相减，非同时并行对照。mixed 为 −0.167969 MiB，不能宣传为系统净增。每格极差、堆 PD/other-anon/total PD、memps 与 faults 见完整 TSV。{system_links}</p>
+  <p>可检出规则与 gst p99 使用同一幅度/离散原则：双向量仅当 |中位| &gt; 重复极差才可见，gst 原正向劣化规则不变。三组系统净效应及 G4 RSS 降幅均为 NOT-DETECTED，不是已证明的整机净增；该规则不是统计显著性检验。G3 全周期统计合并三重复的 153 个点（范围 13.282648–21.043165%）；首周期中位在 51 个周期中位中最高。收益头条沿用合同 cycle=1，而业务代价沿用 gst 分析器 primary_cycles="2-51"，排除首周期；两者窗口不同，不能把首周期收益当成持续周期的典型收益。{system_links}</p>
   <p>释放点调用为 0.843612–1.478167 ms 的逐组中位（约 1 ms）；前后采样窗口 major fault 为 0，末周期 next-cycle 为 NA，G4 的静置 faults 独立记录。trim/none 使用同一已验哈希产物，差别是运行时调用，不修改 ELF，二进制体积不变；不是磁盘空间优化。{system_links}</p>
   <p>本轮 gst 业务 p99 中位差 {system_gst['delta_p99_ms']:.6f} ms，none 重复间离散 {system_gst['none_p99_repeat_dispersion_ms']:.6f} ms；按固定规则未检出可见劣化，方向仅 REPORT_ONLY，不等于零代价。<a href="../data/raw/system_level_before_after_20260908/accepted_matrix/gst_comparison.json">本轮 p99 证据</a> · <a href="{guide}#l1-system-before-after">复算</a>。此前 gst 代价轮的数字仍在下方独立呈现，不混池。</p>
-  <p>G4 常驻守护进程堆 PD 仅下降 88/0/4 KiB，RSS 降幅中位约 0.03%（分母是 RSS）；1899.209517 ms 是包含 gdb/ptrace 的注入开销，不是约 1 ms 的钩子代价。与 B/B2 的 272 KiB / 36 KiB / 8–20 KiB 同向：这些格的主要收益在批量释放型负载，不在已测常驻守护格；不外推所有服务。{system_links} · <a href="#native">历史原生证据</a></p>
+  <p>G4 常驻守护进程堆 PD 仅下降 88/0/4 KiB，RSS 降幅中位约 0.03%（分母是 RSS）；1899.209517 ms 是包含 gdb/ptrace 的注入开销，不是约 1 ms 的钩子代价。与 B/B2 同目标 enlightenment 的 272 KiB / 36 KiB 同向：这些格的主要收益在批量释放型负载，不在已测常驻守护格；不外推所有服务。{system_links} · <a href="#native">历史原生证据</a></p>
   <p class="source-links"><a href="system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果">完整报告与分期边界</a> · <a href="../data/raw/system_level_before_after_20260908/accepted_matrix/composition.json">18+3 与延期收尾证据链</a></p>
   <div class="callout">延期收尾按 PM 规则通过，不等于零残留：四个非空 GDB 目录均保留待查，镜像 python 未动；无测量重跑。<a href="system_level_before_after_20260908.md#121-实际处置与收尾结果">目录处置原文</a>。整机/产品收益仍待产品板验证。</div>
 </section>
