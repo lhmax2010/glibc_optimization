@@ -187,3 +187,50 @@ builder 对 G1/G2 六点全周期、首周期三点作整数 KiB 正控，G3 原
 变异负控和七载体窗口一致性测试通过。Kimi V13-2 的 1 ulp 极差双舍入差仅记
 [PM 台账](pm_decisions.md#2026-09-15demo-v13-demo-v14-minor-收口)，不改数值。
 250 份既有 TSV/JSON/XML、入口、构建证明校验、合同及验收带均保持原字节。
+
+## 7. demo-v14 交付完成
+
+2026-09-15：本轮 minor 已闭合，当前交付快照为 **demo-v14**，demo-v13 保留。
+§5 为 v13 首次交付历史，§6 为本轮自执行的 v13 复跑；本节才是新 v14 的交付核验。
+v13 新完整回执已随切库前 main 进入 v14，旧 partial 与首次回执均未删除。
+
+| 核验 | 隔离候选远端 | 切库后 GitHub 远端 |
+|---|---|---|
+| 三克隆 × 六环境完整 verify | 18/18 PASS，RC=0 | 18/18 PASS，RC=0 |
+| 启动注入拒绝 | 129/129 PASS | 129/129 PASS |
+| demo / annotated tag 身份 | REQUIRED | REQUIRED |
+| 默认 main 身份 | 既定 REPORT_ONLY，完整 host 测试执行 | 既定 REPORT_ONLY，完整 host 测试执行 |
+| HTML 重建 / 双语 README 模板 cmp | 静默 | 静默 |
+| 交付面 / 全仓链接 | 752 / 1618，零失败 | 752 / 1618，零失败 |
+| 当前冻结树脱敏 | 4439 文件，零命中 | 4439 文件，零命中 |
+
+交付面计数为两份根 README、INDEX、包/叙事/指南、A2、held-out、落点建议、
+来源声明、原生实证、估算器及 HTML 共 13 份文档；全仓为跟踪 Markdown/HTML，
+模板源路径豁免、按实际根入口另验。计数不与 §5 的历史选择范围混用。
+
+另从 GitHub 按普通 HQ 方式独立克隆 demo 与 demo-v14，两次默认 host 环境
+required verify 均为 `PASS host-tests`、`OVERALL PASS`、RC=0；未用覆盖或跳过
+测试来替代交付验证。原始输出、逐格引用及文件哈希见
+[v14 机器回执](../data/raw/demo_v14_delivery_20260915/verification.json)及
+[文件表](../data/raw/demo_v14_delivery_20260915/README.md)。
+
+| 引用 | SHA |
+|---|---|
+| 文案/回执与 builder 正控源提交 | `e70e1e96fe9c5e5d57c10ac76c40dbc6e2456bbb` |
+| 切库 main（HTML 派生提交） | `0d91ac686e525eb7a649198b2a5d2e0bff996482` |
+| demo / demo-v14 peel 后 commit | `7289a47b9d24791944cd3b02c00f24b8cb76aa3b` |
+| demo-v14 annotated tag 对象 | `5d60d80ea41d3b3a7af42c3a569b9e30740d0df8` |
+| 保留的 demo-v13 annotated tag 对象 | `0353ad46ef83e9f46c305c2cb8a023256514bf52` |
+
+main 普通快进推送；demo 使用精确旧 SHA lease 更新，相对切库 main 仅两份 README。
+本节及 v14 切库后回执另行提交到 main，不回写冻结 v14；最终回执提交用本报告的
+`git log -1 --format=%H -- docs/demo_v13_delivery_20260915.md` 定位，避免自引用伪 SHA。
+
+报告专项 14 项、交付引用与 current-proof 专项 2 项通过。一次手工 unittest 选择器
+误写名称产生 AttributeError，更正为实际测试名后 16 项通过；未改代码或跳过测试。
+G2 概述与断言修正不改变原值：250 份已有 TSV/JSON/XML、机制、入口、current-proof、
+合同和验收带均原字节保留；Kimi V13-2 仅台账。全程 host-only，无新测量或 GBS 构建。
+
+追加回执后的 main 当前树复核：4445 个跟踪文件脱敏零命中，全仓链接 1557 条零失败，
+HTML 重建 cmp 静默，全部回执文件哈希吻合。此处为 main 工程入口范围，不与上表
+冻结双语入口快照的 4439 文件 / 1618 链接混用；原始 CLI 日志对齐空格按字节保留。

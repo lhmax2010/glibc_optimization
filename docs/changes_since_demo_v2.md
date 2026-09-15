@@ -320,3 +320,9 @@ repomd 404、Unified 仍可用，仅新建 GBS 构建证明受影响，既有证
 仅回执登记与文案口径订正，机制、入口、合同、验收带、测量和原派生件保持不变；
 demo-v13 保留。完整记录见[交付续节](demo_v13_delivery_20260915.md)及
 [PM 台账](pm_decisions.md#2026-09-15demo-v13-demo-v14-minor-收口)。
+
+完成记录：源提交 `e70e1e9`、HTML/切库 main `0d91ac6`；demo-v14 commit `7289a47`，
+annotated tag 对象 `5d60d80`。隔离候选及 GitHub 远端分别 18/18 verify、129/129
+启动拒绝通过，额外 demo/tag 两种普通 HQ 克隆通过；HTML cmp 静默、链接与脱敏零失败。
+[切库后回执](../data/raw/demo_v14_delivery_20260915/README.md) 随后入 main，
+不回写冻结标签；v13 的本轮完整复跑回执已随 v14 提供。

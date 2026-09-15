@@ -1,0 +1,414 @@
+{
+  "schema": "demo-v14-delivery-verification.v1",
+  "recorded_utc": "2026-09-15T15:03:47.324583+00:00",
+  "main_at_cut": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+  "main_documentation_source": "e70e1e96fe9c5e5d57c10ac76c40dbc6e2456bbb",
+  "demo_commit": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+  "demo_v14_annotated_tag_object": "5d60d80ea41d3b3a7af42c3a569b9e30740d0df8",
+  "demo_v14_peeled_commit": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+  "preserved_demo_v13_tag_object": "0353ad46ef83e9f46c305c2cb8a023256514bf52",
+  "matrices": {
+    "isolated_matrix.txt": {
+      "rc": 0,
+      "overall": "PASS",
+      "complete_verify_pass": 18,
+      "clone_shapes": 3,
+      "environment_profiles": 6,
+      "startup_rejection_pass": 129,
+      "matrix_cases": [
+        {
+          "profile": "present-gbs+present-rpm",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+present-rpm",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+present-rpm",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "absent-gbs+present-rpm",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "absent-gbs+present-rpm",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "absent-gbs+present-rpm",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+absent-rpm",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+absent-rpm",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+absent-rpm",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "minimal-whitelist",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "minimal-whitelist",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "minimal-whitelist",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "broken-tools",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "broken-tools",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "broken-tools",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "startup-injection",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "startup-injection",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "startup-injection",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        }
+      ],
+      "default_main_identity": "REPORT_ONLY",
+      "demo_and_tag_identity": "REQUIRED"
+    },
+    "github_matrix.txt": {
+      "rc": 0,
+      "overall": "PASS",
+      "complete_verify_pass": 18,
+      "clone_shapes": 3,
+      "environment_profiles": 6,
+      "startup_rejection_pass": 129,
+      "matrix_cases": [
+        {
+          "profile": "present-gbs+present-rpm",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+present-rpm",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+present-rpm",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "absent-gbs+present-rpm",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "absent-gbs+present-rpm",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "absent-gbs+present-rpm",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+absent-rpm",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+absent-rpm",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "present-gbs+absent-rpm",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "minimal-whitelist",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "minimal-whitelist",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "minimal-whitelist",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "broken-tools",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "broken-tools",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "broken-tools",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "startup-injection",
+          "shape": "branch",
+          "ref": "demo",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "startup-injection",
+          "shape": "tag",
+          "ref": "demo-v14",
+          "head": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+          "identity": "REQUIRED",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        },
+        {
+          "profile": "startup-injection",
+          "shape": "default",
+          "ref": "main",
+          "head": "0d91ac686e525eb7a649198b2a5d2e0bff996482",
+          "identity": "REPORT_ONLY",
+          "host-tests": "PASS",
+          "OVERALL": "PASS"
+        }
+      ],
+      "default_main_identity": "REPORT_ONLY",
+      "demo_and_tag_identity": "REQUIRED"
+    }
+  },
+  "additional_github_hq_clones": {
+    "demo": {
+      "rc": 0,
+      "identity": "REQUIRED",
+      "overall": "PASS"
+    },
+    "demo-v14": {
+      "rc": 0,
+      "identity": "REQUIRED",
+      "overall": "PASS",
+      "checkout": "detached HEAD"
+    }
+  },
+  "html_rebuild_cmp": "silent (isolated snapshot and fresh GitHub clone)",
+  "readme_template_cmp": "silent for both languages",
+  "delivery_links_checked": 752,
+  "delivery_link_scope": "13 unique entry documents: both root READMEs, INDEX, demo package/narrative/guide, A2, held-out, landing, provenance, native evidence, estimator, HTML",
+  "repository_links_checked": 1618,
+  "repository_link_scope": "all tracked Markdown/HTML; root-rendered templates checked at root and exempt only at template source paths",
+  "snapshot_privacy": {
+    "files": 4439,
+    "findings": 0,
+    "scope": "current tracked snapshot"
+  },
+  "targeted_tests": {
+    "report": 14,
+    "additional_identity_and_current_proof": 2
+  },
+  "targeted_command_note": "An initial manual unittest selector was misspelled; corrected to test_delivery_identity_marks_main_report_only and all 16 targeted tests passed. No test or gate was skipped.",
+  "baseline_tsv_json_xml_files_byte_identical": 250,
+  "protected_file_sha256": {
+    "tools/reproduce/reproduce.sh": "006ab1b9e5a0e533e1e4760f6e274492c1756ded7ecf6735be7422072318723a",
+    "tools/reproduce/check_gbs_package.py": "6cdbb42997069bb8f24cd37aa350b66a1bedba88bf30afff0998e205b2b9da55",
+    "config/gbs.conf": "d25a937ce1617c244224aed491ceefbeea039919ec1a840c23135f996b5648bc",
+    "config/gbs_llvm.conf": "d83fbe416ec1c93a45b0e8a130d0d0622b5fbb33c1ffef354537693b293f0ff6",
+    "tools/reproduce/deliverables_manifest.json": "c56cf9a1a17dd7a9e121706e2158967f3d30b5f88ab4ea94e397fda390d8cdba",
+    "packaging/glibc-memopt-tools.spec": "b12cd4547a99b86368d364ec7201d8002882d404156bd29f86f823cd30e3eec1",
+    "tools/reproduce/acceptance_bands.json": "9bb8b9bf457013a06a40446d41e26c577707f3a1766631e86468499eb464af55"
+  },
+  "current_proof_methods_byte_identical": true,
+  "board_connection_or_measurement": false,
+  "new_gbs_build_executed": false,
+  "N12-05": "WITHDRAWN-BY-PM",
+  "N13_scope": "receipt registration and wording/window correction only; Kimi V13-2 rounding is ledger-only, values unchanged",
+  "v13_fresh_rerun_receipt": "../demo_v13_delivery_20260915/verification.json",
+  "artifacts_sha256": {
+    "github_matrix.txt": "fa2c52ad5579150c53833796b14ca82b7403f0d5ced4e07c5680a993444b0074",
+    "hq_demo_verify.txt": "17e5f24d32dc6f96e62cecfc2830d04c13aa12aa452065bb41ceb1c8056c6678",
+    "hq_tag_verify.txt": "17e5f24d32dc6f96e62cecfc2830d04c13aa12aa452065bb41ceb1c8056c6678",
+    "isolated_matrix.txt": "ecddf20f5b4111be74a7b22f5a5c24eb20b6e409608651505b1319791766e487",
+    "isolated_snapshot_verify.txt": "17e5f24d32dc6f96e62cecfc2830d04c13aa12aa452065bb41ceb1c8056c6678"
+  },
+  "redactions": "isolated candidate remote path replaced by <LOCAL_CANDIDATE_REMOTE>; GitHub and HQ logs otherwise unchanged",
+  "note": "Post-cut v14 receipts are appended to main and do not rewrite frozen demo-v14. The fresh v13 receipt was committed before the cut and is included in demo-v14."
+}

@@ -16,6 +16,11 @@
 回执与完成状态见[v13 交付记录续节](demo_v13_delivery_20260915.md)；
 原测量依据见[逐周期 TSV](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv)。
 
+执行追注（2026-09-15）：本轮 v13 远端复跑 18/18 verify、129/129 启动拒绝通过，
+机器回执随切库前 main 入 v14；v14 隔离候选与 GitHub 远端各 18/18、129/129，
+额外两种普通 HQ 克隆通过。demo-v14 `7289a47` / annotated 对象 `5d60d80` 已发布，
+v13 保留；仅回执登记与文案口径订正，见[完成记录](demo_v13_delivery_20260915.md#7-demo-v14-交付完成)。
+
 ## 2026-09-15：demo-v12 → demo-v13 对客口径订正
 
 批准人：PM；日期按本轮收到裁决记录。仅对客口径与文档修正，不改测量、
