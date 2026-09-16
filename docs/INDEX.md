@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-16 — [产品板连接分层诊断](product_board_connectivity_diagnosis_20260916.md)：ping 正常，26101 TCP 明确拒绝，22 开放但 SSH 认证拒绝；未登录/采样/改板。并列记录本机 sdb 重启错误与最终监听恢复；无目标 ARP/MAC，待 PM 本地核实设备及 sdbd 监听/网络调试。
+
 - 2026-09-16 — [产品板 floor 续跑](product_floor_reconfirm_20260916.md#5-pm-确认恢复后的续跑2026-09-16)：PM 确认恢复后按原合同再尝试一次，sdb 连接仍失败即停止；未执行板端 shell、未提权、未产生画像；独立保留两次原文，待 PM 确认通道。
 
 - 2026-09-16 — [产品板 floor 只读复确认](product_floor_reconfirm_20260916.md)：annotated 合同推送后间隔门通过，首次 sdb 连接失败即停止；产品身份及画像均未执行，无板端写入，待 PM 确认产品板地址/服务。平行英文报告已先行推库，不受影响。

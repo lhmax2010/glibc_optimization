@@ -1,0 +1,9 @@
+PING <PRODUCT_BOARD_IP> (<PRODUCT_BOARD_IP>) 56(84) bytes of data.
+64 bytes from <PRODUCT_BOARD_IP>: icmp_seq=1 ttl=63 time=0.400 ms
+64 bytes from <PRODUCT_BOARD_IP>: icmp_seq=2 ttl=63 time=0.725 ms
+64 bytes from <PRODUCT_BOARD_IP>: icmp_seq=3 ttl=63 time=1.47 ms
+64 bytes from <PRODUCT_BOARD_IP>: icmp_seq=4 ttl=63 time=0.557 ms
+
+--- <PRODUCT_BOARD_IP> ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3078ms
+rtt min/avg/max/mdev = 0.400/0.786/1.465/0.408 ms

@@ -1,0 +1,8 @@
+{
+  "started_utc": "2026-09-16T14:26:04.164256+00:00",
+  "board_alias": "<PRODUCT_BOARD_IP>",
+  "banner": "not applicable: TCP unreachable or no reported connect failure",
+  "ssh": "host_rc=255",
+  "ended_utc": "2026-09-16T14:26:10.729601+00:00",
+  "status": "DIAGNOSIS_FINISHED_NO_MEASUREMENTS"
+}

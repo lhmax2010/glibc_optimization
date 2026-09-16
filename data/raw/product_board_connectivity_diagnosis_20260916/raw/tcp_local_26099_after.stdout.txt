@@ -1,0 +1,10 @@
+{
+  "address": "127.0.0.1",
+  "port": 26099,
+  "sent_bytes": 0,
+  "error_type": "ConnectionRefusedError",
+  "error": "[Errno 111] Connection refused",
+  "errno": 111,
+  "tcp_connected": false,
+  "elapsed_seconds": 0.00011237198486924171
+}

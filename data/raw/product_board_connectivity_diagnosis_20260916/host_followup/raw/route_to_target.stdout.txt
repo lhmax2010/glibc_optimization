@@ -1,0 +1,2 @@
+<PRODUCT_BOARD_IP> via <INTERNAL_ENDPOINT> dev enp128s31f6 src <INTERNAL_ENDPOINT> uid 1000 
+    cache 

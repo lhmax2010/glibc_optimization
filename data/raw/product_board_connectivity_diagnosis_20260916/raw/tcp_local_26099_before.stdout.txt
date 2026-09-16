@@ -1,0 +1,8 @@
+{
+  "address": "127.0.0.1",
+  "port": 26099,
+  "sent_bytes": 0,
+  "tcp_connected": true,
+  "receive": "not requested",
+  "elapsed_seconds": 0.00011516199447214603
+}

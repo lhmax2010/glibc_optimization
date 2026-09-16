@@ -1,0 +1,8 @@
+{
+  "address": "<PRODUCT_BOARD_IP>",
+  "port": 22,
+  "sent_bytes": 0,
+  "tcp_connected": true,
+  "receive": "not requested",
+  "elapsed_seconds": 0.0007515139877796173
+}

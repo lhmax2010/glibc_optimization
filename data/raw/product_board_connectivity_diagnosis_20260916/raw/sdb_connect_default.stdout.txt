@@ -1,0 +1,3 @@
+* Server is not running. Start it now on port 26099 *
+* Server has started successfully *
+error: failed to connect to remote target '<PRODUCT_BOARD_IP>'

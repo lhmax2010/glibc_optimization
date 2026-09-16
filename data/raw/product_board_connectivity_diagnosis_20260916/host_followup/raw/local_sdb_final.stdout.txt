@@ -1,0 +1,1 @@
+1960524 sdb fork-server server --only-detect-tizen

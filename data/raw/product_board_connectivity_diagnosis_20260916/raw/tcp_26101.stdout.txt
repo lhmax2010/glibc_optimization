@@ -1,0 +1,10 @@
+{
+  "address": "<PRODUCT_BOARD_IP>",
+  "port": 26101,
+  "sent_bytes": 0,
+  "error_type": "ConnectionRefusedError",
+  "error": "[Errno 111] Connection refused",
+  "errno": 111,
+  "tcp_connected": false,
+  "elapsed_seconds": 0.011304451152682304
+}
