@@ -14,9 +14,15 @@ import html
 import io
 import json
 import math
+import posixpath
+import re
 import statistics as stats
+import subprocess
+import unicodedata
 from decimal import Decimal, ROUND_HALF_EVEN, ROUND_HALF_UP
+from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 
 SYSTEM = 'system_level_before_after_20260908/accepted_matrix/'
@@ -25,7 +31,121 @@ GST = 'gst_trim_cost_20260901/'
 NATIVE = 'tizen_native_evidence_20260904/'
 B2 = 'tizen_native_evidence_b2_20260904/'
 GUIDE = 'demo_reproduction_guide_20260901.md'
-LABELS = {'G1': 'mixed', 'G2': 'medium-only', 'G3': 'gst 解码循环', 'G4': 'enlightenment'}
+PROFILES = {'mixed': '混合尺寸分配负载', 'medium-only': '中等尺寸为主的分配负载'}
+LABELS = {'G1': PROFILES['mixed'], 'G2': PROFILES['medium-only'],
+          'G3': '媒体解码循环负载', 'G4': '常驻 UI 合成器进程'}
+
+
+class ReportDocument(HTMLParser):
+    def __init__(self, text):
+        super().__init__(convert_charrefs=True)
+        self.links, self.ids, self.text = [], set(), []
+        self.feed(text)
+
+    def handle_starttag(self, tag, attrs):
+        for key, value in attrs:
+            if key in ('href', 'src'):
+                if not value:
+                    raise ValueError('empty report link')
+                self.links.append(value)
+            if key == 'id':
+                self.ids.add(value)
+
+    def handle_data(self, data):
+        self.text.append(data)
+
+
+FORBIDDEN = re.compile(
+    r'人工智能|智能体|模型|评审|复审|'
+    r'(?<![a-z0-9])(?:ai|agents?|agentic|llms?|models?|codex|openai|chatgpt|'
+    r'claude|gemini|kimi|reviews?)(?![a-z0-9])', re.I)
+
+
+def check_keywords(report):
+    # Include comments, metadata and attributes, not just visible paragraphs.
+    # Also inspect joined text so entities or inline tags cannot split a word.
+    doc = ReportDocument(report)
+    for source in (report, ''.join(doc.text)):
+        text = unicodedata.normalize('NFKC', html.unescape(source))
+        text = ''.join(c for c in text if unicodedata.category(c) != 'Cf')
+        match = FORBIDDEN.search(text)
+        if match:
+            raise ValueError(f'forbidden report keyword: {match.group()}')
+
+
+def snapshot(repo):
+    refs = json.loads((repo / 'tools/report/impact_delivery.json').read_text())
+    commit = refs['commit']
+    if not re.fullmatch(r'[0-9a-f]{40}', commit):
+        raise ValueError('delivery snapshot must be a full commit SHA')
+    run = subprocess.run(['git', '-C', str(repo), 'ls-tree', '-rz', '--full-tree', commit], capture_output=True)
+    if run.returncode:
+        raise ValueError(f'delivery snapshot {commit} unavailable; fetch it with '
+                         f'git fetch --no-tags origin {commit}; no checks were skipped')
+    files = {}
+    for entry in run.stdout.split(b'\0'):
+        if entry:
+            meta, path = entry.split(b'\t', 1)
+            mode, kind, oid = meta.decode().split()
+            if kind == 'blob' and mode in ('100644', '100755'):
+                files[path.decode()] = oid
+    return refs, files
+
+
+def snapshot_blob(repo, oid):
+    run = subprocess.run(['git', '-C', str(repo), 'cat-file', 'blob', oid], capture_output=True)
+    if run.returncode:
+        raise ValueError(f'delivery blob unavailable: {oid}; fetch the delivery snapshot')
+    return run.stdout
+
+
+def document_anchors(text, path):
+    found = ReportDocument(text).ids
+    if not path.endswith('.md'):
+        return found
+    counts = {}
+    for line in text.splitlines():
+        match = re.match(r'^#{1,6}\s+(.+?)\s*$', line)
+        if match:
+            title = re.sub(r'`([^`]*)`', r'\1', match[1].strip().lower())
+            base = re.sub(r'\s+', '-', re.sub(r'[^\w\-\s\u4e00-\u9fff]', '', title))
+            count = counts.get(base, 0)
+            counts[base] = count + 1
+            found.add(base if not count else f'{base}-{count}')
+    return found
+
+
+def check_delivery_links(repo, report, evidence=None):
+    refs, files = snapshot(repo)
+    document = ReportDocument(report)
+    cache = {}
+
+    def read(path):
+        if path not in files:
+            raise ValueError(f'link not in {refs["tag"]} snapshot: {path}')
+        if path not in cache:
+            cache[path] = snapshot_blob(repo, files[path])
+        return cache[path]
+
+    for link in document.links:
+        url = urlsplit(link)
+        if url.scheme or url.netloc or url.query or url.path.startswith('/'):
+            raise ValueError(f'report link must be repository-relative: {link}')
+        path = posixpath.normpath(posixpath.join('docs', unquote(url.path))) if url.path else ''
+        if path == '..' or path.startswith('../') or '\\' in path:
+            raise ValueError(f'report link escapes delivery snapshot: {link}')
+        anchors = document.ids
+        if path:
+            blob = read(path)
+            if url.fragment:
+                anchors = document_anchors(blob.decode('utf-8'), path)
+        if url.fragment and unquote(url.fragment) not in anchors:
+            raise ValueError(f'anchor not in {refs["tag"]} snapshot: {link}')
+    # The linked frozen files must contain the exact bytes used in the plots.
+    for relative, expected in (evidence or {}).items():
+        expect(hashlib.sha256(read('data/raw/' + relative)).hexdigest(), expected,
+               'delivery evidence ' + relative)
+    return len(document.links)
 
 
 def expect(actual, expected, label):
@@ -177,16 +297,15 @@ def controls(data):
     for phase in ('START', 'END'):
         expect(proof['cleanup']['health'][phase]['oom_lmk'], 0, 'cleanup OOM/LMK')
         expect(proof['cleanup']['health'][phase]['stability_count'], 0, 'cleanup alerts')
-    expect(data['demo_v14_delivery_20260915/verification.json']['demo_v14_peeled_commit'],
-           '7289a47b9d24791944cd3b02c00f24b8cb76aa3b', 'delivery package')
     return result
 
 
 def cite(paths, anchor):
     if isinstance(paths, str):
         paths = [paths]
-    links = [f'<a href="../data/raw/{html.escape(p, quote=True)}">{html.escape(p.split("/")[-1])}</a>' for p in paths]
-    links.append(f'<a href="{GUIDE}#{anchor}">L1 复算</a>')
+    links = [f'<a href="../data/raw/{html.escape(p, quote=True)}">公开证据{index if len(paths) > 1 else ""}</a>'
+             for index, p in enumerate(paths, 1)]
+    links.append(f'<a href="{GUIDE}#{anchor}">公开数据复算（L1）</a>')
     return '<span class="sources">' + ' · '.join(links) + '</span>'
 
 
@@ -201,10 +320,10 @@ def rss_chart(values):
         parts.append(f'<text x="12" y="{y}">{LABELS[group]}</text>')
         for j, (key, label, color) in enumerate((('pre', '前', 'before'), ('post', '后', 'after'))):
             width = float(r[key]) * 38
-            parts.append(f'<rect x="172" y="{y-21+j*30}" width="{width:.3f}" height="22" class="{color}"/>')
-            parts.append(f'<text x="{184+width:.3f}" y="{y-5+j*30}">{label} {float(r[key]):.2f} MiB</text>')
-        parts.append(f'<text x="172" y="{y+63}" class="accent">下降 {float(r["drop"]):.2f} MiB · {float(r["pct"]):.2f}%</text>')
-    parts.append('<text x="172" y="385">共同零基线；下表保留精确值，G3 全周期口径另列。</text></svg>')
+            parts.append(f'<rect x="250" y="{y-21+j*30}" width="{width:.3f}" height="22" class="{color}"/>')
+            parts.append(f'<text x="{262+width:.3f}" y="{y-5+j*30}">{label} {float(r[key]):.2f} MiB</text>')
+        parts.append(f'<text x="250" y="{y+63}" class="accent">下降 {float(r["drop"]):.2f} MiB · {float(r["pct"]):.2f}%</text>')
+    parts.append('<text x="250" y="385">共同零基线；精确值见下表，媒体负载全周期口径另列。</text></svg>')
     return ''.join(parts)
 
 
@@ -215,35 +334,37 @@ def net_chart(values):
         parts.append(f'<text x="12" y="{y}">{LABELS[group]}</text>')
         # Two magnitude bars, NOT a confidence interval or ±range error bar.
         for j, (value, color) in enumerate(((abs(float(r['net'])), 'after'), (float(r['spread']), 'before'))):
-            parts.append(f'<rect x="172" y="{y-18+j*22}" width="{value*34:.3f}" height="15" class="{color}"/>')
-        parts.append(f'<text x="530" y="{y-4}">中位 {float(r["net"]):+.6f} MiB</text>')
-        parts.append(f'<text x="530" y="{y+19}">极差 {r["spread"]} MiB · NOT-DETECTED</text>')
-    parts.append('<text x="172" y="260">绿色：中位绝对值；灰色：重复极差。原符号在标注保留，不是置信区间。</text></svg>')
+            parts.append(f'<rect x="250" y="{y-18+j*22}" width="{value*34:.3f}" height="15" class="{color}"/>')
+        parts.append(f'<text x="590" y="{y-4}">中位 {float(r["net"]):+.6f} MiB</text>')
+        parts.append(f'<text x="590" y="{y+19}">极差 {r["spread"]} MiB · NOT-DETECTED</text>')
+    parts.append('<text x="120" y="260">绿色：中位绝对值；灰色：重复极差。原符号在标注保留，不是置信区间。</text></svg>')
     return ''.join(parts)
 
 
 def costs_chart(metrics):
-    parts = [svg_open('释放点 trim 调用耗时分布；A 锚点不混池', 290)]
+    parts = [svg_open('释放点 trim 调用耗时分布；大块释放基准单独列出', 290)]
     for i, (label, times, median) in enumerate((
-        ('S4 mixed', metrics['s4']['mixed']['times'], '1.233269'),
-        ('S4 medium-only', metrics['s4']['medium-only']['times'], '1.218361'),
-        ('gst / NULL 后', metrics['gst_times'], '0.671556'),
+        (PROFILES['mixed'], metrics['s4']['mixed']['times'], '1.233269'),
+        (PROFILES['medium-only'], metrics['s4']['medium-only']['times'], '1.218361'),
+        ('媒体管线停止释放后', metrics['gst_times'], '0.671556'),
     )):
         y = 52+i*72
         parts.append(f'<text x="12" y="{y}">{label}</text>')
-        parts.append(f'<line x1="190" x2="750" y1="{y}" y2="{y}" class="axis"/>')
+        parts.append(f'<line x1="250" x2="730" y1="{y}" y2="{y}" class="axis"/>')
         for j, elapsed in enumerate(sorted(times)):
-            parts.append(f'<circle cx="{190+float(elapsed)*260:.3f}" cy="{y+(j%5-2)*4}" r="3" class="point"/>')
+            parts.append(f'<circle cx="{250+float(elapsed)*230:.3f}" cy="{y+(j%5-2)*4}" r="3" class="point"/>')
         parts.append(f'<text x="755" y="{y+5}">中位 {median} ms</text>')
     for tick in (0, .5, 1, 1.5, 2):
-        parts.append(f'<text x="{190+tick*260:.0f}" y="242" text-anchor="middle">{tick:g}</text>')
-    parts.append('<text x="190" y="275">横轴：耗时（ms）；共同零起点，每个点为一次调用，纵向仅作防重叠。</text></svg>')
+        parts.append(f'<text x="{250+tick*230:.0f}" y="242" text-anchor="middle">{tick:g}</text>')
+    parts.append('<text x="160" y="275">横轴：耗时（ms）；共同零起点，每个点为一次调用，纵向仅作防重叠。</text></svg>')
     return ''.join(parts)
 
 
 def applicability_chart(metrics):
     items = [(LABELS[g] + ' / 首周期中位', int(metrics['system'][g]['heap_kib'])) for g in ('G1', 'G2', 'G3')]
-    items += [('enlightenment / E1', 272), ('enlightenment / E4′', 36), ('enlightenment / G4 r1', 88), ('enlightenment / G4 r2', 0), ('enlightenment / G4 r3', 4)]
+    items += [('常驻 UI 合成器 / 初始观测', 272), ('常驻 UI 合成器 / 应用释放后', 36),
+              ('常驻 UI 合成器 / 后续观测一', 88), ('常驻 UI 合成器 / 后续观测二', 0),
+              ('常驻 UI 合成器 / 后续观测三', 4)]
     parts = [svg_open('同为 glibc 堆 PD 的回收量对比，KiB；不是 RSS 百分比', 402)]
     for i, (label, value) in enumerate(items):
         y = 35+i*44
@@ -274,128 +395,125 @@ def build(repo):
     syscite = cite([SYSTEM+'summary.tsv', SYSTEM+'cycles.tsv'], 'l1-system-before-after')
     s4cite = cite(S4+'b_cycles.tsv', 'l1-s4')
     gstcite = cite([GST+'comparison.json', GST+'cycles.tsv', GST+'repetitions.tsv'], 'l1-gst-trim-cost')
-    nativecite = cite([NATIVE+'summary.json', B2+'summary.json'], 'l1-impact-report')
+    nativecite = cite([NATIVE+'summary.json', B2+'summary.json'], 'l1-tizen-native-b2')
     rows = []
     for group, r in m['system'].items():
-        scope = ('<small>G3 为 51 周期负载，此处为 cycle=1；全周期降幅中位 16.038164%（13.28–21.04%；精确范围 13.282648–21.043165%）。</small>' if group == 'G3' else f'<small>全周期降幅中位 {r["full_pct"]}%。</small>')
+        scope = ('<small>媒体负载运行 51 周期，此处为首周期；全周期降幅中位 16.038164%（13.28–21.04%；精确范围 13.282648–21.043165%）。</small>' if group == 'G3' else f'<small>全周期降幅中位 {r["full_pct"]}%。</small>')
         rows.append(f'<tr><td>{LABELS[group]}</td><td>{r["pre"]} → {r["post"]}</td><td>{r["drop"]} MiB / {r["pct"]}%{scope}</td><td>{syscite}</td></tr>')
-    cost_rows = ''.join(f'<tr><td>S4 B / {p}</td><td>{r["median"]} ms</td><td>+{r["extra"]} minflt；下一周期 majflt=0</td><td>{s4cite}</td></tr>' for p, r in m['s4'].items())
-    a_rows = ''.join(f'<tr><td>A 锚点 / {r["profile"]}</td><td>{fixed(r["trim_elapsed_ms"])} ms</td><td>单次大区域机制锚点，不是释放点钩子代价；每档单次观测。</td><td>{cite(S4+"a_cells.tsv", "l1-impact-report")}</td></tr>' for r in m['a'])
-    inputs = ''.join(f'<li><a href="../data/raw/{p}">{p}</a> <small>SHA-256 {h}</small></li>' for p,h in refs['sha256'].items())
-    return f'''<!doctype html>
+    cost_rows = ''.join(f'<tr><td>{PROFILES[p]} / 批量释放后</td><td>{r["median"]} ms</td><td>+{r["extra"]} 次 minor fault；下一周期 major fault 为 0</td><td>{s4cite}</td></tr>' for p, r in m['s4'].items())
+    a_rows = ''.join(f'<tr><td>大块释放后的回收基准 / {PROFILES[r["profile"]]}</td><td>{fixed(r["trim_elapsed_ms"])} ms</td><td>大区域回收调用，不代表日常释放点的调用成本；每档单次观测。</td><td>{cite(S4+"a_cells.tsv", "l1-s4")}</td></tr>' for r in m['a'])
+    report = f'''<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="现有 glibc 运行时门控 trim：进程内存回收、已量化代价、稳定性与产品启用边界。">
-<title>glibc 门控 trim｜内存优化影响报告</title><style>{STYLE}</style></head><body><main>
+<meta name="description" content="在现有 glibc 上按条件归还空闲内存：进程回收量、调用代价、稳定性与产品启用边界。">
+<title>glibc 运行时内存回收｜影响报告</title><style>{STYLE}</style></head><body><main>
 <header><div class="eyebrow">TIZEN · GLIBC · 运行时内存回收</div>
 <h1>让已释放的内存，真正回到系统</h1>
-<p class="lead">本方案不替换 libc、不改本次对照实验的二进制；在现有 glibc 上按释放相位调用 <code>malloc_trim(0)</code>，让可归还的空闲页退出进程驻留内存。</p>
+<p class="lead">本方案不替换 libc、不改本次对照实验的二进制；在现有 glibc 上，于业务批量释放对象后按条件调用 <code>malloc_trim(0)</code>。</p>
+<p><code>malloc_trim</code> 是 glibc 提供的运行时接口：它尝试把分配器中已经空闲、但仍占用物理内存的完整页归还内核。
+操作系统按页回收内存；一页内只要还有必须保留的数据，就不能整页丢弃。因此，<code>free</code> 释放的对象字节不一定都能立即转化为可回收页。</p>
 <p><strong>内存有明确收益；按固定 p99 判据未检出性能劣化，已测窗口未发现 OOM/LMK 或目标重启。</strong>
 这是带范围的“未检出副作用”，不是所有性能指标零影响或长期稳定性的证明；本报告不宣称性能提升。</p>
 <p class="muted">只组织既有公开证据，没有新测量。收益指进程内存回收，不等于整机或产品收益。</p>
 <nav aria-label="报告导航"><a href="#summary">摘要</a><a href="#memory">内存收益</a><a href="#performance">性能与稳定性</a><a href="#applicability">适用面</a><a href="#boundaries">边界</a><a href="#reproduction">复现</a></nav></header>
 
 <section id="summary"><h2>一页摘要</h2>
-<div class="cards"><div class="card">进程 RSS / mixed 首周期<span class="big">13.02 → 7.72 MiB</span>下降 40.70%；同窗口 none 臂下降为 0。{syscite}</div>
-<div class="card">已释放 payload 的回收比例<span class="big">80.18%–85.45%</span>S4 B 批量释放代理；不是 RSS 降幅。{s4cite}</div>
-<div class="card">业务 p99 / 固定判据<span class="big">未检出劣化</span>+6.229 ms，未超基线离散 6.784 ms。{gstcite}</div></div>
-<p><strong>适用：</strong>glibc 管理、批量释放后仍有驻留空闲页、实测收益达标且代价过门的目标。
-<strong>不适用：</strong>已经自动归还、没有可回收驻留、非 glibc 所有权，或收益不足的进程。常驻服务不能因“有空闲块”就默认启用。</p>
-<p class="caution">性能结论的必要限定：同一 gst 数据中，p50 差 +1.870462 ms 超过基线离散 0.173927 ms；不能概括成“全部业务延迟无变化”。{gstcite}</p>
+<p>本报告包含两种<strong>批量分配—释放负载</strong>：混合尺寸分配负载反复申请不同大小的对象，再集中释放其中一部分；中等尺寸为主的分配负载执行同样的过程，但以中等大小对象为主。
+<strong>媒体解码循环负载</strong>则反复进行软件解码，停止管线并释放资源后再进入下一轮。
+常驻 UI 合成器进程（enlightenment）作为不同使用场景的对照：它持续负责界面合成，不以大批对象集中释放为主要形态。</p>
+<p>下文的<strong>对照臂</strong>指使用相同二进制和相同负载参数、但不调用 trim 的一组运行；与调用 trim 的运行在对应时点取样。
+<strong>RSS</strong>是进程当前驻留在物理内存中的总页量，包含代码、栈、共享页及其他映射；<strong>堆内 Private_Dirty（简称堆 PD）</strong>仅统计本报告归类到 glibc 堆的私有脏页，二者不是同一个范围。
+所有内存图表使用 MiB 或 KiB。</p>
+<div class="cards"><div class="card">混合尺寸分配负载 / 首周期 RSS<span class="big">13.02 → 7.72 MiB</span>下降 40.70%；不调用 trim 的对照下降为 0。{syscite}</div>
+<div class="card">已释放对象字节的回收比例<span class="big">80.18%–85.45%</span>批量释放后仍占用堆内存的合成负载；不是 RSS 降幅。{s4cite}</div>
+<div class="card">业务尾部延迟 / 固定判据<span class="big">未检出劣化</span>p99 差 +6.229 ms，小于基线重复波动 6.784 ms。{gstcite}</div></div>
+<p><strong>适用：</strong>由 glibc 管理、批量释放后仍有驻留空闲页、实测收益达标且代价在预算内的目标。
+<strong>不适用：</strong>已经自行归还的那部分内存，以及没有可回收驻留空闲页、使用其他分配器或实测收益不足的进程。
+同一进程中其他尚未归还的内存仍须单独实测；常驻服务不能因“有空闲块”就默认启用。</p>
+<p>统计量的读法：中位数表示排序后的中间位置，极差表示最大值减最小值；p50 表示中间水平，p99 用于观察较慢的尾部延迟。判定阈值和样本窗口在后文就地列出。</p>
+<p class="caution">性能结论的必要限定：同一媒体解码数据中，p50 差 +1.870462 ms 超过基线重复波动 0.173927 ms；不能概括成“全部业务延迟无变化”。{gstcite}</p>
 </section>
 
 <section id="memory"><h2>内存收益：进程回收明确，系统净增尚未检出</h2>
 <figure>{rss_chart(m['system'])}<figcaption>图 1 · 首周期前后 RSS。前值、后值、绝对降幅与百分比分别取三重复中位，不能用两列中位直接相减替代降幅统计。{syscite}</figcaption></figure>
 <div class="table-wrap"><table><thead><tr><th>测试板负载</th><th>RSS 前 → 后 / MiB</th><th>降幅中位与窗口</th><th>证据 / 复算</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
-<p class="scope">G3 头条展示首次释放；全周期合并 153 个点，典型降幅约 16.0%。代价统计取 <code>primary_cycles="2-51"</code>，排除冷启动首周期，因此收益与代价窗口不同；首周期收益不是持续周期典型收益。{syscite}{cite(SYSTEM+'gst_comparison.json', 'l1-system-before-after')}</p>
+<p class="scope">媒体解码负载的头条展示首次释放；全周期合并 153 个点，典型降幅约 16.0%。代价统计只取第 2–51 周期，排除冷启动首周期，因此收益与代价窗口不同；首周期收益不是持续周期典型收益。{syscite}{cite(SYSTEM+'gst_comparison.json', 'l1-system-before-after')}</p>
 <p>不调用 trim 的对照臂，三个负载全部对应采样点的 RSS 下降均精确为 0。这支持本次调用前后进程下降归因于 trim；不表示系统背景波动为零，也不外推所有运行条件。{syscite}</p>
-<figure>{net_chart(m['system'])}<figcaption>图 2 · 系统可用内存的配对净效应。定义为 trim 臂前后变化减去同重复、同周期 none 臂变化；两臂顺序执行，不是同步并行控制。{syscite}</figcaption></figure>
-<p>沿用包内“幅度超过重复离散”的固定原则：系统项仅当 <code>|三重复中位| &gt; 重复极差</code> 才判可见；三组均为 <strong>NOT-DETECTED</strong>。gst 使用同一原则的正向劣化判据。它不是统计显著性检验，不能把正的系统中位读成已证明整机净增。{syscite}</p>
-<p>释放后仍驻留的合成批量负载，S4 B 单次调用回收已释放 payload 的 <strong>80.175875%–85.453954%</strong>（约 80–85%）。这是堆 PD 回收量除以已释放对象字节，与上面的 RSS 分母不同。{s4cite}</p>
+<figure>{net_chart(m['system'])}<figcaption>图 2 · 系统可用内存（MemAvailable）的配对净效应。计算方式：调用 trim 前后的变化，减去同重复、同周期中不调用 trim 的变化；两组顺序执行，不是同步并行控制。{syscite}</figcaption></figure>
+<p>固定判据要求：只有三重复中位数的绝对值大于重复极差，才把系统净效应判为可见。
+本次每组差值都小于同一条件下重复测量自身的波动范围，因此三组均为 <strong>NOT-DETECTED（未检出）</strong>。
+业务 p99 也按“劣化幅度超过基线重复波动才判可见”的同一原则判断。这不是统计显著性检验，不能把正的系统中位读成已证明整机净增。{syscite}</p>
+<p>对于释放后内存仍留在堆内的合成批量负载，单次调用回收已释放对象字节的 <strong>80.175875%–85.453954%</strong>（约 80–85%）。这是堆 PD 回收量除以已释放对象字节，与上面的 RSS 分母不同。{s4cite}</p>
 </section>
 
 <section id="performance"><h2>性能与稳定性：检查负面影响，不宣称提升</h2>
-<p>释放点调用是有代价的；已测结果支持“调用成本已量化，固定 p99 门未检出劣化”，不能写成数学意义上的零副作用。</p>
-<figure>{costs_chart(m)}<figcaption>图 3 · 释放点耗时分布：S4 分档中位约 1.2 ms；gst 中位 0.671556 ms（约 0.67 ms）。gst 是真实多线程解码目标，但调用发生在管线 NULL release 后，非活跃并发分配瞬间的锁停顿测量。{s4cite}{cite(GST+'cycles.tsv', 'l1-gst-trim-cost')}</figcaption></figure>
+<p>释放点调用是有代价的；已测结果支持“调用成本已量化，按固定 p99 判据未检出劣化”，不能写成数学意义上的零副作用。</p>
+<figure>{costs_chart(m)}<figcaption>图 3 · 释放点耗时分布：两种分配负载的中位约 1.2 ms；媒体解码负载中位 0.671556 ms（约 0.67 ms）。后者是真实多线程解码目标，但调用发生在管线进入 NULL 状态、停止并释放资源后，不是活跃并发分配瞬间的锁停顿测量。{s4cite}{cite(GST+'cycles.tsv', 'l1-gst-trim-cost')}</figcaption></figure>
 <div class="table-wrap"><table><thead><tr><th>窗口 / 目标</th><th>调用耗时</th><th>代价或性质</th><th>证据 / 复算</th></tr></thead><tbody>{cost_rows}
-<tr><td>gst / NULL release 后</td><td>p50 0.671556；p95 0.818315；p99 0.842185；max 0.856944 ms</td><td>153 次合并；下周期约 +359 minflt/循环</td><td>{gstcite}</td></tr>
+<tr><td>媒体管线停止并释放资源后</td><td>p50 0.671556；p95 0.818315；p99 0.842185；最大值 0.856944 ms</td><td>153 次合并；下周期每循环约增加 +359 次 minor fault</td><td>{gstcite}</td></tr>
 {a_rows}</tbody></table></div>
 <h3>业务延迟：p99 未检出，p50 差异如实保留</h3>
-<p><strong>p99 中位差 +6.228611 ms &lt; 基线重复离散 6.784167 ms</strong>，故按固定门未检出劣化。
-margin 为 0.555556 ms（约 0.556 ms），达到门槛的 91.8%。每臂三重复，每重复以 cycle 2–51 的 50 个样本计算 nearest-rank p99；这里 p99 就是该重复最大观测值。{gstcite}</p>
+<p><strong>p99 中位差 +6.228611 ms &lt; 基线重复波动 6.784167 ms</strong>：加上调用后的差值没有超过不调用时重复测量自身的波动，因此按固定判据未检出劣化。
+距判定阈值还差 0.555556 ms（约 0.556 ms），已达到门槛的 91.8%。每组运行三重复，每重复取第 2–51 周期的 50 个样本；p99 按排序后向上取整的百分位位置计算（nearest-rank），这里恰好是该重复的最大观测值。{gstcite}</p>
 <p class="caution">“未检出”不等于数学零，也不构成产品 SLA 等价证明。同一规则用于 p50 会判可见：+1.870462 ms &gt; 0.173927 ms。尚不能证明任意活跃并发线程的锁停顿无影响。{gstcite}</p>
-<h3>Faults 与稳定性：看清窗口与异常记录</h3>
-<ul><li><strong>major fault：</strong>系统前后对照的采样窗口均为 0；有定义的下一周期也为 0，末周期的 NA 不计作零。S4 下一周期与 gst cycle 2–51 主窗口同样为 0。{syscite}{s4cite}{gstcite}</li>
-<li><strong>冷启动例外：</strong>gst none 首重复 cycle=1 在任何 trim 前出现 4 次 major fault，外部序列同样记录 4；不归因于 trim，但不能写“全部实验全程为零”。旧 gst 附加 capture 字段缺失不冒充零，以有效目标内及外部序列为准。{cite([GST+'cycles.tsv', GST+'external_summary.tsv', GST+'health.json'], 'l1-impact-report')}</li>
-<li><strong>再激活成本：</strong>S4 mixed / medium-only 下一周期分别增加 +1351 / +1465 minflt；gst 主窗口按重复总和中位之差摊到每循环约 +359。它与空闲页丢弃后重新建立映射相容；minor fault 本身不需要磁盘页读入，不能据此承诺整个进程没有其他磁盘 I/O。{s4cite}{gstcite}</li>
-<li><strong>已测稳定性：</strong>S4、gst 的记录窗口零 OOM/LMK，zram 三项 Δ=0；gst 目标正常退出，原生守护进程的已完成观测中 PID/启动身份保持，未发现崩溃或重启。不将有限实验窗口改称长期无异常证明。{cite([S4+'health.json', GST+'health.json', NATIVE+'health.json', B2+'summary.json'], 'l1-impact-report')}</li>
-<li><strong>并非全历史零告警：</strong>A 锚点有已知告警豁免记录；触发理由与窗口可复现，未做无害性根因证明。系统矩阵分期执行、延期完成收尾，已知非空目录保留，不能表述成不中断运行且现场零残留。{cite(SYSTEM+'composition.json', 'l1-system-before-after')}<a href="demo_reproduction_guide_20260901.md#l2-acceptance">健康规则与既有记录</a></li></ul>
+<h3>缺页与稳定性：看清窗口与异常记录</h3>
+<p>minor fault 指无需从后备存储读入页面就能处理的缺页；major fault 则需要调入页面。前者增加通常表现为页映射重新建立的成本，不能与后者混为一谈。
+OOM/LMK 指内存不足或低内存杀进程记录；zram 是内存中的压缩交换设备，本报告记录其原始数据量、压缩数据量与占用内存量的变化。</p>
+<ul><li><strong>major fault：</strong>系统前后对照的采样窗口均为 0；有定义的下一周期也为 0，末周期的缺失值不计作零。批量分配负载下一周期与媒体解码第 2–51 周期主窗口同样为 0。{syscite}{s4cite}{gstcite}</li>
+<li><strong>冷启动例外：</strong>媒体解码不调用 trim 的首重复、首周期，在任何 trim 前出现 4 次 major fault，外部序列同样记录 4；不归因于 trim，但不能写“全部实验全程为零”。早期媒体实验的附加采样字段缺失不冒充零，以有效目标内及外部序列为准。{cite([GST+'cycles.tsv', GST+'external_summary.tsv', GST+'health.json'], 'l1-gst-trim-cost')}</li>
+<li><strong>再激活成本：</strong>混合尺寸与中等尺寸为主的分配负载，下一周期分别增加 +1351 / +1465 次 minor fault；媒体解码主窗口按重复总和中位之差摊到每循环约 +359。它与空闲页丢弃后重新建立映射相容；minor fault 本身不需要磁盘页读入，不能据此承诺整个进程没有其他磁盘 I/O。{s4cite}{gstcite}</li>
+<li><strong>已测稳定性：</strong>批量分配与媒体解码的记录窗口零 OOM/LMK，zram 三项变化均为 0；媒体目标正常退出，常驻 UI 合成器的已完成观测中进程号和启动身份保持，未发现崩溃或重启。不将有限实验窗口改称长期无异常证明。{cite([S4+'health.json', GST+'health.json'], 'l1-gst-trim-cost')}{cite([NATIVE+'health.json', B2+'summary.json'], 'l1-tizen-native-b2')}</li>
+<li><strong>并非全历史零告警：</strong>大块释放后的回收基准有已知告警豁免记录；触发理由与窗口可复现，未做无害性根因证明。系统前后对照实验分期执行、延期完成收尾，已知非空目录保留，不能表述成不中断运行且现场零残留。{cite(SYSTEM+'composition.json', 'l1-system-before-after')}<a href="demo_reproduction_guide_20260901.md#l2-acceptance">健康规则与既有记录</a></li></ul>
 <h3>集成影响与选择性启用</h3>
-<p>本次 trim/none 对照使用相同 ELF，由运行时参数选择是否调用，不替换 libc，不因启用开关改变二进制体积或构建产物。
-<strong>启动时间未做专项测量</strong>；释放点设计不要求在启动路径执行 trim，但“产物未变”不是启动耗时完全不变的实证。产品增加调用点是否需要 owner 改动，由集成方式决定。{cite(SYSTEM+'composition.json', 'l1-system-before-after')}<a href="system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果">同产物对照口径</a></p>
+<p>本次调用与不调用的对照使用相同可执行文件，由运行时参数选择是否调用，不替换 libc，不因启用开关改变二进制体积或构建产物。
+<strong>启动时间未做专项测量</strong>；释放点设计不要求在启动路径执行 trim，但“产物未变”不是启动耗时完全不变的实证。产品增加调用点是否需要目标维护者改动，由集成方式决定。{cite(SYSTEM+'composition.json', 'l1-system-before-after')}<a href="system_level_before_after_20260908.md#13-已验收矩阵合成与优化效果">同产物对照口径</a></p>
 <p>不满足门的目标可以完全不调用，因此没有新增的 trim 调用开销；这是一种收缩影响面的方式，不是整个系统风险为零的保证。</p>
 </section>
 
 <section id="applicability"><h2>适用面：批量释放收益明显，已测常驻服务收益很小</h2>
 <figure>{applicability_chart(m)}<figcaption>图 4 · 同为 glibc 堆 PD 回收，单位 KiB。前三项为系统前后对照的首周期中位；其余为常驻服务单格观测，不混合计算百分比。{syscite}{nativecite}</figcaption></figure>
-<p>enlightenment 的 E1 / E4′ 实测回收分别为 <strong>272 KiB / 36 KiB</strong>；G4 为 <strong>88 / 0 / 4 KiB</strong>。
-G4 RSS 降幅中位 0.003906 MiB / 0.033659%，对重复极差 0.089844 MiB，NOT-DETECTED。其注入耗时中位 <strong>1899.209517 ms</strong> 含 gdb/ptrace，不与释放点约 1 ms 的调用数字混列。{nativecite}{syscite}</p>
-<p>空闲块驻留量不等于可回收量。glibc 归还受完整空闲页与 allocator 状态约束，碎片化可能让许多空闲字节无法形成可归还页；这些聚合观测不能唯一定位块地址或机制路径。
+<p>常驻 UI 合成器的初始观测、应用释放后的观测，实测回收分别为 <strong>272 KiB / 36 KiB</strong>；后续三次观测为 <strong>88 / 0 / 4 KiB</strong>。
+后续 RSS 降幅中位 0.003906 MiB / 0.033659%，小于重复极差 0.089844 MiB，判为 NOT-DETECTED（未检出）。其注入耗时中位 <strong>1899.209517 ms</strong> 包含 gdb 调试器附加、通过 ptrace 控制目标进程等注入开销，不与释放点约 1 ms 的调用数字混列。{nativecite}{syscite}</p>
+<p>空闲块驻留量不等于可回收量。glibc 归还受完整空闲页与分配器状态约束，碎片化可能让许多空闲字节无法形成可归还页；这些聚合观测不能唯一定位块地址或机制路径。
 整页估算器在严格配对的 15/15 个观测中未覆盖实测值，因此不能用直方图预测替代实际探针。{cite('trimmable_estimator_20260905/validation.tsv', 'l1-tizen-native-b2')}<a href="trimmable_estimator_20260905.md#3-失败模式与裁决">失败模式</a></p>
 <h3>产品启用：连续通过四道硬门</h3>
-<p class="scope"><strong>反信号排除 → 堆内驻留确认 → 实测 trim 探针收益达标 → 代价预算</strong></p>
-<ol><li>已经自动归还的周期分量排除；PD 自发下降不是需要 trim 的证据。</li>
-<li>以 malloc_info 的 M7 口径确认 glibc bins 中有空闲驻留，不把 smaps 平台直接当作可回收量。</li>
-<li>同目标、同释放相位实测 trim；收益须达到事前固定阈值，不能由估算器预测替代。</li>
-<li>调用时间、下一周期 faults 与活跃并发锁停顿都须符合业务预算；未过门则不启用。</li></ol>
-<p><a href="product_landing_recommendation_20260901.md#1-启用门清单">完整产品启用条件</a> · <a href="demo_reproduction_guide_20260901.md#l1-servicea">自动归还反信号的 L1 复算</a></p>
+<p class="scope"><strong>排除已经自行归还的那部分内存 → 确认释放后的空闲内存仍留在堆内 → 实测 trim 回收收益达标 → 确认代价在预算内</strong></p>
+<ol><li>对已经自行归还的周期分量，不启用额外回收；堆 PD 自发下降不是需要 trim 的证据。</li>
+<li>用 glibc 的 <code>malloc_info</code> 接口查看各分配区域的空闲块统计，确认有已释放但仍驻留的内存；不能只看到内核 <code>smaps</code> 的内存曲线不下降，就认定这些内存全都可回收。</li>
+<li>在同目标、同释放时点试调用 trim 并测量实际收益；收益须达到事前固定阈值，不能用空闲块尺寸直方图的预测替代。</li>
+<li>调用时间、下一周期缺页与活跃并发锁停顿都须符合业务预算；未过门则不启用。</li></ol>
+<p><a href="product_landing_recommendation_20260901.md#1-启用门清单">完整产品启用条件</a> · <a href="demo_reproduction_guide_20260901.md#l1-servicea">堆内存自行归还的公开数据复算</a></p>
 </section>
 
 <section id="boundaries"><h2>边界与未决</h2>
 <ul><li><strong>测试板量级，不等于产品收益。</strong>进程 RSS 回收明确；系统净效应未检出，不外推整机收益或业务收益。</li>
-<li><strong>产品候选尚未完成 floor 复确认与 live/bin 分解。</strong>需要目标 owner 配合采集堆内分布；现有平台高度只能登记候选。</li>
-<li><strong>真实并发预算仍有缺口。</strong>合成代理不能覆盖产品并发；gst 在 NULL 后调用，只补了该释放点与后续循环代价，未直接量化活跃分配时全 arena 锁停顿、帧时延和能耗。</li>
+<li><strong>产品候选的持续内存占用尚未重新确认，也未区分仍在使用的对象与已释放的空闲块。</strong>需要目标维护者配合采集堆内分布；曲线上不再下降的内存量只能用来登记待查对象。</li>
+<li><strong>真实并发预算仍有缺口。</strong>合成负载不能覆盖产品并发；媒体实验在管线停止释放后调用，只补了该释放点与后续循环代价，未直接量化活跃分配时各分配区域锁竞争造成的停顿、帧时延和能耗。</li>
 <li><strong>镜像、内存环境与负载差异。</strong>测试板的对象尺寸、分配历史和释放方式不能替代产品现场，产品必须重新验证启用门。</li>
-<li><strong>不作统一启用承诺。</strong>已测常驻守护收益很小，M7 驻留与估算器都不能给出统一收益阈值；未检出 p99 劣化不等于所有性能维度无变化。</li></ul>
-<p><a href="product_landing_recommendation_20260901.md">产品落点建议</a> · <a href="product_m7_feasibility_20260902.md">产品 M7 可行路径</a> · <a href="gst_trim_cost_20260901.md#d-是否填上并发线程代价未知">并发证据的具体缺口</a></p>
+<li><strong>不作统一启用承诺。</strong>已测常驻守护收益很小，空闲块驻留统计与整页估算器都不能给出统一收益阈值；未检出 p99 劣化不等于所有性能维度无变化。</li></ul>
+<p><a href="product_landing_recommendation_20260901.md">产品落点建议</a> · <a href="product_m7_feasibility_20260902.md">产品堆内空闲块采集的可行路径</a> · <a href="gst_trim_cost_20260901.md#d-是否填上并发线程代价未知">并发证据的具体缺口</a></p>
 </section>
 
 <section id="reproduction"><h2>复现入口：只读公开证据</h2>
-<p>在完整 Git 克隆的仓库根目录执行以下命令，不连接测试板。图表由公开 TSV/JSON 生成；HTML 不依赖脚本、字体下载或外部图片。
-单文件可离线阅读或邮件发送；相对证据链接需要配套仓库目录。<a href="{GUIDE}#l1-impact-report">本报告 L1 对照与预期输出</a></p>
-<h3>重建本报告并逐字节核验</h3>
-<pre>impact_out=$(mktemp -d)
-python3 tools/report/build_impact_report.py --output "$impact_out/glibc_memopt_impact_report.html"
-cmp "$impact_out/glibc_memopt_impact_report.html" docs/glibc_memopt_impact_report.html
-python3 tools/report/build_impact_report.py --check
-python3 -m unittest tools.report.test_build_impact_report</pre>
-<h3>从原始公开点重放系统前后对照</h3>
-<pre>system_out=$(mktemp -d)
-system_source=data/raw/system_level_before_after_20260908/accepted_matrix
-python3 tools/runners/system_level_before_after_20260908/replay_compact.py \
-  --points "$system_source/point_source.json" \
-  --gst-cycles "$system_source/gst_cycles.tsv" --output-dir "$system_out"
-cmp "$system_source/cycles.tsv" "$system_out/cycles.tsv"
-cmp "$system_source/summary.tsv" "$system_out/summary.tsv"
-cmp "$system_source/gst_repetitions.tsv" "$system_out/gst_repetitions.tsv"
-cmp "$system_source/gst_arms.tsv" "$system_out/gst_arms.tsv"
-cmp "$system_source/gst_comparison.json" "$system_out/gst_comparison.json"</pre>
-<p>{syscite}</p>
-<h3>重放业务代价；其他指标按相应 L1 段复算</h3>
-<pre>gst_out=$(mktemp -d)
-python3 tools/runners/gst_trim_cost_20260901/analyze_gst_trim_cost.py \
-  --replay-cycles data/raw/gst_trim_cost_20260901/cycles.tsv --output "$gst_out"
-cmp "$gst_out/repetitions.tsv" data/raw/gst_trim_cost_20260901/repetitions.tsv
-cmp "$gst_out/arm_summary.tsv" data/raw/gst_trim_cost_20260901/arm_summary.tsv
-cmp "$gst_out/comparison.json" data/raw/gst_trim_cost_20260901/comparison.json</pre>
-<p>{gstcite}{s4cite}{nativecite}</p>
-<p><strong>demo-v14 交付包：</strong><a href="demo_package_20260902.md">包入口</a> · <a href="demo_reproduction_guide_20260901.md">完整复现指南</a> · <a href="../data/raw/demo_v14_delivery_20260915/verification.json">冻结快照与交付回执</a>。
-该标签保留；本报告是 main 上新增独立说明，不改冻结包。<code>bash tools/reproduce/reproduce.sh verify</code> 是完整 host 校验入口，本报告的重建测试也随正常 verify 执行。</p>
-<details><summary>公开输入与冻结字节清单</summary><ul>{inputs}</ul><p><a href="{GUIDE}#l1-impact-report">上述输入的 L1 映射</a> · <a href="../tools/report/impact_sources.json">机器清单</a></p></details>
+<p>本报告可作为单文件离线阅读或邮件发送；图表以内联 SVG 保存，不下载脚本、字体或图片。
+<strong>先验包，再添加阅读材料：</strong>先在未添加本报告的干净 Git 克隆根目录运行 <code>bash tools/reproduce/reproduce.sh verify</code>，核验 demo-v14 交付包。
+之后另用一份阅读副本放置本报告；不要在待验证的干净克隆中添加文件，完整校验会拒绝未跟踪文件，不应绕过该门。</p>
+<p>
+如需打开相对证据链接，请将单独收到的本报告放入 <strong>demo-v14 交付快照的 docs/ 目录</strong>，再打开本文件。正文链接只引用该快照已公开的文件与章节，不要求访问本地工作区或后续提交。</p>
+<p><strong>L1 复算</strong>是仅用公开表格和脚本重新计算已发布结果，不连接测试板，不产生新测量。下面各入口提供可照抄的命令与预期输出：</p>
+<ul><li><a href="{GUIDE}#l1-system-before-after">进程 RSS、系统可用内存净效应与常驻服务对照：复算命令及逐字节比较</a>{syscite}</li>
+<li><a href="{GUIDE}#l1-s4">批量释放回收比例、调用耗时与下一周期缺页：复算命令</a>{s4cite}</li>
+<li><a href="{GUIDE}#l1-gst-trim-cost">媒体解码业务延迟与调用耗时分布：复算命令及逐字节比较</a>{gstcite}</li>
+<li><a href="{GUIDE}#l1-tizen-native-b2">原生进程观测与整页估算器：复算命令</a>{nativecite}</li></ul>
+<p><strong>demo-v14 交付包：</strong><a href="../README.md">交付入口（含中文入口）</a> · <a href="demo_package_20260902.md">演示材料与证据导航</a> · <a href="{GUIDE}">完整复现指南</a>。
+该冻结包的完整 host 校验不包含本次另行提供的报告重建测试。本报告不修改该冻结包。
+完整原始件本地留存，可按请求提供；上述公开紧凑证据可直接访问。</p>
 </section>
-<footer>证据基线 commit：{refs['evidence_commit']}（指证据快照，不是生成器执行证明）。本文件为派生产物，可由
-<a href="../tools/report/build_impact_report.py">生成脚本</a> 重建。未修改既有测量数据、验收带、机制或复现入口。</footer>
+<footer>链接与证据校验基线：demo-v14，commit 7289a47b9d24791944cd3b02c00f24b8cb76aa3b。本文件为可重建的派生产物；数字来自交付包公开证据。未修改既有测量数据、验收带、机制或复现入口。</footer>
 </main></body></html>
 '''
+    check_keywords(report)
+    check_delivery_links(repo, report, refs['sha256'])
+    return report
 
 
 def main():

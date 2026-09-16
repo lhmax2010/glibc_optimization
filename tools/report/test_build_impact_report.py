@@ -8,6 +8,8 @@ suite too. No extra executables beyond its existing Python/git environment.
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 import re
 import subprocess
 import sys
@@ -15,6 +17,8 @@ import tempfile
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
+from unittest import mock
+from urllib.parse import unquote, urlsplit
 
 from tools.report import build_impact_report as impact
 
@@ -72,11 +76,124 @@ class ImpactReportTests(unittest.TestCase):
         run = subprocess.run([sys.executable, str(REPO/'tools/reproduce/check_links.py'), str(REPORT)], capture_output=True, text=True)
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
         text = REPORT.read_text()
+        refs, _ = impact.load_evidence(REPO)
+        self.assertEqual(impact.check_delivery_links(REPO, text, refs['sha256']),
+                         len(impact.ReportDocument(text).links))
         blocks = re.findall(r'<figure>.*?</figure>|<tr><td>.*?</tr>|<div class="card">.*?</div>', text, re.S)
         self.assertGreater(len(blocks), 10)
         for block in blocks:
             self.assertIn('href="../data/raw/', block)
             self.assertRegex(block, r'demo_reproduction_guide_20260901.md#l1-[^"]+')
+
+    def test_all_links_resolve_using_only_delivery_snapshot_files(self):
+        # Materialize only linked Git blobs, not working-tree files. The new
+        # report is supplied separately and placed at docs/ in the package.
+        refs, files = impact.snapshot(REPO)
+        text = REPORT.read_text()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            report = root / refs['report_location']
+            report.parent.mkdir(parents=True)
+            report.write_text(text)
+            for link in impact.ReportDocument(text).links:
+                relative = unquote(urlsplit(link).path)
+                if not relative:
+                    continue
+                path = (report.parent / relative).resolve()
+                self.assertTrue(path.is_relative_to(root))
+                key = path.relative_to(root).as_posix()
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(impact.snapshot_blob(REPO, files[key]))
+            run = subprocess.run([sys.executable, str(REPO/'tools/reproduce/check_links.py'), str(report)],
+                                 capture_output=True, text=True)
+            self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+
+    def test_main_only_files_and_anchors_fail_delivery_gate(self):
+        cases = (
+            '../tools/report/build_impact_report.py',
+            '../tools/report/impact_sources.json',
+            '../data/raw/demo_v14_delivery_20260915/verification.json',
+            'demo_reproduction_guide_20260901.md#l1-impact-report',
+            '../board_results/not-public.json',
+        )
+        for link in cases:
+            with self.subTest(link=link), self.assertRaisesRegex(ValueError, 'not in demo-v14 snapshot'):
+                impact.check_delivery_links(REPO, f'<a href="{link}">link</a>')
+
+    def test_delivery_gate_checks_fragments_boundaries_and_evidence_bytes(self):
+        for link in ('#absent', '../../outside', 'https://example.invalid/a',
+                     '//example.invalid/a', '/etc/passwd', '../README.md?ref=main'):
+            with self.subTest(link=link), self.assertRaises(ValueError):
+                impact.check_delivery_links(REPO, f'<a href="{link}">link</a>')
+        with self.assertRaisesRegex(ValueError, 'delivery evidence'):
+            impact.check_delivery_links(REPO, '', {impact.SYSTEM+'cycles.tsv': '0'*64})
+
+    def test_missing_snapshot_is_not_a_skip_and_explains_fetch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'tools/report').mkdir(parents=True)
+            refs = json.loads((REPO/'tools/report/impact_delivery.json').read_text())
+            refs['commit'] = '0'*40
+            (root/'tools/report/impact_delivery.json').write_text(json.dumps(refs))
+            with self.assertRaisesRegex(ValueError, 'git fetch --no-tags origin .*no checks were skipped'):
+                impact.snapshot(root)
+
+    def test_delivery_pin_and_source_hashes_resolve_to_frozen_bytes(self):
+        refs, files = impact.snapshot(REPO)
+        self.assertEqual(refs['commit'], '7289a47b9d24791944cd3b02c00f24b8cb76aa3b')
+        self.assertEqual(refs['tag'], 'demo-v14')
+        evidence, _ = impact.load_evidence(REPO)
+        for relative, digest in evidence['sha256'].items():
+            blob = impact.snapshot_blob(REPO, files['data/raw/' + relative])
+            self.assertEqual(hashlib.sha256(blob).hexdigest(), digest, relative)
+
+    def test_keywords_rejected_in_body_captions_comments_and_metadata(self):
+        samples = ('<p>AI</p>', '<p>人工智能</p>', '<p>模型</p>',
+                   '<figcaption>多轮评审流程</figcaption>', '<!-- agent -->',
+                   '<meta name="generator" content="OpenAI">',
+                   '<meta name="generator" content="AI_generated">',
+                   '<svg aria-label="AGENT"><title>plot</title></svg>',
+                   '<p>ag&#101;nt</p>', '<p>A<span>I</span></p>',
+                   '<!-- ＡＩ -->', '<p>ag\u200bent</p>')
+        for sample in samples:
+            with self.subTest(sample=sample), self.assertRaisesRegex(ValueError, 'forbidden report keyword'):
+                impact.check_keywords(sample)
+        impact.check_keywords('<main>RSS / available memory / domain</main>')
+        impact.check_keywords(REPORT.read_text())
+
+    def test_build_itself_fails_for_missing_links_and_forbidden_metadata(self):
+        for addition, message in (('<a href="../tools/report/build_impact_report.py">link</a>', 'not in demo-v14'),
+                                  ('<!-- agent -->', 'forbidden report keyword')):
+            with self.subTest(addition=addition), mock.patch.object(impact, 'costs_chart', return_value=addition):
+                with self.assertRaisesRegex(ValueError, message):
+                    impact.build(REPO)
+
+    def test_plain_language_terms_and_first_use_definitions(self):
+        doc = Document(REPORT.read_text())
+        visible = ''.join(doc.text)
+        self.assertNotRegex(visible, r'\bmixed\b|medium-only|\bG[1-4]\b|\bS4\b|B 组|A 锚点|T1[′\x27]|\bM7\b|反信号|滞留型|自回收型')
+        # SVG captions, aria labels and metadata are reader-facing too; hrefs
+        # deliberately retain the immutable evidence filenames from delivery.
+        for name, value in doc.attributes:
+            if name in ('aria-label', 'content', 'title'):
+                self.assertNotRegex(value, r'\bG[1-4]\b|\bS4\b|\bM7\b|mixed|medium-only')
+        for definition in ('混合尺寸分配负载反复申请不同大小的对象',
+                           '中等尺寸为主的分配负载执行同样的过程',
+                           '操作系统按页回收内存', '堆内 Private_Dirty',
+                           '包含代码、栈、共享页及其他映射',
+                           '但不调用 trim 的一组运行',
+                           '同一条件下重复测量自身的波动范围'):
+            self.assertIn(definition, visible)
+        self.assertNotIn('#l1-impact-report', REPORT.read_text())
+
+    def test_reading_copy_does_not_conflict_with_clean_delivery_verification(self):
+        text = ''.join(Document(REPORT.read_text()).text)
+        self.assertLess(text.index('bash tools/reproduce/reproduce.sh verify'),
+                        text.index('请将单独收到的本报告放入'))
+        self.assertIn('先在未添加本报告的干净 Git 克隆', text)
+        self.assertIn('另用一份阅读副本', text)
+        self.assertIn('完整校验会拒绝未跟踪文件，不应绕过该门', text)
+        self.assertNotIn('REPRODUCE_ALLOW_DIRTY', text)
 
     def test_frozen_input_change_is_rejected_without_changing_data(self):
         refs, _ = impact.load_evidence(REPO)
@@ -117,8 +234,9 @@ class ImpactReportTests(unittest.TestCase):
         text = ''.join(Document(REPORT.read_text()).text)
         for value in ('未检出性能劣化', '不宣称性能提升', '1.870462', '0.173927',
                       '冷启动例外', '出现 4 次 major fault', '启动时间未做专项测量',
-                      '不是整个系统风险为零', 'NULL release 后', '不与释放点约 1 ms',
+                      '不是整个系统风险为零', '管线进入 NULL 状态、停止并释放资源后', '不与释放点约 1 ms',
                       '不是统计显著性检验', '不等于整机或产品收益', '碎片化可能',
+                      '同一进程中其他尚未归还的内存仍须单独实测',
                       '未做无害性根因证明', '四道硬门'):
             self.assertIn(value, text)
         self.assertNotIn('全部实验窗口为 0', text)
