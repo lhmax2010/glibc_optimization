@@ -32,12 +32,17 @@ class Document(HTMLParser):
         super().__init__()
         self.attributes = []
         self.tags = []
+        self.structure = []
         self.text = []
         self.feed(text)
 
     def handle_starttag(self, tag, attrs):
         self.tags.append(tag)
+        self.structure.append(('start', tag))
         self.attributes.extend(attrs)
+
+    def handle_endtag(self, tag):
+        self.structure.append(('end', tag))
 
     def handle_data(self, data):
         self.text.append(data)
@@ -60,6 +65,7 @@ class ImpactReportTests(unittest.TestCase):
     def test_languages_have_identical_structure_plot_geometry_and_numbers(self):
         cn, en = Document(REPORT.read_text()), Document(EN_REPORT.read_text())
         self.assertEqual(cn.tags, en.tags)
+        self.assertEqual(cn.structure, en.structure)
         # Text/accessible labels change; every other attribute is invariant,
         # including all chart coordinates, navigation and section identities.
         structural = lambda d: [(key, value) for key, value in d.attributes
@@ -120,6 +126,32 @@ class ImpactReportTests(unittest.TestCase):
         for message in ('Change -{0}%', 'Change +{0}', 'Change {0}%'):
             with self.subTest(message=message), self.assertRaisesRegex(ValueError, 'signs and percentages'):
                 impact.EnglishReport({'变化 +{0}%': message}).translate('变化 +1.23%')
+
+    def test_english_cli_catalogue_failure_never_writes_output(self):
+        for messages in ({}, {'glibc 运行时内存回收｜影响报告': 'p99'}):
+            with self.subTest(messages=messages), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory)/'english.html'
+                # Substitute only the real catalogue read. All rendering,
+                # validation and CLI error/output handling remain real.
+                code = ('from pathlib import Path\nfrom unittest.mock import patch\n'
+                        'from tools.report import build_impact_report as b\n'
+                        'read = Path.read_text\n'
+                        f'catalogue = {json.dumps({"messages": messages})!r}\n'
+                        'def edited(path, *a, **kw):\n'
+                        '    return catalogue if path.name == "impact_en.json" else read(path, *a, **kw)\n'
+                        'with patch.object(Path, "read_text", edited):\n    b.main()\n')
+                for exists in (False, True):
+                    if exists:
+                        output.write_bytes(b'previous approved file')
+                    run = subprocess.run([sys.executable, '-c', code, '--lang', 'en', '--output', str(output)],
+                                         cwd=REPO, capture_output=True, text=True)
+                    self.assertEqual(run.returncode, 1, run.stdout + run.stderr)
+                    self.assertIn('FAIL impact report:', run.stderr)
+                    self.assertNotIn('PASS', run.stdout)
+                    if exists:
+                        self.assertEqual(output.read_bytes(), b'previous approved file')
+                    else:
+                        self.assertFalse(output.exists())
 
     def test_rebuild_matches_submission_and_is_repeatable(self):
         one, two = impact.build(REPO), impact.build(REPO)
