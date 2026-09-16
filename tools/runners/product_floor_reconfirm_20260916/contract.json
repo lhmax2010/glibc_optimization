@@ -1,0 +1,34 @@
+{
+  "schema": "product-floor-readonly.v1",
+  "date": "2026-09-16",
+  "tag": "product-floor-contract-20260916",
+  "minimum_push_to_connect_seconds": 600,
+  "endpoint_public_alias": "<PRODUCT_BOARD_IP>",
+  "transport": "sdb/26101; one read operation per request; remote RC and DONE/FAIL",
+  "max_remote_request_bytes": 200,
+  "prohibited": ["push", "board temporary files", "load generation", "package mutation", "configuration changes", "injection", "root on", "reboot", "poweroff"],
+  "identity_order": ["uname -r", "uname -m", "cat /etc/os-release"],
+  "identity_stop": "Stop immediately on rpi4 kernel or unified-toolchain/development image; unknown product-image identity also stops. Never identify by IP.",
+  "candidate_aliases": ["enlightenment", "ServiceH", "ServiceA"],
+  "candidate_mapping": "Existing private desensitize_map.tsv; exact comm match; disclose nearby names separately, do not silently substitute.",
+  "supplemental_candidates": "Top 10 accessible userspace processes ranked by the historical glibc-heap-PD heuristic; require whole-system PID view and disclose races/coverage.",
+  "sampling": {
+    "duration_seconds": 600,
+    "period_seconds": 1,
+    "samples_including_both_endpoints": 601,
+    "targets": "Union of all live named candidates and top-10 supplementary PIDs; no target stimulation",
+    "fields": ["sample", "epoch_ns", "target", "pid", "start_ticks", "glibc_heap_pd_kb", "other_anon_pd_kb", "file_backed_pd_kb", "total_pd_kb", "minflt", "majflt", "MemAvailable_kb", "zram_used_kb", "zram_orig_bytes", "zram_compr_bytes", "zram_mem_used_bytes"],
+    "clock": "Host monotonic deadlines; record each read's UTC interval and lateness; do not fabricate simultaneous acquisition or replace missing samples.",
+    "smaps_definition": "Identical to product_cyclic_target_probe_20260814/collect_timeseries.sh: [heap] OR unnamed rw-p, start aligned 1 MiB, 0 < size <= 1 MiB; other writable anonymous mappings separately; remainder file-backed bucket.",
+    "quality": "Remote proof required; classified PD sums to total; stable PID/start_ticks and monotonic faults. Stop on missing required fields, unreadable candidate or process restart. Optional absent zram is recorded as absent, never zero."
+  },
+  "analysis": {
+    "classifier": "Reuse cyclic_fall_attribution_20260901/audit_phenotypes.py release_ratio_census without changing thresholds, including dual a+b labels. First current sample is baseline, not a historical sample.",
+    "attribution_audit": "Report all positive zram steps, major faults and total-PD/other-anon changes around the largest heap drawdown. A classifier label alone is not unique proof of a glibc mechanism.",
+    "floor": "Absolute minimum heap PD; first-minute minimum and last-minute minimum; difference of those two minima as within-window floor change. Never equate current absolute PD to historical activity-induced increments or allocator free bytes.",
+    "history": {"enlightenment_retained_increment_kib": 1736, "ServiceH_plateau_upper_bound_kib": 2360, "ServiceA_valley_increment_kib": 788},
+    "comparison_limit": "Passive ten-minute observation is not the historical remote-key activity protocol; live/bin decomposition and recoverability remain unmeasured."
+  },
+  "failure": "Any identity/transport/required observation gate failure stops this stage; publish completed host work, partial evidence and stop reason; no retries that rerun completed observations.",
+  "publication": "Full raw evidence host-only board_results; compact alias-only evidence data/raw; report reproduction section; endpoint/privacy scan zero before push. No demo branch change."
+}
