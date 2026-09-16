@@ -1,0 +1,29 @@
+{
+  "schema": "product-floor-board-script.v1",
+  "date": "2026-09-16",
+  "tag": "product-floor-board-script-contract-20260916",
+  "minimum_push_to_connect_seconds": 600,
+  "authorization": "PM explicitly changed this resumption to a readonly sampling shell script uploaded under /tmp, executed, collected and removed; old contract/tag remains historical and unchanged.",
+  "inherits_analysis_and_fields_from": "contract.json",
+  "analyzer": "analyze_floor.py",
+  "max_remote_request_bytes": 200,
+  "transport": "sdb/26101 only; remote RC/DONE/FAIL; no SSH, no root on",
+  "allowed_board_writes": "Only uniquely named /tmp/pf_20260916_<hex>.sh sampling scripts; hash check before execution/removal; captured output streams directly to host, no board result files; delete own scripts and verify absence on every exit path.",
+  "identity": {
+    "order": ["uname -r", "uname -m", "cat /etc/os-release", "command -v vk_send"],
+    "hard": "kernel must not contain rpi4; architecture must equal armv7l; OS must be Tizen10/TV product image, not unified-toolchain/development",
+    "kernel_history": "6.12.60 family is reference, deviation recorded not automatically rejected",
+    "vk_send": "presence is supporting evidence, absence recorded without veto; never invoke it"
+  },
+  "baseline": ["id", "rpm -q glibc", "/lib/libc.so.6", "MemTotal", "CPU online/CLK_TCK", "uptime", "date", "df", "rpm -q gdb", "ptrace_scope if present", "package-manager availability and RPM database path/writability; no installation test"],
+  "inventory": "Whole-system process view including PID 1, all readable live userspace smaps ranked by old heuristic; exact named candidates plus top 10; unknown visibility or live unreadable smaps stops and records authorization-needed items; process exits reported, never zero-filled.",
+  "samples": 601,
+  "duration_seconds": 600,
+  "period_seconds": 1,
+  "sampling_clock": "Board /proc/uptime monotonic deadlines at available resolution; date +%s%N read timestamps. Parallel readonly PID and global reads per slot. Record sample acquisition intervals; any batch finishing at/after next deadline stops with partial data, no invented rows.",
+  "required_observations": "Historical glibc-heap/other-anon/file-backed PD buckets, total PD, minflt/majflt, PID/start_ticks, MemAvailable, zram first three mm_stat bytes and swaps used. Missing required fields, process identity change, remote proof failure or malformed rows stops; absent zram is not zero.",
+  "capacity_boundary": "Read-only permission and installed-package metadata are not proof that future install/attach is permitted; never run RPM transaction, gdb attach or ptrace probe.",
+  "analysis": "Unchanged analyze_floor.py and historical release_ratio_census thresholds, absolute/first-minute/last-minute floor definitions; passive observation not equal to historical activity-induced increments or free-bin bytes.",
+  "failure": "Stop new diagnostic/sampling actions on any hard gate failure; only bounded cleanup of this attempt's own scripts remains authorized. No retry or completed-window rerun.",
+  "publication": "Raw host board_results; redacted compact data/raw; report retains historical stops. Push main only, no demo changes."
+}
