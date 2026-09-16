@@ -12,6 +12,30 @@ spec.loader.exec_module(publisher)
 
 
 class PublicationTests(unittest.TestCase):
+    def test_dependency_stop_publishes_exact_remote_failure_without_sampling(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, output = root/'source', root/'public'
+            (source/'raw').mkdir(parents=True)
+            (source/'state.json').write_text(json.dumps({
+                'status': 'STOP', 'reason': 'STOP remote command failed: timeout_path RC=1'}))
+            (source/'cleanup.json').write_text('[]\n')
+            raw = {'timeout_path': '\nRC=1\nFAIL\n',
+                   'vk_send_path': '/usr/bin/vk_send\n\nRC=0\nDONE\n',
+                   'rpm_dbpath': '/var/lib/rpm\n\nRC=0\nDONE\n',
+                   'shell_status': 'CapEff:\t0000000000000000\n\nRC=0\nDONE\n'}
+            for name, body in raw.items():
+                (source/'raw'/f'{name}.txt').write_text(body)
+            mapping, receipt = root/'mapping.tsv', root/'receipt.json'
+            mapping.write_text('type\tscope\toriginal\treplacement\n')
+            receipt.write_text('{}\n')
+            publisher.publish(source, output, mapping, '192.0.2.1', receipt)
+            for name, body in raw.items():
+                self.assertEqual((output/'raw'/f'{name}.txt').read_text(), body)
+            self.assertEqual(json.loads((output/'cleanup.json').read_text()), [])
+            for name in ('timeseries.tsv', 'summary.json', 'inventory.json', 'owned_scripts.json'):
+                self.assertFalse((output/name).exists())
+
     def test_stopped_connection_retains_lines_and_hashes_without_fake_measurements(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

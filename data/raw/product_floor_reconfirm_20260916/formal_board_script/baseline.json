@@ -1,0 +1,74 @@
+{
+  "id": [
+    0,
+    "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6509(app_logging),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\""
+  ],
+  "glibc": [
+    0,
+    "glibc-2.40-1.12.armv7l"
+  ],
+  "libc_version": [
+    0,
+    "GNU C Library (GNU libc) stable release version 2.40.\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 14.2.0.\nlibc ABIs: UNIQUE ABSOLUTE\nMinimum supported kernel: 3.2.0\nFor bug reporting instructions, please see:\n<https://www.gnu.org/software/libc/bugs.html>."
+  ],
+  "meminfo": [
+    0,
+    "MemTotal:        1599416 kB\nMemFree:          108700 kB\nMemAvailable:    1002980 kB\nBuffers:           20128 kB\nCached:           865240 kB\nSwapCached:          592 kB\nActive:           662156 kB\nInactive:         540952 kB\nActive(anon):     317188 kB\nInactive(anon):       52 kB\nActive(file):     344968 kB\nInactive(file):   540900 kB\nUnevictable:        7012 kB\nMlocked:            7012 kB\nHighTotal:       1037568 kB\nHighFree:          19824 kB\nLowTotal:         561848 kB\nLowFree:           88876 kB\nSwapTotal:       1039320 kB\nSwapFree:         939444 kB\nDirty:                 0 kB\nWriteback:             0 kB\nAnonPages:        312000 kB\nMapped:           204756 kB\nShmem:              6116 kB\nShmem_swapped:        32 kB\nKReclaimable:      43976 kB\nSlab:              95344 kB\nSReclaimable:      43976 kB\nSUnreclaim:        51368 kB\nKernelStack:        5552 kB\nOn-demandKStack:      16 kB\nPageTables:        17872 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     1839028 kB\nCommitted_AS:    6640224 kB\nPercpu:              976 kB\nCmaTotal:         311296 kB\nCmaFree:           19044 kB\nCmaUsed-Dev:       2724 kB\nCmaUsed-User:    289528 kB\nzram0: 97652 kB OrigDataSize, 26087 kB ComprDataSize, 35608 kB MemUsedTotal"
+  ],
+  "cpu_online": [
+    0,
+    "0-3"
+  ],
+  "clk_tck": [
+    0,
+    "250"
+  ],
+  "uptime": [
+    0,
+    "07:58:26 up  2:14,  0 user,  load average: 29.01, 29.00, 29.02"
+  ],
+  "date": [
+    0,
+    "Wed Sep 16 14:58:27 UTC 2026"
+  ],
+  "df": [
+    0,
+    "Filesystem            Size  Used Avail Use% Mounted on\n/dev/root             1.3G  1.3G     0 100% /.org_rootfs\n/dev/subroot2          37M   37M     0 100% /.org_rootfs/prd\n/dev/mmcblk0p21       3.9G  1.4G  2.5G  36% /.org_rootfs/opt\noverlay               3.9G  1.4G  2.5G  36% /\n/dev/mmcblk0p22       640K  640K     0 100% /.org_rootfs/factory_peq\noverlay               3.9G  1.4G  2.5G  36% /factory_peq\noverlay               3.9G  1.4G  2.5G  36% /prd\nnone                  629M     0  629M   0% /dev\ntmpfs                 781M  400K  781M   1% /tmp\ntmpfs                 781M  1.7M  780M   1% /run\n/dev/mmcblk0p20        20M  9.5M   11M  48% /mnt/systemrw\n/dev/mmcblk0p21       3.9G  1.4G  2.5G  36% /opt\ntmpfs                 781M  196K  781M   1% /run/user/5001\ntmpfs                 781M  2.5M  779M   1% /dev/shm\n/dev/mmcblk0p17        12M  2.6M  9.5M  22% /mnt/drm\ntmpfs                 781M     0  781M   0% /sys/fs/cgroup\ntmpfs                 781M     0  781M   0% /opt/media\n/dev/mmcblk0p21       3.9G  1.4G  2.5G  36% /opt/usr/home/owner/content"
+  ],
+  "proc_uptime": [
+    0,
+    "8058.09 22970.45"
+  ],
+  "gdb": [
+    0,
+    "gdb-15.1-1.2.armv7l"
+  ],
+  "ptrace_scope": [
+    1,
+    "cat: /proc/sys/kernel/yama/ptrace_scope: No such file or directory"
+  ],
+  "rpm_path": [
+    0,
+    "/usr/bin/rpm"
+  ],
+  "zypper_path": [
+    1,
+    ""
+  ],
+  "rpm_dbpath": [
+    0,
+    "/var/lib/rpm"
+  ],
+  "shell_status": [
+    0,
+    "Name:\tcat\nUmask:\t0000\nState:\tR (running)\nTgid:\t2499\nNgid:\t0\nPid:\t2499\nPPid:\t2498\nTracerPid:\t0\nUid:\t5001\t5001\t5001\t5001\nGid:\t100\t100\t100\t100\nFDSize:\t32\nGroups:\t29 44 100 201 1901 6509 6525 10001 10002 10013 10014 10212 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201 \nNStgid:\t2499\nNSpid:\t2499\nNSpgid:\t2498\nNSsid:\t2498\nKthread:\t0\nVmPeak:\t    2012 kB\nVmSize:\t    2008 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t     540 kB\nVmRSS:\t     540 kB\nRssAnon:\t      80 kB\nRssFile:\t     460 kB\nRssShmem:\t       0 kB\nVmData:\t     176 kB\nVmStk:\t     132 kB\nVmExe:\t      12 kB\nVmLib:\t    1664 kB\nVmPTE:\t      10 kB\nVmSwap:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffff\nThreads:\t1\nSigQ:\t0/10059\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000001000\nSigCgt:\t0000000000000000\nCapInh:\t00000000002000e2\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\tf\nCpus_allowed_list:\t0-3\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t0\nnonvoluntary_ctxt_switches:\t4"
+  ],
+  "tmp_writable": [
+    0,
+    ""
+  ],
+  "awk_path": [
+    0,
+    "/usr/bin/awk"
+  ]
+}

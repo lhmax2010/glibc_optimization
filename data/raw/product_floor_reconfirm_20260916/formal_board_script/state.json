@@ -1,0 +1,22 @@
+{
+  "started_utc": "2026-09-16T14:57:42.981466+00:00",
+  "status": "STOP",
+  "board_alias": "<PRODUCT_BOARD_IP>",
+  "source_commit": "80332940df48db7b85db0e5101a9c553a192b714",
+  "harness_sha256": {
+    "run_board_script.py": "28e5f4b1f19843f47fa428151f5625dc8e9b364b12d68c08636ebedd59e1ac25",
+    "board_probe.sh": "b68dd44330f853a893ab52ad647d4271f3aa48cb75916968bc8060965a9cdaa4",
+    "run_readonly.py": "3d00e355e106c3b94a15d03118bf422587b70aaebd1545864665bea49834cdd5"
+  },
+  "identity": {
+    "kernel": "6.12.60",
+    "arch": "armv7l",
+    "os_release": "NAME=Tizen\nVERSION=\"10.0.0 (<PRODUCT_IMAGE>)\"\nID=tizen\nVERSION_ID=10.0.0\nPRETTY_NAME=\"<PRODUCT_IMAGE>\"\nANSI_COLOR=\"0;36\"\nCPE_NAME=\"cpe:/o:tizen:tizen:10.0.0\"\nBUILD_ID=<PRODUCT_BUILD_ID>",
+    "vk_send": [
+      0,
+      "/usr/bin/vk_send"
+    ]
+  },
+  "reason": "STOP remote command failed: timeout_path RC=1",
+  "ended_utc": "2026-09-16T14:57:49.134735+00:00"
+}

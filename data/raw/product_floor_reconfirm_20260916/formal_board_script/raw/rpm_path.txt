@@ -1,0 +1,4 @@
+/usr/bin/rpm
+
+RC=0
+DONE

@@ -226,5 +226,173 @@ unified-toolchain 开发镜像。历史 6.12.60 仅作对照；`command -v vk_se
 输出通过 sdb 直接保存在 host，不在板上落采样结果文件。安装可行性仅查询已装包、
 工具存在、RPM 数据库权限和空间，不做试装，不能把文件可写等同于已获安装/attach 权限。
 
-状态：合同已写定，等待事前门及执行器 host 核验；下方另记实际结果，不以本段代替
+事前状态：合同已写定，等待事前门及执行器 host 核验；下方另记实际结果，不以本段代替
 身份原文、数据或收尾证明。
+
+### 6.1 本轮结果与停止原因
+
+**连接恢复，产品身份门通过；画像未执行。** 本轮在板端依赖检查时，
+`command -v timeout` 返回远端 `RC=1 / FAIL`、无路径输出。执行器把独立 `timeout`
+作为限制自身探针存活时间的必要依赖，故立即停止。这是本轮执行器引入的兼容性缺口，
+不是产品身份失败、不是 sdb 再次故障，也没有证据表明是读取权限不足。
+未临场安装工具、改用另一入口或重新连接重试；不把未经验证的替代方式当作已完成采样。
+
+本轮实际只有 26 条 sdb 调用，其中 23 条为带远端标志的只读 shell 请求；
+没有 push、脚本执行、候选盘点或采样请求。没有本轮板端文件需要删除，
+[收尾动作列表](../data/raw/product_floor_reconfirm_20260916/formal_board_script/cleanup.json)为空。
+这是“尚未创建产物”的操作证据，不是对整板既有文件的卫生审计结论。
+
+| 时间线（UTC） | 实际记录 | 证据 |
+|---|---|---|
+| 新合同提交 | `495f627e0751b71e1bc93e879be7187d1bf43d23` | [推送回执](../data/raw/product_floor_reconfirm_20260916/formal_board_script/contract_push.json) |
+| annotated tag 对象 | `9f8f504c12fb182df42cd593ea001582427e00e4` | 同上 |
+| 推送完成确认 | `2026-09-16T14:46:42.431004+00:00` | 同上 |
+| 事前字节/间隔门 | `14:57:44.081515`；`661.650452998 s`，超过 600 s；四个冻结文件哈希一致 | [合同门](../data/raw/product_floor_reconfirm_20260916/formal_board_script/contract_gate.json) |
+| 执行器提交 | `80332940df48db7b85db0e5101a9c553a192b714`，连接前已推 main，38 项 host 测试通过 | [终态与执行器哈希](../data/raw/product_floor_reconfirm_20260916/formal_board_script/state.json) |
+| sdb connect | `14:57:44.085947` → `14:57:46.091852`，明确 connected，devices 为 device | [connect 原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/connect.txt)、[devices 原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/devices.txt) |
+| 三项硬身份门 | `14:57:46.096765` → `14:57:46.482732`，全部远端 RC=0 / DONE | [逐条记录](../data/raw/product_floor_reconfirm_20260916/formal_board_script/commands.jsonl) |
+| timeout 依赖门 | `14:57:49.017944` → `14:57:49.134222`，host RC=0，但远端 RC=1 / FAIL | [失败原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/timeout_path.txt) |
+| STOP | `14:57:49.134735`，其后无板端请求 | 终态与逐条记录 |
+
+最后一条请求及完整输出：
+
+```sh
+sdb -s '<PRODUCT_BOARD_IP>:26101' shell 'LC_ALL=C command -v timeout;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL'
+```
+
+```text
+
+RC=1
+FAIL
+```
+
+只可判定当前 SDB 会话 PATH 中查不到该独立命令；没有检查其他路径或工具的同类功能，
+不能扩大为“整份固件没有任何超时机制”。host RC=0 未被误认成功。
+
+### 6.2 产品身份原文
+
+`uname -r`（[原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/uname_r.txt)）：
+
+```text
+6.12.60
+
+RC=0
+DONE
+```
+
+`uname -m`（[原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/uname_m.txt)）：
+
+```text
+armv7l
+
+RC=0
+DONE
+```
+
+`cat /etc/os-release`（[全文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/os_release.txt)，
+镜像名称及 BUILD_ID 按既有映射脱敏，未删行；判板在脱敏前完成）：
+
+```text
+NAME=Tizen
+VERSION="10.0.0 (<PRODUCT_IMAGE>)"
+ID=tizen
+VERSION_ID=10.0.0
+PRETTY_NAME="<PRODUCT_IMAGE>"
+ANSI_COLOR="0;36"
+CPE_NAME="cpe:/o:tizen:tizen:10.0.0"
+BUILD_ID=<PRODUCT_BUILD_ID>
+
+RC=0
+DONE
+```
+
+原镜像标识为 Tizen10/TV 产品系列，不是 unified-toolchain；内核与历史 6.12.60 系一致，
+无 rpi4，架构符合本轮 armv7l 硬门。旁证 `command -v vk_send`
+（[原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/vk_send_path.txt)）：
+
+```text
+/usr/bin/vk_send
+
+RC=0
+DONE
+```
+
+只查询存在，未调用按键工具；身份来自这些实际特征，不以共享 IP 判板。
+
+### 6.3 环境基线与能力实测
+
+| 项目 | 本轮读取值 / 限定 | 原文 |
+|---|---|---|
+| glibc RPM | `glibc-2.40-1.12.armv7l` | [rpm](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/glibc.txt) |
+| libc 版本与编译器 | GNU libc 2.40；GNU CC 14.2.0 | [完整版本输出](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/libc_version.txt) |
+| MemTotal / MemAvailable | `1599416 / 1002980 kB`，一次快照，不是 10 分钟趋势 | [meminfo 全文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/meminfo.txt) |
+| CPU | armv7l；online `0-3`，即 4 个在线核；CLK_TCK=250 | [online](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/cpu_online.txt)、[CLK_TCK](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/clk_tck.txt) |
+| uptime / load | `up 2:14`；load `29.01, 29.00, 29.02`，不据单次值推断业务类别 | [uptime](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/uptime.txt) |
+| 单调 uptime | `8058.09 22970.45` | [proc uptime](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/proc_uptime.txt) |
+| 板端 UTC | `Wed Sep 16 14:58:27 UTC 2026` | [date](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/date.txt) |
+| 根目录可见 overlay / `/opt` | 各显示可用 `2.5G`、36%；为同一底层空间，不能相加 | [df 全文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/df.txt) |
+| 只读镜像下层 / 临时目录 | `/.org_rootfs` 可用 0；`/tmp` 可用 781M；`/mnt/systemrw` 可用 11M | 同上 |
+| 当前 UID | `5001(owner)`，`context="User::Shell"`，未提权 | [id 全文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/id.txt) |
+| gdb | `gdb-15.1-1.2.armv7l` 已安装；没有调用 gdb | [rpm -q gdb](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/gdb.txt) |
+| yama | `/proc/sys/kernel/yama/ptrace_scope` 不存在，远端 RC=1；不是 Permission denied | [原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/ptrace_scope.txt) |
+| 包工具 / 数据库路径 | rpm=`/usr/bin/rpm`；zypper 未找到；`%{_dbpath}`=`/var/lib/rpm` | [rpm](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/rpm_path.txt)、[zypper](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/zypper_path.txt)、[dbpath](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/rpm_dbpath.txt) |
+| 会话权限旁证 | 同会话执行的 `cat /proc/self/status`：Uid=5001，CapPrm/CapEff/CapAmb=0 | [原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/shell_status.txt) |
+| 探针依赖 | `/tmp` 可写检查成功，awk=`/usr/bin/awk`；timeout 查询失败导致 STOP | [tmp](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/tmp_writable.txt)、[awk](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/awk_path.txt)、[timeout](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/timeout_path.txt) |
+
+glibc 上游版本仍为 2.40，未触发 2.41+ 版本迁移告警；RPM 构建修订与测试板不同，
+不能据版本相同假定 allocator 布局、floor 或产品收益相同。板端 date 与 host UTC
+约差 40 s，uptime 自带时刻字段亦与 date 不同，均保留原文，未校时/改时区。
+没有实际采样序列，不能把这些时钟快照充当相位对齐证明。
+
+meminfo 自带 zram 汇总为 `97652 kB OrigDataSize / 26087 kB ComprDataSize /
+35608 kB MemUsedTotal`；这是单次内核展示值，不是合同要求的逐秒 sysfs 字节序列，
+不能据此判 zram 平坦或排除换出。`shell_status` 是采集标签，其 `/proc/self`
+指向读取命令 cat 本身，不是父 shell 或候选进程的状态；不能由它证明 attach 能力。
+
+**历史记录 vs 本轮实测**：历史产品侧“只读与环境变量方式、不支持 lldb 注入”及
+[不可装包约束](product_m7_feasibility_20260902.md#41-前置与建议采集形态)保留为当时结论；
+PM 现告知可安装 gdb，而本轮已直接查询到 gdb 包。已安装不等于当前 UID 可以安装、
+删除包或 attach。RPM 数据库可写检查尚未执行，未尝试包事务，不能判“安装权限已通过”。
+yama 文件缺失也不能排除其他 ptrace、凭据或安全策略限制；本轮未查询 lldb，
+未把测试板历史能力外推为产品板当前能力。
+
+### 6.4 候选、floor 与下一轮权限边界
+
+| 候选 / 要求 | 本轮状态 | 历史对照仅作待验证项 |
+|---|---|---|
+| enlightenment | 存活/PID/启动时长、角色现场核验、画像均 NOT_EXECUTED | retained 增量 `+1736 KiB`，不是当前绝对 floor |
+| ServiceH | 同上；未检查真实原名或近似候选 | 平台高度上界 `2360 KiB`，不能直接当可回收量 |
+| ServiceA | 同上 | 谷底增量 `+788 KiB`，不能直接当当前驻留量 |
+| 堆 PD Top 10 | NOT_EXECUTED，未获得全系统进程视图 | 不按历史排名补齐 |
+| 10 分钟 smaps / faults / MemAvailable / zram | NOT_EXECUTED，无 timeseries 或 summary | 没有本轮分类、floor、换出排除或变化归因 |
+
+历史量出处仍见 §2。当前不能选择“floor 仍在且值得注入”的目标，也不能判断分类变化。
+镜像、业务和采样时段差异只能作为后续待核对因素，不能在没有序列时给出变化归因。
+
+下一轮风险评估仍待进程核验：enlightenment 若确为在用 UI 合成器，attach 暂停可能
+表现为画面/输入停顿；ServiceH、ServiceA 的具体职责、关键性和看门狗不能仅凭别名
+推定，需 owner 确认是否会造成服务超时或恢复动作。本轮没有 attach，因此没有实测
+暂停风险或“可安全注入”的结论。
+
+需 PM 单独批准的后续注入事项应包括：确认后的目标 PID/启动身份、实际角色、调用种类
+及次数、自然空闲/释放时机、最大允许暂停时间、画面/服务/watchdog 观察项、异常时停止
+后续调用并解除附加的回退方案；不得默认授权杀服务、重启或改安全配置。
+**当前没有已证实需 root 才能读取的项**；完整 ps、候选 smaps 与 sysfs 读取尚未开始，
+只能标“未测试”，不能把 UID=5001 当作必须提权的证据。
+
+### 6.5 收线与复现状态
+
+本轮未改 governor/包/配置/UID，未注入、未执行业务负载或 SSH；没有板端脚本/结果
+落盘，没有清理删除。全部 26 条调用的原文公开，完整私有原文仍本地留存，可按请求提供。
+[发布清单](../data/raw/product_floor_reconfirm_20260916/formal_board_script/publication.json)
+记录 31 个证据文件的原始/公开双哈希；新增镜像字段与端点按既有映射脱敏，保留行结构。
+
+复现入口为[本轮 harness](../tools/runners/product_floor_reconfirm_20260916/README.md)，
+参数与分析器仍按 §6 新合同；§4 host 测试命令可直接运行，收线共 39 项通过。
+本次只有 STOP 原文，没有画像派生件可重放，不能声称 601 点、1 s 时序、目标身份或
+PD 分类已在板上验收。确定性项与采样质量门不放宽，不拿历史值替代本轮缺失值。
+
+待闭合的是 **host 执行器对产品工具集的兼容性**：先在 host 设计并测试不需要安装/提权
+的有界探针执行方式，保持原合同的采样口径与安全门；如需改合同定义，须另行裁决。
+本轮依停止门不实现现场替代、不重连；需明确续跑后才再次执行。连接故障已恢复，
+不再把“请 PM 开启 sdb”作为当前建议。只推 main，`demo-v14` 保持不变。

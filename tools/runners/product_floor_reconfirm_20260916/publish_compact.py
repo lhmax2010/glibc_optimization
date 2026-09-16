@@ -57,7 +57,9 @@ def publish(source, output, mapping, address, receipt):
     # The manifest still preserves their hashes in commands.jsonl.
     allowed_raw = {'sdb_version', 'connect', 'devices', 'uname_r', 'uname_m', 'os_release',
                    'glibc', 'libc_version', 'cpu_online', 'clk_tck', 'meminfo',
-                   'uptime', 'date', 'id', 'df', 'proc_uptime', 'gdb', 'ptrace_scope'}
+                   'uptime', 'date', 'id', 'df', 'proc_uptime', 'gdb', 'ptrace_scope',
+                   'vk_send_path', 'rpm_path', 'zypper_path', 'rpm_dbpath',
+                   'shell_status', 'tmp_writable', 'awk_path', 'timeout_path'}
     files += [p for p in (source/'raw').glob('*.txt') if p.stem in allowed_raw]
     manifest = []
     for path in files:

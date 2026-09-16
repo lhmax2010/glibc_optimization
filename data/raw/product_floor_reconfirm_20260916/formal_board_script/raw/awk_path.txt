@@ -1,0 +1,4 @@
+/usr/bin/awk
+
+RC=0
+DONE

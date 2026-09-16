@@ -1,0 +1,193 @@
+{
+  "schema": "product-floor-publication.v1",
+  "status": "STOP",
+  "files": [
+    {
+      "path": "contract_gate.json",
+      "raw_sha256": "8e9d8f882ad554c629094e5d042a3dd3a3d7edd6869b21e63c7045290d1aa40f",
+      "public_sha256": "8e9d8f882ad554c629094e5d042a3dd3a3d7edd6869b21e63c7045290d1aa40f",
+      "redacted": false
+    },
+    {
+      "path": "state.json",
+      "raw_sha256": "04b6ffebddb8a6b828c96546a8b32cb40088bdc178f65fd45ad392f17cd1f4c7",
+      "public_sha256": "18a33167306178017da53d2baf504943dd02a56a8d0abb72f1829539c1a18d4d",
+      "redacted": true
+    },
+    {
+      "path": "cleanup.json",
+      "raw_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "public_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "redacted": false
+    },
+    {
+      "path": "commands.jsonl",
+      "raw_sha256": "8e7ebf7ae00ced795f3f484a7840ac60c43f7849751f583090730f7cdddcda0e",
+      "public_sha256": "e0835f2342a391b0ecf9c22357ff8c9ef022ce6093fb4350b84bd64eee0e2250",
+      "redacted": true
+    },
+    {
+      "path": "baseline.json",
+      "raw_sha256": "bff4b447723d9f511ad7fbcd074b63ee56950c08fdf8bd3d21a744325424b2bd",
+      "public_sha256": "bff4b447723d9f511ad7fbcd074b63ee56950c08fdf8bd3d21a744325424b2bd",
+      "redacted": false
+    },
+    {
+      "path": "raw/shell_status.txt",
+      "raw_sha256": "2b7168df8fc87d18b20bd4dc6846a32931f0e6cb16e9720d9a60940a5314d5ff",
+      "public_sha256": "c2f10690f2fee75587b6a84fafe476a1244d13c893289640503bc1ea0575eb1f",
+      "redacted": false
+    },
+    {
+      "path": "raw/libc_version.txt",
+      "raw_sha256": "605ae2fc834231c0fb045e45bc3265f3b0428796ec5ed7c1cfc95cd74bcf902a",
+      "public_sha256": "3a8c8706389a43246f53d079e377f219ce7caf811a2ff329cb0f5ddd2405e1bb",
+      "redacted": false
+    },
+    {
+      "path": "raw/clk_tck.txt",
+      "raw_sha256": "5d12b3bf50a8e9853716e4eae2ae45557d5e5b838dff53cb4c1f6395ff6fa116",
+      "public_sha256": "dcf0be00d2b2682baa7f93b4ff0447a400f5829ba850d572589b7e2cfb00e52a",
+      "redacted": false
+    },
+    {
+      "path": "raw/proc_uptime.txt",
+      "raw_sha256": "250f07d8d3375dcd41d9e4953e71ef22b9e91b0315dfc64aa8e8506a3229393d",
+      "public_sha256": "47bd137dcbdf44d0b28ae413fb16fa529d270dc1a61e1f03994edc24a9a98daa",
+      "redacted": false
+    },
+    {
+      "path": "raw/ptrace_scope.txt",
+      "raw_sha256": "2ab7649b0cac37ea2cd1f36c35ffbe2a1d7ed37a330a82fa2f7729ed74306f26",
+      "public_sha256": "96acd1966de787e3e3a97e18692dbd121d92a88704a2a3cdb6c6b352deb10d5e",
+      "redacted": false
+    },
+    {
+      "path": "raw/zypper_path.txt",
+      "raw_sha256": "54ac2099af092f5ec8195ec505e8b6e7a48a059e6d4de1b19deed5aa47e86ec0",
+      "public_sha256": "174ad9b4c030970eaedd1d39fa4cd536bd1a86f362333d92efc4688192a23261",
+      "redacted": false
+    },
+    {
+      "path": "raw/devices.txt",
+      "raw_sha256": "8cc72ef8386aefc74d1000d15183303d1140aa13a671c1aeff9f7ffa637b9ab4",
+      "public_sha256": "92579bd4b3de07c629312b963ecca9de2cfff2b0410d3e9d66442f1ce6aefe05",
+      "redacted": true
+    },
+    {
+      "path": "raw/meminfo.txt",
+      "raw_sha256": "a7fd78dcfaace1e366a3d36cf2a089356cec45e1775193e655d96bf94dd40b8e",
+      "public_sha256": "e9832a9d90276c8f5f0f7687436bf0829ce40d62c9762f212dc40bdeab7f43d9",
+      "redacted": false
+    },
+    {
+      "path": "raw/df.txt",
+      "raw_sha256": "bb6e740bf4616a6b40e161a1f0d5f2820f8d6123983237447153a5ff631dd31f",
+      "public_sha256": "a18c5a41aa024b35d0c1c878faf4da0f829985d14c846ec9ccb07132e82dd479",
+      "redacted": false
+    },
+    {
+      "path": "raw/rpm_path.txt",
+      "raw_sha256": "b67f64ae0c098f1399859ca81e341424a0639f0c5a9cf3c3cbb00d135b21dd3e",
+      "public_sha256": "23c319954abfe2d8e8160ee106ad0fa2a0a8b00806521c78d6e2378a086b4449",
+      "redacted": false
+    },
+    {
+      "path": "raw/sdb_version.txt",
+      "raw_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "public_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "redacted": false
+    },
+    {
+      "path": "raw/connect.txt",
+      "raw_sha256": "83e0048ffcc311d563207698ad2cac34d097c8f2fa7dd3fe29fba1c69d8299f9",
+      "public_sha256": "5ff064fab3eabcb928d35ad76f1af356d294126a6938d8582dc2971e16ebe35d",
+      "redacted": true
+    },
+    {
+      "path": "raw/date.txt",
+      "raw_sha256": "cd6df79b81e6515a4afbc3ecd4a12e5c62a9478b2edd4e009ecccf2eeb298ac0",
+      "public_sha256": "8d480b6699113a45f5a3ddfe791e84b7cf47c3db3e97ea4ecd8a3c7dd8287dce",
+      "redacted": false
+    },
+    {
+      "path": "raw/os_release.txt",
+      "raw_sha256": "52a4e23f7941686ad0d5007dddaafcbe94ab35ed14e23e0da9bf7c29d509f8d5",
+      "public_sha256": "09a7716b03e3bb7adca5348d79da9db2136aabc88ffef886d74a6b6cb2732573",
+      "redacted": true
+    },
+    {
+      "path": "raw/uname_r.txt",
+      "raw_sha256": "7cb005d620c9bf09c5c95e9ac8c68e1ddf1c16155c2a6ee3840cefa8c3b2cdf8",
+      "public_sha256": "f3a516eddb7744598ac935d51b61c6091f08fe40f266732fbc7b60abc4e002e9",
+      "redacted": false
+    },
+    {
+      "path": "raw/vk_send_path.txt",
+      "raw_sha256": "b2f8ac3cceaa497c929c9592802c9a34e1ee26e8d5e3d2790e4ad89951067d13",
+      "public_sha256": "d8b5cc1c874611c22d1a4e50a1c3226ed3d8948f30d867597c0b65802fea0577",
+      "redacted": false
+    },
+    {
+      "path": "raw/timeout_path.txt",
+      "raw_sha256": "54ac2099af092f5ec8195ec505e8b6e7a48a059e6d4de1b19deed5aa47e86ec0",
+      "public_sha256": "174ad9b4c030970eaedd1d39fa4cd536bd1a86f362333d92efc4688192a23261",
+      "redacted": false
+    },
+    {
+      "path": "raw/glibc.txt",
+      "raw_sha256": "3ddd5628993d4659a367fae78b646cbec5485775645eb2351fae02bef3e7608f",
+      "public_sha256": "4a0a68f129e1d679f7ac43a9ab33adafb3288c21d6f58e98a624fee4e2987222",
+      "redacted": false
+    },
+    {
+      "path": "raw/gdb.txt",
+      "raw_sha256": "d269062b55e2416579a94fcffe6b2160e0f6c44703292edfe524fc41fdd43968",
+      "public_sha256": "c9d45c8b441dee75e447b2bc179d6d5d3335c54ba745c6c779f8d0682aab631c",
+      "redacted": false
+    },
+    {
+      "path": "raw/cpu_online.txt",
+      "raw_sha256": "1956ce301391dad72f591a354d18abcf8167754a749aedced10be2589716de76",
+      "public_sha256": "18273193698e93a56f9b3ef20fa2f5f630020967e47b26519468429b25024a2c",
+      "redacted": false
+    },
+    {
+      "path": "raw/id.txt",
+      "raw_sha256": "a385d1b79d0c7a0f090bafc74392f78dc226152ee6f5f012edc2e419993cf710",
+      "public_sha256": "ff5ac7341aaadcf7864e42e9a818f390565d2b65313b73929278d81378569d4b",
+      "redacted": false
+    },
+    {
+      "path": "raw/uptime.txt",
+      "raw_sha256": "8ac648238ef6c9f6f74824b1deaf29deeadd8795c37ab3777588066b09d472c7",
+      "public_sha256": "02befcfb968bc265b0f69e68079030be195129c86175d9827a12709289dee3d0",
+      "redacted": false
+    },
+    {
+      "path": "raw/awk_path.txt",
+      "raw_sha256": "94a11536cb1d5c2e68ca477cc523dce897741420a2225b5d79ccc07294e95106",
+      "public_sha256": "517697576979fbd925c3ce44e068208b81b4278ce19323b7062d2b8d4d14907d",
+      "redacted": false
+    },
+    {
+      "path": "raw/rpm_dbpath.txt",
+      "raw_sha256": "911e9e92c675e6cfc3cf2052103c0ccf2cabfcf6ae6ff2568a059f4f39d2a90c",
+      "public_sha256": "0e27e78e3937511abdd6e914e92dd0b6717b4affc8fecdb4dcc46f7274462b61",
+      "redacted": false
+    },
+    {
+      "path": "raw/tmp_writable.txt",
+      "raw_sha256": "7f66b711f25301e7bb3cafc607fe1ed40ae488deaae8239d9c3fa282348212e9",
+      "public_sha256": "25273a0b898776f86fd6411ce1061d6d6845569b3cc66a247d2914232e5ee627",
+      "redacted": false
+    },
+    {
+      "path": "raw/uname_m.txt",
+      "raw_sha256": "d6ea8cf4e6797465e843bbac56163777bec07ac9a8cebb9b05e6c96f5d9b33f2",
+      "public_sha256": "dbdcd555e3e0dcefaed439a3ce3b4d4839b2f79dcebf43807115482450c06129",
+      "redacted": false
+    }
+  ],
+  "policy": "Host paths and internal identifiers sanitized; board runtime paths retained. Full raw evidence local, available on request."
+}

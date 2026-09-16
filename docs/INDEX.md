@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-16 — [产品 floor 正式执行](product_floor_reconfirm_20260916.md#61-本轮结果与停止原因)：新 `/tmp` 只读脚本合同及事前间隔门通过；SDB 连接恢复、三项产品身份门通过，glibc 2.40-1.12、UID=5001、gdb 已安装。执行器依赖 `timeout` 查询失败立即 STOP，未推脚本、未采候选/画像、不提权；保留基线与全部原文，待 host 兼容性闭合，不切 demo。
+
 - 2026-09-16 — [产品板连接分层诊断](product_board_connectivity_diagnosis_20260916.md)：ping 正常，26101 TCP 明确拒绝，22 开放但 SSH 认证拒绝；未登录/采样/改板。并列记录本机 sdb 重启错误与最终监听恢复；无目标 ARP/MAC，待 PM 本地核实设备及 sdbd 监听/网络调试。
 
 - 2026-09-16 — [产品板 floor 续跑](product_floor_reconfirm_20260916.md#5-pm-确认恢复后的续跑2026-09-16)：PM 确认恢复后按原合同再尝试一次，sdb 连接仍失败即停止；未执行板端 shell、未提权、未产生画像；独立保留两次原文，待 PM 确认通道。
