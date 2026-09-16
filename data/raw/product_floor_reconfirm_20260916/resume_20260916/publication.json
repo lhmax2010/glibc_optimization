@@ -1,0 +1,37 @@
+{
+  "schema": "product-floor-publication.v1",
+  "status": "STOP",
+  "files": [
+    {
+      "path": "contract_gate.json",
+      "raw_sha256": "4d8b83b9ac1550180fad5a914813683893d23bdfdcd6f6d1c768dfd2a37eea83",
+      "public_sha256": "4d8b83b9ac1550180fad5a914813683893d23bdfdcd6f6d1c768dfd2a37eea83",
+      "redacted": false
+    },
+    {
+      "path": "state.json",
+      "raw_sha256": "186656da19599d6df81bb244e2d502854845cb0abae8d7940d37c1bd6257798c",
+      "public_sha256": "186656da19599d6df81bb244e2d502854845cb0abae8d7940d37c1bd6257798c",
+      "redacted": false
+    },
+    {
+      "path": "commands.jsonl",
+      "raw_sha256": "61e04d394912972d2fc1044d6aa091b93d407a10859ffe65ffdeb61fbdb54e1d",
+      "public_sha256": "8b8953b8a23e9588696045ec6e90032162f61fe0fe728643fc39417ab27b1c4a",
+      "redacted": true
+    },
+    {
+      "path": "raw/sdb_version.txt",
+      "raw_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "public_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "redacted": false
+    },
+    {
+      "path": "raw/connect.txt",
+      "raw_sha256": "c34ac96ed18122e76de110eb9ef78558c82704d08f41f9c43280e35501c0955b",
+      "public_sha256": "6c3a396ced03cb242551543108acf6f12ef98b4b456aed00a58b047cf04e4a29",
+      "redacted": true
+    }
+  ],
+  "policy": "Host paths and internal identifiers sanitized; board runtime paths retained. Full raw evidence local, available on request."
+}

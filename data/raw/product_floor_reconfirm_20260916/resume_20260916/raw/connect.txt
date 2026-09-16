@@ -1,0 +1,4 @@
+* Server is not running. Start it now on port 26099 *
+* Server has started successfully *
+connecting to <PRODUCT_BOARD_IP>:26101 ...
+failed to connect to <PRODUCT_BOARD_IP>:26101

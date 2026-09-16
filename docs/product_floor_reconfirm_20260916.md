@@ -1,5 +1,8 @@
 # 产品板 floor 只读复确认（2026-09-16）
 
+最新状态见 §5：PM 确认恢复后的续跑仍在连接门停止，尚未产生板端读取。
+§3 保留首次阻塞原记录；两次连接属于分别授权的两轮尝试，不是失败后自动重试。
+
 ## 1. 事前规格与边界
 
 第 1 段英文影响报告已独立完成并推送 `9a8f10913af9d4cd31701f4abfb7359a95bd3125`；
@@ -119,3 +122,80 @@ python3 -m unittest discover -s tools/runners/product_floor_reconfirm_20260916 -
 重放。确定性检查：公开输入字节、派生件重建、PID/start identity、PD 分桶加和、远端
 RC 证明；实板数值没有人为相等容差，不以历史增量作验收带。采样时延、压力、PID
 与版本差异如实披露。完整原始件留本地 board_results，可按请求提供。
+
+## 5. PM 确认恢复后的续跑（2026-09-16）
+
+**STOP_CONNECTION_FAILED。** PM 确认板恢复正常并授权重新执行后，host 同步至
+`f325489d8e7a5e1219c47ab74cd9e88df53d0b35`，沿用原事前合同、annotated tag
+和推送回执。此次只尝试连接一次，仍返回明确失败；立即停止，未做额外网络探测、
+重试、身份读取或提权。前轮阻塞不覆盖，本次证据独立存放于
+[续跑证据目录](../data/raw/product_floor_reconfirm_20260916/resume_20260916/README.md)。
+
+### 5.1 实际时间线与原文（UTC）
+
+| 项目 | 记录 | 证据 |
+|---|---|---|
+| 执行开始 | `2026-09-16T13:58:47.865025+00:00` | [终态](../data/raw/product_floor_reconfirm_20260916/resume_20260916/state.json) |
+| 合同核验 | `13:58:48.992148`；距原推送确认 `9219.169548731 s`，超过 `600 s`；三个冻结文件字节均相同 | [合同门](../data/raw/product_floor_reconfirm_20260916/resume_20260916/contract_gate.json)、[原推送回执](../data/raw/product_floor_reconfirm_20260916/resume_20260916/contract_push.json) |
+| `sdb version` | `13:58:49.015136` → `13:58:49.055863`；host RC=0 | [原文](../data/raw/product_floor_reconfirm_20260916/resume_20260916/raw/sdb_version.txt) |
+| `sdb connect <PRODUCT_BOARD_IP>` | `13:58:49.056201` → `13:58:55.065807`；host RC=1 | [原文](../data/raw/product_floor_reconfirm_20260916/resume_20260916/raw/connect.txt) |
+| 终止 | `13:58:55.066236`；STOP，未执行 devices 或任何 shell 请求 | [逐条命令](../data/raw/product_floor_reconfirm_20260916/resume_20260916/commands.jsonl) |
+
+客户端原文：
+
+```text
+Smart Development Bridge version 4.2.25
+```
+
+连接原文（只替换端点，行结构保留）：
+
+```text
+* Server is not running. Start it now on port 26099 *
+* Server has started successfully *
+connecting to <PRODUCT_BOARD_IP>:26101 ...
+failed to connect to <PRODUCT_BOARD_IP>:26101
+```
+
+前两行是客户端在 host 自动启动本地 sdb server，**不是板端连接成功**；随后对
+26101 的连接明确失败。本轮没有主动执行 kill-server/start-server，也没有任何板端
+shell 请求，因而不存在可记录的远端 RC/DONE/FAIL；不能用 host RC 冒充远端证明。
+
+### 5.2 尚未执行的项与结论
+
+| 核验项 | 本轮状态 |
+|---|---|
+| `uname -r` / `uname -m` / 完整 `/etc/os-release` | 全部 NOT_EXECUTED，无原文；产品 TV 或 RPI4 身份均未确立 |
+| glibc RPM 与 libc 版本输出、MemTotal、CPU/核数、uptime/date/df | NOT_EXECUTED；没有版本或容量可与机制基线比较 |
+| 三个主候选、近似匹配与 Top 10、PID/启动时长 | NOT_EXECUTED；不据历史存在推定本轮存活 |
+| 10 分钟画像、分类、floor 与历史对照 | NOT_EXECUTED；没有 timeseries 或 summary，不产生新数字 |
+| gdb、ptrace_scope、id 与 attach 风险现场依据 | NOT_EXECUTED；不安装、不注入、不提权 |
+
+a) 不能确认任何候选 floor 仍在或足够大，不能推荐具体目标进入注入轮。
+b) 不能判定分类相对 08-14 是否变化；镜像、业务与时段差异只能作为后续待验证因素。
+c) 请 PM 再确认当前产品板地址、sdb 26101 服务及 host 至板的可达性。完成只读候选
+与角色确认后，下一轮注入仍需单独批准目标/PID、次数、业务时机、暂停与看门狗风险、
+异常时停止后续调用和解除附加的回退方式；本次不预授权安装、注入或重启。
+d) **本轮没有已证实需要 root 的读取项**：权限检查根本未开始。连接失败不能据此
+归因为 UID 或读取权限，不能把提权作为本次补救。若后续遇到不可读项，须单列等 PM 授权。
+
+### 5.3 host 闭环与复现
+
+采集器提交 `733b5e5` 补齐本次要求的 libc 版本、CPU online 和进程年龄换算读取，
+仍为固定只读命令，带远端标志并受 200 字节本地硬闸约束。增加活进程空 smaps
+不得静默排除的完整性检查；相关 host 测试共 26 项通过。合同、冻结分析器与历史
+判别器未改；上述新读取本次均未在板端执行。
+
+本次实际使用的采集入口如下（端点及映射为本地输入；**不是失败后可自动重试的授权**）：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/run_readonly.py \
+  --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --push-receipt board_results/product_floor_reconfirm_20260916/contract_push.json \
+  --output board_results/product_floor_reconfirm_20260916/attempt2
+```
+
+输出目录已留存，不得覆盖。重新连接需另行确认；host 测试与固定口径复算入口仍见 §4。
+[发布清单](../data/raw/product_floor_reconfirm_20260916/resume_20260916/publication.json)
+记录原始/脱敏件双哈希；完整原始件本地留存，可按请求提供。
+本轮无板端文件、包、配置、governor 或 UID 变更，无板端清理动作；只推 main，
+不切 demo，既有 `demo-v14` 不变。
