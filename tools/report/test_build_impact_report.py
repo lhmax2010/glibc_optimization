@@ -18,7 +18,6 @@ import unittest
 from html.parser import HTMLParser
 from pathlib import Path
 from unittest import mock
-from urllib.parse import unquote, urlsplit
 
 from tools.report import build_impact_report as impact
 
@@ -72,61 +71,67 @@ class ImpactReportTests(unittest.TestCase):
         for forbidden in ('评审', '人工智能', 'AI ', '其他团队', '竞品'):
             self.assertNotIn(forbidden, ''.join(doc.text))
 
-    def test_links_and_numeric_blocks_have_raw_and_l1_sources(self):
+    def test_links_are_only_in_page_and_numeric_blocks_need_no_extra_files(self):
         run = subprocess.run([sys.executable, str(REPO/'tools/reproduce/check_links.py'), str(REPORT)], capture_output=True, text=True)
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
         text = REPORT.read_text()
-        refs, _ = impact.load_evidence(REPO)
-        self.assertEqual(impact.check_delivery_links(REPO, text, refs['sha256']),
-                         len(impact.ReportDocument(text).links))
+        doc = impact.ReportDocument(text)
+        self.assertEqual(impact.check_single_file(text), len(doc.links))
+        self.assertEqual(len(doc.links), 5)
         blocks = re.findall(r'<figure>.*?</figure>|<tr><td>.*?</tr>|<div class="card">.*?</div>', text, re.S)
         self.assertGreater(len(blocks), 10)
         for block in blocks:
-            self.assertIn('href="../data/raw/', block)
-            self.assertRegex(block, r'demo_reproduction_guide_20260901.md#l1-[^"]+')
+            self.assertNotIn('href=', block)
 
-    def test_all_links_resolve_using_only_delivery_snapshot_files(self):
-        # Materialize only linked Git blobs, not working-tree files. The new
-        # report is supplied separately and placed at docs/ in the package.
-        refs, files = impact.snapshot(REPO)
+    def test_single_html_in_empty_directory_has_working_navigation(self):
         text = REPORT.read_text()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            report = root / refs['report_location']
-            report.parent.mkdir(parents=True)
+            report = root / 'report.html'
             report.write_text(text)
-            for link in impact.ReportDocument(text).links:
-                relative = unquote(urlsplit(link).path)
-                if not relative:
-                    continue
-                path = (report.parent / relative).resolve()
-                self.assertTrue(path.is_relative_to(root))
-                key = path.relative_to(root).as_posix()
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(impact.snapshot_blob(REPO, files[key]))
+            with mock.patch.object(impact, 'snapshot', side_effect=AssertionError('reader has no repo')):
+                self.assertEqual(impact.check_single_file(report.read_text()), 5)
             run = subprocess.run([sys.executable, str(REPO/'tools/reproduce/check_links.py'), str(report)],
-                                 capture_output=True, text=True)
+                                 cwd=root, capture_output=True, text=True)
             self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+            self.assertEqual(list(root.iterdir()), [report])
 
-    def test_main_only_files_and_anchors_fail_delivery_gate(self):
+    def test_every_file_link_is_rejected_even_if_publicly_delivered(self):
         cases = (
+            '../README.md',
+            '../data/raw/s4_retention_20260901/b_cycles.tsv',
+            'demo_reproduction_guide_20260901.md#l1-s4',
             '../tools/report/build_impact_report.py',
-            '../tools/report/impact_sources.json',
-            '../data/raw/demo_v14_delivery_20260915/verification.json',
-            'demo_reproduction_guide_20260901.md#l1-impact-report',
             '../board_results/not-public.json',
+            'https://example.invalid/report', '//example.invalid/report',
+            'file:///tmp/report.html', 'mailto:reader@example.invalid',
+            'data:text/html,hello', '%23summary', '?chapter=summary#summary',
+            'javascript:alert(1)',
         )
         for link in cases:
-            with self.subTest(link=link), self.assertRaisesRegex(ValueError, 'not in demo-v14 snapshot'):
-                impact.check_delivery_links(REPO, f'<a href="{link}">link</a>')
+            with self.subTest(link=link), self.assertRaisesRegex(ValueError, 'only #anchor'):
+                impact.check_single_file(f'<a href="{link}">link</a>')
 
-    def test_delivery_gate_checks_fragments_boundaries_and_evidence_bytes(self):
-        for link in ('#absent', '../../outside', 'https://example.invalid/a',
-                     '//example.invalid/a', '/etc/passwd', '../README.md?ref=main'):
+    def test_fragment_targets_resources_and_plain_text_paths(self):
+        for link in ('#absent', '', '#', '../../outside', '/etc/passwd'):
             with self.subTest(link=link), self.assertRaises(ValueError):
-                impact.check_delivery_links(REPO, f'<a href="{link}">link</a>')
+                impact.check_single_file(f'<a href="{link}">link</a>')
+        for snippet in ('<base href="https://example.invalid">',
+                        '<svg><use xlink:href="picture.svg#plot"/></svg>',
+                        '<img src="picture.svg">', '<script>alert(1)</script>',
+                        '<meta http-equiv="refresh" content="0;url=elsewhere">',
+                        '<style>body{background:url(picture.png)}</style>',
+                        '<p>docs/report.html</p>', '<p>data/raw/source.tsv</p>',
+                        '<p>/tmp/report.html</p>', '<p>../README.md</p>'):
+            with self.subTest(snippet=snippet), self.assertRaises(ValueError):
+                impact.check_single_file(snippet)
+        self.assertEqual(impact.check_single_file('<section id="内存"></section><a href="#%E5%86%85%E5%AD%98">go</a>'), 1)
+
+    def test_delivery_evidence_gate_remains_strict_without_reader_links(self):
+        refs, _ = impact.load_evidence(REPO)
+        impact.check_delivery_evidence(REPO, refs['sha256'])
         with self.assertRaisesRegex(ValueError, 'delivery evidence'):
-            impact.check_delivery_links(REPO, '', {impact.SYSTEM+'cycles.tsv': '0'*64})
+            impact.check_delivery_evidence(REPO, {impact.SYSTEM+'cycles.tsv': '0'*64})
 
     def test_missing_snapshot_is_not_a_skip_and_explains_fetch(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -154,7 +159,13 @@ class ImpactReportTests(unittest.TestCase):
                    '<meta name="generator" content="AI_generated">',
                    '<svg aria-label="AGENT"><title>plot</title></svg>',
                    '<p>ag&#101;nt</p>', '<p>A<span>I</span></p>',
-                   '<!-- ＡＩ -->', '<p>ag\u200bent</p>')
+                   '<!-- ＡＩ -->', '<p>ag\u200bent</p>',
+                   '<p>p99</p>', '<meta name="description" content="P50">',
+                   '<figcaption>p95 / percentile</figcaption>', '<!-- 极差 -->',
+                   '<svg aria-label="离散"><title>plot</title></svg>',
+                   '<p>百分位</p>', '<p>NOT-DETECTED</p>', '<p>判据 N1</p>',
+                   '<p>中位数 / nearest-rank</p>', '<p>p<span>99</span></p>',
+                   '<p>ＮＯＴ－ＤＥＴＥＣＴＥＤ</p>', '<p>p&#57;9</p>')
         for sample in samples:
             with self.subTest(sample=sample), self.assertRaisesRegex(ValueError, 'forbidden report keyword'):
                 impact.check_keywords(sample)
@@ -162,18 +173,39 @@ class ImpactReportTests(unittest.TestCase):
         impact.check_keywords(REPORT.read_text())
 
     def test_build_itself_fails_for_missing_links_and_forbidden_metadata(self):
-        for addition, message in (('<a href="../tools/report/build_impact_report.py">link</a>', 'not in demo-v14'),
-                                  ('<!-- agent -->', 'forbidden report keyword')):
+        for addition, message in (('<a href="../README.md">link</a>', 'only #anchor'),
+                                  ('<!-- agent -->', 'forbidden report keyword'),
+                                  ('<meta content="p99">', 'forbidden report keyword')):
             with self.subTest(addition=addition), mock.patch.object(impact, 'costs_chart', return_value=addition):
                 with self.assertRaisesRegex(ValueError, message):
                     impact.build(REPO)
+
+    def test_cli_rejects_bad_output_without_writing_or_overwriting(self):
+        for addition in ('<a href="../README.md">link</a>', '<!-- p99 -->', '<meta content="AI">'):
+            with self.subTest(addition=addition), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory)/'report.html'
+                code = ('from unittest.mock import patch\n'
+                        'from tools.report import build_impact_report as b\n'
+                        f'with patch.object(b, "costs_chart", return_value={addition!r}):\n'
+                        '    b.main()\n')
+                for exists in (False, True):
+                    if exists:
+                        output.write_bytes(b'previous approved file')
+                    run = subprocess.run([sys.executable, '-c', code, '--output', str(output)],
+                                         cwd=REPO, capture_output=True, text=True)
+                    self.assertEqual(run.returncode, 1, run.stdout + run.stderr)
+                    self.assertIn('FAIL impact report:', run.stderr)
+                    self.assertNotIn('PASS', run.stdout)
+                    if exists:
+                        self.assertEqual(output.read_bytes(), b'previous approved file')
+                    else:
+                        self.assertFalse(output.exists())
 
     def test_plain_language_terms_and_first_use_definitions(self):
         doc = Document(REPORT.read_text())
         visible = ''.join(doc.text)
         self.assertNotRegex(visible, r'\bmixed\b|medium-only|\bG[1-4]\b|\bS4\b|B 组|A 锚点|T1[′\x27]|\bM7\b|反信号|滞留型|自回收型')
-        # SVG captions, aria labels and metadata are reader-facing too; hrefs
-        # deliberately retain the immutable evidence filenames from delivery.
+        # SVG captions, aria labels and metadata are reader-facing too.
         for name, value in doc.attributes:
             if name in ('aria-label', 'content', 'title'):
                 self.assertNotRegex(value, r'\bG[1-4]\b|\bS4\b|\bM7\b|mixed|medium-only')
@@ -186,14 +218,13 @@ class ImpactReportTests(unittest.TestCase):
             self.assertIn(definition, visible)
         self.assertNotIn('#l1-impact-report', REPORT.read_text())
 
-    def test_reading_copy_does_not_conflict_with_clean_delivery_verification(self):
+    def test_standalone_reading_needs_no_repository_and_has_plain_footer(self):
         text = ''.join(Document(REPORT.read_text()).text)
-        self.assertLess(text.index('bash tools/reproduce/reproduce.sh verify'),
-                        text.index('请将单独收到的本报告放入'))
-        self.assertIn('先在未添加本报告的干净 Git 克隆', text)
-        self.assertIn('另用一份阅读副本', text)
-        self.assertIn('完整校验会拒绝未跟踪文件，不应绕过该门', text)
-        self.assertNotIn('REPRODUCE_ALLOW_DIRTY', text)
+        for old in ('本方案不替换 libc、不改本次对照实验的二进制',
+                    '干净 Git 克隆', '阅读副本', 'docs/', 'board_results',
+                    'data/raw/', 'tools/', 'L1', 'REPRODUCE_ALLOW_DIRTY'):
+            self.assertNotIn(old, text)
+        self.assertIn('<footer>完整数据与复现包见内部交付仓库 glibc_optimization，标签 demo-v14。</footer>', REPORT.read_text())
 
     def test_frozen_input_change_is_rejected_without_changing_data(self):
         refs, _ = impact.load_evidence(REPO)
@@ -232,11 +263,12 @@ class ImpactReportTests(unittest.TestCase):
 
     def test_important_limits_are_adjacent_not_hidden(self):
         text = ''.join(Document(REPORT.read_text()).text)
-        for value in ('未检出性能劣化', '不宣称性能提升', '1.870462', '0.173927',
+        for value in ('没有观察到下降不等于所有指标零影响', '不宣称性能提升', '1.870462', '0.173927',
                       '冷启动例外', '出现 4 次 major fault', '启动时间未做专项测量',
                       '不是整个系统风险为零', '管线进入 NULL 状态、停止并释放资源后', '不与释放点约 1 ms',
-                      '不是统计显著性检验', '不等于整机或产品收益', '碎片化可能',
+                      '不能证明变化一定存在或一定不存在', '不等于整机或产品收益', '碎片化可能',
                       '同一进程中其他尚未归还的内存仍须单独实测',
+                      '居中的两轮里较快的一轮', '回收比例不是内存占用降幅',
                       '未做无害性根因证明', '四道硬门'):
             self.assertIn(value, text)
         self.assertNotIn('全部实验窗口为 0', text)
@@ -258,6 +290,16 @@ class ImpactReportTests(unittest.TestCase):
             for number in values:
                 self.assertIn(number, text, ('impact', number))
                 self.assertIn(number, other, (path, number))
+
+    def test_plain_language_call_time_coverage_matches_the_same_rows(self):
+        _, data = impact.load_evidence(REPO)
+        calls = [float(r['trim_elapsed_ms']) for r in data[impact.GST+'cycles.tsv']
+                 if r['arm'] == 'trim-at-loop-release']
+        for percentage, limit in ((95, 0.818315), (99, 0.842185)):
+            self.assertGreaterEqual(100 * sum(value <= limit for value in calls), percentage * len(calls))
+            self.assertIn(f'{percentage}% 不超过 {limit:.6f}',
+                          REPORT.read_text().replace(' 的调用不超过', ' 不超过'))
+        self.assertEqual(max(calls), 0.856944)
 
     def test_default_verify_discovers_impact_suite_without_entrypoint_changes(self):
         parent = (REPO/'tools/report/test_build_demo_report.py').read_text()

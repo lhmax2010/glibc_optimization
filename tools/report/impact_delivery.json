@@ -3,5 +3,5 @@
   "tag": "demo-v14",
   "commit": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
   "report_location": "docs/glibc_memopt_impact_report.html",
-  "note": "Resolve links and document fragments from this committed Git tree, never from the current working tree. The separately supplied report belongs in docs/ alongside the frozen package. No tag-name dependency at build time."
+  "note": "Author-side evidence identity only: compare frozen input bytes with this committed Git tree. The reader receives a standalone HTML with fragment-only navigation, no file links, and no repository prerequisite. No tag-name dependency at build time."
 }
