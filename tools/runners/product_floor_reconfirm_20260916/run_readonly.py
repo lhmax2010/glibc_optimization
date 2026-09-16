@@ -72,12 +72,19 @@ def contract_gate(receipt):
 def readonly_body(argv):
     # The inherited transport also supports old cleanup operations; do NOT
     # expose those capabilities in this round. Exact read-only argument gate.
+    # Two additional, exact queries explicitly required by the PM continuation.
+    # Do not extend the historical cleanup transport's executable allowlist.
+    if argv in (['/lib/libc.so.6'], ['getconf', 'CLK_TCK']):
+        body = 'LC_ALL=C ' + ' '.join(argv) + single.SUFFIX
+        single.check_body(body)
+        return body
     valid = argv in (['uname', '-r'], ['uname', '-m'], ['id'], ['ps', '-ef'],
                      ['ls', '/proc'], ['uptime'], ['date', '-u'], ['df', '-h'],
                      ['rpm', '-q', 'glibc'], ['rpm', '-q', 'gdb'])
     if len(argv) == 2 and argv[0] == 'cat':
         valid = argv[1] in ('/etc/os-release', '/proc/meminfo', '/proc/swaps', '/proc/uptime',
-                           '/proc/sys/kernel/yama/ptrace_scope', '/sys/block/zram0/mm_stat')
+                           '/proc/sys/kernel/yama/ptrace_scope', '/sys/block/zram0/mm_stat',
+                           '/sys/devices/system/cpu/online')
         valid |= bool(re.fullmatch(r'/proc/[1-9]\d*/(?:stat|smaps|cmdline)', argv[1]))
     if not valid:
         raise ValueError('LOCAL_STOP operation is not on the readonly allowlist')
@@ -226,15 +233,15 @@ def inventory(board, names):
                 excluded.append({'pid': pid, 'reason': 'exited during inventory'})
                 continue
             raise ValueError('STOP unreadable smaps prevents full ranking: '+str(pid))
-        if not maps.strip():
-            excluded.append({'pid': pid, 'reason': 'empty mappings at read time'})
-            continue
         rc, after = board.read('inventory_stat_after_'+str(pid), ['cat', f'/proc/{pid}/stat'], optional=True)
         if rc and 'No such file or directory' in after:
             excluded.append({'pid': pid, 'reason': 'exited before identity recheck'})
             continue
         if rc or (proc_stat(after)['pid'], proc_stat(after)['start_ticks']) != (pid, stat['start_ticks']):
             raise ValueError('STOP process identity unavailable/changed during inventory: '+str(pid))
+        if not maps.strip():
+            raise ValueError('STOP empty smaps for live userspace PID '+str(pid)+
+                             '; complete readable ranking not established; seek PM read-access authorization')
         records.append({**stat, **smaps(maps)})
     ranking = sorted(records, key=lambda r: (-r['glibc_heap_pd_kb'], r['pid']))[:10]
     named = [r for r in records if r['comm'] in names.values()]
@@ -325,8 +332,11 @@ def main():
         board = Board(args.ip, args.output, args.sdb)
         state['identity'] = board.identity()
         baseline = {}
-        for label, command in (('glibc', ['rpm', '-q', 'glibc']), ('meminfo', ['cat', '/proc/meminfo']),
-                               ('uptime', ['uptime']), ('date', ['date', '-u']), ('id', ['id']),
+        for label, command in (('id', ['id']), ('glibc', ['rpm', '-q', 'glibc']),
+                               ('libc_version', ['/lib/libc.so.6']), ('meminfo', ['cat', '/proc/meminfo']),
+                               ('cpu_online', ['cat', '/sys/devices/system/cpu/online']),
+                               ('clk_tck', ['getconf', 'CLK_TCK']),
+                               ('uptime', ['uptime']), ('date', ['date', '-u']),
                                ('df', ['df', '-h']), ('proc_uptime', ['cat', '/proc/uptime'])):
             baseline[label] = board.read(label, command)[1]
             write_json(args.output/'baseline.json', baseline)

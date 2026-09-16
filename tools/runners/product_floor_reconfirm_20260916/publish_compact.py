@@ -56,7 +56,8 @@ def publish(source, output, mapping, address, receipt):
     # smaps, whole-process inventories and high-rate read streams stay local.
     # The manifest still preserves their hashes in commands.jsonl.
     allowed_raw = {'sdb_version', 'connect', 'devices', 'uname_r', 'uname_m', 'os_release',
-                   'glibc', 'meminfo', 'uptime', 'date', 'id', 'df', 'proc_uptime', 'gdb', 'ptrace_scope'}
+                   'glibc', 'libc_version', 'cpu_online', 'clk_tck', 'meminfo',
+                   'uptime', 'date', 'id', 'df', 'proc_uptime', 'gdb', 'ptrace_scope'}
     files += [p for p in (source/'raw').glob('*.txt') if p.stem in allowed_raw]
     manifest = []
     for path in files:

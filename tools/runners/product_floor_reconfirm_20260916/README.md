@@ -37,3 +37,12 @@ python3 tools/runners/product_floor_reconfirm_20260916/analyze_floor.py \
 发布脚本 `publish_compact.py` 只做 host 脱敏和原文/公开件双哈希，不接触板端。
 `commands.jsonl` 留逐条 RC 与原始件哈希；全量 smaps/进程原文留本地，可按请求提供。
 STOP 只表示本段未完成，不撤销已经推库的平行英文报告；不切 demo。
+
+## 2026-09-16 PM 确认恢复后的续跑
+
+继续使用同一合同/tag 与原始推送回执，不覆盖 `attempt1`。新输出使用 `attempt2`。
+按续跑要求增加三个精确只读请求：`/lib/libc.so.6` 版本输出、CPU `online` 列表、
+`getconf CLK_TCK`（进程年龄换算所需）；仍包含 RC 标志并受 200 字节限制。
+不扩展通用 shell/执行权限，不允许这两个可执行项附带其他参数。
+活着的非内核进程返回空 smaps 时，不把它静默剔除来声称 Top 10 完整；停止并
+记录读取范围不明，等 PM 决定是否授权提高读取权限。合同、样本数、分桶与判别器不改。

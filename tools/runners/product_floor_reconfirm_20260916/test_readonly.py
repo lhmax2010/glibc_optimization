@@ -16,6 +16,7 @@ class ReadonlyTests(unittest.TestCase):
     def test_only_single_read_commands_fit_full_200_byte_body(self):
         for command in (['uname', '-r'], ['uname', '-m'], ['id'], ['ps', '-ef'], ['ls', '/proc'],
                         ['uptime'], ['date', '-u'], ['df', '-h'], ['rpm', '-q', 'glibc'], ['rpm', '-q', 'gdb'],
+                        ['/lib/libc.so.6'], ['getconf', 'CLK_TCK'], ['cat', '/sys/devices/system/cpu/online'],
                         *[['cat', p] for p in ('/etc/os-release', '/proc/meminfo', '/proc/swaps', '/proc/uptime',
                             '/proc/1/stat', '/proc/1/smaps', '/proc/1/cmdline',
                             '/proc/sys/kernel/yama/ptrace_scope', '/sys/block/zram0/mm_stat')]):
@@ -29,7 +30,8 @@ class ReadonlyTests(unittest.TestCase):
         forbidden = (['rm', '/tmp/file'], ['rmdir', '/tmp/file'], ['kill', '123'],
                      ['sh', '-c', 'id'], ['reboot'], ['sdb', 'root', 'on'], ['cat', '/etc/shadow'],
                      ['rpm', '-e', 'gdb'], ['cat', '/proc/1/stat;reboot'], ['cat', '/proc/1/stat\nid'],
-                     ['cat', '/proc/1/../1/stat'], ['cat', '/proc/1/stat', '/proc/2/stat'])
+                     ['cat', '/proc/1/../1/stat'], ['cat', '/proc/1/stat', '/proc/2/stat'],
+                     ['/lib/libc.so.6', '--anything'], ['getconf', 'PATH'], ['getconf', 'CLK_TCK;id'])
         with tempfile.TemporaryDirectory() as out, mock.patch.object(runner.subprocess, 'run') as run:
             board = runner.Board('192.0.2.1', Path(out))
             for command in forbidden:
@@ -164,6 +166,15 @@ class ReadonlyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'PID identity changed'):
             runner.sample_process(board, {'pid': 42, 'start_ticks': 0, 'target': 'sample'}, 0)
         board.stopped.set.assert_called_once()
+
+    def test_live_userspace_empty_smaps_cannot_silently_disappear_from_top10(self):
+        board = mock.Mock()
+        stat = '1 (init) '+' '.join(['S']+['0']*24)
+        board.read.side_effect = [(0, 'UID PID PPID CMD\nroot 1 0 init'), (0, '1'),
+                                  (0, stat), (0, ''), (0, stat)]
+        with self.assertRaisesRegex(ValueError, 'empty smaps for live userspace PID 1'):
+            runner.inventory(board, {})
+        self.assertEqual(board.read.call_count, 5)
 
     def test_sampling_overrun_retains_partial_and_never_runs_analysis(self):
         with tempfile.TemporaryDirectory() as out:
