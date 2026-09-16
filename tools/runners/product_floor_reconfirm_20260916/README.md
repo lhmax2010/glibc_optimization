@@ -1,0 +1,39 @@
+# 产品 floor 只读复确认
+
+本目录只在 host 执行；只经 sdb 读取现有虚拟文件，不推送任何脚本/产物，不提权。
+连接前必须有本轮已推送 annotated 合同及 600 s 间隔回执。
+合同与分析器已经冻结，采集器通过该 tag 中的字节逐个比较，不能以新数据改口径。
+
+```sh
+python3 -m unittest discover -s tools/runners/product_floor_reconfirm_20260916 -p 'test_*.py'
+python3 tools/runners/product_floor_reconfirm_20260916/run_readonly.py \
+  --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --push-receipt board_results/product_floor_reconfirm_20260916/contract_push.json \
+  --output board_results/product_floor_reconfirm_20260916/attempt1
+```
+
+`--mapping` 为本地既有映射，不随公开仓库发布。新现场需维护者提供该映射；不可用时
+本地失败，不猜真实目标。输出目录必须不存在；任何已完成采样不得覆盖或重跑。
+报告使用 `<PRODUCT_BOARD_IP>`，命令记录与完整 smaps 只留本地。
+
+采集器只允许列举的读取指令（固定路径或严格数字 PID 路径）；复用单请求 RC/DONE
+解析与 200 字节上限，额外禁止历史清理模块中的一切写动作。
+`rpi4` 命中后不再读架构、镜像或其他数据。开发镜像/未知产品身份同样停止。
+PID 1 及 ps/目录相互校验用于过程完整性；无法证明完整就停止，不提权补读。
+
+固定 1 s 截止时间内并行读取候选及全局量；任一批越过下一截止时间即停止，保留
+已完成部分，不扩时伪称正常一秒采样。首/末分钟 floor 使用首/末 60 个固定秒槽，
+同时保留实际读取区间。无目标刺激，不能复现历史按键下的 floor 增量。
+冻结判别器在零基线处的 10% 门退化，零 PD 不能按其原始标签宣称自动释放或滞留；
+必须结合绝对数与分桶记录报告限制。独立 analyzer 不替代采集时序与输入完整性核验。
+
+公开重放仅在有效完整序列存在时执行：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/analyze_floor.py \
+  --timeseries '<timeseries.tsv>' --output '<summary.json>'
+```
+
+发布脚本 `publish_compact.py` 只做 host 脱敏和原文/公开件双哈希，不接触板端。
+`commands.jsonl` 留逐条 RC 与原始件哈希；全量 smaps/进程原文留本地，可按请求提供。
+STOP 只表示本段未完成，不撤销已经推库的平行英文报告；不切 demo。
