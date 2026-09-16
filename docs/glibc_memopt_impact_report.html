@@ -14,6 +14,7 @@ nav{display:flex;flex-wrap:wrap;gap:12px 22px;margin:20px 0}figure{margin:22px 0
 @media print{body{background:white}main{max-width:none;padding:10px}section{break-inside:auto}figure,.card,tr{break-inside:avoid}a{color:inherit}pre{white-space:pre-wrap;overflow-wrap:anywhere}nav{display:none}}
 </style></head><body><main>
 <header><div class="eyebrow">TIZEN · GLIBC · 运行时内存回收</div>
+<p class="muted">语言：当前为中文版；英文版单独提供。如有歧义，以中文技术文档为准。</p>
 <h1>让已释放的内存，真正回到系统</h1>
 <p class="lead">本方案在业务批量释放对象后，按条件调用 glibc 的 <code>malloc_trim(0)</code>，把仍留在堆内的可回收空闲页归还系统，降低进程内存占用。</p>
 <p><code>malloc_trim</code> 是 glibc 提供的运行时接口：它尝试把分配器中已经空闲、但仍占用物理内存的完整页归还内核。

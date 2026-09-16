@@ -10,6 +10,8 @@
 ```sh
 python3 tools/report/build_impact_report.py
 python3 tools/report/build_impact_report.py --check
+python3 tools/report/build_impact_report.py --lang en
+python3 tools/report/build_impact_report.py --lang en --check
 python3 -m unittest tools.report.test_build_impact_report
 ```
 
@@ -47,3 +49,14 @@ HTML，不必克隆、验包或重建。main 的完整
 耗时的小幅变慢、冷启动例外等原有限定保留，未改计算或已发布数据。
 “代表值”是排序后居中取值；业务通常耗时仍保留 nearest-rank 的既有取值
 位置，并在正文用“居中的两轮里较快的一轮”解释，不偷换为另一个算法。
+
+## 2026-09-16 平行英文版
+
+默认语言仍为 `zh-CN`；`--lang en` 生成独立英文 HTML。两版均可单文件分发，
+语言切换只用纯文字提示，英文版注明以中文技术文档为准。
+`impact_en.json` 只翻译文本与可读标签，共用中文页面的结构、图形坐标和数字。
+数值占位符必须逐个、原序、原字符串保留；缺翻译、改数字或禁用词均构建失败。
+
+跨语言测试逐文本节点比较数字（含符号与百分号）、全部章节/导航/图形属性，
+并逐项比对 11 条限定语的出现次数。原单文件、禁用词、冻结证据与数字硬门
+对两版共同生效；这些测试随既有报告模块进入完整 verify，入口字节不变。

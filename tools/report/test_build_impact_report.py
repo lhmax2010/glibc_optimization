@@ -23,6 +23,7 @@ from tools.report import build_impact_report as impact
 
 REPO = Path(__file__).resolve().parents[2]
 REPORT = REPO / 'docs/glibc_memopt_impact_report.html'
+EN_REPORT = REPO / 'docs/glibc_memopt_impact_report.en.html'
 BUILDER = REPO / 'tools/report/build_impact_report.py'
 
 
@@ -43,6 +44,83 @@ class Document(HTMLParser):
 
 
 class ImpactReportTests(unittest.TestCase):
+    def test_english_cli_rebuild_is_byte_identical_and_repeatable(self):
+        self.assertEqual(impact.build(REPO, 'en').encode(), EN_REPORT.read_bytes())
+        self.assertEqual(impact.build(REPO, 'en'), impact.build(REPO, 'en'))
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)/'english.html'
+            for arguments in (['--check'], ['--output', str(output)]):
+                run = subprocess.run([sys.executable, str(BUILDER), '--lang', 'en', *arguments],
+                                     cwd=REPO, capture_output=True, text=True)
+                self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+            self.assertEqual(output.read_bytes(), EN_REPORT.read_bytes())
+        with self.assertRaisesRegex(ValueError, 'unsupported report language'):
+            impact.build(REPO, 'invalid')
+
+    def test_languages_have_identical_structure_plot_geometry_and_numbers(self):
+        cn, en = Document(REPORT.read_text()), Document(EN_REPORT.read_text())
+        self.assertEqual(cn.tags, en.tags)
+        # Text/accessible labels change; every other attribute is invariant,
+        # including all chart coordinates, navigation and section identities.
+        structural = lambda d: [(key, value) for key, value in d.attributes
+                                if key not in ('lang', 'aria-label', 'content', 'title')]
+        self.assertEqual(structural(cn), structural(en))
+        tokens = re.compile(r'[+−-]?\d+(?:\.\d+)?%?')
+        self.assertEqual(len(cn.text), len(en.text))
+        for index, (left, right) in enumerate(zip(cn.text, en.text)):
+            self.assertEqual(tokens.findall(left), tokens.findall(right), index)
+        self.assertNotRegex(EN_REPORT.read_text(), impact.HAN)
+        self.assertIn(('lang', 'en'), en.attributes)
+
+    def test_languages_preserve_each_required_limit_and_plain_language_notice(self):
+        catalog = json.loads((REPO/'tools/report/impact_en.json').read_text())
+        required = {'no_zero_impact', 'no_speedup_claim', 'different_denominators',
+                    'not_product_benefit', 'finite_observation', 'startup_unmeasured',
+                    'typical_slowdown', 'injection_overhead', 'after_pipeline_stop',
+                    'not_zero_system_risk', 'other_retained_memory'}
+        self.assertEqual(set(catalog['limitations']), required)
+        cn, en = (''.join(Document(path.read_text()).text) for path in (REPORT, EN_REPORT))
+        for key, (left, right) in catalog['limitations'].items():
+            with self.subTest(limit=key):
+                self.assertEqual(cn.count(left), 1)
+                self.assertEqual(en.count(right), cn.count(left))
+        self.assertIn('英文版单独提供', cn)
+        self.assertIn('Chinese edition is provided separately', en)
+        self.assertIn('Chinese technical documentation is authoritative', en)
+
+    def test_both_languages_apply_standalone_keyword_and_internal_name_gates(self):
+        for path in (REPORT, EN_REPORT):
+            text = path.read_text()
+            impact.check_keywords(text)
+            self.assertEqual(impact.check_single_file(text), 5)
+        for sample in ('mixed', 'medium-only', 'G1', 'g4', 'S4', 'M7', 'T1′', '反信号'):
+            with self.subTest(sample=sample), self.assertRaisesRegex(ValueError, 'internal report term'):
+                impact.check_keywords(f'<p>{sample}</p>')
+        for lang in ('zh-CN', 'en'):
+            for addition, diagnostic in (('<!-- p99 -->', 'forbidden report keyword'),
+                                          ('<meta content="agent">', 'forbidden report keyword'),
+                                          ('<p>G3</p>', 'internal report term'),
+                                          ('<a href="report.html">go</a>', 'only #anchor')):
+                with self.subTest(lang=lang, addition=addition), \
+                     mock.patch.object(impact, 'costs_chart', return_value=addition), \
+                     self.assertRaisesRegex(ValueError, diagnostic):
+                    impact.build(REPO, lang)
+
+    def test_translation_fails_closed_for_missing_or_changed_numeric_placeholders(self):
+        for messages in ({}, {'数值 {0} / {1}': 'Values {1} / {0}'},
+                         {'数值 {0} / {1}': 'Values {0}'},
+                         {'数值 {0} / {1}': 'Values {0} / {1} / {0}'},
+                         {'数值 {0} / {1}': 'Values {0} / {1} / 99'},
+                         {'数值 {0} / {1}': '未翻译 {0} / {1}'}):
+            with self.subTest(messages=messages), self.assertRaises(ValueError):
+                impact.EnglishReport(messages).translate('数值 1.233269 / 1.218361')
+        translator = impact.EnglishReport({'数值 {0} / {1}': 'Values {0} / {1}'})
+        self.assertEqual(translator.translate('数值 1.233269 / 1.218361'),
+                         'Values 1.233269 / 1.218361')
+        for message in ('Change -{0}%', 'Change +{0}', 'Change {0}%'):
+            with self.subTest(message=message), self.assertRaisesRegex(ValueError, 'signs and percentages'):
+                impact.EnglishReport({'变化 +{0}%': message}).translate('变化 +1.23%')
+
     def test_rebuild_matches_submission_and_is_repeatable(self):
         one, two = impact.build(REPO), impact.build(REPO)
         self.assertEqual(one, two)

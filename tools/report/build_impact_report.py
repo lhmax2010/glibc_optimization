@@ -21,6 +21,7 @@ import unicodedata
 from decimal import Decimal, ROUND_HALF_EVEN, ROUND_HALF_UP
 from html.parser import HTMLParser
 from pathlib import Path
+from string import Formatter
 from urllib.parse import unquote
 
 
@@ -61,6 +62,78 @@ FORBIDDEN = re.compile(
     r'nearest[-_\s]?rank|not[-_\s]?detected)(?![a-z0-9])|'
     r'(?<![a-z0-9])(?:ai|agents?|agentic|llms?|models?|codex|openai|chatgpt|'
     r'claude|gemini|kimi|reviews?)(?![a-z0-9])', re.I)
+INTERNAL_TERMS = re.compile(r'反信号|滞留型|自回收型|A 锚点|B 组|'
+                            r'(?<![a-z0-9])(?:mixed|medium-only|g[1-4]|s4|m7|t1[′\x27]?)(?![a-z0-9])', re.I)
+NUMBER = re.compile(r'\d+(?:\.\d+)?')
+SIGNED_NUMBER = re.compile(r'[+−-]?\d+(?:\.\d+)?%?')
+HAN = re.compile(r'[\u3400-\u9fff]')
+
+
+class EnglishReport(HTMLParser):
+    """Translate text only: the Chinese renderer owns structure and all numbers."""
+    def __init__(self, messages):
+        super().__init__(convert_charrefs=False)
+        self.messages, self.output = messages, []
+
+    def translate(self, value):
+        if not HAN.search(value):
+            return value
+        core = ' '.join(value.split())
+        numbers = []
+        def placeholder(match):
+            numbers.append(match.group())
+            return '{' + str(len(numbers)-1) + '}'
+        key = NUMBER.sub(placeholder, core)
+        if key not in self.messages:
+            raise ValueError(f'missing English translation: {key}')
+        message = self.messages[key]
+        fields = [field for _, field, _, _ in Formatter().parse(message) if field is not None]
+        expect(fields, [str(i) for i in range(len(numbers))], 'translation numeric placeholders')
+        rendered = message.format(*numbers)
+        expect(NUMBER.findall(rendered), numbers, 'translation numeric tokens')
+        expect(SIGNED_NUMBER.findall(rendered), SIGNED_NUMBER.findall(core),
+               'translation signs and percentages')
+        if HAN.search(rendered):
+            raise ValueError('untranslated Chinese in English report')
+        leading = value[:len(value)-len(value.lstrip())]
+        if rendered.startswith(('.', ',', ';', ':')):
+            leading = ''
+        return leading + rendered + value[len(value.rstrip()):]
+
+    def handle_starttag(self, tag, attrs):
+        parts = ['<' + tag]
+        for name, value in attrs:
+            if tag == 'html' and name == 'lang':
+                value = 'en'
+            if value is None:
+                parts.append(' ' + name)
+            else:
+                parts.append(f' {name}="{html.escape(self.translate(value), quote=True)}"')
+        self.output.append(''.join(parts) + '>')
+
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        self.output[-1] = self.output[-1][:-1] + '/>'
+
+    def handle_endtag(self, tag):
+        self.output.append(f'</{tag}>')
+
+    def handle_data(self, data):
+        # Catalogue content is text, never HTML markup or links.
+        self.output.append(html.escape(self.translate(data), quote=False) if HAN.search(data)
+                           else data.replace('：', ': '))
+
+    def handle_entityref(self, name):
+        self.output.append('&' + name + ';')
+
+    def handle_charref(self, name):
+        self.output.append('&#' + name + ';')
+
+    def handle_decl(self, decl):
+        self.output.append('<!' + decl + '>')
+
+    def handle_comment(self, data):
+        self.output.append('<!--' + data + '-->')
 
 
 def check_keywords(report):
@@ -73,6 +146,9 @@ def check_keywords(report):
         match = FORBIDDEN.search(text)
         if match:
             raise ValueError(f'forbidden report keyword: {match.group()}')
+        match = INTERNAL_TERMS.search(text)
+        if match:
+            raise ValueError(f'internal report term: {match.group()}')
 
 
 def snapshot(repo):
@@ -370,7 +446,9 @@ nav{display:flex;flex-wrap:wrap;gap:12px 22px;margin:20px 0}figure{margin:22px 0
 '''
 
 
-def build(repo):
+def build(repo, lang='zh-CN'):
+    if lang not in ('zh-CN', 'en'):
+        raise ValueError('unsupported report language: ' + lang)
     refs, data = load_evidence(repo)
     m = controls(data)
     rows = []
@@ -384,6 +462,7 @@ def build(repo):
 <meta name="description" content="在现有 glibc 上按条件归还空闲内存：进程回收量、调用代价、稳定性与产品启用边界。">
 <title>glibc 运行时内存回收｜影响报告</title><style>{STYLE}</style></head><body><main>
 <header><div class="eyebrow">TIZEN · GLIBC · 运行时内存回收</div>
+<p class="muted">语言：当前为中文版；英文版单独提供。如有歧义，以中文技术文档为准。</p>
 <h1>让已释放的内存，真正回到系统</h1>
 <p class="lead">本方案在业务批量释放对象后，按条件调用 glibc 的 <code>malloc_trim(0)</code>，把仍留在堆内的可回收空闲页归还系统，降低进程内存占用。</p>
 <p><code>malloc_trim</code> 是 glibc 提供的运行时接口：它尝试把分配器中已经空闲、但仍占用物理内存的完整页归还内核。
@@ -473,6 +552,12 @@ OOM/LMK 指内存不足或低内存杀进程记录；zram 是内存中的压缩�
 <footer>完整数据与复现包见内部交付仓库 glibc_optimization，标签 demo-v14。</footer>
 </main></body></html>
 '''
+    if lang == 'en':
+        catalog = json.loads((repo/'tools/report/impact_en.json').read_text(encoding='utf-8'))
+        translator = EnglishReport(catalog['messages'])
+        translator.feed(report)
+        translator.close()
+        report = re.sub(r'[ \t]+\n', '\n', ''.join(translator.output))
     check_keywords(report)
     check_single_file(report)
     check_delivery_evidence(repo, refs['sha256'])
@@ -483,18 +568,20 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repo-root', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--lang', choices=('zh-CN', 'en'), default='zh-CN')
     parser.add_argument('--check', action='store_true', help='rebuild in memory, compare committed HTML; no writes')
     args = parser.parse_args()
     if args.check and args.output:
         parser.error('--check and --output are mutually exclusive')
     try:
-        report = build(args.repo_root).encode('utf-8')
+        report = build(args.repo_root, args.lang).encode('utf-8')
+        name = 'glibc_memopt_impact_report' + ('.en' if args.lang == 'en' else '') + '.html'
         if args.check:
-            if (args.repo_root / 'docs/glibc_memopt_impact_report.html').read_bytes() != report:
+            if (args.repo_root / 'docs' / name).read_bytes() != report:
                 raise ValueError('committed HTML differs from rebuild; regenerate and review the diff')
             print('PASS impact report: frozen inputs, numeric controls, byte-identical HTML')
         else:
-            output = args.output or args.repo_root / 'docs/glibc_memopt_impact_report.html'
+            output = args.output or args.repo_root / 'docs' / name
             output.write_bytes(report)
             print('PASS impact report generated from frozen public evidence')
     except (OSError, ValueError, KeyError) as error:
