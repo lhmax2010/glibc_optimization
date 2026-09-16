@@ -43,18 +43,18 @@ def git(*args):
     return subprocess.check_output(['git', '-C', str(ROOT), *args])
 
 
-def contract_gate(receipt):
-    if receipt['tag'] != TAG or git('cat-file', '-t', TAG).strip() != b'tag':
+def contract_gate(receipt, tag=TAG, pinned_files=PINNED_FILES):
+    if receipt['tag'] != tag or git('cat-file', '-t', tag).strip() != b'tag':
         raise ValueError('STOP annotated contract tag required')
-    if git('rev-parse', TAG).decode().strip() != receipt['tag_object']:
+    if git('rev-parse', tag).decode().strip() != receipt['tag_object']:
         raise ValueError('STOP tag object differs from push receipt')
-    commit = git('rev-parse', TAG+'^{commit}').decode().strip()
+    commit = git('rev-parse', tag+'^{commit}').decode().strip()
     if commit != receipt['commit']:
         raise ValueError('STOP contract commit differs')
-    for path in PINNED_FILES:
+    for path in pinned_files:
         if git('show', commit+':'+path) != (ROOT/path).read_bytes():
             raise ValueError('STOP frozen contract/analyzer changed: '+path)
-    refs = git('ls-remote', 'origin', 'refs/tags/'+TAG).decode().split()
+    refs = git('ls-remote', 'origin', 'refs/tags/'+tag).decode().split()
     if not refs or refs[0] != receipt['tag_object']:
         raise ValueError('STOP remote contract tag not confirmed')
     boot = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
@@ -66,7 +66,7 @@ def contract_gate(receipt):
         raise ValueError('STOP contract push interval below 600 s: %.3f' % interval)
     return {'interval_seconds': interval, 'checked_utc': utc(), 'commit': commit,
             'tag_object': receipt['tag_object'], 'files_sha256': {
-                p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in PINNED_FILES}}
+                p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in pinned_files}}
 
 
 def readonly_body(argv):

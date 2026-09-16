@@ -46,3 +46,30 @@ STOP 只表示本段未完成，不撤销已经推库的平行英文报告；不
 不扩展通用 shell/执行权限，不允许这两个可执行项附带其他参数。
 活着的非内核进程返回空 smaps 时，不把它静默剔除来声称 Top 10 完整；停止并
 记录读取范围不明，等 PM 决定是否授权提高读取权限。合同、样本数、分桶与判别器不改。
+
+## PM 解决连接后的正式执行：板端只读脚本
+
+本轮新授权替代旧的禁推送传输方式；旧入口与旧合同保留作历史记录，不改其定义。
+新入口 `run_board_script.py` 只采用
+`product-floor-board-script-contract-20260916` annotated tag 与
+`board_script_contract.json`，合同/分析器字节核验及推送后 600 s 间隔仍是硬门。
+架构严格 armv7l，kernel rpi4 或非 Tizen TV 产品镜像立即停止。
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/run_board_script.py \
+  --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --push-receipt board_results/product_floor_reconfirm_20260916/board_script_push.json \
+  --output board_results/product_floor_reconfirm_20260916/formal_board_script
+```
+
+先做身份/能力读取，再生成并推送唯一 `/tmp/pf_20260916_<hex>.sh`，按字节哈希确认后
+执行。inventory 与 collect 采用同一模板；只有脚本文件落板，样本经 sdb stdout
+直达 host。脚本只读 `/proc`/`/sys`，不调用 vk_send、gdb、trim 或业务负载。
+时间槽并行读取并等待所有子进程，任一失败停止；板端 timeout 只约束本轮探针进程，
+不向目标 PID 发送信号。完整结果需 601 点、固定 1 s deadline、PID/start 一致、
+分桶相加正确、远端 RC 证明、冻结分析器成功。
+
+收尾先读进程表确认本轮脚本不再运行；仅删除路径与哈希匹配的自身脚本，复核普通
+路径与符号链接均不存在。任何失败只进行必要的自身收尾，不继续业务诊断/采样。
+读不到全系统视图或 smaps 不做提权，列出受限项；文件/目录可写不等于可以安装或 attach。
+本轮不使用旧入口的 host 高频请求采样，不重跑已有窗口。
