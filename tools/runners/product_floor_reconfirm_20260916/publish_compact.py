@@ -13,6 +13,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 spec = importlib.util.spec_from_file_location('endpoint_privacy', ROOT/'tools/privacy/scan_endpoints.py')
 privacy = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = privacy
 spec.loader.exec_module(privacy)
 
 
@@ -24,7 +25,7 @@ def redactor(mapping, address):
     replacements += [(str(ROOT), '<WORKSPACE>'), (str(Path.home()), '<USER_HOME>')]
     replacements.sort(key=lambda pair: -len(pair[0]))
     def redact(text):
-        text = privacy.redact_endpoints(text, {address: '<PRODUCT_BOARD_IP>'})
+        text, _ = privacy.redact_endpoints(text, {address: '<PRODUCT_BOARD_IP>'})
         for source, replacement in replacements:
             text = text.replace(source, replacement)
         return text

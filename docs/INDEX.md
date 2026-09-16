@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-16 — [产品板 floor 只读复确认](product_floor_reconfirm_20260916.md)：annotated 合同推送后间隔门通过，首次 sdb 连接失败即停止；产品身份及画像均未执行，无板端写入，待 PM 确认产品板地址/服务。平行英文报告已先行推库，不受影响。
+
 - 2026-09-16 — [独立影响报告英文版](glibc_memopt_impact_report.en.html)：与[中文版](glibc_memopt_impact_report.html)共用结构、图形和数值生成逻辑；仅页内导航，限定语逐项核对，独立单文件分发。未新增测量、不切 demo。
 
 - 2026-09-16 — [总部独立影响报告](glibc_memopt_impact_report.html)：既有进程 RSS 前后对照、系统净效应 NOT-DETECTED、调用/fault 代价与常驻服务边界；[L1 入口](demo_reproduction_guide_20260901.md#l1-impact-report)。离线内联 SVG、冻结公开输入与逐字节重建测试，不改测量或入口，不切交付快照。

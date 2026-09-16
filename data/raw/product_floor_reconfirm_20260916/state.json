@@ -1,0 +1,7 @@
+{
+  "started_utc": "2026-09-16T11:35:24.346003+00:00",
+  "status": "STOP",
+  "board_alias": "<PRODUCT_BOARD_IP>",
+  "reason": "STOP connection failed; no retry",
+  "ended_utc": "2026-09-16T11:35:28.479647+00:00"
+}

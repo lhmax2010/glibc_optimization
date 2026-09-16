@@ -37,8 +37,73 @@ ServiceA `+788 KiB` 是逐轮谷底增量。不同 PID/启动历程、负载/按
 
 ## 3. 执行状态
 
-尚未连接；等待事前凭证推送、间隔门及执行器 host 测试。身份、基线、存活、画像、
-floor 与注入可行性结论均未产生，不沿用旧测试板结果冒充产品板结果。
+**STOP_CONNECTION_FAILED，产品板身份未判定。** 首次连接即失败，未重试，
+未执行任何板端 shell 请求。第 1 段英文报告已完成，不受本段停止影响。
+本段不能判断该地址是否为 RPI4，也不能确认产品镜像；需 PM 确认当前产品板地址与
+sdb 服务状态。没有依据把历史或测试板数值填为本次产品板观测。
+
+### 3.1 通道与事前门时间线（UTC）
+
+| 项目 | 实际记录 | 证据 |
+|---|---|---|
+| 第 1 段 main | `9a8f10913af9d4cd31701f4abfb7359a95bd3125`，先于本段已推送 | 本轮 Git 提交 |
+| 合同 commit | `50da737f9976588472b66f5650929c60b7fca38a` | [间隔及字节门](../data/raw/product_floor_reconfirm_20260916/contract_gate.json) |
+| annotated tag 对象 | `91f67a1d29c6f1a0a29957bee5dda5b9e2faf5c5` | [推送回执](../data/raw/product_floor_reconfirm_20260916/contract_push.json) |
+| 远端推送完成确认 | `2026-09-16T11:25:09.822545+00:00` | 同上 |
+| 首次操作前间隔核验 | `615.630770927 s`，超过 `600 s`，合同/分析器/历史判别器字节均一致 | 间隔及字节门 |
+| 采集器版本 | `b408157`，本轮 23 项 host 测试通过后推送 | [harness](../tools/runners/product_floor_reconfirm_20260916/run_readonly.py) |
+| 本机 sdb version | `11:35:25.454865` 开始，host RC=0 | [原文](../data/raw/product_floor_reconfirm_20260916/raw/sdb_version.txt) |
+| 首次 sdb connect | `11:35:25.456995` → `11:35:28.479277`；host RC=1，输出明确 failed | [原文](../data/raw/product_floor_reconfirm_20260916/raw/connect.txt) |
+| 终态 | `11:35:28.479647` STOP，无重试、无后续 devices/身份/采样请求 | [终态](../data/raw/product_floor_reconfirm_20260916/state.json)、[逐条命令](../data/raw/product_floor_reconfirm_20260916/commands.jsonl) |
+
+本机原文：
+
+```text
+Smart Development Bridge version 4.2.25
+```
+
+连接原文（仅端点按既有映射脱敏，保留行结构）：
+
+```text
+connecting to <PRODUCT_BOARD_IP>:26101 ...
+failed to connect to <PRODUCT_BOARD_IP>:26101
+```
+
+判断同时依据明确失败文本与 host RC，不把 sdb RC 当作成功证明。板端命令数为 0，
+没有远端 RC/DONE 可记录，不能伪造身份门原文。200 字节/只读 allowlist/远端标志门
+已做 host 回归，但本次未到达可现场验证它们的阶段。
+
+### 3.2 身份、环境、候选与注入可行性状态
+
+| 要求 | 状态 / 原因 |
+|---|---|
+| `uname -r` 不含 rpi4 | NOT_EXECUTED；连接门先失败，未产生原文 |
+| `uname -m` 原样记录 | NOT_EXECUTED；未产生原文 |
+| `/etc/os-release` 全文与产品 TV 判定 | NOT_EXECUTED；未产生原文 |
+| glibc / MemTotal / uptime / date | NOT_EXECUTED；不沿用测试板 2.40 或内存容量 |
+| enlightenment / ServiceH / ServiceA 存活、PID、启动时长 | NOT_EXECUTED；没有本次存活或近似候选结论 |
+| 全系统 glibc 堆 PD Top 10 | NOT_EXECUTED |
+| 10 分钟 smaps、fault、MemAvailable、zram 画像 | NOT_EXECUTED；未产生 timeseries 或 floor 派生件 |
+| 与 08-14 的分类/floor 对照 | 无本次数据，§2 仅定义历史口径，不能判变化或一致 |
+| gdb、ptrace_scope、id、df 侦察 | NOT_EXECUTED；未安装、未提权、未注入 |
+
+### 3.3 结论与待 PM 事项
+
+a) 尚不能确认任何候选 floor 仍在，也不能判定其量级足以进入注入轮。
+b) 尚不能判断分类相对 08-14 是否变化；连接失败不是分类变化的证据。
+c) 请 PM 先确认当前产品板地址及 sdb 可用状态。待只读复确认完成，再按实际 PID、
+角色和释放时机提交目标/次数/窗口/暂停风险清单；本轮不请求或推定任何注入权限。
+UI 合成器附加暂停可能影响画面，其他目标的实际职责和可观察影响须完成存活及角色
+核验后再评估，不能仅据 Service 别名推断。
+
+所有已采原文与公开件的双哈希见[发布清单](../data/raw/product_floor_reconfirm_20260916/publication.json)。
+本轮没有板端产物，无需清理；没有配置、包、governor 或提权变更。不切 demo，
+`demo-v14` 交付快照保持原样。
+
+收线 host 核验：本轮测试最终为 25 项通过，包含只读 allowlist、200 字节硬闸、
+连接失败/RPI4/开发镜像立即停止、无 RC 证明拒绝、进程完整性、采样超时停止与
+发布双哈希。发布器首次 host 调用发现动态导入与脱敏函数返回值适配问题，
+已修正并补发布回归；不涉及板端请求重试、不改合同或冻结分析器。
 
 ## 4. 复现
 
@@ -49,7 +114,8 @@ harness：[本轮目录](../tools/runners/product_floor_reconfirm_20260916/)。
 python3 -m unittest discover -s tools/runners/product_floor_reconfirm_20260916 -p 'test_*.py'
 ```
 
-公开采样若完成，用本轮 `analyze_floor.py --timeseries <timeseries.tsv> --output <summary.json>`
+本次仅有连接停止证据，不提供虚构的画像复算命令结果。今后公开采样若完成，
+用本轮 `analyze_floor.py --timeseries <timeseries.tsv> --output <summary.json>`
 重放。确定性检查：公开输入字节、派生件重建、PID/start identity、PD 分桶加和、远端
 RC 证明；实板数值没有人为相等容差，不以历史增量作验收带。采样时延、压力、PID
 与版本差异如实披露。完整原始件留本地 board_results，可按请求提供。
