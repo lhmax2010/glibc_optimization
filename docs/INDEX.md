@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-16 — [总部独立影响报告](glibc_memopt_impact_report.html)：既有进程 RSS 前后对照、系统净效应 NOT-DETECTED、调用/fault 代价与常驻服务边界；[L1 入口](demo_reproduction_guide_20260901.md#l1-impact-report)。离线内联 SVG、冻结公开输入与逐字节重建测试，不改测量或入口，不切交付快照。
+
 - 2026-09-15 — [v13→v14 minor 收口](demo_v13_delivery_20260915.md#7-demo-v14-交付完成)：v13 自执行复跑回执/partial superseded 随 v14 提供；G2 首周期/全周期窗口订正，1 ulp 仅台账。v14 已发布，隔离及 GitHub 各 18/18 verify、129/129 拒绝及两种 HQ 克隆通过；不改测量、机制或入口，v13 保留。
 
 - 2026-09-15 — [demo-v13 对客口径修正与交付](demo_v13_delivery_20260915.md)：G3 首周期/全周期、系统净效应 NOT-DETECTED、字段与 Git 依赖说明；N12-05 WITHDRAWN-BY-PM、固定 Base 404 仅记新构建限制，入口/证明门保持 v12 原字节。不改测量数据；隔离/远端各 18/18 verify、129/129 拒绝探针及额外两种 HQ 克隆通过，v13 已发布、v12 保留。

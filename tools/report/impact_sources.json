@@ -1,0 +1,24 @@
+{
+  "schema": "glibc-memopt-impact-sources.v1",
+  "evidence_commit": "50bb278623ca16b2b9d57bd2b317106d48c1e58e",
+  "note": "Evidence snapshot only; not the generator's build commit. Existing measurements are read-only.",
+  "sha256": {
+    "system_level_before_after_20260908/accepted_matrix/summary.tsv": "a265aa297a0f87b34dbfbe3a7c7ab25b25f2a2429c1eb0a21662232e0c7e1ebd",
+    "system_level_before_after_20260908/accepted_matrix/cycles.tsv": "b6a77c801de81bd0e3a80c904cc36e19f8ceebaaf50ecb8df81cafc1b2640e44",
+    "system_level_before_after_20260908/accepted_matrix/gst_comparison.json": "8bbbe4fbff7bb09d7795893932cfbe9d4c03b35bec9e34c6120b6b9aeca59a63",
+    "system_level_before_after_20260908/accepted_matrix/composition.json": "f9d4cc6963a5f08d0f4099da056caed38870f3ed8e22388f23f41b2f31ae4f0f",
+    "s4_retention_20260901/a_cells.tsv": "c30b8f473906e795b825ae345e04ab7f84c514fc0df34c1b29ef2d5fa16077d3",
+    "s4_retention_20260901/b_cycles.tsv": "aa6795c49b51976c22007f1db1ee2a00274414afaec114307b626c9b9c6a6e17",
+    "s4_retention_20260901/health.json": "3ceb020b4e06411413985873f2aac3996966373d4c1bc3fca96471cc574e7b6e",
+    "gst_trim_cost_20260901/cycles.tsv": "894ef57d7d1e8fb0424621717a3b1b3293a447e03dc65feb62935dcb75d401ce",
+    "gst_trim_cost_20260901/repetitions.tsv": "5a60239386efb9abfde411c19cb96226b15c46e2b0ff2ecb7b82bea6d336b2c5",
+    "gst_trim_cost_20260901/comparison.json": "f9d1fbfa720b81a4dd8c8c4eb02e449b7f3a7474434bb8c68b88523cd2f509f2",
+    "gst_trim_cost_20260901/health.json": "8ae2c8c5b730532964193c3636b062714e3fa03025f7638980d6f7f8b4745555",
+    "gst_trim_cost_20260901/external_summary.tsv": "09eb4e3ded4a529904fbc334c2ed2db3f558bf0a5559f72908f6d1c5720963f1",
+    "tizen_native_evidence_20260904/summary.json": "45e5a362a4f9b8182e58b1820593c360f607fabd1d45afea6ddb5d3e33387a06",
+    "tizen_native_evidence_20260904/health.json": "745c6ab90e1016285898e8c09b31eff6138c35348b9fc232e63de3358a921d15",
+    "tizen_native_evidence_b2_20260904/summary.json": "08cc7b7636f554bc23a220548ccc851c25ba064cab82d7879666736662e026f7",
+    "trimmable_estimator_20260905/validation.tsv": "f9326bd414b42ecce22054c61607956e25227820ff4e416ba3679e0f41860212",
+    "demo_v14_delivery_20260915/verification.json": "12810516282934dd167ac930ed4e34f2efeb66dfd96bf90d0a459a08d6404c93"
+  }
+}

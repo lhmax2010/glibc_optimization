@@ -69,6 +69,93 @@ OUT=$(mktemp -d /tmp/glibc-memopt-demo.XXXXXX)
 python3 --version
 ```
 
+<a id="l1-impact-report"></a>
+### 总部独立影响报告：重建与数字范围
+
+[独立 HTML](glibc_memopt_impact_report.html) 是 main 上新增的说明，不修改 demo-v14
+冻结包或测量数据。数字沿用以下既有 L1；此处不增加测量或判据。
+
+| 报告数字 / 范围 | 公开输入 | 原 L1 |
+|---|---|---|
+| RSS 首周期前后/降幅、G1/G2/G3 全周期中位、系统净效应/极差、G4 | [summary.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/summary.tsv)、[cycles.tsv](../data/raw/system_level_before_after_20260908/accepted_matrix/cycles.tsv) | [系统前后对照](#l1-system-before-after)；G3 首周期与全周期不混称 |
+| S4 B 回收/已释放、分档耗时中位、下一周期 faults | [b_cycles.tsv](../data/raw/s4_retention_20260901/b_cycles.tsv) | [S4](#l1-s4)；分母不是 RSS |
+| gst p99/margin、p50、耗时分布与 minflt | [cycles.tsv](../data/raw/gst_trim_cost_20260901/cycles.tsv)、[comparison.json](../data/raw/gst_trim_cost_20260901/comparison.json)、[repetitions.tsv](../data/raw/gst_trim_cost_20260901/repetitions.tsv) | [gst](#l1-gst-trim-cost)；主窗口排除首周期 |
+| A 大区域耗时、E1/E4′ 回收、冷启动 major fault 例外、健康窗口 | [A cells](../data/raw/s4_retention_20260901/a_cells.tsv)、[E1](../data/raw/tizen_native_evidence_20260904/summary.json)、[E4′](../data/raw/tizen_native_evidence_b2_20260904/summary.json)、[外部 faults](../data/raw/gst_trim_cost_20260901/external_summary.tsv)、[S4 health](../data/raw/s4_retention_20260901/health.json)、[gst health](../data/raw/gst_trim_cost_20260901/health.json)、[原生 health](../data/raw/tizen_native_evidence_20260904/health.json) | 本节补充命令；[B2/估算器](#l1-tizen-native-b2) |
+| 分期执行与延期收尾、同 ELF 的运行时对照 | [composition.json](../data/raw/system_level_before_after_20260908/accepted_matrix/composition.json) | [系统前后对照](#l1-system-before-after)；不是不中断的长期实验 |
+
+在包含本节的 main 完整克隆根目录执行（host-only；无需板、GBS、rpm 或工具链）：
+
+```sh
+impact_out=$(mktemp -d)
+python3 tools/report/build_impact_report.py --output "$impact_out/glibc_memopt_impact_report.html"
+cmp "$impact_out/glibc_memopt_impact_report.html" docs/glibc_memopt_impact_report.html
+python3 tools/report/build_impact_report.py --check
+python3 -m unittest tools.report.test_build_impact_report
+```
+
+生成和 check 预期各输出一行；cmp 静默，测试为 OK：
+
+```text
+PASS impact report generated from frozen public evidence
+PASS impact report: frozen inputs, numeric controls, byte-identical HTML
+```
+
+生成器读取 [冻结输入清单](../tools/report/impact_sources.json) 并严格核对字节 SHA，
+从行数据独立断言窗口、分母、分位数与关键数字。证据基线 commit 指来源快照，不冒充
+生成器执行证明。测试由既有 report 测试模块载入，正常 `reproduce.sh verify` 同时执行
+HTML 重建、链接和跨载体断言；复现入口/current-proof 本轮不改字节。原统计分析器仍为
+上述各节的唯一重放入口，builder 的计算仅作显示正确性正控。
+
+以下补充只提取已发布值，用于明确旧报告中不应省略的例外与口径：
+
+```sh
+python3 - <<'PY'
+import csv, json, statistics
+from pathlib import Path
+p = Path('data/raw')
+def tsv(name):
+    with (p / name).open() as f:
+        return list(csv.DictReader(f, delimiter='\t'))
+def js(name):
+    return json.loads((p / name).read_text())
+for r in tsv('s4_retention_20260901/a_cells.tsv'):
+    print('A %s elapsed=%.6fms (not release hook)' % (r['profile'], float(r['trim_elapsed_ms'])))
+e1 = next(r for r in js('tizen_native_evidence_20260904/summary.json')['cells'] if r['cell']=='T2_E1')
+e4 = js('tizen_native_evidence_b2_20260904/summary.json')['e4_prime']
+print('enlightenment E1=%dKiB E4prime=%dKiB' % (e1['project_reclaimed_kb'], e4['reclaimed_kb']))
+rows = tsv('gst_trim_cost_20260901/cycles.tsv')
+print('gst primary majflt_zero=%s cold_start_majflt=%s' % (
+    str(all(r['cycle_majflt']=='0' for r in rows if r['primary_business_sample']=='1')).lower(),
+    '/'.join(r['cycle_majflt'] for r in rows if r['cycle_majflt']!='0')))
+reps = tsv('gst_trim_cost_20260901/repetitions.tsv')
+none = [float(r['business_p50_ms']) for r in reps if r['arm']=='none']
+trim = [float(r['business_p50_ms']) for r in reps if r['arm']=='trim-at-loop-release']
+delta = statistics.median(trim)-statistics.median(none)
+dispersion = max(none)-min(none)
+print('gst p50 delta=%.6fms none_range=%.6fms visible=%s' % (delta, dispersion, str(delta > dispersion).lower()))
+for name in ('s4_retention_20260901', 'gst_trim_cost_20260901'):
+    h = js(name + '/health.json')
+    print('%s oom_lmk=%d zram_delta=%s' % (name, len(h['oom_lmk_matches']), '/'.join(str(h['zram_'+k+'_delta']) for k in ('original_data_size', 'compressed_data_size', 'mem_used_total'))))
+h = js('tizen_native_evidence_20260904/health.json')
+print('enlightenment identity_stable=%s' % str(h['enlightenment']['stable_across_completed_cells']).lower())
+print('B2 new_livedumps=%d' % js('tizen_native_evidence_b2_20260904/summary.json')['health']['stability_monitor_new_livedumps'])
+PY
+```
+
+预期原文：
+
+```text
+A mixed elapsed=13.331907ms (not release hook)
+A medium-only elapsed=12.723240ms (not release hook)
+enlightenment E1=272KiB E4prime=36KiB
+gst primary majflt_zero=true cold_start_majflt=4
+gst p50 delta=1.870462ms none_range=0.173927ms visible=true
+s4_retention_20260901 oom_lmk=0 zram_delta=0/0/0
+gst_trim_cost_20260901 oom_lmk=0 zram_delta=0/0/0
+enlightenment identity_stable=true
+B2 new_livedumps=0
+```
+
 <a id="l1-servicea"></a>
 ### ServiceA：峰谷、换出排除与时长伪影
 

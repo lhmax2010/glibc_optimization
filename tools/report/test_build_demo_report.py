@@ -11,6 +11,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+# Keep the release entrypoint/current-proof bytes unchanged. Normal verify
+# already loads this module; unittest also discovers this imported test class.
+from tools.report.test_build_impact_report import ImpactReportTests
+
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
