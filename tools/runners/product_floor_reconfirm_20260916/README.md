@@ -1,5 +1,49 @@
 # 产品 floor 只读复确认
 
+## 2026-09-17 PM 授权的不落盘驱动
+
+当前轮采用 `run_diskless.py`，不再调用下述历史脚本入口。板上零文件、零 push，
+仅发送一条短读取及固定 RC/DONE 包装；实际发送前校验只读 allowlist 和 200 字节
+上限。脚本签名失败的历史保留，本方法不申请签名也不绕过镜像文件执行校验。
+显式授权参数仅表示本轮 PM 已许可的 root on/off，不是对未来轮次的默认授权。
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/run_diskless.py \
+  --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --previous-private-snapshot board_results/product_floor_reconfirm_20260916/root_authorized_20260917/permissions.json \
+  --push-receipt board_results/product_floor_reconfirm_20260916/diskless_push.json \
+  --output board_results/product_floor_reconfirm_20260916/diskless_20260917 \
+  --pm-authorized-readonly-root
+```
+
+私有候选名快照必须经既有映射后与公开冻结快照逐值一致；不能用地址判板。
+新合同 `product-floor-diskless-contract-20260917` 必须是已推送 annotated tag，
+合同/分析器/候选快照逐字节核对，双时钟证明推送至连接至少 600 s。
+不写板端文件，不使用 timeout/sha256sum，不安装、不注入、不发送目标信号。
+root on/off 各一次，失败亦查询 id；完成条件含恢复 UID5001 的原文证明。
+
+每目标至少 600 s，初始目标 1 s，最近 10 批间隔中位 >1.5 s 时只降级一次至
+目标 2 s。保留所有实际起止时刻，不重跑、不补点。完整 smaps 20 s 超时才
+改为短 awk 只传映射头与 Private_Dirty，由原 parser 在 host 汇总；再失败即停。
+该模式仍保留全部四个 PD 数字，但必须披露减少了传输字段及不同的读取窗口。
+全局量与目标量分任务读，不能当作原子快照；实际抖动/偏移是报告的一部分。
+
+host-only 重放入口（仅当本轮存在完整成功序列）：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/analyze_diskless.py \
+  --timeseries '<公开 timeseries.tsv>' --timing '<公开 sampling_timing.json>' \
+  --output /tmp/product-floor-diskless-summary.json
+cmp /tmp/product-floor-diskless-summary.json '<公开 summary.json>'
+```
+
+确定性验收：合同字节、冻结候选集合、身份、逐请求 RC、字段齐全、PD 分桶相加、
+PID/start 稳定、每目标实际时长、真实降级记录、零文件传输、root 恢复。
+数值容差：不要求产品自然业务 floor 重现历史活动增量；不以结果修改分类阈值。
+历史 heap 分类是映射启发式，并非 allocator live/bin 或可 trim 收益的直接测量。
+
+## 历史入口（保留原合同，不用于当前轮）
+
 旧入口 `run_readonly.py` 只在 host 执行，不推送任何脚本/产物，不提权；
 后续授权的 `/tmp` 只读脚本入口见后文，各轮合同和历史记录分别保留。
 连接前必须有本轮已推送 annotated 合同及 600 s 间隔回执。
