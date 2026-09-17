@@ -175,7 +175,8 @@ def verify_script(board, label, item):
             raise ValueError('STOP script SHA mismatch')
     else:
         rc,_=operation(board,label,'read',path)
-        raw=(board.output/'raw'/(label+'.txt')).read_bytes().replace(b'\r\n',b'\n')
+        recorded_label = board.recorded_label(label) if hasattr(type(board), 'recorded_label') else label
+        raw=(board.output/'raw'/(recorded_label+'.txt')).read_bytes().replace(b'\r\n',b'\n')
         ending=b'\nRC=0\nDONE\n'
         if rc or not raw.endswith(ending):
             raise ValueError('STOP script readback framing')

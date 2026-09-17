@@ -39,6 +39,8 @@ def publish(source, output, mapping, address, receipt):
     if state['status'] not in ('STOP', 'COMPLETE'):
         raise ValueError('source must have a terminal status')
     if state['status'] == 'COMPLETE':
+        if (source/'authorization.json').exists() and state.get('root_off_verified_uid') != 5001:
+            raise ValueError('complete publication root-off UID 5001 unproven')
         contract = json.loads((HERE/'contract.json').read_text())
         with (source/'timeseries.tsv').open() as stream:
             reader = csv.DictReader(stream, delimiter='\t')
@@ -75,12 +77,16 @@ def publish(source, output, mapping, address, receipt):
                    'uptime', 'date', 'id', 'df', 'proc_uptime', 'gdb', 'ptrace_scope',
                    'vk_send_path', 'rpm_path', 'zypper_path', 'rpm_dbpath',
                    'shell_status', 'tmp_writable', 'awk_path', 'timeout_path', 'tools'}
-    files += [p for p in (source/'raw').glob('*.txt') if p.stem in allowed_raw]
+    transition_raw = {'pre_id_before_root_on', 'pre_root_on', 'pre_id_after_root_on',
+                      'restore_root_off', 'restore_id_after_root_off'}
+    files += [p for p in (source/'raw').glob('*.txt') if p.stem in allowed_raw
+              or p.stem in transition_raw
+              or any(p.stem == prefix+'_'+label for prefix in ('pre', 'root') for label in allowed_raw)]
     if (source/'commands.jsonl').exists():
         # Permission errors are compact evidence; successful full smaps stay local.
         commands=[json.loads(l) for l in (source/'commands.jsonl').read_text().splitlines()]
         files += [source/'raw'/(r['label']+'.txt') for r in commands
-                  if r['label'].startswith('permission_') and r.get('remote_rc',0)!=0]
+                  if r['label'].startswith(('permission_', 'root_permission_')) and r.get('remote_rc',0)!=0]
     manifest = []
     for path in files:
         relative = path.relative_to(source)

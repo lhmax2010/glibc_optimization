@@ -107,3 +107,27 @@ epoch 秒加单调增量构成 epoch_ns，字段单位不代表墙钟精度；�
 复现确定性门：合同/分析器固定字节、远端标志、可读候选 PID/start、分桶合计、601 点、
 截止时间、脚本传输与清理；容差项：不规定真实 floor 必须等于历史增量，镜像/业务/
 压力与视图差异原样披露。完整数据经 analyze_floor.py 重放并字节比较，STOP 不造结论。
+
+## 2026-09-16 PM 单轮授权；2026-09-17 执行
+
+`run_authorized_root.py` 是本轮授权的独立入口，不改变上述入口的默认权限行为。
+使用 `root_authorization_contract.json` / annotated tag
+`product-floor-root-contract-20260917`，合同推送后至少 600 s 才连接。
+仅替代旧合同中的本轮禁提权条款，采样模板、字段、601 点、分桶与判别器原字节不变。
+该授权不可复用于后续轮次；以下命令不是一般性提权许可。
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/run_authorized_root.py \
+  --pm-authorization-20260916 --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --push-receipt board_results/product_floor_reconfirm_20260916/root_push.json \
+  --output board_results/product_floor_reconfirm_20260916/root_authorized_20260917
+```
+
+产品身份通过且 id=5001 后才 root on；id=0 与产品身份再核验。root ps 与 proc 均需
+含 PID1，排名仍逐项披露退出/不可读等排除，并非全系统同时快照。读取目标 status
+用于凭据与 TracerPid 等风险侦察；`/proc/self/status` 对应查询命令本身，不是 attach
+实测。任何情况下都不执行 gdb attach、注入、kill 或包操作。
+
+成功或停止均进入收尾：有退出证明才按原字节哈希删除自己的唯一 /tmp 脚本、确认
+路径与符号链接均不存在，然后 root off 并复核 id=5001；失败原样报告，不自动重试。
+公开 COMPLETE 回执额外要求已记录 root-off UID=5001，不能只凭 sdb 返回码判过。
