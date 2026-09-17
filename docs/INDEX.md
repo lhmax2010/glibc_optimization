@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-17 — [产品 floor 单轮授权提权](product_floor_reconfirm_20260916.md#82-执行结果权限门通过未签名脚本执行被拒绝)：UID5001→0 后产品身份、三名主候选读取与 Top10 发现通过；未签名 /tmp 脚本被 UEP 拒绝，10 分钟画像未执行，不绕过/重跑。脚本已删除、root off 后 UID5001 复核通过；保留只读快照、权限与回执，待 PM 确认受支持的签名交付方式。
+
 - 2026-09-17 — [产品 floor 可移植性与权限预检](product_floor_reconfirm_20260916.md#71-执行结论可移植性闭合读取范围-stop)：移除 timeout 依赖、一次工具探测、缺 SHA 的完整字节回读、部分可读分流均有 host 回归。产品身份/工具门通过，但 UID=5001 视图无主候选，无可用用户态 smaps；零 push/采样，STOP_READ_PERMISSION，列只读 root 待授权清单。
 
 - 2026-09-16 — [产品 floor 正式执行](product_floor_reconfirm_20260916.md#61-本轮结果与停止原因)：新 `/tmp` 只读脚本合同及事前间隔门通过；SDB 连接恢复、三项产品身份门通过，glibc 2.40-1.12、UID=5001、gdb 已安装。执行器依赖 `timeout` 查询失败立即 STOP，未推脚本、未采候选/画像、不提权；保留基线与全部原文，待 host 兼容性闭合，不切 demo。

@@ -1,0 +1,27 @@
+{
+  "schema": "product-floor-root-authorization.v1",
+  "pm_authorization_date": "2026-09-16",
+  "execution_date": "2026-09-17",
+  "tag": "product-floor-root-contract-20260917",
+  "minimum_push_to_connect_seconds": 600,
+  "inherits": "portable_contract.json",
+  "supersedes_only": "The earlier no-elevation restriction, for this single explicitly authorized round only. All historical contracts remain unchanged.",
+  "authorization": "PM permits one explicit sdb root on round for read-only product profiling. Record id before (UID 5001), after (UID 0), and after mandatory root off (UID 5001). No automatic elevation in existing runners. A failed root off is recorded; no automatic retry.",
+  "identity": "Check product kernel, armv7l and Tizen TV image before elevation; repeat after elevation. Never identify by endpoint alone.",
+  "scope": "Read proc smaps/status/stat, full ps, meminfo/zram, identity/environment and rpm queries. Only the sampling script may be written under /tmp; stdout streams to host; verify and remove that script immediately after exit.",
+  "prohibited": [
+    "package mutation",
+    "configuration changes",
+    "attach",
+    "injection",
+    "target signals",
+    "load generation",
+    "reboot",
+    "poweroff",
+    "other board files"
+  ],
+  "candidates": "Rediscover exact historical names plus top ten readable userspace heap PD. Require PID 1 in root ps and proc view; retain all exclusions and disclose accessible-ranking limitations. No silently substituted near matches.",
+  "sampling_and_analysis": "Unchanged portable contract: 601 points / 600 seconds, 1-second deadlines, same PD buckets, faults, global fields and frozen analyze_floor.py/historical classifier; no stimulus, no retries or zero-filling.",
+  "cleanup": "Any failed gate stops observations. Mandatory own-script cleanup (only when ownership and termination are proven), then root off and id verification even on failure. Report any cleanup or privilege-restoration failure, never call kill.",
+  "publication": "Append report, public sanitized compact evidence, main only. PM authorization date and actual execution time are both recorded. Root authorization is not reusable by future rounds."
+}

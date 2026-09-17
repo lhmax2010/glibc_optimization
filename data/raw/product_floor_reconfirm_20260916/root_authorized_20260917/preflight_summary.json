@@ -1,0 +1,154 @@
+{
+  "schema": "product-floor-permissions-summary.v1",
+  "commands": 1072,
+  "remote_requests": 1063,
+  "maximum_remote_request_bytes": 184,
+  "checked_pids": 307,
+  "readable_pids": [
+    243,
+    684,
+    1975,
+    1,
+    193,
+    206,
+    212,
+    213,
+    249,
+    253,
+    268,
+    280,
+    295,
+    366,
+    373,
+    449,
+    450,
+    583,
+    591,
+    638,
+    639,
+    641,
+    647,
+    657,
+    658,
+    678,
+    683,
+    692,
+    694,
+    769,
+    771,
+    782,
+    783,
+    785,
+    947,
+    1015,
+    1016,
+    1028,
+    1041,
+    1046,
+    1049,
+    1050,
+    1051,
+    1053,
+    1060,
+    1068,
+    1070,
+    1114,
+    1207,
+    1208,
+    1211,
+    1213,
+    1230,
+    1252,
+    1335,
+    1343,
+    1355,
+    1370,
+    1442,
+    1479,
+    1483,
+    1487,
+    1488,
+    1563,
+    1578,
+    1589,
+    1604,
+    1616,
+    1654,
+    1669,
+    1672,
+    1715,
+    1727,
+    1754,
+    1757,
+    1759,
+    1760,
+    1761,
+    2031,
+    2247,
+    2307,
+    2345,
+    2397,
+    2398,
+    2416,
+    2423,
+    2426,
+    2494,
+    2497,
+    2523,
+    2668,
+    2686,
+    2749,
+    2750,
+    2751,
+    2752,
+    2754,
+    2756,
+    2993,
+    3727
+  ],
+  "reasons": {
+    "readable": 100,
+    "empty status/smaps; not a usable userspace observation": 204,
+    "unreadable or exited; see exact command errors": 3
+  },
+  "smaps_permission_denied_pids": [],
+  "exited_or_unavailable_pids": [
+    2659,
+    3033,
+    3165
+  ],
+  "named_exact_pids": {
+    "enlightenment": [
+      243
+    ],
+    "ServiceA": [
+      684
+    ],
+    "ServiceH": [
+      1975
+    ]
+  },
+  "named_nearby": {
+    "enlightenment": {
+      "exact_pids": [
+        243
+      ],
+      "nearby": []
+    },
+    "ServiceA": {
+      "exact_pids": [
+        684
+      ],
+      "nearby": []
+    },
+    "ServiceH": {
+      "exact_pids": [
+        1975
+      ],
+      "nearby": []
+    }
+  },
+  "pid1_visible": true,
+  "script_pushes": 1,
+  "note": "Unseen in this restricted view is not proof of process absence; empty smaps is not zero heap PD."
+}

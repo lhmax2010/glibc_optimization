@@ -1,0 +1,5 @@
+Filename				Type		Size		Used		Priority
+/dev/zram0                              partition	1039320		98852		-2
+
+RC=0
+DONE

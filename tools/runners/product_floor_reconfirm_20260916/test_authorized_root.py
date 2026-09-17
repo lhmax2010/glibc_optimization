@@ -77,6 +77,21 @@ class AuthorizationTests(unittest.TestCase):
                 publish_compact.publish(source,root/'public',Path('unused'),'192.0.2.1',Path('unused'))
             self.assertFalse((root/'public').exists())
 
+    def test_stop_publisher_keeps_policy_denial_and_cleanup_proofs(self):
+        import publish_compact
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);source=root/'source';(source/'raw').mkdir(parents=True)
+            (source/'state.json').write_text('{"status":"STOP"}')
+            (source/'raw/root_sampling.txt').write_text('[uep][bash] the file is NOT signed!!\nRC=1\nFAIL\n')
+            (source/'raw/root_cleanup_remove_0.txt').write_text('RC=0\nDONE\n')
+            (source/'raw/root_permission_smaps_1.txt').write_text('private full maps')
+            mapping=root/'map.tsv';mapping.write_text('original\treplacement\tscope\ttype\n')
+            receipt=root/'receipt.json';receipt.write_text('{}')
+            publish_compact.publish(source,root/'public',mapping,'192.0.2.1',receipt)
+            self.assertIn('NOT signed',(root/'public/raw/root_sampling.txt').read_text())
+            self.assertTrue((root/'public/raw/root_cleanup_remove_0.txt').exists())
+            self.assertFalse((root/'public/raw/root_permission_smaps_1.txt').exists())
+
     def test_root_permission_replay_uses_exact_prefixed_command_proofs(self):
         import summarize_permissions
         with tempfile.TemporaryDirectory() as d:

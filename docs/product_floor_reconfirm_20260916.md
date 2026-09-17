@@ -211,7 +211,7 @@ annotated tag `product-floor-board-script-contract-20260916`，推送确认至�
 才连接。原 [analyze_floor.py](../tools/runners/product_floor_reconfirm_20260916/analyze_floor.py)
 及历史判别器原字节复用；不改变样本数、分桶、阈值或 floor 派生定义。
 
-硬身份门为：内核不得含 rpi4、架构严格 armv7l、OS 确认为 Tizen10/TV 产品镜像而非
+硬身份门为：内核不得含 rpi4、架构严格 armv7l、OS 确认为 Tizen TV 产品镜像而非
 unified-toolchain 开发镜像。历史 6.12.60 仅作对照；`command -v vk_send` 仅查存在，
 缺失记录但不否决，绝不实际调用按键工具。不走 SSH、不提权、不装卸包、不注入、
 不改配置或 governor、不重启、不干预业务。
@@ -306,7 +306,7 @@ RC=0
 DONE
 ```
 
-原镜像标识为 Tizen10/TV 产品系列，不是 unified-toolchain；内核与历史 6.12.60 系一致，
+原镜像标识为 <PRODUCT_IMAGE> 产品系列，不是 unified-toolchain；内核与历史 6.12.60 系一致，
 无 rpi4，架构符合本轮 armv7l 硬门。旁证 `command -v vk_send`
 （[原文](../data/raw/product_floor_reconfirm_20260916/formal_board_script/raw/vk_send_path.txt)）：
 
@@ -447,7 +447,7 @@ Permission denied、3 项在读取时已不存在；可用用户态 smaps 为 0�
 [架构原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/uname_m.txt)、
 [镜像全文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/os_release.txt)、
 [旁证原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/vk_send_path.txt)。
-均为 RC=0 / DONE：`6.12.60`、`armv7l`、Tizen10/TV 产品镜像、`/usr/bin/vk_send`。
+均为 RC=0 / DONE：`6.12.60`、`armv7l`、Tizen TV 产品镜像、`/usr/bin/vk_send`。
 不是按 IP 认板；未调用 vk_send。镜像内部名称/BUILD_ID 按既有映射脱敏，行结构不变。
 
 | 项目 | 本轮实测 | 原文 |
@@ -580,3 +580,240 @@ stat、全系统 ps、meminfo/zram 与环境查询；不得 attach、注入、ki
 身份，再 root on、id=0 和身份复核；root ps/proc 均必须包含 PID1。逐项保留不可读或
 已退出进程，Top10 是这次逐进程可读扫描的排名，不伪称同一时刻的完整快照。
 采样仍为 601 点 / 600 s / 1 s deadline，历史分桶与判别器原字节不变。
+
+### 8.2 执行结果：权限门通过，未签名脚本执行被拒绝
+
+**STOP：产品板拒绝执行未签名的采样脚本；10 分钟画像 NOT_EXECUTED。**
+root 读取解决了 §7 的受限进程视图与 smaps 权限问题，但不等于获准执行任意脚本。
+本轮脚本已成功传输、板上 SHA-256 一致，执行时即被拒绝，未输出任何 P/G/T 采样行。
+未尝试改变签名/执行策略、换解释器、改用 stdin/eval 绕过或重跑。
+只进行了必要的本轮脚本清理与 root off；没有继续候选/环境观察或业务操作。
+
+失败原文（下方仅省略终端颜色转义，文件保留完整原始字节）：
+
+```text
+[uep][bash] the file is NOT signed!! : /tmp/pf_20260916_69e6243c6bfa.sh
+
+RC=1
+FAIL
+```
+
+证据：[启动拒绝原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_sampling.txt)、
+[终态](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/state.json)、
+[完整命令时间线](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/commands.jsonl)。
+本机 sdb RC=0，而远端 RC=1/FAIL，执行器按远端证明正确停止。
+这是新的产品脚本执行策略门，不是 timeout、网络或 smaps 权限再次失败；
+没有进一步探查策略配置，不声称已经定位具体签名设施或解除方式。
+
+| UTC 时间（2026-09-17） | 动作与结果 |
+|---|---|
+| 01:35:46.513806 | 事前门通过；距合同推送确认 616.087235658 s；冻结文件严格字节一致 |
+| 01:35:46.575096–01:35:47.089418 | 非 root 下三项产品身份与 vk_send 存在性通过 |
+| 01:35:47.238747 | 提权前 id：UID=5001 |
+| 01:35:47.239145–01:35:48.430826 | root on 一次；id 原文证实 UID=0 |
+| 01:35:48.442722–01:35:51.784752 | 产品身份再次通过；基线、完整 ps/proc 视图及能力读取 |
+| 01:35:51.785 起–01:38:33.150 前 | 主候选优先、随后全视图只读预检；307 个 PID，100 个可用用户态 smaps |
+| 01:38:33.791173–01:38:34.482099 | 唯一脚本推送、非符号链接与 SHA-256 复核通过 |
+| 01:38:34.482631–01:38:34.748871 | 启动被未签名检查拒绝；远端 RC=1，零采样槽，停止 |
+| 01:38:34.833356–01:38:35.506817 | 重验本轮脚本哈希、删除、确认路径和符号链接均不存在 |
+| 01:38:35.507391–01:38:36.702246 | root off 一次，原文证实 UID=5001；无重试 |
+
+### 8.3 身份、权限与环境原文
+
+`uname -r` 与 `uname -m` 原文分别为：
+
+```text
+6.12.60
+
+RC=0
+DONE
+```
+
+```text
+armv7l
+
+RC=0
+DONE
+```
+
+`cat /etc/os-release` 全文（产品标识按既有映射脱敏）：
+
+```text
+NAME=Tizen
+VERSION="10.0.0 (<PRODUCT_IMAGE>)"
+ID=tizen
+VERSION_ID=10.0.0
+PRETTY_NAME="<PRODUCT_IMAGE>"
+ANSI_COLOR="0;36"
+CPE_NAME="cpe:/o:tizen:tizen:10.0.0"
+BUILD_ID=<PRODUCT_BUILD_ID>
+
+RC=0
+DONE
+```
+
+[提权前 id 全文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/pre_id_before_root_on.txt)、
+[root on 原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/pre_root_on.txt)、
+[提权后 id 全文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/pre_id_after_root_on.txt)、
+[root off 原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/restore_root_off.txt)、
+[恢复后 id 全文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/restore_id_after_root_off.txt)
+完整保留。会话按授权从 `uid=5001(owner)` 到 `uid=0(root)`，收尾回到
+`uid=5001(owner)`，三次均为远端 RC=0/DONE。
+
+| 项目 | 本轮结果 | 证据 |
+|---|---|---|
+| 产品旁证 | `/usr/bin/vk_send` 存在；未调用 | [原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_vk_send_path.txt) |
+| glibc | `glibc-2.40-1.12.armv7l`；libc 2.40，GNU CC 14.2.0 | [RPM](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_glibc.txt)、[完整版本](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_libc_version.txt) |
+| MemTotal / 基线 MemAvailable | 1599416 / 947608 KiB | [原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_meminfo.txt) |
+| CPU / CLK_TCK | armv7l，在线 0–3，共 4 核；250 tick/s | [基线](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/baseline.json) |
+| uptime / 板端 UTC date | `up 12:52`；`Thu Sep 17 01:36:30 UTC 2026` | [uptime](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_uptime.txt)、[date](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_date.txt) |
+| 根 overlay 与 /opt | 同一存储可用 2.5G、36% 已用；不重复相加 | [df 原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_df.txt) |
+| 镜像下层 /tmp / systemrw | `/.org_rootfs` 可用 0；`/tmp` 可用 781M；`/mnt/systemrw` 可用 11M | 同上 |
+| 启动前全局只读单点 | MemAvailable 946716 KiB；zram orig/compr/mem_used 为 98947072 / 26371961 / 36356096 B；swap used 98852 KiB | [单点](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/before_globals.json) |
+
+glibc 与 §7 相同，同为 2.40 系，既有机制版本前提不变；与 RPI4 的 `2.40-1.6`
+构建不同，不能视为相同补丁/布局/镜像，也不能把测试板收益数字移植给产品板。
+板端 UTC date 与 host 收取时间仍有约 40 s 偏差；上表事件时间统一使用 host UTC，
+未改板时钟。两次 MemAvailable 来自不同时刻，不是 trim 前后效应。
+
+### 8.4 候选发现与只读快照（不是十分钟 floor）
+
+[ps 原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_process_view.txt)
+及 `/proc` 视图均含 PID1。按既有私有映射的实际 comm 精确匹配三名主候选，
+无近似名替代；公开件继续使用别名。
+[权限/排名完整记录](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/permissions.json)
+和[可重放摘要](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/preflight_summary.json)
+记载：307 个 PID 中，100 个有效用户态 smaps，204 个为空（不补零），
+3 个在读取时已不存在（PID 2659、3033、3165，保留错误原文）；无 smaps Permission denied。
+逐进程扫描跨越时间，不能排除扫描期间新生进程；这里的 Top10 不是全系统同时快照。
+
+进程年龄以基线 `/proc/uptime=46341.60 s` 与 `start_ticks/250` 相减，取约数；
+不是本轮新启动或精确采样时年龄。
+
+| 主候选 | PID | 基线时年龄约 | 堆 PD / other-anon / file-backed / total PD（KiB） | 本轮覆盖 |
+|---|---:|---|---|---|
+| enlightenment | 243 | 12 h 52 m 20 s | 4548 / 1180 / 3028 / 8756 | status/stat/smaps 可读；未完成序列 |
+| ServiceH | 1975 | 9 h 17 m 47 s | 3276 / 4652 / 3040 / 10968 | 同上 |
+| ServiceA | 684 | 12 h 52 m 16 s | 208 / 336 / 1124 / 1668 | 同上 |
+
+可读用户态 Top10（按本次堆 PD 单点降序，单位 KiB）：
+
+| 排名 | 进程别名或系统名 | PID | glibc 堆 PD | other-anon PD | total PD |
+|---:|---|---:|---:|---:|---:|
+| 1 | AppProcD | 449 | 22456 | 42188 | 70800 |
+| 2 | ServiceD | 1016 | 16892 | 6972 | 27220 |
+| 3 | AppProcB | 785 | 14464 | 13208 | 34148 |
+| 4 | ServiceE | 450 | 8720 | 2216 | 18736 |
+| 5 | AppProcF | 2686 | 6944 | 5032 | 23752 |
+| 6 | ServiceC | 657 | 4644 | 7852 | 14044 |
+| 7 | enlightenment | 243 | 4548 | 1180 | 8756 |
+| 8 | ServiceH | 1975 | 3276 | 4652 | 10968 |
+| 9 | slive-provider- | 1051 | 1708 | 6692 | 9092 |
+| 10 | cynara | 206 | 1668 | 1032 | 2824 |
+
+Top10 与三名主候选并集为 11 个 PID，均已纳入本轮脚本目标，随后脚本被执行策略拒绝。
+`glibc 堆 PD` 仍为历史 smaps 映射分类近似，不证明桶内每个字节都由 ptmalloc 管理或空闲。
+
+| 候选 | 08-14 归因后分类与历史值 | 本轮 floor / 分类 | 现阶段对照结论 |
+|---|---|---|---|
+| enlightenment | 自动回撤分量 a + retained floor b；`+1736 KiB` 是活动后增量 | NOT_EXECUTED | 4548 KiB 只是当前单点；不能与增量相减判 floor 保留或变化 |
+| ServiceH | 滞留候选 b；`2360 KiB` 为平台高度上界 | NOT_EXECUTED | 3276 KiB 为当前绝对单点，不是同口径平台增幅 |
+| ServiceA | 周期自动回收 a + 谷底残渣；`+788 KiB` 是八轮谷底增量 | NOT_EXECUTED | 当前 208 KiB 不能证明原残渣消失或分类改变 |
+
+历史依据见 [§2 所引归因报告](cyclic_fall_mechanism_attribution_v2_20260901.md)。
+没有连续样本，故不计算窗口 floor、不运行既有判别器造标签、不计算 minflt/majflt
+窗口增量、不把单点 zram 当作“平坦”。影像/业务/运行历程/时段差异均可能影响后续
+对照，但本轮不能把其中任何一个判为已证实的变化原因。
+
+### 8.5 注入能力与风险：只有只读证据，无 attach 验证
+
+本轮 `rpm -q gdb` 为 `gdb-15.1-1.2.armv7l`，
+[ptrace_scope](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_ptrace_scope.txt)
+仍为节点不存在、RC=1。root 查询进程 cat 的
+[status](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_shell_status.txt)
+显示 `CapEff=000001ffffffffff`、`Seccomp=0`；它不是父 shell 或目标进程的 attach 成功证明。
+目标 status 的 `TracerPid=0` 仅表示该次读取时未见 tracer。
+
+| 候选 | 只读凭据/角色依据 | attach 暂停的潜在可观察影响；下一步前置 |
+|---|---|---|
+| enlightenment PID243 | [status](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_permission_status_243.txt)：UID0、26 线程、TracerPid0；UI 合成器候选 | 画面/输入短停、显示时限及 watchdog；须专用安全窗口与 UI owner 在场，不能仅因 root 可读便批准暂停 |
+| ServiceH PID1975 | [status](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_permission_status_1975.txt)：UID5001、9 线程、TracerPid0；历史名对应应用加载/运行时进程 | 运行中应用卡顿、IPC 超时；先确认具体载荷、owner 与关键服务依赖 |
+| ServiceA PID684 | [status](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_permission_status_684.txt)：UID5001、15 线程、TracerPid0；产品服务 | 请求停顿、依赖服务超时、watchdog；具体职责和允许暂停预算需 owner 确认 |
+| AppProcD PID449 | 应用进程，实际业务依赖未核实 | 可见业务停顿/超时；不因本次 PD 排名第一就推荐注入 |
+| ServiceD PID1016 | 产品服务，关键链路未核实 | 依赖调用延迟/watchdog，需 owner 分级 |
+| AppProcB PID785 | 应用进程，活动状态未核实 | UI/媒体或后台工作停顿，需明确当时业务 |
+| ServiceE PID450 | 产品服务，关键链路未核实 | 服务暂停传播与超时，需 owner 分级 |
+| AppProcF PID2686 | 应用进程，活动状态未核实 | 活动中任务停顿，需确认安全窗口 |
+| ServiceC PID657 | 产品服务，关键链路未核实 | 调用方等待/watchdog，需 owner 分级 |
+| slive-provider- PID1051 | 仅观察到此 comm，角色未确认 | 不猜服务用途；先确认 owner 和暂停影响，不直接注入 |
+| cynara PID206 | 系统服务，暂停影响未实测 | 可能影响其他进程的服务调用；不以小 PD 或系统名推定可安全暂停 |
+
+历史“只读 + 环境变量注入、不支持 lldb 注入”不外推到本次：本次证实 gdb 已安装、
+经 PM 授权 UID0 可读目标 smaps/status/stat；没有安装事务、attach 或 malloc_info/trim。
+没有 yama 节点与 root 身份都不足以排除其他安全策略。未签名脚本拒绝更说明
+“root 可读”与“任意执行/注入可行”不能等同。
+
+明确结论与 PM 待裁事项：
+
+1. **当前不能确认任何候选 floor 仍存在且足够进入注入轮。** enlightenment 和
+   ServiceH 的当前堆 PD 分别为 4548/3276 KiB，可作为继续被动观察的理由，但不是
+   bin 驻留或可回收量；优先闭合未签名只读脚本的执行条件。
+2. **相对 08-14 的分类变化未知。** 10 分钟序列不存在，历史结论不撤销，也不以单点更新。
+3. **请 PM 确认产品设备认可的只读采样脚本签名/交付方式。** 本轮不尝试绕过 UEP，
+   不改变采样合同、配置或换执行途径；如需改传输/执行方式，应另轮明确授权并冻结。
+   本轮 root 授权已用完并恢复 UID5001，下轮若仍需特权读取，须重新授权。
+4. 下一轮注入另立合同：明确所选进程及 PID/start 身份、先完成 floor 序列的前置、
+   malloc_info 与 trim 各自次数、自然空闲/释放时机、最大暂停预算与观测项。
+   建议先讨论单个 owner 批准的目标、单次探针，不建议同时暂停全 Top10；这不是实施授权。
+   回退须允许出错后立即停止进一步调用、解除调试附加并由 owner 核验业务恢复；
+   不默认授权 kill/restart/reboot 或改 ptrace 策略。本轮没有实施任何回退动作或注入。
+
+### 8.6 收尾、公开复算与复现限制
+
+采样脚本 `/tmp/pf_20260916_69e6243c6bfa.sh` 是唯一落板文件；传输与删除前的 SHA-256
+均为 `ad3a92a31f167f876a62e710c1adc9688f7a970c38850a97a772a0f18d5f06a3`。
+[清理记录](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/cleanup.json)
+及[删除原文](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/raw/root_cleanup_remove_0.txt)
+确认只删除该脚本；随后 `test -e`、`test -L` 均为 RC=1，表示路径/链接不存在，
+不是被忽略的错误。原始文件内容与元数据留在 host，能按请求提供。
+root off 后 UID5001 有原文与可重放证明，无 root-off 重试；无包变更、配置变更、
+注入、attach、业务刺激、目标信号或 reboot。
+
+[harness 与运行说明](../tools/runners/product_floor_reconfirm_20260916/README.md#2026-09-16-pm-单轮授权2026-09-17-执行)
+给出本轮入口。**不要将本次命令当作未来提权许可或直接重跑**：必须先解决签名门并
+获得新的板端授权。冻结规格、样本口径与判别器未改；本轮没有可发布的 timeseries/summary。
+确定性验收：合同/分析器字节、产品身份、远端 RC、PID/start、分桶相加、完整采样时序、
+自有脚本完整性与清理、UID恢复。数值容差：真实产品 floor 不要求等于历史活动增量；
+不因为自然波动改判据。此次在脚本执行门停止，不能报告采样验收通过。
+
+以下是 **host-only** 公开权限与提权回执复算，不会接触板，也不冒充 floor 复算：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/summarize_permissions.py \
+  --source data/raw/product_floor_reconfirm_20260916/root_authorized_20260917 \
+  --output /tmp/product-floor-root-permissions-replay.json
+cmp /tmp/product-floor-root-permissions-replay.json \
+  data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/preflight_summary.json
+python3 tools/runners/product_floor_reconfirm_20260916/audit_authorized_receipt.py \
+  --source data/raw/product_floor_reconfirm_20260916/root_authorized_20260917 \
+  --output /tmp/product-floor-root-receipt-replay.json
+cmp /tmp/product-floor-root-receipt-replay.json \
+  data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/authorization_receipt.json
+```
+
+预期输出分别为：
+
+```text
+PASS permission evidence: checked=307 readable=100 pushes=1
+PASS authorized receipt: UID 5001 -> 0 -> 5001; one root round
+```
+
+两个 cmp 静默。共 1072 条 sdb 调用，其中 1063 条远端请求，最大请求体 184 字节，
+未超过 200 字节硬闸；已开始的这一次采样启动未重试。
+[公开发布清单](../data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/publication.json)
+记录 80 个文件的原始/公开双哈希；完整原始件留本地，可按请求提供。
+本轮只推 main，不切 demo；后续只读画像及注入均停在待 PM 裁决状态。
+
+host 收线：本轮 65 项测试通过，两项公开回执重放逐字节一致，80 对原始/公开文件
+哈希核验通过。原始命令输出的行尾空格与终端颜色转义保留，不为格式检查改写证据。
+历史段落中三处产品系列文字按既有脱敏映射统一表达，原有结果和停止记录不变。

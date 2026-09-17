@@ -1,0 +1,2 @@
+List of devices attached 
+<PRODUCT_BOARD_IP>:26101	device    	0

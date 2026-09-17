@@ -78,10 +78,20 @@ def publish(source, output, mapping, address, receipt):
                    'vk_send_path', 'rpm_path', 'zypper_path', 'rpm_dbpath',
                    'shell_status', 'tmp_writable', 'awk_path', 'timeout_path', 'tools'}
     transition_raw = {'pre_id_before_root_on', 'pre_root_on', 'pre_id_after_root_on',
-                      'restore_root_off', 'restore_id_after_root_off'}
+                      'restore_root_off', 'restore_id_after_root_off', 'root_process_view',
+                      'root_before_mem', 'root_before_zram', 'root_before_swaps',
+                      'root_script_push', 'root_script_identity', 'root_script_identity_symlink'}
+    if (source/'authorization.json').exists() and (source/'permissions.json').exists():
+        selected=json.loads((source/'permissions.json').read_text())['selected']
+        transition_raw.update('root_permission_status_'+str(row['pid']) for row in selected)
     files += [p for p in (source/'raw').glob('*.txt') if p.stem in allowed_raw
               or p.stem in transition_raw
               or any(p.stem == prefix+'_'+label for prefix in ('pre', 'root') for label in allowed_raw)]
+    # A bounded failed-launch transcript is not a high-rate data stream. Keep
+    # policy errors verbatim; successful/large sampling streams stay local.
+    if state['status'] == 'STOP':
+        files += [p for p in (source/'raw').glob('*sampling.txt') if p.stat().st_size <= 16384]
+    files += [p for p in (source/'raw').glob('root_cleanup_*.txt')]
     if (source/'commands.jsonl').exists():
         # Permission errors are compact evidence; successful full smaps stay local.
         commands=[json.loads(l) for l in (source/'commands.jsonl').read_text().splitlines()]

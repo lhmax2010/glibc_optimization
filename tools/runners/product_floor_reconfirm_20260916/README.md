@@ -1,7 +1,7 @@
 # 产品 floor 只读复确认
 
 旧入口 `run_readonly.py` 只在 host 执行，不推送任何脚本/产物，不提权；
-本轮新授权的 `/tmp` 只读脚本入口见末节，两份合同和历史记录分别保留。
+后续授权的 `/tmp` 只读脚本入口见后文，各轮合同和历史记录分别保留。
 连接前必须有本轮已推送 annotated 合同及 600 s 间隔回执。
 合同与分析器已经冻结，采集器通过该 tag 中的字节逐个比较，不能以新数据改口径。
 
@@ -15,7 +15,7 @@ python3 tools/runners/product_floor_reconfirm_20260916/run_readonly.py \
 
 `--mapping` 为本地既有映射，不随公开仓库发布。新现场需维护者提供该映射；不可用时
 本地失败，不猜真实目标。输出目录必须不存在；任何已完成采样不得覆盖或重跑。
-报告使用 `<PRODUCT_BOARD_IP>`，命令记录与完整 smaps 只留本地。
+报告使用 `<PRODUCT_BOARD_IP>`，完整未脱敏命令记录与 smaps 只留本地；脱敏命令回执公开。
 
 采集器只允许列举的读取指令（固定路径或严格数字 PID 路径）；复用单请求 RC/DONE
 解析与 200 字节上限，额外禁止历史清理模块中的一切写动作。
@@ -131,3 +131,9 @@ python3 tools/runners/product_floor_reconfirm_20260916/run_authorized_root.py \
 成功或停止均进入收尾：有退出证明才按原字节哈希删除自己的唯一 /tmp 脚本、确认
 路径与符号链接均不存在，然后 root off 并复核 id=5001；失败原样报告，不自动重试。
 公开 COMPLETE 回执额外要求已记录 root-off UID=5001，不能只凭 sdb 返回码判过。
+
+本轮实测状态为 STOP：产品身份、提权与候选读取通过，但产品设备以
+`[uep][bash] the file is NOT signed!!` 拒绝执行 /tmp 脚本，远端 RC=1，未产生采样槽。
+没有绕过签名检查或重跑；自有脚本已删除，root off 后 id=5001 已核验。
+详见[报告 §8](../../../docs/product_floor_reconfirm_20260916.md#82-执行结果权限门通过未签名脚本执行被拒绝)。
+后续板上复现先需 PM 确认受支持的签名交付方式并重新授权；host 回执复算不受影响。

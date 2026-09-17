@@ -1,0 +1,4 @@
+[1;31m[uep][bash] the file is NOT signed!! : /tmp/pf_20260916_69e6243c6bfa.sh[0m
+
+RC=1
+FAIL

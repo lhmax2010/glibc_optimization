@@ -1,0 +1,35 @@
+{
+  "status": "STOP",
+  "started_utc": "2026-09-17T01:35:46.516989+00:00",
+  "board_alias": "<PRODUCT_BOARD_IP>",
+  "source_commit": "d5abec3c8e2092c7563095c6f3dea35d95b752b9",
+  "harness_sha256": {
+    "run_authorized_root.py": "5e5fcb6397fb73a9398107d5c832f11df05775de1c6449824d74994f3cf82bb3",
+    "run_portable.py": "f1cb87bf1fbae144cae9a74a2bb6e1612a9d630cb10462b6e84d975fa1010648",
+    "board_probe.sh": "34de138cd729badaec84c76fa0e946fe5b180a5ddc5cd1748732269fd1f447a2",
+    "run_board_script.py": "e3b76f3c9b0eba4eee74ab9c87db15b3f5e5efec1ecd3846bda8d79538f1c1d8",
+    "run_readonly.py": "3d00e355e106c3b94a15d03118bf422587b70aaebd1545864665bea49834cdd5"
+  },
+  "identity_before": {
+    "kernel": "6.12.60",
+    "arch": "armv7l",
+    "os_release": "NAME=Tizen\nVERSION=\"10.0.0 (<PRODUCT_IMAGE>)\"\nID=tizen\nVERSION_ID=10.0.0\nPRETTY_NAME=\"<PRODUCT_IMAGE>\"\nANSI_COLOR=\"0;36\"\nCPE_NAME=\"cpe:/o:tizen:tizen:10.0.0\"\nBUILD_ID=<PRODUCT_BUILD_ID>",
+    "vk_send": [
+      0,
+      "/usr/bin/vk_send"
+    ]
+  },
+  "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6509(app_logging),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+  "identity": {
+    "kernel": "6.12.60",
+    "arch": "armv7l",
+    "os_release": "NAME=Tizen\nVERSION=\"10.0.0 (<PRODUCT_IMAGE>)\"\nID=tizen\nVERSION_ID=10.0.0\nPRETTY_NAME=\"<PRODUCT_IMAGE>\"\nANSI_COLOR=\"0;36\"\nCPE_NAME=\"cpe:/o:tizen:tizen:10.0.0\"\nBUILD_ID=<PRODUCT_BUILD_ID>",
+    "vk_send": [
+      0,
+      "/usr/bin/vk_send"
+    ]
+  },
+  "reason": "ValueError: STOP script failed: root_sampling remote_RC=1",
+  "root_off_verified_uid": 5001,
+  "ended_utc": "2026-09-17T01:38:36.702572+00:00"
+}

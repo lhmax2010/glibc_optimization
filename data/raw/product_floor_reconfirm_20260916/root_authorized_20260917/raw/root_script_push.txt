@@ -1,0 +1,6 @@
+WARNING: Your data are to be sent over an unencrypted connection and could be read by others.
+
+pushed             sampling_script.sh	  0%	      0 B	    0KB/s
+pushed             sampling_script.sh	100%	   7078 B	    0KB/s
+1 file(s) pushed. 0 file(s) skipped.
+board_results/product_floor_reconfirm_20260916/root_authorized_20260917/sampling_script.sh   16KB/s (7078 bytes in 0.422s)
