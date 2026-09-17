@@ -1,0 +1,22 @@
+{
+  "schema": "product-floor-portable.v1",
+  "date": "2026-09-17",
+  "tag": "product-floor-portable-contract-20260917",
+  "minimum_push_to_connect_seconds": 600,
+  "authorization": "PM explicitly permits partial readable candidate coverage and removes the remote timeout dependency. Previous contracts and observations remain unchanged.",
+  "inherits_analysis_and_fields_from": "contract.json",
+  "analyzer": "analyze_floor.py",
+  "identity": "Repeat product kernel/armv7l/Tizen10-TV gates; vk_send existence only. SDB only, no SSH, elevation, injection, package/config changes or business stimulation.",
+  "preflight": "Collect all required command availability in one shell-native probe; enumerate missing commands together. timeout is never required or invoked. Missing sha256sum uses full script byte readback compared on host, explicitly recorded; no integrity bypass.",
+  "permissions": "Before pushing any script, identify named candidates and read each candidate smaps/status once with remote RC and error text. All living named candidates unreadable: stop without push and list needed PM read-access authorization. Partial readable: sample readable candidates only and publish exclusions. If no named candidate exists, inspect visible supplemental candidates; never invent a match.",
+  "inventory": "Rank only actually readable live userspace smaps; label top ten as accessible-view, never claim whole-system coverage when PID 1 is absent or some processes are hidden/unreadable. Record exclusions, nearby comm matches and PID/start identity; never zero-fill unavailable PD.",
+  "samples": 601,
+  "duration_seconds": 600,
+  "period_seconds": 1,
+  "timing": "Native shell loop checks elapsed time and board /proc/uptime deadlines. Epoch seconds anchor from date +%s; per-slot epoch_ns is anchor plus monotonic elapsed ns, not measured nanosecond wall-clock precision. Record intervals; late, failed or missing sample stops without retry.",
+  "required_observations": "Same frozen PD buckets/faults/MemAvailable/zram fields and classifier/floor definitions. Selected PID/start identity must remain fixed; absent global counters are not zero.",
+  "board_files": "Only unique /tmp/pf_20260916_<hex>.sh script; output streams to host. Verify exact script bytes (remote SHA or host SHA of complete readback) before execution/removal. Delete own script and verify missing, never remove any other file.",
+  "max_remote_request_bytes": 200,
+  "failure": "Stop on any non-exempt gate failure; only own-script cleanup afterward. No automatic retry, measurement rerun or elevation. Missing/denied candidate reads are classified under the explicit partial-coverage permission rule, not silently passed.",
+  "publication": "Host raw evidence plus sanitized compact public evidence, append report; main only, no demo change. No comparison of absolute floor with historic activity-induced increments as if same metric."
+}
