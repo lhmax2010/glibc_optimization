@@ -13,9 +13,10 @@ def summarize(source):
     if len({c['pid'] for c in checks})!=len(checks):
         raise ValueError('duplicate checked PID')
     by_label={c['label']:c for c in commands}
+    prefix='root_' if (source/'authorization.json').exists() else ''
     for check in checks:
         for field,key in [('status','status_rc'),('smaps','smaps_rc')]:
-            name=f'permission_{field}_{check["pid"]}'
+            name=f'{prefix}permission_{field}_{check["pid"]}'
             if by_label[name]['remote_rc']!=check[key]:
                 raise ValueError('permission RC mismatch: '+name)
     return dict(schema='product-floor-permissions-summary.v1',

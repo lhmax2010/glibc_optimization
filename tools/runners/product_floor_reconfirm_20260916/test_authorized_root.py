@@ -57,6 +57,18 @@ class AuthorizationTests(unittest.TestCase):
                 publish_compact.publish(source,root/'public',Path('unused'),'192.0.2.1',Path('unused'))
             self.assertFalse((root/'public').exists())
 
+    def test_root_permission_replay_uses_exact_prefixed_command_proofs(self):
+        import summarize_permissions
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            (root/'authorization.json').write_text('{}')
+            (root/'permissions.json').write_text(json.dumps(dict(pid1_visible=True,
+                matching={},checks=[dict(pid=1,status_rc=0,smaps_rc=0,readable=True,errors={})])))
+            rows=[dict(label='root_permission_'+field+'_1',remote_rc=0,argv=['sdb','shell','cat']) for field in ('status','smaps')]
+            (root/'commands.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
+            result=summarize_permissions.summarize(root)
+            self.assertEqual(result['readable_pids'],[1]);self.assertTrue(result['pid1_visible'])
+
     def test_missing_authorization_never_contacts_board(self):
         run = subprocess.run([sys.executable, str(HERE/'run_authorized_root.py'),
                               '--ip', '127.0.0.1', '--output', 'unused',

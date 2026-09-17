@@ -1,6 +1,6 @@
 # 产品板 floor 只读复确认（2026-09-16）
 
-历史续跑状态见 §5；本轮正式执行的新增合同与结果见 §6。
+历史续跑状态见 §5–§7；授权提权后的本轮记录见 §8。
 §3 保留首次阻塞原记录；两次连接属于分别授权的两轮尝试，不是失败后自动重试。
 
 ## 1. 事前规格与边界
@@ -557,3 +557,26 @@ cmp /tmp/product-floor-permissions-replay.json \
 收线 52 项本轮 host 测试通过；证据发布清单记录 43 个文件的双哈希，端点统一
 `<PRODUCT_BOARD_IP>`，报告保留所有既往停止。本轮只推 main，不切 demo；
 后续板端执行须等待 PM 对读取边界的授权。
+
+## 8. 授权提权后的只读画像（2026-09-17）
+
+### 8.1 授权与事前规格
+
+PM 授权日期为 **2026-09-16**，host 实际执行日为 **2026-09-17**，不将两个日期混写。
+此前 §7 的 UID=5001 读取停止记录保留。本轮仅获准一次 root on，以读取 smaps、status、
+stat、全系统 ps、meminfo/zram 与环境查询；不得 attach、注入、kill、刺激业务、装卸包、
+改配置或 reboot。唯一板端文件是 /tmp 下本轮采样脚本，输出直接回 host，执行后核验
+原字节并删除。完成或停止均 root off，须以 id 原文证实 UID=5001，不信任 sdb 退出码。
+
+[本轮授权合同](../tools/runners/product_floor_reconfirm_20260916/root_authorization_contract.json)
+只替代原可移植合同对本轮提权的禁止，其余采样/分析定义不变。合同提交
+`01b4451951b779694e29df0da8343ae7023e4fa8`；annotated tag
+`product-floor-root-contract-20260917`，对象
+`5e2ae11075a3e2ec2b926e5dec03609b3eb5f712`；远端推送确认
+`2026-09-17T01:25:30.426513+00:00`。连接前须通过至少 600 s 间隔及合同/分析器字节门。
+
+[独立入口](../tools/runners/product_floor_reconfirm_20260916/run_authorized_root.py)要求显式
+`--pm-authorization-20260916`；原有入口不增加默认提权行为。先在 UID=5001 下判定产品
+身份，再 root on、id=0 和身份复核；root ps/proc 均必须包含 PID1。逐项保留不可读或
+已退出进程，Top10 是这次逐进程可读扫描的排名，不伪称同一时刻的完整快照。
+采样仍为 601 点 / 600 s / 1 s deadline，历史分桶与判别器原字节不变。
