@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
@@ -144,6 +145,26 @@ class PortableTests(unittest.TestCase):
                 return rc,text.replace('(alpha)','(changed)') if 'stat_after' in label else text
             b.read.side_effect=changed
             with self.assertRaisesRegex(ValueError,'identity changed'):m.permissions(b,{'A':'alpha'})
+
+    def test_main_cleanup_failure_is_not_retried(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d); receipt=root/'receipt.json';receipt.write_text('{}')
+            b=Mock();b.identity.return_value={}
+            def install(board,selected,owned):
+                owned.append(dict(path='/tmp/pf_20260916_0123456789ab.sh',sha256='a'*64))
+                return owned[0]['path']
+            with patch.object(sys,'argv',['probe','--ip','192.0.2.1','--output',str(root/'out'),
+                       '--mapping',str(root/'map'),'--push-receipt',str(receipt)]), \
+                 patch.object(m.old,'git',return_value=b'commit'),patch.object(m.old,'contract_gate',return_value={}), \
+                 patch.object(m.old,'names_from_mapping',return_value={}),patch.object(m,'Board',return_value=b), \
+                 patch.object(m,'tools_gate'),patch.object(m,'baseline'), \
+                 patch.object(m,'permissions',return_value={'selected':[]}),patch.object(m.old,'globals_at',return_value={}), \
+                 patch.object(m,'install',side_effect=install),patch.object(m,'collect',return_value='raw'), \
+                 patch.object(m.previous,'parse_samples',return_value=([],[])), \
+                 patch.object(m,'cleanup',side_effect=ValueError('cleanup failed')) as cleanup:
+                self.assertEqual(m.main(),2)
+                cleanup.assert_called_once()
+            self.assertEqual(json.loads((root/'out/state.json').read_text())['status'],'STOP')
 
     def test_601_native_slots_no_timeout_no_sha_and_failure_propagation(self):
         with tempfile.TemporaryDirectory() as d:

@@ -242,7 +242,7 @@ def main():
                source_commit=old.git('rev-parse','HEAD').decode().strip(),
                harness_sha256={n:hashlib.sha256((HERE/n).read_bytes()).hexdigest() for n in
                                ('run_portable.py','board_probe.sh','run_board_script.py','run_readonly.py')})
-    board=None; owned=[]; completed=False
+    board=None; owned=[]; completed=False; cleanup_attempted=False
     try:
         old.write_json(args.output/'contract_gate.json',old.contract_gate(json.loads(args.push_receipt.read_text()),TAG,PINS))
         board=Board(args.ip,args.output)
@@ -254,6 +254,7 @@ def main():
         print('SAMPLING_STARTED 601 slots / 600 s; readable subset only',flush=True)
         raw=collect(board,path); completed=True
         rows,timing=previous.parse_samples(raw,inventory['selected'])
+        cleanup_attempted=True
         cleanup(board,owned,completed); owned=[]
         fields=json.loads((HERE/'contract.json').read_text())['sampling']['fields']
         with (args.output/'timeseries.tsv').open('w') as stream:
@@ -265,7 +266,7 @@ def main():
     except (OSError,ValueError,KeyError,IndexError,subprocess.SubprocessError) as error:
         state.update(status='STOP',reason=str(error)); print(str(error),flush=True)
     finally:
-        if board is not None and (owned or not (args.output/'cleanup.json').exists()):
+        if board is not None and not cleanup_attempted:
             try: cleanup(board,owned,completed or getattr(board,'script_exited',False))
             except (OSError,ValueError,subprocess.SubprocessError) as error:
                 state.update(status='STOP',cleanup_error=str(error))
