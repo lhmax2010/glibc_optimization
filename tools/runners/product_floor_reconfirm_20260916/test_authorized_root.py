@@ -14,6 +14,26 @@ import test_board_script as fixtures
 
 
 class AuthorizationTests(unittest.TestCase):
+    def test_receipt_audits_raw_uid_proofs_not_state_claim(self):
+        import audit_authorized_receipt as audit
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);(root/'raw').mkdir();commands=[]
+            for label,uid in [('pre_id_before_root_on',5001),('pre_root_on',None),
+                              ('pre_id_after_root_on',0),('restore_root_off',None),
+                              ('restore_id_after_root_off',5001)]:
+                if uid is None:
+                    commands.append(dict(label=label,argv=['sdb','-s','fixture','root','on' if label=='pre_root_on' else 'off']))
+                else:
+                    raw=f'uid={uid}(name)\n\nRC=0\nDONE\n'.encode()
+                    (root/'raw'/(label+'.txt')).write_bytes(raw)
+                    commands.append(dict(label=label,argv=['sdb','-s','fixture','shell',m.old.readonly_body(['id'])],
+                                         remote_rc=0,raw_sha256=hashlib.sha256(raw).hexdigest(),ended_utc='fixture'))
+            (root/'commands.jsonl').write_text(''.join(json.dumps(c)+'\n' for c in commands))
+            self.assertEqual([x['uid'] for x in audit.audit(root)['uid_transitions']],[5001,0,5001])
+            commands[-1]['remote_rc']=1
+            (root/'commands.jsonl').write_text(''.join(json.dumps(c)+'\n' for c in commands))
+            with self.assertRaisesRegex(ValueError,'not proven'):audit.audit(root)
+
     def test_complete_stream_is_analyzed_only_after_script_cleanup_and_root_is_restored(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d); b=Mock(output=root)
