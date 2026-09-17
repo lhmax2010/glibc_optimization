@@ -172,8 +172,9 @@ def install_script(board, label, targets, owned):
     return path
 
 
-def run_script(board, label, path, mode):
-    body = script_body('run', path, mode)
+def run_script(board, label, path, mode, body=None):
+    body = script_body('run', path, mode) if body is None else body
+    old.single.check_body(body)
     argv = [board.sdb, '-s', board.serial, 'shell', body]
     target = board.output/'raw'/(label+'.txt')
     if target.exists():

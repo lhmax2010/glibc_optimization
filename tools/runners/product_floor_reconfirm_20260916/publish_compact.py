@@ -48,7 +48,22 @@ def publish(source, output, mapping, address, receipt):
         if not rows or any(not re.fullmatch(r'\d+', v) for r in rows for k, v in r.items() if k != 'target'):
             raise ValueError('complete publication missing numeric observations; never substitute zero')
         timing = json.loads((source/'sampling_timing.json').read_text())
-        if len(timing) != 601 or any(r['lateness_s']+r['read_duration_s'] >= 1 for r in timing):
+        if timing and 'deadline_mono_ns' in timing[0]:
+            if len(timing)!=601 or any(r['sample']!=i or
+                    r['deadline_mono_ns']!=timing[0]['deadline_mono_ns']+i*1000000000 or
+                    not r['deadline_mono_ns']<=r['begin_mono_ns']<=r['end_mono_ns']<r['deadline_mono_ns']+1000000000
+                    for i,r in enumerate(timing)):
+                raise ValueError('complete publication violates 1 s cadence')
+            sys.path.insert(0,str(HERE))
+            from analyze_floor import analyze
+            numeric=[{k:(v if k=='target' else int(v)) for k,v in r.items()} for r in rows]
+            if analyze(numeric)!=json.loads((source/'summary.json').read_text()):
+                raise ValueError('complete publication summary mismatch')
+            owned=json.loads((source/'owned_scripts.json').read_text())
+            cleaned=json.loads((source/'cleanup.json').read_text())
+            if not owned or len(owned)!=len(cleaned) or any(dict(o,absent=True)!=c for o,c in zip(owned,cleaned)):
+                raise ValueError('complete publication script cleanup unproven')
+        elif len(timing) != 601 or any(r['lateness_s']+r['read_duration_s'] >= 1 for r in timing):
             raise ValueError('complete publication violates 1 s cadence')
     clean = redactor(mapping, address)
     output.mkdir(parents=True)
@@ -59,8 +74,13 @@ def publish(source, output, mapping, address, receipt):
                    'glibc', 'libc_version', 'cpu_online', 'clk_tck', 'meminfo',
                    'uptime', 'date', 'id', 'df', 'proc_uptime', 'gdb', 'ptrace_scope',
                    'vk_send_path', 'rpm_path', 'zypper_path', 'rpm_dbpath',
-                   'shell_status', 'tmp_writable', 'awk_path', 'timeout_path'}
+                   'shell_status', 'tmp_writable', 'awk_path', 'timeout_path', 'tools'}
     files += [p for p in (source/'raw').glob('*.txt') if p.stem in allowed_raw]
+    if (source/'commands.jsonl').exists():
+        # Permission errors are compact evidence; successful full smaps stay local.
+        commands=[json.loads(l) for l in (source/'commands.jsonl').read_text().splitlines()]
+        files += [source/'raw'/(r['label']+'.txt') for r in commands
+                  if r['label'].startswith('permission_') and r.get('remote_rc',0)!=0]
     manifest = []
     for path in files:
         relative = path.relative_to(source)

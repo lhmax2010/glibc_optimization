@@ -5,6 +5,13 @@ LC_ALL=C; export LC_ALL
 proc_root=/proc
 sys_root=/sys
 targets='@TARGETS@'
+missing=
+for tool in awk cat date sleep ps id sh rm uname rpm getconf uptime df; do
+ command -v "$tool" >/dev/null 2>&1 || missing="$missing $tool"
+done
+if [ -n "$missing" ]; then echo "ERROR missing required tools:$missing" >&2; exit 78; fi
+# sed/grep are replaced by shell/read and host parsing; hash fallback is host byte comparison.
+for tool in sed grep sha256sum; do command -v "$tool" >/dev/null 2>&1 || :; done
 program='
 function die(message) { print "ERROR\t" message > "/dev/stderr"; exit 70 }
 function hex(value, i,n,c) {
@@ -122,6 +129,8 @@ esac
 
 mono_ns() { awk '{printf "%.0f\n",$1*1000000000}' "$proc_root/uptime"; }
 start=$(mono_ns) || exit 71
+epoch_start=$(date +%s) || exit 71
+case "$epoch_start" in ''|*[!0-9]*) echo 'ERROR invalid epoch seconds' >&2; exit 71;; esac
 i=0
 while [ "$i" -le 600 ]; do
  deadline=$((start+i*1000000000))
@@ -131,8 +140,9 @@ while [ "$i" -le 600 ]; do
   sleep "$delay" || exit 71
  fi
  began=$(mono_ns) || exit 71
- epoch=$(date +%s%N) || exit 71
- case "$epoch" in ''|*[!0-9]*) echo 'ERROR invalid nanosecond date' >&2; exit 71;; esac
+ elapsed=$((began-start))
+ if [ "$elapsed" -gt 601000000000 ]; then echo 'ERROR elapsed limit exceeded' >&2; exit 71; fi
+ epoch=$((epoch_start*1000000000+elapsed))
  awk -v root="$proc_root" -v sysroot="$sys_root" -v mode=globals -v sample="$i" -v epoch="$epoch" "$program" &
  jobs="$!"
  for target in $targets; do

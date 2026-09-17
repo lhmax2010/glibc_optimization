@@ -1,4 +1,5 @@
 import hashlib
+import csv
 import importlib.util
 import json
 from pathlib import Path
@@ -12,6 +13,43 @@ spec.loader.exec_module(publisher)
 
 
 class PublicationTests(unittest.TestCase):
+    def test_portable_complete_timing_summary_and_cleanup_are_hard_gates(self):
+        import sys
+        sys.path.insert(0,str(HERE))
+        from analyze_floor import analyze
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'source';(source/'raw').mkdir(parents=True)
+            (source/'state.json').write_text('{"status":"COMPLETE"}')
+            rows=[dict(sample=i,epoch_ns=i*1000000000,target='Example',pid=1,start_ticks=123,
+                       glibc_heap_pd_kb=20,other_anon_pd_kb=4,file_backed_pd_kb=2,total_pd_kb=26,
+                       minflt=i,majflt=0,MemAvailable_kb=1000,zram_used_kb=0,zram_orig_bytes=0,
+                       zram_compr_bytes=0,zram_mem_used_bytes=0) for i in range(601)]
+            with (source/'timeseries.tsv').open('w') as f:
+                w=csv.DictWriter(f,fieldnames=list(rows[0]),delimiter='\t');w.writeheader();w.writerows(rows)
+            timing=[dict(sample=i,deadline_mono_ns=i*1000000000,begin_mono_ns=i*1000000000,
+                         end_mono_ns=i*1000000000+10000000) for i in range(601)]
+            (source/'sampling_timing.json').write_text(json.dumps(timing))
+            summary=analyze(rows);(source/'summary.json').write_text(json.dumps(summary))
+            owned=[dict(path='/tmp/pf_20260916_0123456789ab.sh',sha256='a'*64)]
+            (source/'owned_scripts.json').write_text(json.dumps(owned))
+            (source/'cleanup.json').write_text(json.dumps([dict(owned[0],absent=True)]))
+            mapping,receipt=root/'mapping.tsv',root/'receipt.json'
+            mapping.write_text('type\tscope\toriginal\treplacement\n');receipt.write_text('{}\n')
+            publisher.publish(source,root/'pass',mapping,'192.0.2.1',receipt)
+            timing[10]['end_mono_ns']+=1000000000
+            (source/'sampling_timing.json').write_text(json.dumps(timing))
+            with self.assertRaisesRegex(ValueError,'cadence'):
+                publisher.publish(source,root/'bad_timing',mapping,'192.0.2.1',receipt)
+            timing[10]['end_mono_ns']-=1000000000
+            (source/'sampling_timing.json').write_text(json.dumps(timing))
+            (source/'summary.json').write_text('[]')
+            with self.assertRaisesRegex(ValueError,'summary mismatch'):
+                publisher.publish(source,root/'bad_summary',mapping,'192.0.2.1',receipt)
+            (source/'summary.json').write_text(json.dumps(summary))
+            (source/'cleanup.json').write_text('[]')
+            with self.assertRaisesRegex(ValueError,'cleanup unproven'):
+                publisher.publish(source,root/'bad_cleanup',mapping,'192.0.2.1',receipt)
+
     def test_dependency_stop_publishes_exact_remote_failure_without_sampling(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

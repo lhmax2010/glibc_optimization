@@ -79,3 +79,31 @@ python3 tools/runners/product_floor_reconfirm_20260916/run_board_script.py \
 尚未 push 或开始采样，不能认为本入口已在产品板完成验证。当前实现需要板端独立
 `timeout` 命令；本轮不安装、不提权、不换方案重试。缺口与原文见
 [报告 §6](../../../docs/product_floor_reconfirm_20260916.md#61-本轮结果与停止原因)。
+
+## 2026-09-17 可移植入口与权限分流
+
+`run_portable.py` 使用本轮 `portable_contract.json` / annotated tag
+`product-floor-portable-contract-20260917`；保留旧入口作为历史，不再调用 timeout。
+先提交合同并记录推送回执，至少 600 s 后才允许连接。不会安装工具或自行提权。
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/run_portable.py \
+  --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --push-receipt board_results/product_floor_reconfirm_20260916/portable_push.json \
+  --output board_results/product_floor_reconfirm_20260916/portable_20260917
+```
+
+身份门后用单条工具探测一次列全缺失项；sed/grep 不存在时使用既有 shell/read 与
+host 解析，无 sha256sum 时回读脚本全部字节，在 host 比较 SHA-256，明确记录方法。
+采样脚本开头再次汇总其命令依赖。时间控制为 shell 601 点循环与 uptime 截止时间，
+epoch 秒加单调增量构成 epoch_ns，字段单位不代表墙钟精度；不使用 date 的 `%N`。
+
+推送前先对每个存活实名候选各 cat 一次 status/smaps，保存错误原文；全不可读立即
+停止、零 push；部分可读则只选可读者。补充排名只覆盖可读视图，不要求非 root 的 ps
+一定含 PID1，也不据受限视图声称全系统完整。不可读/空数据绝不补零。
+采样完成的远端 RC 证明（脚本已 wait 子进程）允许清理自身脚本；若丢失退出证明，
+必须另证自身已停止，无法证明则保留并报告，不向目标进程发信号。
+
+复现确定性门：合同/分析器固定字节、远端标志、可读候选 PID/start、分桶合计、601 点、
+截止时间、脚本传输与清理；容差项：不规定真实 floor 必须等于历史增量，镜像/业务/
+压力与视图差异原样披露。完整数据经 analyze_floor.py 重放并字节比较，STOP 不造结论。
