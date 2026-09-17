@@ -5,6 +5,8 @@
 其后 PM 解决连接并授权板端只读脚本的正式执行见
 [formal_board_script](formal_board_script/README.md)：连接与产品身份通过，但执行器的
 `timeout` 依赖门 STOP；已有环境基线，没有候选/画像。以下根层说明只指首次尝试。
+09-17 可移植性续跑见 [portable_20260917](portable_20260917/README.md)：身份与工具门通过，
+受限视图没有可用用户态 smaps，权限 STOP；未推脚本、未采样。
 
 终态：`STOP_CONNECTION_FAILED`。英文影响报告先行完成；本段没有任何板端
 shell、身份判定、进程画像或新 floor 数据。

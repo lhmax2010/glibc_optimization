@@ -18,6 +18,24 @@ fixtures=importlib.util.module_from_spec(spec2); spec2.loader.exec_module(fixtur
 
 
 class PortableTests(unittest.TestCase):
+    def test_permission_summary_validates_recorded_rc_without_zero_filling(self):
+        import summarize_permissions as audit
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            checks=[dict(pid=10,status_rc=0,smaps_rc=1,readable=False,
+                         errors={'smaps':'cat: /proc/10/smaps: Permission denied'},reason='unreadable')]
+            (root/'permissions.json').write_text(json.dumps(dict(checks=checks,matching={'A':{'exact_pids':[]}},pid1_visible=False)))
+            records=[dict(label='permission_'+field+'_10',remote_rc=rc,argv=['sdb','shell','cat'])
+                     for field,rc in [('status',0),('smaps',1)]]
+            (root/'commands.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in records))
+            result=audit.summarize(root)
+            self.assertEqual(result['readable_pids'],[])
+            self.assertEqual(result['smaps_permission_denied_pids'],[10])
+            self.assertEqual(result['script_pushes'],0)
+            records[-1]['remote_rc']=0
+            (root/'commands.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in records))
+            with self.assertRaisesRegex(ValueError,'RC mismatch'):audit.summarize(root)
+
     def env(self,root,missing=()):
         bindir=root/'bin'; bindir.mkdir()
         for command in m.TOOLS:

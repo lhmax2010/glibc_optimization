@@ -1,0 +1,4 @@
+cat: /proc/639/smaps: Permission denied
+
+RC=1
+FAIL

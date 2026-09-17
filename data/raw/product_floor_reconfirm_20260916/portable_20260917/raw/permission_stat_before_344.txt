@@ -1,0 +1,4 @@
+cat: /proc/344/stat: No such file or directory
+
+RC=1
+FAIL

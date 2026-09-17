@@ -1,0 +1,23 @@
+{
+  "status": "STOP",
+  "started_utc": "2026-09-17T00:59:13.219330+00:00",
+  "board_alias": "<PRODUCT_BOARD_IP>",
+  "source_commit": "aed09a21facdad2475e8e55cc54c612e8f97bab2",
+  "harness_sha256": {
+    "run_portable.py": "32261230245db9da8fb301a1772c9c88d1035eb4f69652f6b64b616c6c72fa8f",
+    "board_probe.sh": "34de138cd729badaec84c76fa0e946fe5b180a5ddc5cd1748732269fd1f447a2",
+    "run_board_script.py": "e3b76f3c9b0eba4eee74ab9c87db15b3f5e5efec1ecd3846bda8d79538f1c1d8",
+    "run_readonly.py": "3d00e355e106c3b94a15d03118bf422587b70aaebd1545864665bea49834cdd5"
+  },
+  "identity": {
+    "kernel": "6.12.60",
+    "arch": "armv7l",
+    "os_release": "NAME=Tizen\nVERSION=\"10.0.0 (<PRODUCT_IMAGE>)\"\nID=tizen\nVERSION_ID=10.0.0\nPRETTY_NAME=\"<PRODUCT_IMAGE>\"\nANSI_COLOR=\"0;36\"\nCPE_NAME=\"cpe:/o:tizen:tizen:10.0.0\"\nBUILD_ID=<PRODUCT_BUILD_ID>",
+    "vk_send": [
+      0,
+      "/usr/bin/vk_send"
+    ]
+  },
+  "reason": "STOP_READ_PERMISSION: no readable candidate, no script pushed",
+  "ended_utc": "2026-09-17T01:00:48.052475+00:00"
+}

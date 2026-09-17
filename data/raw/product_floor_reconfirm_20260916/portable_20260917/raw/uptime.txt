@@ -1,0 +1,4 @@
+ 17:59:56 up 12:15,  0 user,  load average: 29.81, 30.05, 30.06
+
+RC=0
+DONE

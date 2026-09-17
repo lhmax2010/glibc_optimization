@@ -1,0 +1,4 @@
+cat: /proc/1114/smaps: Permission denied
+
+RC=1
+FAIL

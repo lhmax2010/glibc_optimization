@@ -1,0 +1,45 @@
+{
+  "schema": "product-floor-permissions-summary.v1",
+  "commands": 663,
+  "remote_requests": 660,
+  "maximum_remote_request_bytes": 184,
+  "checked_pids": 213,
+  "readable_pids": [],
+  "reasons": {
+    "empty status/smaps; not a usable userspace observation": 206,
+    "unreadable or exited; see exact command errors": 7
+  },
+  "smaps_permission_denied_pids": [
+    193,
+    253,
+    639,
+    1114
+  ],
+  "exited_or_unavailable_pids": [
+    344,
+    510,
+    3758
+  ],
+  "named_exact_pids": {
+    "enlightenment": [],
+    "ServiceA": [],
+    "ServiceH": []
+  },
+  "named_nearby": {
+    "enlightenment": {
+      "exact_pids": [],
+      "nearby": []
+    },
+    "ServiceA": {
+      "exact_pids": [],
+      "nearby": []
+    },
+    "ServiceH": {
+      "exact_pids": [],
+      "nearby": []
+    }
+  },
+  "pid1_visible": false,
+  "script_pushes": 0,
+  "note": "Unseen in this restricted view is not proof of process absence; empty smaps is not zero heap PD."
+}

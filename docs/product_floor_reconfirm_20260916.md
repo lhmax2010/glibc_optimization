@@ -412,3 +412,148 @@ Top 10 仅覆盖实际可读进程，排除项/视图限制逐项披露，不冒
 
 所有板端请求仍受 200 字节和远端 RC/DONE/FAIL 约束；不提权、不注入、不装卸包、
 不改配置、不重启、不干预业务。先提交合同与分析器再连接；结果另行追加。
+
+### 7.1 执行结论：可移植性闭合，读取范围 STOP
+
+**STOP_READ_PERMISSION；没有可采用户态候选，未推送采样脚本。** 本轮连接、产品身份、
+工具探测通过，timeout 阻塞已经解除。UID=5001 的 `ps -ef` 和 `/proc/*/comm` 视图
+均不含 PID 1，三个主候选的精确及近似匹配均为空，不能据此判断进程已退出。
+对可见的 213 个 PID 各读取一次 status 与 smaps：206 项返回空 smaps、4 项明确
+Permission denied、3 项在读取时已不存在；可用用户态 smaps 为 0，未产生 Top 10、
+10 分钟序列或 floor。空 smaps 未补零，不把内核线程当作产品堆画像。
+
+[机器摘要](../data/raw/product_floor_reconfirm_20260916/portable_20260917/preflight_summary.json)、
+[逐 PID 预检](../data/raw/product_floor_reconfirm_20260916/portable_20260917/permissions.json)、
+[全部命令及远端 RC](../data/raw/product_floor_reconfirm_20260916/portable_20260917/commands.jsonl)。
+共 663 条调用、660 条远端请求，正文最长 184 字节；零 push、零采样脚本执行。
+完整原始件本地留存，可按请求提供。
+
+| 时间线（UTC；本地为 UTC+8） | 记录 | 证据 |
+|---|---|---|
+| 合同 commit | `50520f7431b47fac5ad8cbc166d6de08b26acafd` | [回执](../data/raw/product_floor_reconfirm_20260916/portable_20260917/contract_push.json) |
+| annotated tag | `product-floor-portable-contract-20260917`，对象 `5bec43c9f991534fc09161a740f4a9a05c9d0e72` | 同上 |
+| 正式开跑前间隔 | `614.382266469 s`；四个冻结文件字节一致 | [合同门](../data/raw/product_floor_reconfirm_20260916/portable_20260917/contract_gate.json) |
+| 执行器 commit | `aed09a21facdad2475e8e55cc54c612e8f97bab2`，已推 main；连接前本轮 51 项 host 测试通过 | [终态与文件哈希](../data/raw/product_floor_reconfirm_20260916/portable_20260917/state.json) |
+| 执行窗口 | `2026-09-17T00:59:13.219330` → `01:00:48.052475` | 同上 |
+| 终态 | `STOP_READ_PERMISSION: no readable candidate, no script pushed` | 同上 |
+
+事前等待期间曾在 host 查询间隔，尚未满 600 s，未因此连接板；继续等待后正式门通过，
+没有提前开跑或板端失败重试。旧合同、测量数据及两次连接失败、一次 timeout 停止原文均保留。
+
+### 7.2 重走身份门与基线补记
+
+本轮 `uname -r`、`uname -m`、`/etc/os-release` 全文及 vk_send 查询分别见
+[内核原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/uname_r.txt)、
+[架构原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/uname_m.txt)、
+[镜像全文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/os_release.txt)、
+[旁证原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/vk_send_path.txt)。
+均为 RC=0 / DONE：`6.12.60`、`armv7l`、Tizen10/TV 产品镜像、`/usr/bin/vk_send`。
+不是按 IP 认板；未调用 vk_send。镜像内部名称/BUILD_ID 按既有映射脱敏，行结构不变。
+
+| 项目 | 本轮实测 | 原文 |
+|---|---|---|
+| glibc | `glibc-2.40-1.12.armv7l`；GNU libc 2.40，GNU CC 14.2.0 | [RPM](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/glibc.txt)、[libc 全文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/libc_version.txt) |
+| MemTotal / MemAvailable | `1599416 / 943604 kB`，一次快照 | [meminfo](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/meminfo.txt) |
+| CPU / uptime | online `0-3`；`up 12:15`；load `29.81, 30.05, 30.06` | [CPU](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/cpu_online.txt)、[uptime](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/uptime.txt) |
+| 板端 UTC | `Thu Sep 17 00:59:56 UTC 2026`；未校时 | [date](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/date.txt) |
+| 当前用户 | UID=5001(owner)，User::Shell；无提权 | [id 全文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/id.txt) |
+| gdb | `gdb-15.1-1.2.armv7l` 已安装，未执行 | [RPM](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/gdb.txt) |
+| ptrace_scope | 文件不存在，RC=1；不是“attach 已获许可” | [原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/ptrace_scope.txt) |
+| 空间 | 可见根 overlay 与 `/opt` 同为可用 2.5G，不能相加；只读镜像下层可用 0；`/tmp` 可用 781M | [df](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/df.txt) |
+
+与测试板 `glibc-2.40-1.6.armv7l` 相比，本板为同一上游 **2.40 系**、RPM 修订为 1.12：
+既有 2.40 机制基线仍适用，不触发 2.41+ 提交告警；但版本号不能证明补丁、构建选项、
+arena 布局或业务行为完全相同，不能把测试板的回收比例转作产品收益。
+测试板来源见[环境基线](board_baseline_llvm_image_20260831.md)。
+
+工具一次探测原文见[tools.txt](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/tools.txt)，
+汇总见[tools.json](../data/raw/product_floor_reconfirm_20260916/portable_20260917/tools.json)：
+awk、sed、grep、cat、date、sleep、ps、id、sh、rm、sha256sum、uname、rpm、getconf、uptime、df
+全部存在；无缺失工具，没有查询或执行 timeout。缺 sha256sum 的完整字节回读分支
+在 host 模拟环境通过，本轮因未推脚本没有现场执行该分支。
+
+### 7.3 权限证据、候选和 floor 对照
+
+| 可见 PID | status 读取 | smaps 读取 | 证据 |
+|---|---|---|---|
+| 193 | RC=0 | RC=1，Permission denied | [原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/permission_smaps_193.txt) |
+| 253 | RC=0 | RC=1，Permission denied | [原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/permission_smaps_253.txt) |
+| 639 | RC=0 | RC=1，Permission denied | [原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/permission_smaps_639.txt) |
+| 1114 | RC=0 | RC=1，Permission denied | [原文](../data/raw/product_floor_reconfirm_20260916/portable_20260917/raw/permission_smaps_1114.txt) |
+| 344 / 510 / 3758 | RC=1，No such file or directory | 同样不存在，不记成权限拒绝或零 PD | 逐 PID 预检和命令记录 |
+| 其余 206 项 | RC=0 | RC=0 但内容为空，不是有效用户态 smaps | 逐 PID 预检；完整原文本地留存 |
+
+例如 PID 193 的完整错误输出：
+
+```text
+cat: /proc/193/smaps: Permission denied
+
+RC=1
+FAIL
+```
+
+上述四个 PID 只是可见范围内的权限反例，**不是**对三个主候选的近似匹配或下一轮注入
+推荐目标。三个主候选未出现在可见命名视图中，无法取得当前 PID，因此没有猜测 PID
+或使用历史 PID 去读“同名目标”。缺 PID 1、出现 Permission denied 支持“当前读取
+边界不足”的判断；尚未区分具体访问控制/视图过滤机制，也未证明 root 一定能解除全部限制。
+
+| 主候选 | 本轮存活/PID/启动时长 | 10 分钟分类与 floor | 历史量及可比性 |
+|---|---|---|---|
+| enlightenment | 受限视图未见，非确认未运行；无近似匹配 | NOT_EXECUTED | `+1736 KiB` 为活动后的 retained 增量，不是本次绝对值 |
+| ServiceH | 同上，按本地 08-14 名称映射匹配 | NOT_EXECUTED | `2360 KiB` 为平台上界，不是可回收量 |
+| ServiceA | 同上 | NOT_EXECUTED | `+788 KiB` 为历史谷底增量 |
+| 补充 Top 10 | 没有可读用户态 smaps，无法排行 | NOT_EXECUTED | 不拿空映射作零值排序 |
+
+历史来源见 §2。未产生时序，因此不能判“自回收/滞留/无响应”，不能评估 floor 是否
+仍存在、是否足够大或分类是否变化。镜像/业务/时段差异只是未来解释的待验证因素。
+meminfo 含单点 zram 展示值，本轮未进入逐秒全局量采集，不据单点声称 zram 平坦。
+
+### 7.4 下一轮所需 PM 授权与注入风险
+
+本轮只读边界执行到权限门停止，没有自行调用 `sdb root on`。建议 PM 先批准一次
+**仅限 floor 只读复确认的提权 round**（或由 PM 提供同等可读会话），范围逐项如下：
+
+1. 记录提权前/后 id；获得完整进程可见范围，重新发现三个主候选 PID/启动身份，不能沿用历史 PID。
+2. 对这些候选与可读 Top 10 只读 `/proc/<pid>/status`、`stat`、`smaps`，采集既定 601 点及 MemAvailable/zram；不增加刺激或业务负载。
+3. 只允许推送/核验/清理本轮唯一只读采样脚本；完成或停止后 root off，并记录回到非 root。
+
+必要性依据：非 root 视图无 PID 1、无主候选、可见用户态 smaps 有明确权限拒绝，
+现会话无法完成“读取目标 smaps”的任务。此为 **PM 待授权读取项清单**，不是已经获准
+提权；若提权后仍被安全策略拒绝，同样停止，不改配置绕过。包操作、attach、注入、
+杀服务及 reboot 均不在这份只读授权建议中。
+
+注入仍需另轮裁决。gdb 已安装、yama 节点不存在是当前事实，不能替代 attach 权限或
+安全性证明。enlightenment 若为当前 UI 合成器，暂停可能造成画面/输入停顿；ServiceH/
+ServiceA 的职责、超时链和看门狗须由 owner 结合实际进程确认。本轮没有 attach，
+因此只提供风险评估，不报告“暂停无影响”。
+下一轮注入须明确目标 PID/身份、malloc_info/trim 各自次数、自然空闲或释放时机、
+允许暂停上限、画面/超时/watchdog 观察项，以及失败时停止调用和解除附加的回退；
+当前没有足够 floor 证据推荐具体目标或次数，不先授权实施。
+
+### 7.5 复现、核验与收尾
+
+[harness 用法](../tools/runners/product_floor_reconfirm_20260916/README.md#2026-09-17-可移植入口与权限分流)
+与本节事前合同是本轮入口。身份门、工具汇总和只读权限预检本轮已执行；采样计时、
+缺哈希工具回读和清理路径只有 host 测试证据，不能写成产品板完成 10 分钟画像。
+本轮无板端脚本、数据文件、安装、配置或 UID 变更；
+[cleanup.json](../data/raw/product_floor_reconfirm_20260916/portable_20260917/cleanup.json)为空，
+表示没有自身产物需要清理，不代表对板上其他文件做过审计。
+
+公开权限摘要可在 host 重放（不会接触板）：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/summarize_permissions.py \
+  --source data/raw/product_floor_reconfirm_20260916/portable_20260917 \
+  --output /tmp/product-floor-permissions-replay.json
+cmp /tmp/product-floor-permissions-replay.json \
+  data/raw/product_floor_reconfirm_20260916/portable_20260917/preflight_summary.json
+```
+
+预期 `PASS permission evidence: checked=213 readable=0 pushes=0`，cmp 静默。
+这不是 floor 复算；没有 timeseries/summary，不给出伪造的画像复现命令结果。
+确定性验收仍为合同字节、远端 RC、PID 身份、有效数据分桶、采样时序与自身产物完整性；
+实际 floor 无历史数值相等容差，不把历史活动增量当静置绝对值。
+
+收线 52 项本轮 host 测试通过；证据发布清单记录 43 个文件的双哈希，端点统一
+`<PRODUCT_BOARD_IP>`，报告保留所有既往停止。本轮只推 main，不切 demo；
+后续板端执行须等待 PM 对读取边界的授权。

@@ -1,0 +1,4 @@
+/usr/bin/vk_send
+
+RC=0
+DONE

@@ -1,0 +1,27 @@
+{
+  "missing": [],
+  "paths": [
+    "/usr/bin/awk",
+    "/usr/bin/sed",
+    "/usr/bin/grep",
+    "/usr/bin/cat",
+    "/usr/bin/date",
+    "/usr/bin/sleep",
+    "/usr/bin/ps",
+    "/usr/bin/id",
+    "/usr/bin/sh",
+    "/usr/bin/rm",
+    "/usr/bin/sha256sum",
+    "/usr/bin/uname",
+    "/usr/bin/rpm",
+    "/usr/bin/getconf",
+    "/usr/bin/uptime",
+    "/usr/bin/df"
+  ],
+  "required_missing": [],
+  "alternatives": {
+    "sha256sum": "full script bytes read back; SHA-256 computed and compared on host",
+    "sed": "shell read / Python parsing",
+    "grep": "shell case / Python matching"
+  }
+}

@@ -1,0 +1,2175 @@
+{
+  "scope": "accessible-view only; not a whole-system top ten",
+  "pid1_visible": false,
+  "discovery_diagnostics": [],
+  "matching": {
+    "enlightenment": {
+      "exact_pids": [],
+      "nearby": []
+    },
+    "ServiceA": {
+      "exact_pids": [],
+      "nearby": []
+    },
+    "ServiceH": {
+      "exact_pids": [],
+      "nearby": []
+    }
+  },
+  "checks": [
+    {
+      "pid": 2,
+      "comm": "kthreadd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3,
+      "comm": "pool_workqueue_release",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 4,
+      "comm": "kworker/R-kvfree_rcu_reclaim",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 5,
+      "comm": "kworker/R-rcu_gp",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 6,
+      "comm": "kworker/R-sync_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 7,
+      "comm": "kworker/R-slub_flushwq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 8,
+      "comm": "kworker/R-netns",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 11,
+      "comm": "kworker/0:0H-events_highpri",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 14,
+      "comm": "kworker/R-mm_percpu_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 15,
+      "comm": "rcu_tasks_kthread",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 16,
+      "comm": "rcu_tasks_trace_kthread",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 18,
+      "comm": "ksoftirqd/0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 19,
+      "comm": "rcu_preempt",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 20,
+      "comm": "rcu_exp_par_gp_kthread_worker/0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 21,
+      "comm": "rcu_exp_gp_kthread_worker",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 22,
+      "comm": "migration/0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 23,
+      "comm": "cpuhp/0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 24,
+      "comm": "cpuhp/1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 25,
+      "comm": "migration/1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 26,
+      "comm": "ksoftirqd/1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 28,
+      "comm": "kworker/1:0H-events_highpri",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 30,
+      "comm": "cpuhp/2",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 31,
+      "comm": "migration/2",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 32,
+      "comm": "ksoftirqd/2",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 34,
+      "comm": "kworker/2:0H-events_highpri",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 36,
+      "comm": "cpuhp/3",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 37,
+      "comm": "migration/3",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 38,
+      "comm": "ksoftirqd/3",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 40,
+      "comm": "kworker/3:0H-events_highpri",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 46,
+      "comm": "kdevtmpfs",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 47,
+      "comm": "kworker/R-inet_frag_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 48,
+      "comm": "kiomond",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 49,
+      "comm": "kauditd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 50,
+      "comm": "printk",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 52,
+      "comm": "oom_reaper",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 53,
+      "comm": "kworker/R-writeback",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 54,
+      "comm": "kcompactd0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 55,
+      "comm": "ksmd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 56,
+      "comm": "kworker/R-kblockd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 57,
+      "comm": "kworker/R-md",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 58,
+      "comm": "kworker/R-md_bitmap",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 59,
+      "comm": "kworker/u29:0-nvt_clkgate_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 64,
+      "comm": "kworker/R-sdhci",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 65,
+      "comm": "irq/35-mmc0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 66,
+      "comm": "kworker/R-nvt_clkgate_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 71,
+      "comm": "kworker/1:1H",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 73,
+      "comm": "kdtvlogd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 74,
+      "comm": "kworker/R-trace_contention_worker",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 75,
+      "comm": "kworker/R-contention_store_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 76,
+      "comm": "kswapd0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 77,
+      "comm": "erofs_worker/0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 78,
+      "comm": "erofs_worker/1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 79,
+      "comm": "erofs_worker/2",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 80,
+      "comm": "erofs_worker/3",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 81,
+      "comm": "kworker/R-sim_watchdog",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 82,
+      "comm": "kworker/R-kthrotld",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 83,
+      "comm": "softirq_mon",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 84,
+      "comm": "kworker/R-fd0f0c28.tsensor",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 86,
+      "comm": "zram_bgrecompd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 87,
+      "comm": "memnotify",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 88,
+      "comm": "kworker/R-Eth_readTrim",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 89,
+      "comm": "kworker/R-Eth_plugDetect",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 90,
+      "comm": "kworker/R-Eth_reset_mac",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 91,
+      "comm": "rc0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 92,
+      "comm": "rc1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 93,
+      "comm": "kworker/R-dm_bufio_cache",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 94,
+      "comm": "kworker/R-mmc_complete",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 97,
+      "comm": "mmc_trace_vlog",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 98,
+      "comm": "kworker/2:1H",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 99,
+      "comm": "kworker/R-mld",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 100,
+      "comm": "kworker/R-ipv6_addrconf",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 101,
+      "comm": "kworker/u24:1+dvb_core_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 102,
+      "comm": "kworker/R-vd_time_occupy_workqueue",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 104,
+      "comm": "kworker/0:1H",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 108,
+      "comm": "kworker/3:1H",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 192,
+      "comm": "vlog_task",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 193,
+      "comm": "kfactoryd",
+      "status_rc": 0,
+      "smaps_rc": 1,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {
+        "smaps": "cat: /proc/193/smaps: Permission denied"
+      },
+      "reason": "unreadable or exited; see exact command errors"
+    },
+    {
+      "pid": 252,
+      "comm": "menu",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 253,
+      "comm": "launchpad-proce",
+      "status_rc": 0,
+      "smaps_rc": 1,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {
+        "smaps": "cat: /proc/253/smaps: Permission denied"
+      },
+      "reason": "unreadable or exited; see exact command errors"
+    },
+    {
+      "pid": 259,
+      "comm": "_NerveTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 261,
+      "comm": "_NerveMTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 262,
+      "comm": "_NVTAsyncTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 263,
+      "comm": "_NVTAsyncTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 264,
+      "comm": "_NVTAsyncTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 266,
+      "comm": "_NVTAsyncTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 267,
+      "comm": "_NVTAsyncTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 281,
+      "comm": "DRV_DBG_UART",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 282,
+      "comm": "DRV_STBC_CALLBACK_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 284,
+      "comm": "irq/49-ntkMsgBox",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 287,
+      "comm": "MLBX_TEST_Thread",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 294,
+      "comm": "tztv_mc_debug_print",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 303,
+      "comm": "kthread_watchdog",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 331,
+      "comm": "kworker/R-free_pages_workq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 334,
+      "comm": "tzdev-tee-threads",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 341,
+      "comm": "nsrpc:0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 344,
+      "comm": "sleep",
+      "status_rc": 1,
+      "smaps_rc": 1,
+      "stat_rc": 1,
+      "readable": false,
+      "errors": {
+        "status": "cat: /proc/344/status: No such file or directory",
+        "smaps": "cat: /proc/344/smaps: No such file or directory",
+        "stat": "cat: /proc/344/stat: No such file or directory"
+      },
+      "reason": "unreadable or exited; see exact command errors"
+    },
+    {
+      "pid": 345,
+      "comm": "nsrpc:1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 346,
+      "comm": "kworker/R-kbase_job_fault_resume_work_que",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 347,
+      "comm": "nsrpc:2",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 349,
+      "comm": "nsrpcwatchdog",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 350,
+      "comm": "kworker/0:2",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 353,
+      "comm": "tzlogd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 354,
+      "comm": "teedrv_watch",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 363,
+      "comm": "kworker/u25:1-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 370,
+      "comm": "hdmi_vlog_thread",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 371,
+      "comm": "kworker/u26:2-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 380,
+      "comm": "HDCP22_PROC",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 381,
+      "comm": "_MEM_HandleDmem",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 388,
+      "comm": "dspMonitor",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 389,
+      "comm": "HDMI_EvtThread",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 395,
+      "comm": "_SPDIF_OclTrigger",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 400,
+      "comm": "cube_event0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 401,
+      "comm": "DRV_VD",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 409,
+      "comm": "cube_event1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 410,
+      "comm": "_APUTask_",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 415,
+      "comm": "kworker/u26:4-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 417,
+      "comm": "TSD_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 418,
+      "comm": "DEMUX_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 422,
+      "comm": "irq/82-frc_leon2_irq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 423,
+      "comm": "PQ_MPFW_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 424,
+      "comm": "PQ_SHELL_DBG_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 425,
+      "comm": "kworker/R-dvb_core_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 426,
+      "comm": "DEMUX_FEED_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 427,
+      "comm": "ATSC30_CB_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 428,
+      "comm": "KER_CI_timer",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 432,
+      "comm": "kdvb-ca-0:0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 433,
+      "comm": "CHK5V_NDP_HDMI",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 437,
+      "comm": "kworker/u26:3-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 478,
+      "comm": "CLK_DET_NDP_HDMI",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 479,
+      "comm": "DRV_TVADC",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 480,
+      "comm": "SCLR_DP0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 481,
+      "comm": "kworker/u24:2-ipv6_addrconf",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 483,
+      "comm": "VRR_ST_NDP_HDMI",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 486,
+      "comm": "_VPL_SRC_KADC",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 487,
+      "comm": "SCLR_IP0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 489,
+      "comm": "SCLR_SHL_Scale0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 491,
+      "comm": "SCLR_IP1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 493,
+      "comm": "SRC_ModeTask",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 494,
+      "comm": "SCLR_SHL_Scale1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 495,
+      "comm": "DRV_VBI",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 496,
+      "comm": "VPL_SCLR_CTRL_MONITOR",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 497,
+      "comm": "SRC_MonitorTask",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 499,
+      "comm": "SCLR_SHL_Scale2",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 500,
+      "comm": "VPL_SRC_MODE_EVENT_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 501,
+      "comm": "card0-crtc0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 502,
+      "comm": "PLAT_VC_UPDATE_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 503,
+      "comm": "SCLR_SHL_Scale3",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 504,
+      "comm": "card0-crtc1",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 506,
+      "comm": "eArcTask",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 507,
+      "comm": "PLAT_VC_UPDATE_TASK",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 508,
+      "comm": "SCLR_SHL_Scale4",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 509,
+      "comm": "SCLR_SHL_Bio",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 510,
+      "comm": "sh",
+      "status_rc": 1,
+      "smaps_rc": 1,
+      "stat_rc": 1,
+      "readable": false,
+      "errors": {
+        "status": "cat: /proc/510/status: No such file or directory",
+        "smaps": "cat: /proc/510/smaps: No such file or directory",
+        "stat": "cat: /proc/510/stat: No such file or directory"
+      },
+      "reason": "unreadable or exited; see exact command errors"
+    },
+    {
+      "pid": 511,
+      "comm": "kworker/u27:2-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 557,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 588,
+      "comm": "kworker/R-cfg80211",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 634,
+      "comm": "kworker/3:1-trace_contention_worker",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 639,
+      "comm": "rscmgr-service",
+      "status_rc": 0,
+      "smaps_rc": 1,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {
+        "smaps": "cat: /proc/639/smaps: Permission denied"
+      },
+      "reason": "unreadable or exited; see exact command errors"
+    },
+    {
+      "pid": 659,
+      "comm": "kworker/u29:1-nvt_clkgate_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 818,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 948,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 980,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1114,
+      "comm": "pm_monitor.sh",
+      "status_rc": 0,
+      "smaps_rc": 1,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {
+        "smaps": "cat: /proc/1114/smaps: Permission denied"
+      },
+      "reason": "unreadable or exited; see exact command errors"
+    },
+    {
+      "pid": 1212,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1295,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1428,
+      "comm": "kworker/1:0-events",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1466,
+      "comm": "smdl_daemon",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1826,
+      "comm": "ecryptfs-kthread",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1860,
+      "comm": "kworker/0:0R-kblockd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1945,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 1959,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 2161,
+      "comm": "kworker/u28:2-flush-179:0",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 2224,
+      "comm": "kworker/0:1-rcu_gp",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 2585,
+      "comm": "kworker/u25:0-dput_wq",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 2630,
+      "comm": "kworker/R-kbase_event",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 2806,
+      "comm": "kworker/u33:1-kbase_pm_shader_poweroff",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 2900,
+      "comm": "kworker/u26:0-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 2972,
+      "comm": "kworker/1:0R-mmc_complete",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3132,
+      "comm": "kworker/3:0R-kblockd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3215,
+      "comm": "kworker/u31:2-kbase_pm_shader_poweroff",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3339,
+      "comm": "kworker/0:0-cgroup_free",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3354,
+      "comm": "kworker/u25:2-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3456,
+      "comm": "kworker/u32:0-kbase_pm_shader_poweroff",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3464,
+      "comm": "kworker/3:2-cgroup_free",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3482,
+      "comm": "kworker/u24:3-Eth_plugDetect",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3492,
+      "comm": "kworker/u30:2-mali_jd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3499,
+      "comm": "kworker/2:2-events",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3521,
+      "comm": "kworker/u27:0-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3574,
+      "comm": "kworker/1:1-cgroup_release",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3627,
+      "comm": "kworker/2:1R",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3671,
+      "comm": "kworker/u25:3-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3696,
+      "comm": "kworker/u28:0-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3721,
+      "comm": "kworker/u30:0-mali_jd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3741,
+      "comm": "kworker/u27:3-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3758,
+      "comm": "kworker/u31:0-kbase_pm_shader_poweroff",
+      "status_rc": 1,
+      "smaps_rc": 1,
+      "stat_rc": 1,
+      "readable": false,
+      "errors": {
+        "status": "cat: /proc/3758/status: No such file or directory",
+        "smaps": "cat: /proc/3758/smaps: No such file or directory",
+        "stat": "cat: /proc/3758/stat: No such file or directory"
+      },
+      "reason": "unreadable or exited; see exact command errors"
+    },
+    {
+      "pid": 3808,
+      "comm": "kworker/u32:1-kbase_pm_shader_poweroff",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3862,
+      "comm": "psimon",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3865,
+      "comm": "kworker/u26:1-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3867,
+      "comm": "kworker/1:2R-mmc_complete",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3888,
+      "comm": "kworker/u30:1-mali_jd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3900,
+      "comm": "kworker/u27:1-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3906,
+      "comm": "kworker/2:1-rcu_gp",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3929,
+      "comm": "kworker/u33:0-kbase_pm_shader_poweroff",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3942,
+      "comm": "kworker/0:1R",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3944,
+      "comm": "kworker/2:2R-kblockd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3945,
+      "comm": "kworker/3:1R",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3960,
+      "comm": "kworker/u28:1-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 3985,
+      "comm": "kworker/u31:1-vd_time_occupy_workqueue",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 4032,
+      "comm": "kworker/u32:2-kbase_pm_shader_poweroff",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 4037,
+      "comm": "kworker/1:2-cgroup_free",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 4072,
+      "comm": "kworker/2:0-events",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 4074,
+      "comm": "kworker/u30:3-mali_jd",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    },
+    {
+      "pid": 4089,
+      "comm": "kworker/u28:3-events_unbound",
+      "status_rc": 0,
+      "smaps_rc": 0,
+      "stat_rc": 0,
+      "readable": false,
+      "errors": {},
+      "reason": "empty status/smaps; not a usable userspace observation"
+    }
+  ],
+  "records": [],
+  "selected": [],
+  "ranking": [],
+  "decision": "READABLE_SUBSET"
+}
