@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import run_authorized_root as m
-from test_board_script import BoardScriptTests
+import test_board_script as fixtures
 
 
 class AuthorizationTests(unittest.TestCase):
@@ -29,7 +29,7 @@ class AuthorizationTests(unittest.TestCase):
                  patch.object(m.portable,'permissions',return_value=inventory), \
                  patch.object(m.old,'globals_at',return_value={}), \
                  patch.object(m.portable,'install',return_value='/tmp/pf_20260916_0123456789ab.sh'), \
-                 patch.object(m.portable.previous,'run_script',return_value=BoardScriptTests().series()), \
+                 patch.object(m.portable.previous,'run_script',return_value=fixtures.BoardScriptTests().series()), \
                  patch.object(m.portable,'cleanup') as clean:
                 self.assertEqual(m.execute(b,Path('unused'),state),0)
             self.assertEqual([c.args[1] for c in switch.call_args_list],['on','off'])
