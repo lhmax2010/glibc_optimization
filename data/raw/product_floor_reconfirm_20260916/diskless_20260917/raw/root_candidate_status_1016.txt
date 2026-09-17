@@ -1,0 +1,61 @@
+Name:	ServiceD
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1016
+Ngid:	0
+Pid:	1016
+PPid:	280
+TracerPid:	0
+Uid:	5001	5001	5001	5001
+Gid:	100	100	100	100
+FDSize:	128
+Groups:	29 44 100 201 6509 10212 10503 10704 10705 10711 
+NStgid:	1016
+NSpid:	1016
+NSpgid:	1016
+NSsid:	1016
+Kthread:	0
+VmPeak:	  414968 kB
+VmSize:	  386708 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	   69056 kB
+VmRSS:	   60392 kB
+RssAnon:	   26852 kB
+RssFile:	   32440 kB
+RssShmem:	    1100 kB
+VmData:	  165036 kB
+VmStk:	     136 kB
+VmExe:	     208 kB
+VmLib:	   92420 kB
+VmPTE:	     264 kB
+VmSwap:	     452 kB
+CoreDumping:	0
+THP_enabled:	0
+untag_mask:	0xffffffff
+Threads:	34
+SigQ:	0/10059
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000001000
+SigCgt:	0000000100016a07
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	unknown
+SpeculationIndirectBranch:	unsupported
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	1
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	19668
+nonvoluntary_ctxt_switches:	2709
+
+RC=0
+DONE

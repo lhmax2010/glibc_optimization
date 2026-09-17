@@ -1,0 +1,25 @@
+{
+  "schema": "product-floor-root-receipt.v1",
+  "uid_transitions": [
+    {
+      "label": "pre_id_before_root_on",
+      "uid": 5001,
+      "ended_utc": "2026-09-17T04:05:24.986427+00:00"
+    },
+    {
+      "label": "pre_id_after_root_on",
+      "uid": 0,
+      "ended_utc": "2026-09-17T04:05:26.179575+00:00"
+    },
+    {
+      "label": "restore_id_after_root_off",
+      "uid": 5001,
+      "ended_utc": "2026-09-17T04:05:41.488088+00:00"
+    }
+  ],
+  "remote_requests": 107,
+  "maximum_remote_request_bytes": 106,
+  "root_on_calls": 1,
+  "root_off_calls": 1,
+  "script_pushes": 0
+}

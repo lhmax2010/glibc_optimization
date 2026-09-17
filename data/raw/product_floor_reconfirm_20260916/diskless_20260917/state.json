@@ -1,0 +1,31 @@
+{
+  "status": "STOP",
+  "mode": "diskless",
+  "started_utc": "2026-09-17T04:05:24.189428+00:00",
+  "board_alias": "<PRODUCT_BOARD_IP>",
+  "source_commit": "f79d7d64bff0a25ad2c8bd0422b492b9026c8c9d",
+  "harness_sha256": "5054d5b53294590f7f85468b3bd9c0e25bdf9e12a74b5e496cf45d8d299a61b7",
+  "board_files_created": 0,
+  "identity_before": {
+    "kernel": "6.12.60",
+    "arch": "armv7l",
+    "os_release": "NAME=Tizen\nVERSION=\"10.0.0 (<PRODUCT_IMAGE>)\"\nID=tizen\nVERSION_ID=10.0.0\nPRETTY_NAME=\"<PRODUCT_IMAGE>\"\nANSI_COLOR=\"0;36\"\nCPE_NAME=\"cpe:/o:tizen:tizen:10.0.0\"\nBUILD_ID=<PRODUCT_BUILD_ID>",
+    "vk_send": [
+      0,
+      "/usr/bin/vk_send"
+    ]
+  },
+  "id_before": "uid=5001(owner) gid=100(users) groups=29(audio),44(video),100(users),201(display),1901(log),6509(app_logging),6525(usb_device),10001(priv_externalstorage),10002(priv_externalstorage_appdata),10013(priv_tee_client),10014(priv_peripheralio),10212(priv_platform),10501(priv_camera),10502(priv_mediastorage),10503(priv_recorder),10704(priv_internet),10705(priv_network_get),10711(priv_tethering_admin),10901(priv_email),10903(priv_message_read),11103(priv_mapservice),11201(priv_appdebugging) context=\"User::Shell\"",
+  "identity": {
+    "kernel": "6.12.60",
+    "arch": "armv7l",
+    "os_release": "NAME=Tizen\nVERSION=\"10.0.0 (<PRODUCT_IMAGE>)\"\nID=tizen\nVERSION_ID=10.0.0\nPRETTY_NAME=\"<PRODUCT_IMAGE>\"\nANSI_COLOR=\"0;36\"\nCPE_NAME=\"cpe:/o:tizen:tizen:10.0.0\"\nBUILD_ID=<PRODUCT_BUILD_ID>",
+    "vk_send": [
+      0,
+      "/usr/bin/vk_send"
+    ]
+  },
+  "reason": "ValueError: STOP prior read failed",
+  "root_off_verified_uid": 5001,
+  "ended_utc": "2026-09-17T04:05:41.488406+00:00"
+}

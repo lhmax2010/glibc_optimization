@@ -845,3 +845,185 @@ Private_Dirty 字段，再由 host 原分桶器汇总堆、其他匿名、文件
 紧凑读取再失败则停止，不跳过该候选。无需板端 timeout、sha256sum 或可写目录。
 判别阈值、双标签规则及历史对照值不变；首尾分钟按实际 60 秒而非固定点数计算。
 当前绝对 floor 不等于历史活动引起的增量，也不证明 live/bin 属性或可回收收益。
+
+### 9.2 执行结论：不落盘读取已开始，SDB 传输门 STOP
+
+**本轮未完成 10 分钟画像，不生成分类/floor 结论，不进入注入轮。** 产品身份门、
+UID0 只读权限与 11 个候选的 PID/start 确认通过；第一批 11 个点读取完整，第二批
+一条 SDB 请求失败，缺少远端 RC/DONE，立即停止。没有重连、重跑或继续排障。
+未推送/创建任何板端采样文件；root off 已执行一次，最终 UID=5001。
+
+| 时刻（host UTC，2026-09-17） | 事件与证据 |
+|---|---|
+| 03:55:05.179815 | [合同推送回执](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/contract_push.json)：commit `06f38f9589c27ebb50e59a9206ad728dba99df57`，annotated tag 对象 `de261b56b7b1aaf6a0bef045586afd438bd9ef59` |
+| 04:05:24.189428 | [开始执行](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/state.json)；执行器 commit `f79d7d64bff0a25ad2c8bd0422b492b9026c8c9d`；[事前间隔](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/contract_gate.json) 618.922823 s |
+| 04:05:24.986427 → 04:05:26.179575 | [提权回执](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/authorization_receipt.json)：UID5001 → UID0，提权前后身份一致 |
+| 04:05:37.092581 | 第二批 PID657 的 stat 读取返回 SDB 错误；仅已在途的只读请求完成，后续读取被停止标记拦截 |
+| 04:05:41.488088 | root off 后 id 明确为 UID5001，远端 RC=0/DONE；[最终状态](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/state.json) STOP |
+
+首个失败请求为 `cat /proc/657/stat`（一条操作，含固定 RC 包装）；
+[原始错误](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/root_s1_p657_before.txt)
+仅将端点按既有映射脱敏：
+
+```text
+error: Server is not running
+error: serial number '<PRODUCT_BOARD_IP>:26101' wrong
+```
+
+host RC=1，**远端 RC 缺失，不把它当成 RC=0**。`state.reason` 的
+`STOP prior read failed` 是并行任务感知共享停止标志后的汇总异常；真正的首次
+错误在上述原文与[逐条命令日志](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/commands.jsonl)。
+这是 SDB 客户端/服务/设备会话链路失败证据，不是 `cat` 权限错误或再次触发脚本
+签名门。root off 随后成功，说明恢复时通道可用，但**不能据此确认服务为何短暂失败**。
+并发客户端竞争是待验证的可能原因，不把它写成已定位根因，也未在停止后做探测。
+
+### 9.3 本轮身份、环境与能力原文
+
+提权前后均通过：
+[uname -r](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/root_uname_r.txt)、
+[uname -m](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/root_uname_m.txt)、
+[os-release 全文](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/root_os_release.txt)。
+以下仅产品镜像标识按已有映射编辑，RC/DONE 原文留在链接文件：
+
+```text
+6.12.60
+armv7l
+
+NAME=Tizen
+VERSION="10.0.0 (<PRODUCT_IMAGE>)"
+ID=tizen
+VERSION_ID=10.0.0
+PRETTY_NAME="<PRODUCT_IMAGE>"
+ANSI_COLOR="0;36"
+CPE_NAME="cpe:/o:tizen:tizen:10.0.0"
+BUILD_ID=<PRODUCT_BUILD_ID>
+```
+
+`vk_send` 存在于 `/usr/bin/vk_send`，本轮只查路径、未调用。
+[基线汇总](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/baseline.json)
+保留每项 RC 与完整原文：
+
+| 项 | 本轮读取 |
+|---|---|
+| glibc RPM / libc 版本 | `glibc-2.40-1.12.armv7l` / stable release 2.40，GNU CC 14.2.0 |
+| 内存 / CPU | MemTotal 1599416 kB；armv7l，online 0–3，CLK_TCK=250 |
+| uptime / 板端 UTC | `/proc/uptime` 55319.47 s；`Thu Sep 17 04:06:08 UTC 2026`；板端墙钟与 host 不同步，未修改，以 host 单调时钟计采样时长 |
+| 分区可用 | 根 overlay 与 `/opt` 同一底层卷可用 2.5G，不相加；只读镜像 `/.org_rootfs` 可用 0；`/tmp` 781M；`/mnt/systemrw` 11M |
+| gdb | `gdb-15.1-1.2.armv7l` 已安装，本轮未装卸、未执行 |
+| ptrace_scope | 查询 RC=1，`No such file or directory`；不存在不等于 attach 已获准/已验证 |
+| 进程视图与权限 | root ps 含 PID1；11 个 status/stat 与第一批 smaps 可读；采集子进程 status 显示 CapEff=`000001ffffffffff`、Seccomp=0，不外推为 attach 成功证明 |
+| 临时文件/工具 | 无板端文件需求；awk 路径 `/usr/bin/awk`；不依赖板端 timeout/sha256sum |
+
+与上轮产品基线一致；相比测试板 `glibc-2.40-1.6.armv7l`，RPM 修订号不同但仍属
+2.40 系。机制基线可沿用，不能因此认为布局、回收量或绝对 PD 必须与测试板相同。
+
+### 9.4 候选存活与实际采样范围
+
+[本轮候选清单](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/candidates.json)
+确认所有 11 个 PID、comm、start_ticks 与 §8 快照相同，没有重启/替换。Top10 是
+**上轮的选择清单**，本轮没有重新全系统排名，也不将下表称为当前 Top10 排名。
+启动时长依据确认后的 `/proc/uptime` 与 CLK_TCK=250 计算。
+全部 PD 数字来自[唯一完整批次](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/timeseries.tsv)，
+单位 KiB；是单点，不是 floor 或释放量。
+
+| 候选 | PID | 已运行 s（约） | 堆 PD | 其他匿名 PD | file bucket PD | 总 PD |
+|---|---:|---:|---:|---:|---:|---:|
+| AppProcD / Supplemental01 | 449 | 55321 | 22636 | 49896 | 6156 | 78688 |
+| ServiceD / Supplemental02 | 1016 | 55312 | 16584 | 6948 | 3356 | 26888 |
+| AppProcB / Supplemental03 | 785 | 55317 | 14464 | 13208 | 6476 | 34148 |
+| ServiceE / Supplemental04 | 450 | 55321 | 8720 | 2216 | 7800 | 18736 |
+| AppProcF / Supplemental05 | 2686 | 55265 | 6944 | 5032 | 11776 | 23752 |
+| ServiceC / Supplemental06 | 657 | 55318 | 4636 | 7852 | 1548 | 14036 |
+| enlightenment | 243 | 55323 | 4552 | 1180 | 3028 | 8760 |
+| ServiceH | 1975 | 42450 | 3276 | 4652 | 3040 | 10968 |
+| slive-provider- / Supplemental09 | 1051 | 55311 | 1744 | 6380 | 692 | 8816 |
+| cynara / Supplemental10 | 206 | 55323 | 1612 | 512 | 124 | 2248 |
+| ServiceA | 684 | 55318 | 208 | 336 | 1124 | 1668 |
+
+`file bucket` 沿用旧分桶器的余项定义，不重新解释为 allocator 所有权。
+全局同批 MemAvailable=932372 kB，zram orig/compr/mem_used 为
+98684928 / 26297329 / 36356096 B；仅一个完整全局点，不能判断 zram 平坦或变化。
+minflt/majflt 保存的是累计计数，**不能把首点的累计 major faults 当成本窗口新增**，
+也不能从一个点声称本窗口 major fault 为零。
+
+时间质量见[逐批时序](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/sampling_timing.json)
+及逐请求日志：
+
+- **目标 1 s；实际相邻完整采样点间隔及抖动 X–Y ms：不可评估**，因为仅完成一批，
+  不是已完成的 10 分钟序列。第一批耗时 3564.441077 ms，已超过目标周期。
+- 首批单次 smaps 读耗时 639.826049–3108.763347 ms，候选 smaps 请求起点相差
+  378.780851 ms；全局三条读取覆盖 1172.898234 ms。没有把它们当成同时刻快照。
+- 停止发生在第 2 批，尚未形成合同规定的最近 10 个完整间隔，1→2 s 自动降级
+  判定未执行（transition=null），不是判为无需降级；未静默改成 2 s。
+- 无完整 smaps 20 s 超时，紧凑 awk 降级没有实际触发。第二批不完整原始件保留在
+  host，不补成有效批次、不插值、不重新采集。
+
+### 9.5 历史分类/floor 对照与注入风险
+
+| 主候选 | 2026-08-14 已有证据 | 本轮结果与可比性 |
+|---|---|---|
+| enlightenment | a 周期分量 + b retained floor，活动后 `+1736 KiB` | 当前单点 4552 KiB；10 分钟 floor/分类 NOT_EVALUATED；不能把绝对堆 PD 与增量相减 |
+| ServiceH | b 滞留候选，平台上界 `2360 KiB` | 当前单点 3276 KiB；不是同口径平台增幅，不能证明 retained floor 仍在或可回收 |
+| ServiceA | a 自动下降分量 + 谷底 `+788 KiB` 残渣 | 当前单点 208 KiB；不能证明历史残渣消失或分类改变 |
+| 其余 8 个补充候选 | 历史按键/活动状态不等于当前自然业务窗口 | 仅补充单点；不从一个点强行判自回收/滞留/无响应 |
+
+因此 **a) 尚不能确认任何候选满足“floor 仍在且量级足够进入注入轮”；b) 也不能
+确认相对 08-14 分类是否改变**。镜像/RPM 修订、业务阶段、采样时段与活动刺激的
+差异都可能影响画像，但本轮无足够序列区分这些原因。即使后续完整采样成功，也需
+披露 host 读时刻抖动、全局量偏移、可能的 2 s 采样及被动窗口与旧活动窗口的差异。
+分类器的 PD 实降 + zram/major fault 条件需要序列，单点不能执行归因链。
+
+能力实测相比历史的变化仍为：gdb 已安装、授权 UID0 可读 smaps；没有测试 attach，
+没有安装事务或注入。保留 §8.5 的权限/产品策略限制，不把 root 读取许可外推为调试
+注入许可。主目标的本轮 status 原文及风险：
+
+| 目标 | 本轮只读证据 | 若未来 attach，潜在可观察影响 |
+|---|---|---|
+| enlightenment PID243 | [status](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/root_candidate_status_243.txt)：UID0、26 线程、TracerPid0；UI 合成器 | 画面/输入短停、显示时限或 watchdog，需 UI owner 与安全窗口 |
+| ServiceH PID1975 | [status](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/root_candidate_status_1975.txt)：UID5001、9 线程、TracerPid0；应用加载/运行时候选 | 应用卡顿、IPC 超时；具体载荷与依赖需 owner 确认 |
+| ServiceA PID684 | [status](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/root_candidate_status_684.txt)：UID5001、15 线程、TracerPid0；产品服务 | 请求停顿、关联服务超时；职责与允许暂停预算尚未核实 |
+| 补充候选 | PID/comm 已核对，但业务归属未核实 | 按未知业务风险处理；堆 PD 大不构成注入许可 |
+
+**c) 下一步 PM 事项**：先决定是否另行允许排查 SDB 会话/并发传输能力，并在新合同下
+补齐只读序列；本轮未自行改传输并发规格或重试。未来注入需另行逐项授权：选择的
+精确进程/PID/start、每目标首次最多一次受控 malloc_info/trim 探针的次数与顺序、
+业务静置/释放窗口与 owner 在场条件、允许暂停/超时预算、产品调试策略许可、输出
+的合规保存方式；尤其不得把已知脚本签名拒绝当成可绕过的门。回退应由 PM 明确批准
+调试器正常 detach/释放已打开资源的路径及故障时现场处置；不默认授权 kill、restart、
+reboot 或改 ptrace 配置。**d) 本轮采样口径的影响无法量化为分类差异，原因是序列
+未完成，而非已经证明不存在差异。**
+
+### 9.6 收尾、公开复现与交付
+
+[提权前 id](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/pre_id_before_root_on.txt)、
+[提权后 id](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/pre_id_after_root_on.txt)、
+[root off 原文](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/restore_root_off.txt)、
+[恢复后 id](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/raw/restore_id_after_root_off.txt)
+完整留存。共 112 次 sdb 调用，其中 107 条远端读取，最大请求体 106 字节；
+root on/off 各一次、push=0。没有自有板端文件需要删除，没有卸包/配置/业务干预。
+本次只读权限已降回 UID5001，未来继续操作须重新获得当轮授权。
+
+完整原始件本地留存，可按请求提供；[公开清单](../data/raw/product_floor_reconfirm_20260916/diskless_20260917/publication.json)
+记录 64 个原始/公开双哈希文件，另含合同推送回执与清单本身。所有实际请求记录
+原始响应 SHA 与起止时间；私有标识、端点和 host 路径脱敏，板端运行路径保留。
+
+[harness 与固定参数](../tools/runners/product_floor_reconfirm_20260916/README.md#2026-09-17-pm-授权的不落盘驱动)
+及 §9.1 合同是本轮复现规格，不是下一轮 root 许可。确定性门包括合同字节、候选
+集合、RC、PD 求和、稳定身份、实际 600 s、降级时序与 UID 恢复；数值容差不要求
+当前产品 floor 等于历史活动增量，不因结果改分类器。当前停止在传输与完整时长门，
+不能给出这些门全部通过的声明。
+
+本轮可公开重放的仅是授权/边界回执：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/audit_authorized_receipt.py \
+  --source data/raw/product_floor_reconfirm_20260916/diskless_20260917 \
+  --output /tmp/product-floor-diskless-receipt.json
+cmp /tmp/product-floor-diskless-receipt.json \
+  data/raw/product_floor_reconfirm_20260916/diskless_20260917/authorization_receipt.json
+```
+
+预期 `PASS authorized receipt: UID 5001 -> 0 -> 5001; one root round`，cmp 静默。
+对本轮 partial timeseries 运行 `analyze_diskless.py --timeseries … --timing … --output …`
+必须非零退出并明确 `STOP missing/duplicate sample`（每目标只有一个点），不是可跳过
+的成功复算；没有发布 `summary.json` 或新分类值。本轮只推 main，不切 demo。

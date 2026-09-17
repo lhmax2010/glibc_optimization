@@ -1,0 +1,30 @@
+{
+  "schema": "product-floor-diskless.v1",
+  "date": "2026-09-17",
+  "tag": "product-floor-diskless-contract-20260917",
+  "minimum_push_to_connect_seconds": 600,
+  "authorization": "PM continuation: one readonly root round; id before/on/off; restore UID 5001 even after STOP; no default elevation in other runners",
+  "transport": "Host-driven SDB read requests, at most 200 UTF-8 bytes including RC/DONE/FAIL framing. No push, scripts, board output files, package/config changes, attach, injection, target kill or reboot.",
+  "identity": "Before and after elevation: kernel excludes rpi4, armv7l, Tizen TV product os-release, not unified-toolchain/development. IP is not identity.",
+  "candidates_snapshot": "data/raw/product_floor_reconfirm_20260916/root_authorized_20260917/permissions.json",
+  "candidates": "Reuse the 11 selected named/top-10 candidates. Confirm comm, PID and start_ticks. Before sampling, rediscover restarted targets by unique exact comm; ambiguity or absence stops. During sampling PID/start change stops.",
+  "sampling": {
+    "duration_seconds_per_candidate": 600,
+    "initial_period_seconds": 1,
+    "degrade_period_seconds": 2,
+    "degrade_rule": "After each complete batch, once 10 start-to-start intervals exist: if median of the latest 10 exceeds 1.5 s, switch once to target 2 s. Keep all earlier observations, actual timings and reason. No burst catch-up, padding or interpolation.",
+    "execution": "Parallel host tasks per candidate and one globals task; sequential short reads within each task. Next batch waits for all tasks and its target deadline. End only once every candidate spans at least 600 s between actual smaps request start times.",
+    "timestamps": "Each command records host UTC/epoch/monotonic start and end; each row uses the smaps request start, not a fictional simultaneous timestamp. Global reads are associated by batch; retain global read interval and report skew.",
+    "smaps_timeout": "20 s host timeout: retain failed raw output; switch that candidate once to an awk filter emitting only mapping headers and Private_Dirty fields, then host sums heap/anonymous/file buckets using the unchanged parser. This reduced-field transport preserves required PD fields but is disclosed. Filter timeout/failure stops; no candidate skipped.",
+    "fields": "sample, epoch_ns, monotonic_ns, read_end_ns, target, pid, start_ticks, glibc_heap_pd_kb, other_anon_pd_kb, file_backed_pd_kb, total_pd_kb, minflt, majflt, MemAvailable_kb, zram_used_kb, zram_orig_bytes, zram_compr_bytes, zram_mem_used_bytes, compact_smaps, globals_start_ns, globals_end_ns",
+    "quality": "Required remote proof, stable identity, nondecreasing faults, complete PD buckets, actual duration >=600 s for each candidate. Missing globals or read permissions stop. No board timeout, sha256sum or writable filesystem needed. No claim that observer overhead is zero."
+  },
+  "analysis": {
+    "classifier": "Unmodified audit_phenotypes.release_ratio_census; threshold/dual labels unchanged. Absolute baseline = first current sample, not historical activity increment.",
+    "floor": "Absolute minimum; minima in first and last 60 actual seconds, and their difference. No inference of live/bin decomposition or trimmable bytes.",
+    "confounding": "Report major faults, all positive zram steps, total-PD and other-anon changes around largest drawdown; global net zram flatness alone is not unique allocator attribution.",
+    "history": "enlightenment +1736 KiB and ServiceA +788 KiB are activity-induced increases, ServiceH 2360 KiB is an upper bound. Passive current absolute floors are not like-for-like replicas.",
+    "timing": "Report min/median/max actual per-target intervals and deviations from the active target period, batch spans and global skew, plus any 1-to-2 s transition."
+  },
+  "failure": "Any required gate failure stops further observation, retains partial evidence, then performs mandatory root off and UID 5001 verification. No new measurement retry. Publish STOP if incomplete or restoration unproved."
+}

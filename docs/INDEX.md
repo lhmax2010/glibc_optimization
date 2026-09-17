@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-17 — [产品 floor 不落盘续跑](product_floor_reconfirm_20260916.md#92-执行结论不落盘读取已开始sdb-传输门-stop)：零 push/板端文件；产品身份及 11 候选 PID/start 核对通过。仅首批完整，第二批 SDB 返回 Server is not running/serial 错误，按门停止，未重跑；root off 后 UID5001 已核验。公开 partial 原文与提权回执，不发布 10 分钟分类/floor 结论。
+
 - 2026-09-17 — [产品 floor 单轮授权提权](product_floor_reconfirm_20260916.md#82-执行结果权限门通过未签名脚本执行被拒绝)：UID5001→0 后产品身份、三名主候选读取与 Top10 发现通过；未签名 /tmp 脚本被 UEP 拒绝，10 分钟画像未执行，不绕过/重跑。脚本已删除、root off 后 UID5001 复核通过；保留只读快照、权限与回执，待 PM 确认受支持的签名交付方式。
 
 - 2026-09-17 — [产品 floor 可移植性与权限预检](product_floor_reconfirm_20260916.md#71-执行结论可移植性闭合读取范围-stop)：移除 timeout 依赖、一次工具探测、缺 SHA 的完整字节回读、部分可读分流均有 host 回归。产品身份/工具门通过，但 UID=5001 视图无主候选，无可用用户态 smaps；零 push/采样，STOP_READ_PERMISSION，列只读 root 待授权清单。

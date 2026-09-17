@@ -1,0 +1,116 @@
+{
+  "selected": [
+    {
+      "pid": 449,
+      "comm": "AppProcD",
+      "state": "S",
+      "minflt": 785634,
+      "majflt": 544,
+      "start_ticks": 684,
+      "target": "Supplemental01",
+      "elapsed_s": 55321.124
+    },
+    {
+      "pid": 1016,
+      "comm": "ServiceD",
+      "state": "S",
+      "minflt": 2163825,
+      "majflt": 1141,
+      "start_ticks": 3004,
+      "target": "Supplemental02",
+      "elapsed_s": 55311.844
+    },
+    {
+      "pid": 785,
+      "comm": "AppProcB",
+      "state": "S",
+      "minflt": 506034,
+      "majflt": 143,
+      "start_ticks": 1779,
+      "target": "Supplemental03",
+      "elapsed_s": 55316.744
+    },
+    {
+      "pid": 450,
+      "comm": "ServiceE",
+      "state": "S",
+      "minflt": 27694,
+      "majflt": 351,
+      "start_ticks": 686,
+      "target": "Supplemental04",
+      "elapsed_s": 55321.116
+    },
+    {
+      "pid": 2686,
+      "comm": "AppProcF",
+      "state": "R",
+      "minflt": 522086,
+      "majflt": 31,
+      "start_ticks": 14673,
+      "target": "Supplemental05",
+      "elapsed_s": 55265.168
+    },
+    {
+      "pid": 657,
+      "comm": "ServiceC",
+      "state": "S",
+      "minflt": 1066598,
+      "majflt": 1039,
+      "start_ticks": 1358,
+      "target": "Supplemental06",
+      "elapsed_s": 55318.428
+    },
+    {
+      "pid": 243,
+      "comm": "enlightenment",
+      "state": "S",
+      "minflt": 3884831,
+      "majflt": 115,
+      "start_ticks": 288,
+      "target": "enlightenment_243",
+      "elapsed_s": 55322.708
+    },
+    {
+      "pid": 1975,
+      "comm": "ServiceH",
+      "state": "S",
+      "minflt": 22187,
+      "majflt": 5,
+      "start_ticks": 3218568,
+      "target": "ServiceH_1975",
+      "elapsed_s": 42449.588
+    },
+    {
+      "pid": 1051,
+      "comm": "slive-provider-",
+      "state": "S",
+      "minflt": 2971117,
+      "majflt": 1506,
+      "start_ticks": 3100,
+      "target": "Supplemental09",
+      "elapsed_s": 55311.46
+    },
+    {
+      "pid": 206,
+      "comm": "cynara",
+      "state": "S",
+      "minflt": 196240,
+      "majflt": 849,
+      "start_ticks": 249,
+      "target": "Supplemental10",
+      "elapsed_s": 55322.864
+    },
+    {
+      "pid": 684,
+      "comm": "ServiceA",
+      "state": "S",
+      "minflt": 9082,
+      "majflt": 202,
+      "start_ticks": 1501,
+      "target": "ServiceA_684",
+      "elapsed_s": 55317.856
+    }
+  ],
+  "changes": [],
+  "selection": "previous primary/top10 snapshot, not a new ranking"
+}

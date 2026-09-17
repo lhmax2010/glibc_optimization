@@ -1,0 +1,2 @@
+error: Server is not running
+error: serial number '<PRODUCT_BOARD_IP>:26101' wrong

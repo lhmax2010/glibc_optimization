@@ -1,0 +1,11 @@
+{
+  "batches": [
+    {
+      "sample": 0,
+      "start_ns": 1462290558454537,
+      "end_ns": 1462294122895614,
+      "target_period_s": 1
+    }
+  ],
+  "transition": null
+}

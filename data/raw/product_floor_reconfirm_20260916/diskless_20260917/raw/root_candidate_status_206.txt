@@ -1,0 +1,61 @@
+Name:	cynara
+Umask:	0000
+State:	S (sleeping)
+Tgid:	206
+Ngid:	0
+Pid:	206
+PPid:	1
+TracerPid:	0
+Uid:	401	401	401	401
+Gid:	401	401	401	401
+FDSize:	64
+Groups:	 
+NStgid:	206
+NSpid:	206
+NSpgid:	206
+NSsid:	206
+Kthread:	0
+VmPeak:	   19040 kB
+VmSize:	   18016 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	    5620 kB
+VmRSS:	    4936 kB
+RssAnon:	    2944 kB
+RssFile:	    1992 kB
+RssShmem:	       0 kB
+VmData:	    8308 kB
+VmStk:	     132 kB
+VmExe:	     128 kB
+VmLib:	    4540 kB
+VmPTE:	      24 kB
+VmSwap:	     116 kB
+CoreDumping:	0
+THP_enabled:	0
+untag_mask:	0xffffffff
+Threads:	2
+SigQ:	0/10059
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000014000
+SigIgn:	0000000000000006
+SigCgt:	0000000100000000
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	unknown
+SpeculationIndirectBranch:	unsupported
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	1
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	4463
+nonvoluntary_ctxt_switches:	1961
+
+RC=0
+DONE

@@ -66,6 +66,13 @@ def publish(source, output, mapping, address, receipt):
     clean = redactor(mapping,address)
     files = [p for p in source.iterdir() if p.is_file() and p.suffix in ('.json','.jsonl','.tsv')]
     files += [p for p in (source/'raw').glob('*.txt') if not re.match(r'root_s\d+_',p.stem)]
+    if state['status'] == 'STOP' and (source/'commands.jsonl').exists():
+        for line in (source/'commands.jsonl').read_text().splitlines():
+            record = json.loads(line)
+            path = source/'raw'/(record['label']+'.txt')
+            if (record.get('proof_error') or record.get('host_rc') or record.get('remote_rc', 0)) and path.stat().st_size <= 16384:
+                files.append(path)
+    files = sorted(set(files))
     output.mkdir(parents=True)
     manifest=[]
     for path in files:

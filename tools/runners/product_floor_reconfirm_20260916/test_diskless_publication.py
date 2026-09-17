@@ -79,3 +79,12 @@ class PublicationTests(unittest.TestCase):
             p.publish(source,root/'public',mapping,'127.0.0.1',receipt)
             self.assertEqual(json.loads((root/'public/publication.json').read_text())['status'],'COMPLETE')
             self.assertEqual((root/'public/summary.json').read_bytes(),(source/'summary.json').read_bytes())
+            (source/'state.json').write_text(json.dumps(dict(mode='diskless',status='STOP',root_off_verified_uid=5001)))
+            raw=b'error: Server is not running\n'
+            label='root_s1_p123_before'
+            (source/'raw'/(label+'.txt')).write_bytes(raw)
+            records.insert(-2,dict(label=label,argv=['sdb','-s',serial,'shell',r.readonly_body(['cat','/proc/123/stat'])],
+                                  host_rc=1,proof_error='missing RC',raw_sha256=hashlib.sha256(raw).hexdigest()))
+            (source/'commands.jsonl').write_text(''.join(json.dumps(x)+'\n' for x in records))
+            p.publish(source,root/'public_stop',mapping,'127.0.0.1',receipt)
+            self.assertEqual((root/'public_stop/raw'/(label+'.txt')).read_bytes(),raw)

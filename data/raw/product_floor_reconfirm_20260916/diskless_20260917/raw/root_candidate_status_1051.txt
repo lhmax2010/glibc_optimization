@@ -1,0 +1,61 @@
+Name:	slive-provider-
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1051
+Ngid:	0
+Pid:	1051
+PPid:	1
+TracerPid:	0
+Uid:	5001	5001	5001	5001
+Gid:	100	100	100	100
+FDSize:	128
+Groups:	29 44 100 201 1901 6509 6525 10001 10013 10014 10212 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201 
+NStgid:	1051
+NSpid:	1051
+NSpgid:	1051
+NSsid:	1051
+Kthread:	0
+VmPeak:	  311936 kB
+VmSize:	  262560 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  138352 kB
+VmRSS:	   23144 kB
+RssAnon:	    9032 kB
+RssFile:	   13756 kB
+RssShmem:	     356 kB
+VmData:	  127032 kB
+VmStk:	     132 kB
+VmExe:	    1612 kB
+VmLib:	   59780 kB
+VmPTE:	     216 kB
+VmSwap:	     784 kB
+CoreDumping:	0
+THP_enabled:	0
+untag_mask:	0xffffffff
+Threads:	13
+SigQ:	0/10059
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000001000
+SigCgt:	0000000100004000
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	unknown
+SpeculationIndirectBranch:	unsupported
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	1
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	8148
+nonvoluntary_ctxt_switches:	24842
+
+RC=0
+DONE
