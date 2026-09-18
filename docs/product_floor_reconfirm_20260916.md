@@ -1027,3 +1027,171 @@ cmp /tmp/product-floor-diskless-receipt.json \
 对本轮 partial timeseries 运行 `analyze_diskless.py --timeseries … --timing … --output …`
 必须非零退出并明确 `STOP missing/duplicate sample`（每目标只有一个点），不是可跳过
 的成功复算；没有发布 `summary.json` 或新分类值。本轮只推 main，不切 demo。
+
+## 10. 2026-09-18 单会话长驻方法续跑：候选重发现路径 STOP
+
+### 10.1 结论与停止原因
+
+**未完成画像。名义 601 点，实得 0 点；长驻采样会话尚未启动。** 本轮不是再次发生
+SDB server 故障，也不是单会话方案已在产品板验证失败，而是执行器在采样前仍复用了
+旧的逐 PID 短连接重发现函数。旧候选 PID 已变化，该分支按每个旧候选重新遍历进程，
+不符合 PM 本轮“不再高频短连接”的方法要求。因此在 host 主动中断执行器，不在现场
+换方案、重连或重跑。**这是执行器的遗漏，不归咎于产品设备。**
+
+[原始终态](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/state.json)
+保留 `KeyboardInterrupt: `，不改写原文；
+[操作说明](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/operator_stop.json)
+补记 `STOP_DISCOVERY_SHORT_CONNECTION_REGRESSION`。中断仅向 host 上唯一匹配的本轮
+Python 进程发送 SIGINT，没有向任何板端目标发送信号。执行器 finally 路径完成
+root off，远端 id 明确回到 UID5001、RC=0/DONE。后续仅进行 host 证据整理。
+
+已完成回执共 556 条，其中 552 条短远端查询、520 条重发现 stat 查询；最大请求体
+106 字节，root on/off 各一次，host server reset=0，push=0。
+[命令日志](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/commands.jsonl)
+记录已完成请求的时刻、响应哈希与 RC。中断当时可能有一条已发出但未完成落日志的
+只读查询，**556 是完整回执数，不声称是全部发送次数**。这项中断日志缺口也需在
+下次执行器修复中闭合；不能把 host 单测通过写成现场所有路径均已验证。
+
+### 10.2 方法、事前合同与时间线
+
+PM 将 §9 的多连接采样改为一次 `sdb shell` 长驻会话，循环文本由 stdin 解释，
+命令、脚本、结果均不在板上落盘。逐批 nonce 起止标记、逐读 RC/DONE、host ACK
+提交完整批次；15 s 连续无输出或会话断开立即 STOP，不自动重连。循环用 epoch 秒
+与 shell 运算控时，不依赖 timeout。每条短查询及每行 stdin 文本均受 200 字节闸约束。
+映射头和全部 Private_Dirty 行经 awk 传回，host 复用原三桶解析器，不丢失所需 PD。
+
+[合同](../tools/runners/product_floor_reconfirm_20260916/persistent_contract.json)与
+[分析器](../tools/runners/product_floor_reconfirm_20260916/analyze_persistent.py)先提交，
+旧合同、分桶器及历史分类器原字节不动。调度目标 1 s；板端 epoch 为 `date +%s`
+的 1 秒精度，表示为 ns 字段不代表纳秒精度；host 接收标记另记高精度单调时钟。
+每候选两种时钟均覆盖至少 600 s 才能判完成，实际点数不补齐、不插值。整秒调度和
+顺序读取会产生抖动，不能宣称精确 1 s。**本次未开采样，实际间隔中位/范围及
+抖动均为 NOT_EVALUATED，不填 0 或沿用 §9 的数据。**
+
+| host UTC（2026-09-18） | 事件 |
+|---|---|
+| 03:34:02.589799 | [推送回执](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/contract_push.json)：commit `237c8ec2d42e995597444e2e821135fcda92dbed`；annotated tag `product-floor-persistent-contract-20260918`，对象 `9e7ba6face97d71d9a109742b37dc539dd9ce9c8` |
+| 03:44:19.550106 | [事前门](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/contract_gate.json)核验合同字节与推送间隔 616.960251 s；执行器 commit `78f10b2d6010e9f3ec5c16474fe992e7da353858` |
+| 03:44:20.360834 → 03:44:21.545050 | id UID5001 → UID0，前后产品身份一致；连接自检首次通过，无 server reset |
+| 03:45:29.127297 | host 中断候选重发现后开始 root off；未到达长驻采样入口 |
+| 03:45:30.313728 | root off 后 id=5001、RC=0/DONE；最终 STOP，无重试 |
+
+### 10.3 身份与环境实测
+
+身份原文分别见 [kernel](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/raw/root_uname_r.txt)、
+[架构](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/raw/root_uname_m.txt)、
+[完整 os-release](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/raw/root_os_release.txt)：
+
+```text
+6.12.60
+armv7l
+
+NAME=Tizen
+VERSION="10.0.0 (<PRODUCT_IMAGE>)"
+ID=tizen
+VERSION_ID=10.0.0
+PRETTY_NAME="<PRODUCT_IMAGE>"
+ANSI_COLOR="0;36"
+CPE_NAME="cpe:/o:tizen:tizen:10.0.0"
+BUILD_ID=<PRODUCT_BUILD_ID>
+```
+
+仅产品标识按既有映射编辑。不是 RPI4/unified-toolchain；vk_send 路径存在，未执行。
+[基线原文汇总](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/baseline.json)：
+
+| 项目 | 本轮读取与限定 |
+|---|---|
+| glibc | `glibc-2.40-1.12.armv7l`；libc 2.40 / GNU CC 14.2.0；同属既有 2.40 机制基线，不等于测试板 -1.6 的布局/绝对值 |
+| 内存 / CPU | MemTotal 1599416 kB，MemAvailable 单点 1019664 kB；armv7l、online 0–3、CLK_TCK=250 |
+| uptime / date | `/proc/uptime` 1404.08 s；`Fri Sep 18 03:45:05 UTC 2026`；上轮 uptime 55319.47 s，运行期已改变，不能沿用旧 PID；本轮未 reboot、未同步时钟 |
+| 空间 | 根 overlay 与 /opt 同底层卷可用 2.5G；/tmp 781M；/mnt/systemrw 11M；只读镜像根可用 0 |
+| 能力 | gdb-15.1-1.2 已安装；ptrace_scope 不存在（RC=1 原文保留）；root ps 含 PID1；没有 attach/安装/注入实测 |
+
+### 10.4 已读到的候选身份；画像与 floor 缺口
+
+以下仅重发现期间捕获的 stat 身份，**不是已完成的候选集合确认，更不是 Top10
+重新排名或 smaps 画像**。启动时长以基线 uptime − start_ticks/250 计算，单位秒；
+逐项原文和复算字段见[停止回执](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/stop_audit.json)。
+
+| 候选 | 旧 PID → 本轮观察 PID | 新 start_ticks | 基线时已运行约 s |
+|---|---:|---:|---:|
+| AppProcD | 449 → 576 | 954 | 1400.264 |
+| ServiceD | 1016 → 1017 | 2726 | 1393.176 |
+| AppProcB | 785 → 729 | 1822 | 1396.792 |
+| ServiceE | 450 → 585 | 963 | 1400.228 |
+| AppProcF | 2686 → 未确认 | — | — |
+| ServiceC | 657 → 735 | 1870 | 1396.600 |
+| enlightenment | 243 → 279 | 326 | 1402.776 |
+| ServiceH | 1975 → 2984 | 14295 | 1346.900 |
+| slive-provider- | 1051 → 1210 | 3868 | 1388.608 |
+| cynara | 206 → 216 | 259 | 1403.044 |
+| ServiceA | 684 → 744 | 1906 | 1396.456 |
+
+旧 PID449 已被其他内核任务占用，旧 PID1016 也不再是对应候选，不能按 IP 或旧 PID
+继续采集。当前表未确认 AppProcF，不把它写成已证实退出。没有读取任何本轮候选
+smaps 时间序列；stat 累计 faults 不能充当本窗口的 faults 增量。
+
+| 主候选 | 2026-08-14 口径 | 本轮分类 / 当前 floor |
+|---|---|---|
+| enlightenment | 自动下降分量 + retained floor；活动后 +1736 KiB | 未评估 / 未测得 |
+| ServiceH | 滞留候选；2360 KiB 上界及其他窗口 floor 增量 | 未评估 / 未测得 |
+| ServiceA | 自动下降周期 + 谷底 +788 KiB 残渣 | 未评估 / 未测得 |
+
+**a)** 本轮不能确认任何候选 floor 仍在且量级足够，不能建议据此进入注入轮。
+**b)** 无分类变化结论；较新的运行期、业务状态与旧活动刺激不同可能影响画像，但
+没有序列可区分这些因素。**d)** 目标 1 s 与顺序扫描的时间差异已登记，影响尚无法
+用本轮数据量化。未来被动绝对 floor 仍不能直接减去历史活动增量，也不能分辨 live/bin。
+
+### 10.5 注入风险、签名交付与待授权事项
+
+gdb 已安装和授权 root 可读 proc 不等于 attach 被允许/可成功，ptrace_scope 缺席
+也不是充分条件。enlightenment 是 UI 合成器，暂停可能影响画面/输入时限；ServiceH
+为应用加载/运行时类候选，可能影响应用响应或 IPC；ServiceA 与其余候选需 owner
+确认具体服务依赖、watchdog 和允许暂停预算。当前不做任何 attach 或注入。
+
+**c) 下一步首先闭合执行器，而非申请直接注入：** 候选发现也应合并进受控长驻
+只读会话或一次完整只读快照，不能回到逐进程短连接；增加真实 PID 全变场景的
+连接次数回归及中断前日志落盘保障，然后请求 PM 重新确认只读续跑与当轮 root 权限。
+本次没有修改合同重新连板。未来注入仍需 PM 逐目标批准 PID/start、次数（建议首次
+每目标最多一次受控探针）、静置/释放时机、owner 在场与暂停预算、超时处理、
+调试器正常 detach/资源回收方案；不默认许可 kill/restart/reboot 或修改调试策略。
+
+**签名约束对产品落地的影响：** §8 已实证产品镜像拒绝未签名脚本。将来在产品上
+启用 trim，无论正式钩子还是临时探针，都必须走产品认可的签名/正规构建链，不能
+依赖推送未签名脚本。本次 PM 授权 stdin 只读读取是采集方式，不是放宽产品签名
+校验或批准注入的依据；此结论供后续产品落点建议引用。
+
+### 10.6 收尾与复现
+
+[提权前 id](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/raw/pre_id_before_root_on.txt)、
+[提权后 id](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/raw/pre_id_after_root_on.txt)、
+[root off](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/raw/restore_root_off.txt)、
+[最终 id](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/raw/restore_id_after_root_off.txt)
+保留全文。没有推送文件、创建采样文件、运行负载、装卸包、改配置、注入或板端 kill。
+采样会话尚未创建，不存在本轮脚本需要删除；未走到计划中的 /tmp 前后列表核对，
+因此不声称已完成全目录卫生审计。只读命令边界与 zero-push 回执证明本轮没有产生
+自有板端采样文件。权限已恢复，未继续连接设备。
+
+[harness](../tools/runners/product_floor_reconfirm_20260916/README.md#2026-09-18-单会话长驻不落盘采样)
+明确标为现场 STOP。开跑前 103 项 host 测试通过，包含真实 shell 的 stdin/ACK/EOF、
+断流、RC/标记、权限收尾；其缺口是测试以 mock 候选确认隔离了旧的重发现分支，未
+验证“旧 PID 全变时的连接次数”。这不是可忽略的测试限制，下次连板前必须补齐。
+
+公开复算仅核验本轮 STOP/权限/部分身份，不生成 summary 或 10 分钟分类：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/audit_persistent_stop.py \
+  --source data/raw/product_floor_reconfirm_20260916/persistent_20260918 \
+  --output /tmp/product-floor-persistent-stop.json
+cmp /tmp/product-floor-persistent-stop.json \
+  data/raw/product_floor_reconfirm_20260916/persistent_20260918/stop_audit.json
+```
+
+预期输出 `PASS persistent STOP audit: completed_points=0; UID 5001 -> 0 -> 5001; no stream/no retry`，
+cmp 静默。[发布清单](../data/raw/product_floor_reconfirm_20260916/persistent_20260918/publication.json)
+含 63 个原始/公开双哈希文件，另有合同推送回执、清单与派生 STOP 回执；无关进程的
+重复 stat 原文仅本地留存，可按请求提供。端点/产品标识/host 路径按既有映射脱敏。
+
+确定性验收：合同字节、身份与 root 恢复已核验；完整 11 候选、长驻会话、实际
+600 s、帧完整性与 floor 复算均未通过现场验证。数值容差不要求 floor 等于历史
+活动增量；STOP 不补数，不更改分类器。只推 main，不切 demo，现有交付快照不变。

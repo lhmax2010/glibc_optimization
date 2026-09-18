@@ -1,0 +1,385 @@
+{
+  "schema": "product-floor-persistent-publication.v1",
+  "status": "STOP",
+  "files": [
+    {
+      "path": "authorization.json",
+      "raw_sha256": "5952aebe5b2d187e921bf51e7c73841d59b3c37fa534995fca66f7ff70857af3",
+      "public_sha256": "5952aebe5b2d187e921bf51e7c73841d59b3c37fa534995fca66f7ff70857af3",
+      "redacted": false
+    },
+    {
+      "path": "authorization_receipt.json",
+      "raw_sha256": "8f3c560e550008907ae15e9a1beb78e92764b19a8562b023338dbbd42f0245e6",
+      "public_sha256": "8f3c560e550008907ae15e9a1beb78e92764b19a8562b023338dbbd42f0245e6",
+      "redacted": false
+    },
+    {
+      "path": "baseline.json",
+      "raw_sha256": "bcc6169d97f44d865687c7feb0b88a5109bd1819518b059ae16da3a2e43b6eec",
+      "public_sha256": "91a75f4d9c575ca36494c68750c8bc81d2ab829896fa8308754c06fb9b37f259",
+      "redacted": true
+    },
+    {
+      "path": "commands.jsonl",
+      "raw_sha256": "c2fcda1c0b47bf203a534b7462e8de36fbaf103789c4a111c602596493ac9c72",
+      "public_sha256": "31702834c0a39a1209e8cf27ab5b2d2baea1698d874f2bde35d157dc2b3ec3a3",
+      "redacted": true
+    },
+    {
+      "path": "contract_gate.json",
+      "raw_sha256": "ba18631b7b85c4aa5f0b24cb7db4616d774a6c253d726424d6502e603ea7bc79",
+      "public_sha256": "ba18631b7b85c4aa5f0b24cb7db4616d774a6c253d726424d6502e603ea7bc79",
+      "redacted": false
+    },
+    {
+      "path": "operator_stop.json",
+      "raw_sha256": "2b5056615056d1ba935a171c7dd22ef58b8de5e51fafb99ab381907f3dfe3e0c",
+      "public_sha256": "2b5056615056d1ba935a171c7dd22ef58b8de5e51fafb99ab381907f3dfe3e0c",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_devices_0.txt",
+      "raw_sha256": "8cc72ef8386aefc74d1000d15183303d1140aa13a671c1aeff9f7ffa637b9ab4",
+      "public_sha256": "92579bd4b3de07c629312b963ecca9de2cfff2b0410d3e9d66442f1ce6aefe05",
+      "redacted": true
+    },
+    {
+      "path": "raw/pre_id_after_root_on.txt",
+      "raw_sha256": "29c662332915b1df920a9f1aa27aa184e7f0a33a70ddfd8852115e34d38461e6",
+      "public_sha256": "29c662332915b1df920a9f1aa27aa184e7f0a33a70ddfd8852115e34d38461e6",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_id_before_root_on.txt",
+      "raw_sha256": "a385d1b79d0c7a0f090bafc74392f78dc226152ee6f5f012edc2e419993cf710",
+      "public_sha256": "a385d1b79d0c7a0f090bafc74392f78dc226152ee6f5f012edc2e419993cf710",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_os_release.txt",
+      "raw_sha256": "52a4e23f7941686ad0d5007dddaafcbe94ab35ed14e23e0da9bf7c29d509f8d5",
+      "public_sha256": "b161b1d1fcc312eae828e11f5553ef0b452aefce7549852696c9c5a5d7f36b0f",
+      "redacted": true
+    },
+    {
+      "path": "raw/pre_root_on.txt",
+      "raw_sha256": "525daa895e41827b8cef29d3387114916a532c2624880a49c1614e6c987b6477",
+      "public_sha256": "525daa895e41827b8cef29d3387114916a532c2624880a49c1614e6c987b6477",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_sdb_version.txt",
+      "raw_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "public_sha256": "dad49e3128cba9ed107a12933deaf53651627bf5049a607e9bcf865551f75605",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_selfcheck_0.txt",
+      "raw_sha256": "a385d1b79d0c7a0f090bafc74392f78dc226152ee6f5f012edc2e419993cf710",
+      "public_sha256": "a385d1b79d0c7a0f090bafc74392f78dc226152ee6f5f012edc2e419993cf710",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_uname_m.txt",
+      "raw_sha256": "d6ea8cf4e6797465e843bbac56163777bec07ac9a8cebb9b05e6c96f5d9b33f2",
+      "public_sha256": "d6ea8cf4e6797465e843bbac56163777bec07ac9a8cebb9b05e6c96f5d9b33f2",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_uname_r.txt",
+      "raw_sha256": "7cb005d620c9bf09c5c95e9ac8c68e1ddf1c16155c2a6ee3840cefa8c3b2cdf8",
+      "public_sha256": "7cb005d620c9bf09c5c95e9ac8c68e1ddf1c16155c2a6ee3840cefa8c3b2cdf8",
+      "redacted": false
+    },
+    {
+      "path": "raw/pre_vk_send_path.txt",
+      "raw_sha256": "b2f8ac3cceaa497c929c9592802c9a34e1ee26e8d5e3d2790e4ad89951067d13",
+      "public_sha256": "b2f8ac3cceaa497c929c9592802c9a34e1ee26e8d5e3d2790e4ad89951067d13",
+      "redacted": false
+    },
+    {
+      "path": "raw/restore_id_after_root_off.txt",
+      "raw_sha256": "a385d1b79d0c7a0f090bafc74392f78dc226152ee6f5f012edc2e419993cf710",
+      "public_sha256": "a385d1b79d0c7a0f090bafc74392f78dc226152ee6f5f012edc2e419993cf710",
+      "redacted": false
+    },
+    {
+      "path": "raw/restore_root_off.txt",
+      "raw_sha256": "6667042b629240d444116555b8f98368ba464e672980623c2dbdb02741c0089d",
+      "public_sha256": "6667042b629240d444116555b8f98368ba464e672980623c2dbdb02741c0089d",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_awk_path.txt",
+      "raw_sha256": "94a11536cb1d5c2e68ca477cc523dce897741420a2225b5d79ccc07294e95106",
+      "public_sha256": "94a11536cb1d5c2e68ca477cc523dce897741420a2225b5d79ccc07294e95106",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_candidate_stat_1016.txt",
+      "raw_sha256": "6ce7a8e3ef63b3a11b67a9719977b502b73427b053c499d39e917adbdd1cdbbf",
+      "public_sha256": "6ce7a8e3ef63b3a11b67a9719977b502b73427b053c499d39e917adbdd1cdbbf",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_candidate_stat_449.txt",
+      "raw_sha256": "797c53e91df8c9aac0b9e637f9e3ae4b4a88637ff5bfe46f9759a2231d06b9e8",
+      "public_sha256": "797c53e91df8c9aac0b9e637f9e3ae4b4a88637ff5bfe46f9759a2231d06b9e8",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_candidate_status_576.txt",
+      "raw_sha256": "729256dc722040d4672fd83f230590d08907d86ce392b08f092bd6a2f2ab678c",
+      "public_sha256": "2bdd50df75fa9a39f699dda8f459d83d5b03b9c14b61f4987940a57d9a3857bd",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_clk_tck.txt",
+      "raw_sha256": "5d12b3bf50a8e9853716e4eae2ae45557d5e5b838dff53cb4c1f6395ff6fa116",
+      "public_sha256": "5d12b3bf50a8e9853716e4eae2ae45557d5e5b838dff53cb4c1f6395ff6fa116",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_cpu_online.txt",
+      "raw_sha256": "1956ce301391dad72f591a354d18abcf8167754a749aedced10be2589716de76",
+      "public_sha256": "1956ce301391dad72f591a354d18abcf8167754a749aedced10be2589716de76",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_date.txt",
+      "raw_sha256": "1060461c40cf03592ffd5864209fd9f77e21a2777ab672e845deba888bbb0d2e",
+      "public_sha256": "1060461c40cf03592ffd5864209fd9f77e21a2777ab672e845deba888bbb0d2e",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_df.txt",
+      "raw_sha256": "ad29e5fd2ca0d511a6e4ed44fdf823f7c13f93de7927ccd83a00ad2b171094ff",
+      "public_sha256": "ad29e5fd2ca0d511a6e4ed44fdf823f7c13f93de7927ccd83a00ad2b171094ff",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_gdb.txt",
+      "raw_sha256": "d269062b55e2416579a94fcffe6b2160e0f6c44703292edfe524fc41fdd43968",
+      "public_sha256": "d269062b55e2416579a94fcffe6b2160e0f6c44703292edfe524fc41fdd43968",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_glibc.txt",
+      "raw_sha256": "3ddd5628993d4659a367fae78b646cbec5485775645eb2351fae02bef3e7608f",
+      "public_sha256": "3ddd5628993d4659a367fae78b646cbec5485775645eb2351fae02bef3e7608f",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_id.txt",
+      "raw_sha256": "29c662332915b1df920a9f1aa27aa184e7f0a33a70ddfd8852115e34d38461e6",
+      "public_sha256": "29c662332915b1df920a9f1aa27aa184e7f0a33a70ddfd8852115e34d38461e6",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_libc_version.txt",
+      "raw_sha256": "605ae2fc834231c0fb045e45bc3265f3b0428796ec5ed7c1cfc95cd74bcf902a",
+      "public_sha256": "605ae2fc834231c0fb045e45bc3265f3b0428796ec5ed7c1cfc95cd74bcf902a",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_meminfo.txt",
+      "raw_sha256": "edc72066621cf0f01073aa76e7f94ac0ab45252ddc4c5348f69296a82b1fea4b",
+      "public_sha256": "edc72066621cf0f01073aa76e7f94ac0ab45252ddc4c5348f69296a82b1fea4b",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_os_release.txt",
+      "raw_sha256": "52a4e23f7941686ad0d5007dddaafcbe94ab35ed14e23e0da9bf7c29d509f8d5",
+      "public_sha256": "b161b1d1fcc312eae828e11f5553ef0b452aefce7549852696c9c5a5d7f36b0f",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_proc_uptime.txt",
+      "raw_sha256": "673d7d7aa68c8202e09e9c1e463b9fd989a034dbe86513971f9a35a240e4200e",
+      "public_sha256": "673d7d7aa68c8202e09e9c1e463b9fd989a034dbe86513971f9a35a240e4200e",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_process_view.txt",
+      "raw_sha256": "ea13de204ecfee4382e19a7641d7d0e80e58fbd219f7123d33c82e45793261c4",
+      "public_sha256": "c9e4ed214abf72ed0cd8a3f0da8a92b64f9ab18bde105ec293b198f470e990c6",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_ptrace_scope.txt",
+      "raw_sha256": "2ab7649b0cac37ea2cd1f36c35ffbe2a1d7ed37a330a82fa2f7729ed74306f26",
+      "public_sha256": "2ab7649b0cac37ea2cd1f36c35ffbe2a1d7ed37a330a82fa2f7729ed74306f26",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_1016.txt",
+      "raw_sha256": "e8114a63c4ff77e0503ded619b2b31196ca97353a81871832e2c2d1889f7365c",
+      "public_sha256": "6261a3a298b4e1f684de6a5bb0ecef9bcee2f096610db6b6a4455b5e5d11d51e",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_1016_216.txt",
+      "raw_sha256": "3fab1a5b8210789166bad5c7ae6ffe53ce3be775cb27047ddbcd2f2592a421f3",
+      "public_sha256": "3fab1a5b8210789166bad5c7ae6ffe53ce3be775cb27047ddbcd2f2592a421f3",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_1016_279.txt",
+      "raw_sha256": "3d5e965dea7dd10611d4e990d393d4893c017eadf66178d7d78521835e57c27a",
+      "public_sha256": "3d5e965dea7dd10611d4e990d393d4893c017eadf66178d7d78521835e57c27a",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_1016_576.txt",
+      "raw_sha256": "8ad97580391b19faceb21cb7e9f06709f038a73f06c3e0634e0d4a01b2d20527",
+      "public_sha256": "750167a7f1b6d974db3d5d06377058fe39145b403548a91cc547ce2c1a4b9d8a",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_1016_585.txt",
+      "raw_sha256": "b802e7224c435642753523604ffeddbca59affe6befbe552341c587b6ce044d7",
+      "public_sha256": "3e4afd595fa004af2ed833ba0926158bcfe498aef77c21e031aa607ab3bb70dc",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_1016_729.txt",
+      "raw_sha256": "fd9b0b6581f0bf6db5a7115471742e2090dab4da7b73acbfbb3f077d4075e57a",
+      "public_sha256": "685b483f1d1fe13370cdbfde6ec4a51779acd3426f2201f3eeebda548e438e56",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_1016_735.txt",
+      "raw_sha256": "ca3a7cfe755cb1b9c19aebf71e020811c1a8ac02f31d77a8058b83436a39d398",
+      "public_sha256": "cf08286903276873de373b3fcc377b2ba6abcead80de1588c9dbdfc1763ae50e",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_1016_744.txt",
+      "raw_sha256": "4cec518647e60b448756c4cb16bba960d2dfc0c5172e6ddd72dd0f7e8a4a6bf4",
+      "public_sha256": "0b4b4747c1f80677014e7cb83b3499f140c43537ae2916b295f623aabc1e003a",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449.txt",
+      "raw_sha256": "4557d02ef221ff618b7fe5b8a5a0fe533acf915742bc82ae776b55e04047e0a9",
+      "public_sha256": "d9982adad6dc5df832cdfb52f8e892466c3b98b0a4787a1f6a5efacf6a8735b6",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449_1017.txt",
+      "raw_sha256": "19e7ccc15e804c660013ad222bc748328311bda6ce3fa00c0792208965cae681",
+      "public_sha256": "6a054b700258780dc7ec4964bacf09db4b84252f78675d819c93ea3c4634d089",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449_1210.txt",
+      "raw_sha256": "fff2b4532c597e28777d2bfd903549c5b63e82c738bc2fbcc457fc83c444741f",
+      "public_sha256": "fff2b4532c597e28777d2bfd903549c5b63e82c738bc2fbcc457fc83c444741f",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_449_1494.txt",
+      "raw_sha256": "4c2aada003fb5c14cd92e22999d3c67b23905a47aa9cf02dc95a8c2d121521d3",
+      "public_sha256": "4c2aada003fb5c14cd92e22999d3c67b23905a47aa9cf02dc95a8c2d121521d3",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_449_1506.txt",
+      "raw_sha256": "a94e9471d163c313527bf644eed03efe5740084ff6b316555b1d817726206c13",
+      "public_sha256": "a94e9471d163c313527bf644eed03efe5740084ff6b316555b1d817726206c13",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_449_1507.txt",
+      "raw_sha256": "e4fecfcba3439ed41ad3d400e2634eb0bb4b27c2a8e9bd791c9dbf9929fd58bb",
+      "public_sha256": "e4fecfcba3439ed41ad3d400e2634eb0bb4b27c2a8e9bd791c9dbf9929fd58bb",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_449_216.txt",
+      "raw_sha256": "3fab1a5b8210789166bad5c7ae6ffe53ce3be775cb27047ddbcd2f2592a421f3",
+      "public_sha256": "3fab1a5b8210789166bad5c7ae6ffe53ce3be775cb27047ddbcd2f2592a421f3",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_449_279.txt",
+      "raw_sha256": "96d31f5386aade26a77fea03717a8aa9afb5f23416d7245cdb5f65ac12bf062d",
+      "public_sha256": "96d31f5386aade26a77fea03717a8aa9afb5f23416d7245cdb5f65ac12bf062d",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_rediscover_449_2984.txt",
+      "raw_sha256": "512051270bcb5311eddad309c6f6526dd91ef1ee800bb26776bcb93fe7e6fb6c",
+      "public_sha256": "9020a5f21d04dc00926637e28f612bff7ea904c935aa55a4e622f7ea22d50338",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449_576.txt",
+      "raw_sha256": "48da88f16aa42886f16b56099af7e860a8f8b505f2b9143f28d31eeb5a92c393",
+      "public_sha256": "1d135624a2a6f317d24bf9c3a9e3426b2e5b67f5441e6ab896e844a59d165be6",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449_585.txt",
+      "raw_sha256": "af0a344963d31f8dc8a9c074aa8a453050ef896f96325d986fb80093e4a4e8d3",
+      "public_sha256": "10b545497d793d79eb3a99139d8e214aa629838613112e9dcfb4c5efd37d9b59",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449_729.txt",
+      "raw_sha256": "cb00332b77461eb52baad83fe0e9ac113b05e9733e34668bfdc46fb18f0d9cec",
+      "public_sha256": "4659b7a3e86b9e8e8ade5593aaf74d48d115465b840bf983f872a2b0c299eb6f",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449_735.txt",
+      "raw_sha256": "8abec48a90052c444c2eec7e9a17bfcf3142889aa421659a8d39506b326cf667",
+      "public_sha256": "bb5a801ba9966ac90478c716f6420be844f072275b58b22b981b58daa6074d9e",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_rediscover_449_744.txt",
+      "raw_sha256": "74de45a19083cb320930bddb4b2f0c4ca0a5fa3a601b6b4c1282107cab9e86d9",
+      "public_sha256": "22d0a33ae09202e4a5a256a06d10e28393ce73c905f65eacee20bab2ae5405f9",
+      "redacted": true
+    },
+    {
+      "path": "raw/root_shell_status.txt",
+      "raw_sha256": "26fbb3070d4c841ed59165feb0d10cb0ed49ecc2697d823d42635c69cdb80f53",
+      "public_sha256": "26fbb3070d4c841ed59165feb0d10cb0ed49ecc2697d823d42635c69cdb80f53",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_uname_m.txt",
+      "raw_sha256": "d6ea8cf4e6797465e843bbac56163777bec07ac9a8cebb9b05e6c96f5d9b33f2",
+      "public_sha256": "d6ea8cf4e6797465e843bbac56163777bec07ac9a8cebb9b05e6c96f5d9b33f2",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_uname_r.txt",
+      "raw_sha256": "7cb005d620c9bf09c5c95e9ac8c68e1ddf1c16155c2a6ee3840cefa8c3b2cdf8",
+      "public_sha256": "7cb005d620c9bf09c5c95e9ac8c68e1ddf1c16155c2a6ee3840cefa8c3b2cdf8",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_uptime.txt",
+      "raw_sha256": "f0506c3baede1a23465478c2900abd5cf53ded58568cd9d175b6cc43e2feaa67",
+      "public_sha256": "f0506c3baede1a23465478c2900abd5cf53ded58568cd9d175b6cc43e2feaa67",
+      "redacted": false
+    },
+    {
+      "path": "raw/root_vk_send_path.txt",
+      "raw_sha256": "b2f8ac3cceaa497c929c9592802c9a34e1ee26e8d5e3d2790e4ad89951067d13",
+      "public_sha256": "b2f8ac3cceaa497c929c9592802c9a34e1ee26e8d5e3d2790e4ad89951067d13",
+      "redacted": false
+    },
+    {
+      "path": "state.json",
+      "raw_sha256": "3b50a331a144741bb3df5f247a701ac1a8eabc4a0a8c9d46a6696fdfc9ee07c9",
+      "public_sha256": "9c8cab2dd6c977e74c747d4190016c1c60bbe6f600ec5d521e83d6e92309fc3d",
+      "redacted": true
+    }
+  ],
+  "policy": "Full stream and original identifiers retained locally, available on request. Public files use established aliases; board paths retained."
+}

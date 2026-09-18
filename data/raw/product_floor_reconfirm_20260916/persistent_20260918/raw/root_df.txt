@@ -1,0 +1,22 @@
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/root             1.3G  1.3G     0 100% /.org_rootfs
+/dev/subroot2          37M   37M     0 100% /.org_rootfs/prd
+/dev/mmcblk0p21       3.9G  1.4G  2.5G  36% /.org_rootfs/opt
+overlay               3.9G  1.4G  2.5G  36% /
+/dev/mmcblk0p22       640K  640K     0 100% /.org_rootfs/factory_peq
+overlay               3.9G  1.4G  2.5G  36% /factory_peq
+overlay               3.9G  1.4G  2.5G  36% /prd
+none                  629M     0  629M   0% /dev
+tmpfs                 781M  400K  781M   1% /tmp
+tmpfs                 781M  1.7M  780M   1% /run
+/dev/mmcblk0p20        20M  9.5M   11M  48% /mnt/systemrw
+/dev/mmcblk0p21       3.9G  1.4G  2.5G  36% /opt
+tmpfs                 781M  196K  781M   1% /run/user/5001
+tmpfs                 781M  2.6M  779M   1% /dev/shm
+/dev/mmcblk0p17        12M  2.6M  9.5M  22% /mnt/drm
+tmpfs                 781M     0  781M   0% /sys/fs/cgroup
+tmpfs                 781M     0  781M   0% /opt/media
+/dev/mmcblk0p21       3.9G  1.4G  2.5G  36% /opt/usr/home/owner/content
+
+RC=0
+DONE

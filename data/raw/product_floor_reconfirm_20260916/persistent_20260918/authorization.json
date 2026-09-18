@@ -1,0 +1,28 @@
+{
+  "schema": "product-floor-persistent.v1",
+  "date": "2026-09-18",
+  "tag": "product-floor-persistent-contract-20260918",
+  "minimum_push_to_connect_seconds": 600,
+  "authorization": "PM: one readonly root round; record id before/on/off, restore UID 5001 on all exits. No board files, push, packages, configuration changes, attach, injection, kill or reboot.",
+  "transport": "Exactly one persistent sdb shell for sampling. POSIX shell program is fed through stdin, never stored on board. Separate setup/restoration queries retain the 200-byte request limit; every stdin program line is also at most 200 UTF-8 bytes. Host sends one CONTINUE/END acknowledgement per completed batch in the same stdin stream. EOF prevents further batches. No reconnect or sampling rerun.",
+  "connectivity": "sdb devices plus a short id query; on failure, one kill-server/start-server/connect sequence and one self-check retry, before root on. No second retry.",
+  "candidates_snapshot": "data/raw/product_floor_reconfirm_20260916/diskless_20260917/candidates.json",
+  "candidates": "Reuse exactly the previous 11 candidates; confirm PID, comm, start_ticks. Before sampling rediscover restarted processes by unique exact comm, record changes; ambiguous/absent targets stop. Within sampling any identity change stops.",
+  "sampling": {
+    "duration_seconds": 600,
+    "nominal_points": 601,
+    "target_period_seconds": 1,
+    "schedule": "Board shell compares epoch seconds to preceding batch start + 1; sleep 1 only while before that deadline. No burst catch-up. Batch processing can overrun; all actual board and host timestamps are retained. Stop normally only after every target spans >=600 s on both board epoch and host monotonic clocks, and board shell elapsed seconds >=600. Count is measured, not padded to 601.",
+    "framing": "Random nonce in SESSION/SAMPLE/READ/RC/END/FINAL markers. Each read has remote RC and DONE/FAIL; END commits only a complete batch. Host timestamps receipt of marker lines. Final remote RC=0 DONE and host transport exit 0 are both required.",
+    "health": "15 seconds with no received bytes, malformed/missing frame, process change, read failure or disconnect before FINAL => STOP. No automatic reconnect, no retry, no skip. Preserve complete batches and partial raw stream.",
+    "scope": "Mapping headers and every Private_Dirty field are filtered by awk, then summed on host by unchanged analyze_floor.smaps. All heap/other-anon/file buckets preserved. stat read before and after smaps; globals read once per batch (meminfo, zram mm_stat, swaps). Sequential observations are not simultaneous; record read/batch spans.",
+    "tools": "Probe cat/date/sleep/awk together before any sample; no timeout or sha256sum needed. Board epoch is read with date +%s (one-second resolution, represented as epoch_ns by appending nine zeros); precise interval/jitter comes from host monotonic receipt times, not fictional board nanosecond precision. No synthetic zeros for unavailable readings."
+  },
+  "analysis": {
+    "classifier": "Unmodified audit_phenotypes.release_ratio_census, including dual tags and n/u outcomes. First current sample is current baseline; not a historical activity increment.",
+    "floor": "Absolute minimum and first/last 60 actual board seconds minima; no live/bin or reclaimability inference.",
+    "confounding": "Report positive zram steps, majflt, total PD and other-anon changes at largest drawdown. Global net swap flatness is not unique allocator attribution.",
+    "history": "enlightenment +1736 KiB and ServiceA +788 KiB are activity increments; ServiceH 2360 KiB is an upper bound. Passive present absolute floors cannot be equated to those increments."
+  },
+  "failure": "Any gate failure stops observation and mandates root off plus UID 5001 proof if elevation attempted. An incomplete run yields STOP, not a 10-minute classification. Signed-file policy remains intact; stdin is PM-authorized, no script-signature bypass or file execution."
+}

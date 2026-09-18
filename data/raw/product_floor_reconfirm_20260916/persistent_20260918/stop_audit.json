@@ -1,0 +1,157 @@
+{
+  "schema": "persistent-presampling-stop.v1",
+  "status": "STOP",
+  "reason_code": "STOP_DISCOVERY_SHORT_CONNECTION_REGRESSION",
+  "original_reason": "KeyboardInterrupt: ",
+  "completed_sdb_receipts": 556,
+  "rediscovery_stat_receipts": 520,
+  "server_resets": 0,
+  "persistent_sampling_sessions": 0,
+  "nominal_points": 601,
+  "completed_points": 0,
+  "authorization": {
+    "schema": "product-floor-root-receipt.v1",
+    "uid_transitions": [
+      {
+        "label": "pre_id_before_root_on",
+        "uid": 5001,
+        "ended_utc": "2026-09-18T03:44:20.360834+00:00"
+      },
+      {
+        "label": "pre_id_after_root_on",
+        "uid": 0,
+        "ended_utc": "2026-09-18T03:44:21.545050+00:00"
+      },
+      {
+        "label": "restore_id_after_root_off",
+        "uid": 5001,
+        "ended_utc": "2026-09-18T03:45:30.313728+00:00"
+      }
+    ],
+    "remote_requests": 552,
+    "maximum_remote_request_bytes": 106,
+    "root_on_calls": 1,
+    "root_off_calls": 1,
+    "script_pushes": 0
+  },
+  "candidates": [
+    {
+      "target": "Supplemental01",
+      "comm": "AppProcD",
+      "prior_pid": 449,
+      "prior_start_ticks": 684,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 576,
+      "start_ticks": 954,
+      "elapsed_s_at_baseline": 1400.264,
+      "evidence": "raw/root_rediscover_449_576.txt"
+    },
+    {
+      "target": "Supplemental02",
+      "comm": "ServiceD",
+      "prior_pid": 1016,
+      "prior_start_ticks": 3004,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 1017,
+      "start_ticks": 2726,
+      "elapsed_s_at_baseline": 1393.176,
+      "evidence": "raw/root_rediscover_449_1017.txt"
+    },
+    {
+      "target": "Supplemental03",
+      "comm": "AppProcB",
+      "prior_pid": 785,
+      "prior_start_ticks": 1779,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 729,
+      "start_ticks": 1822,
+      "elapsed_s_at_baseline": 1396.792,
+      "evidence": "raw/root_rediscover_449_729.txt"
+    },
+    {
+      "target": "Supplemental04",
+      "comm": "ServiceE",
+      "prior_pid": 450,
+      "prior_start_ticks": 686,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 585,
+      "start_ticks": 963,
+      "elapsed_s_at_baseline": 1400.2279999999998,
+      "evidence": "raw/root_rediscover_449_585.txt"
+    },
+    {
+      "target": "Supplemental05",
+      "comm": "AppProcF",
+      "prior_pid": 2686,
+      "prior_start_ticks": 14673,
+      "status": "NOT_CONFIRMED"
+    },
+    {
+      "target": "Supplemental06",
+      "comm": "ServiceC",
+      "prior_pid": 657,
+      "prior_start_ticks": 1358,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 735,
+      "start_ticks": 1870,
+      "elapsed_s_at_baseline": 1396.6,
+      "evidence": "raw/root_rediscover_449_735.txt"
+    },
+    {
+      "target": "enlightenment_243",
+      "comm": "enlightenment",
+      "prior_pid": 243,
+      "prior_start_ticks": 288,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 279,
+      "start_ticks": 326,
+      "elapsed_s_at_baseline": 1402.7759999999998,
+      "evidence": "raw/root_rediscover_449_279.txt"
+    },
+    {
+      "target": "ServiceH_1975",
+      "comm": "ServiceH",
+      "prior_pid": 1975,
+      "prior_start_ticks": 3218568,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 2984,
+      "start_ticks": 14295,
+      "elapsed_s_at_baseline": 1346.8999999999999,
+      "evidence": "raw/root_rediscover_449_2984.txt"
+    },
+    {
+      "target": "Supplemental09",
+      "comm": "slive-provider-",
+      "prior_pid": 1051,
+      "prior_start_ticks": 3100,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 1210,
+      "start_ticks": 3868,
+      "elapsed_s_at_baseline": 1388.608,
+      "evidence": "raw/root_rediscover_449_1210.txt"
+    },
+    {
+      "target": "Supplemental10",
+      "comm": "cynara",
+      "prior_pid": 206,
+      "prior_start_ticks": 249,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 216,
+      "start_ticks": 259,
+      "elapsed_s_at_baseline": 1403.0439999999999,
+      "evidence": "raw/root_rediscover_449_216.txt"
+    },
+    {
+      "target": "ServiceA_684",
+      "comm": "ServiceA",
+      "prior_pid": 684,
+      "prior_start_ticks": 1501,
+      "status": "OBSERVED_IN_DISCOVERY",
+      "pid": 744,
+      "start_ticks": 1906,
+      "elapsed_s_at_baseline": 1396.456,
+      "evidence": "raw/root_rediscover_449_744.txt"
+    }
+  ],
+  "accounting": "Completed receipts only; interrupt may leave one started query without a completed receipt. No board reconnect or rerun after STOP."
+}

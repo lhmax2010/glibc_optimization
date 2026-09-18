@@ -1,0 +1,13 @@
+{
+  "schema": "product-floor-operator-stop.v1",
+  "date": "2026-09-18",
+  "reason_code": "STOP_DISCOVERY_SHORT_CONNECTION_REGRESSION",
+  "reason": "The persistent sampling session had not started. Changed candidate PIDs triggered the inherited per-PID short-SDB rediscovery loop. This violates the round's no-high-frequency-short-connections intent, so the host driver was interrupted rather than allowed to continue.",
+  "action": "SIGINT to the uniquely resolved local Python driver only; no signal/kill command sent to any board target. Driver finally block executed sdb root off and obtained UID 5001 with RC=0 DONE.",
+  "original_state_reason": "KeyboardInterrupt: ",
+  "sampling_sessions_started": 0,
+  "complete_samples": 0,
+  "retry_after_stop": false,
+  "unclosed": "Candidate rediscovery must also avoid the inherited per-PID connection pattern before a future authorized run. Host stream tests are not product-board validation.",
+  "accounting": "556 completed command receipts were retained. An in-flight read interrupted before completion may lack its completion record; the receipt count is not asserted to be the total number of sends."
+}

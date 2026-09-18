@@ -5,10 +5,12 @@ import csv
 import hashlib
 import json
 from pathlib import Path
+import re
 import shlex
 
 import run_persistent as runner
 from analyze_persistent import Parser, analyze
+from analyze_floor import proc_stat
 from audit_authorized_receipt import audit
 from publish_compact import redactor, privacy
 
@@ -81,7 +83,16 @@ def publish(source,output,mapping,address,receipt):
     if output.exists():raise ValueError('refusing publication overwrite')
     clean=redactor(mapping,address)
     files=[p for p in source.iterdir() if p.is_file() and p.suffix in ('.json','.jsonl','.tsv')]
-    files += list((source/'raw').glob('*.txt'))
+    known={c['comm'] for c in json.loads(runner.SNAPSHOT.read_text())['selected']}
+    # Repeated system-wide stat queries are an incident, not a time series.
+    # Keep every command/hash locally; publish identity/baseline, matching
+    # candidate records and errors, not hundreds of unrelated kernel tasks.
+    for path in (source/'raw').glob('*.txt'):
+        if re.fullmatch(r'root_rediscover_\d+_\d+',path.stem):
+            rc,value=runner.old.single.parse(path.read_text())
+            if not rc and clean(proc_stat(value)['comm']) not in known:
+                continue
+        files.append(path)
     if state['status']=='STOP' and (source/'stream.raw').exists():
         raw=(source/'stream.raw').read_bytes()
         # Large smaps transcript stays local; preserve failure tail verbatim.
