@@ -19,6 +19,8 @@ This is the review entry point for the project. Start with the consolidated stat
 
 ## Experiment Timeline
 
+- 2026-09-18 — [产品 floor 全流程单会话续跑](product_floor_reconfirm_20260916.md#111-结果与原始证据)：候选发现与采样已合并进一个工作会话，119 项开跑前 host 测试通过；连通自检设备列表为空，唯一 server 重置的 start-server 报 protocol fault，即 STOP。未提权、0 工作会话、0 点，公开原文与停止复算入口，不发布 floor 结论。
+
 - 2026-09-18 — [产品 floor 单会话方法续跑](product_floor_reconfirm_20260916.md#101-结论与停止原因)：合同/分析器先行，产品身份与 root 门通过；旧候选 PID 变化触发遗留逐 PID 短连接重发现，host 主动 STOP，长驻采样未启动、0 点。root off 后 UID5001 已核验，未重连/重跑；公开停止回执，待重发现路径闭合，不发布 floor 结论。
 
 - 2026-09-17 — [产品 floor 不落盘续跑](product_floor_reconfirm_20260916.md#92-执行结论不落盘读取已开始sdb-传输门-stop)：零 push/板端文件；产品身份及 11 候选 PID/start 核对通过。仅首批完整，第二批 SDB 返回 Server is not running/serial 错误，按门停止，未重跑；root off 后 UID5001 已核验。公开 partial 原文与提权回执，不发布 10 分钟分类/floor 结论。

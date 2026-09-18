@@ -1,0 +1,11 @@
+{
+  "status": "STOP",
+  "working_sessions": 0,
+  "short_id_queries": 1,
+  "completed_batches": 0,
+  "raw_frames": 0,
+  "board_file_writes": 0,
+  "board_sampling_retries": 0,
+  "id_after_root_off": null,
+  "reason": "ValueError: STOP SDB reported failure: reset_start"
+}

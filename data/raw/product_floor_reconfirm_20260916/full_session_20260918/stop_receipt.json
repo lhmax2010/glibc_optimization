@@ -1,0 +1,20 @@
+{
+  "schema": "full-session-connectivity-stop.v1",
+  "status": "STOP",
+  "reason": "STOP_SDB_SERVER_PROTOCOL_FAULT",
+  "source_commit": "0f02fe3f0673ef4456e8ed44b0cbb90d193aad05",
+  "contract_commit": "98bcdeb36b08cdb9943305a031a29554bdb2f179",
+  "contract_push_interval_seconds": 620.487086593,
+  "completed_sdb_commands": 4,
+  "server_reset_attempts": 1,
+  "connect_calls": 0,
+  "short_id_attempts": 1,
+  "working_sessions": 0,
+  "completed_points": 0,
+  "root_on_calls": 0,
+  "root_off_calls": 0,
+  "uid_proven_this_round": false,
+  "identity_proven_this_round": false,
+  "board_file_writes": 0,
+  "limitation": "No board identity or floor observation; local server failure does not establish device state."
+}

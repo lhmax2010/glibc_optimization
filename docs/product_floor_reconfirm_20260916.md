@@ -1201,13 +1201,13 @@ host 收线：补入两项本轮公开停止回执测试后，共 105 项相关�
 文档链接、63 对原始/公开哈希通过，当前树 4852 文件端点扫描零命中，既有全局
 脱敏映射原字符串检查零命中。保留用户原有的未跟踪目录，不纳入本轮提交。
 
-## 11. 2026-09-18 续跑：全流程单会话（事前规格）
+## 11. 2026-09-18 续跑：全流程单会话，连通自检 STOP
 
 PM 于 2026-09-17 明确确认两个权限例外：会话前允许一次独立 root on，工作
 长驻会话的首项读取立即记录 id；会话退出并 root off 后，允许唯一一次
 RC/DONE id 短查询核验 UID5001。连通自检仍为 devices + 极短 id（兼作提权前
 记录）；仅初次失败允许一次 server kill/start/connect 与一次自检重试。
-**身份、基线、一次性候选发现、600 s 采样及无文件残留核验全部在同一工作
+**规格要求：身份、基线、一次性候选发现、600 s 采样及无文件残留核验全部在同一工作
 会话内完成。** 不再调用 §10 的逐 PID 短连接重发现路径。
 
 冻结规格见 [full_session_contract.json](../tools/runners/product_floor_reconfirm_20260916/full_session_contract.json)，
@@ -1224,4 +1224,115 @@ RC/DONE id 短查询核验 UID5001。连通自检仍为 devices + 极短 id（�
 接收时间。实际点数不补齐；存活候选的板端与 host 时钟均需覆盖 600 s。各读
 保留 RC/DONE；15 s 无输出、断开或非消失类读错立即 STOP，不重连、不重跑。
 所有请求行不超过 200 字节。全程无板端落盘、负载、安装、注入、attach、kill
-或 reboot；退出路径必须 root off 并核验。实际结果与时间线在执行后续记。
+或 reboot；任何已尝试提权的退出路径必须 root off 并核验。实际结果与时间线见 §11.1。
+
+### 11.1 结果与原始证据
+
+**结论：STOP_SDB_SERVER_PROTOCOL_FAULT，0 个工作长会话、0 个采样点；未提权。**
+这次停止发生在连通自检，尚未进入身份门、候选发现或采样。不是 §10 的逐 PID
+连接问题再次发生：新执行器已经去掉该路径，但本次现场没有走到工作会话，不能
+把 host 测试通过表述为产品板全流程已经验证。
+
+| host UTC，2026-09-18 | 动作与结果 |
+|---|---|
+| 06:15:01.857183 | [合同推送回执](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/contract_push.json)：commit `98bcdeb36b08cdb9943305a031a29554bdb2f179`；annotated tag `product-floor-full-session-contract-20260918`，对象 `2cb55f752bab2ee1853700c39583659837a9c5dd` |
+| 06:25:22.344310 | [字节与时间门](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/contract_gate.json)：推送后 620.487087 s；执行器 `0f02fe3f0673ef4456e8ed44b0cbb90d193aad05` |
+| 06:25:22.377388 → 06:25:22.454086 | `sdb devices`：列表无设备，host RC=0 |
+| 06:25:22.454418 → 06:25:22.457702 | 唯一预检 id 短查询：target not found / serial wrong，host RC=1，无远端 RC/DONE，不能证明 UID |
+| 06:25:22.457829 → 06:25:22.460332 | 授权的唯一一次 `sdb kill-server`：无输出，host RC=0 |
+| 06:25:22.460435 → 06:25:22.529723 | `sdb start-server`：`error: protocol fault: no status`，虽 host RC=0，仍按错误文本判失败 |
+| 06:25:22.529942 | 立即 STOP；未继续 connect、第二次自检、root on 或任何板端读取 |
+
+逐条全文见[设备列表](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/raw/devices_0.txt)、
+[预检 id](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/raw/selfcheck_0.txt)、
+[kill-server](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/raw/reset_kill.txt)、
+[start-server](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/raw/reset_start.txt)。
+可见输出原文（仅端点按既有映射编辑）：
+
+```text
+List of devices attached
+error: target not found
+error: serial number '<PRODUCT_BOARD_IP>:26101' wrong
+error: protocol fault: no status
+```
+
+上框按上述命令顺序拼列以便阅读，`kill-server` 原文件为空；完整记录仍分文件保存。
+[命令回执](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/commands.jsonl)与
+[发送前日志](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/intents.jsonl)
+均恰好四项，避免遗漏“已发送但未记账”的尝试。没有测试端口、SSH、额外 SDB
+查询或第二次 server 重置。这个证据只能定位到**本次 host SDB 通道未就绪**，
+不能证明产品板掉线、身份变化或 sdbd 状态；没有为进一步定位而越过停止门。
+
+### 11.2 完整性、画像与风险结论
+
+| 项目 | 本次实际结果 |
+|---|---|
+| 身份三项及旁证 | NOT_EXECUTED；§10 的 kernel/armv7l/TV 镜像/vk_send 是历史记录，不冒充本次身份确认 |
+| 环境、gdb、ptrace_scope | NOT_EXECUTED；历史 glibc 2.40-1.12 与测试板 2.40-1.6 同系列但构建不同，当前仍需复核 |
+| 候选与 PID/start、当前 Top10 | NOT_EXECUTED；未取得当前名单，不沿用旧 PID 作为有效身份 |
+| 名义点数 / 实得 | 601 / 0；无 600 s 窗口，未创建 timeseries 或 summary |
+| 间隔中位 / 范围 / 抖动 | NOT_EVALUATED；没有样本，不填零、不借用历史间隔 |
+| enlightenment / ServiceH / ServiceA 分类、floor | 全部 NOT_EVALUATED；不能用旧 +1736 KiB / 2360 KiB 上界 / +788 KiB 填充现值 |
+| 当前权限 | id 查询未成功；本轮 root on/off 均 0 次，不能声称新取得 UID5001 原文 |
+| 收尾 | 工作会话未建，未推送/创建板端文件，无需删除；板端 /tmp 与进程收尾读取未执行 |
+
+**a)** 尚不能确认任何候选 floor 仍存在且量级足够，不据此进入注入轮。
+**b)** 没有本轮分类结果，不能判断相对 08-14 是否变化；镜像、业务与采样时段
+只是未来对照的混杂因素，不是已证实的变化原因。
+**d)** 全流程单会话消除了设计上的高频建连，仍有顺序读取与观察器开销；实际
+间隔尚未取得。将来即使完成，被动绝对 floor 也不等于历史活动增量，smaps 不区分
+live/bin，不能直接推算可回收量。
+
+**c) 待 PM 决策：** 首先确认 host SDB server/产品板通道恢复，再授权新的只读
+执行尝试；不将本轮授权默认延长为自动重试。通道恢复且画像完成后，才讨论逐目标
+注入：enlightenment 的 UI/输入暂停，ServiceH 的加载/运行时与 IPC 超时，ServiceA
+及其他服务的依赖/watchdog 风险均需 owner 确认。建议首次每目标至多一次受控探针，
+明确 PID/start、静置或释放时机、暂停预算、现场观察与调试器正常 detach/资源回收
+方案；不得默认授权 kill/restart/reboot。本轮没有任何 attach 或注入。
+
+产品拒绝未签名脚本的既有事实仍有效：正式 trim 钩子或探针必须经过认可的
+签名/正规构建链，不能靠推送未签名脚本落地。本次 stdin 只读方法是 PM 限定的
+采集许可，不是绕过签名或授予产品注入权限。
+
+### 11.3 复现与 host 验证
+
+[新执行器及使用说明](../tools/runners/product_floor_reconfirm_20260916/README.md#2026-09-18-全流程单会话)
+随轮提交。开跑前 119 项相关 host 测试通过，真实 POSIX shell 模拟覆盖两批循环、
+CONTINUE、消失候选退役及其余候选继续、所有旧 PID 变化时仍只有一个工作会话、
+root-on/off 失败、断流/静默、半帧、空用户态 smaps 拒绝与 200 字节边界。测试的
+加速窗口不充当板上 600 s 证据。干净克隆完整 verify 为 OVERALL PASS；该结果不
+代表板端画像完成。补录本次错误文本 host RC=0 仍停止的回归，禁止误判通道成功。
+
+只在 host 复算此次停止证据（不连接板子，不依赖 tag 名解析）：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/audit_full_session_stop.py \
+  --source data/raw/product_floor_reconfirm_20260916/full_session_20260918 \
+  --output /tmp/product-floor-full-session-stop.json
+cmp /tmp/product-floor-full-session-stop.json \
+  data/raw/product_floor_reconfirm_20260916/full_session_20260918/stop_receipt.json
+```
+
+预期输出：
+
+```text
+PASS full-session STOP audit: 0 working sessions; 0 points; 0 elevation; one server reset failed
+```
+
+cmp 应静默。[停止回执](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/stop_receipt.json)
+校验固定合同 commit 内文件哈希、公共文件字节、四条发送顺序和无后续操作；
+浅克隆缺少该 commit 时明确提示 `git fetch --no-tags origin <commit>`，不跳过。
+[发布清单](../data/raw/product_floor_reconfirm_20260916/full_session_20260918/publication.json)
+保留 10 个原始/公开双哈希件，另附发布清单与两份审计回执；完整原始件本地留存，
+可按请求提供。没有新的测量数值、没有放宽任何身份/采样/降权门，不切 demo 分支。
+
+收线补记：本次 STOP/篡改拒绝/错误文本判定三项回归加入后，相关 host 测试共
+122 项通过；348 条报告/INDEX/harness 链接通过。工作区原有未跟踪目录保留，不
+纳入此次提交。现场停止后没有再发送任何板端命令。
+
+脱敏检查分清范围：当前跟踪树端点扫描零命中；本轮新增/修改文件的既有全局映射
+原字符串检查也为零。补充逐字串检查另在 29 个**与基线 `5bb8879` 字节完全相同**
+的既有文件中命中映射词项，分布于旧 system-before-after 原文与三份旧 board-script
+文件；其中包含进程/包名及凭据类型词项，不能把这种命中直接等同于仍有效的秘密。
+本轮未扩展修改旧冻结证据或合同，也不宣称全仓所有映射词项均为零；建议另轮确认
+这些旧词项的公开保留/脱敏政策。新提交不引入这些原字符串。

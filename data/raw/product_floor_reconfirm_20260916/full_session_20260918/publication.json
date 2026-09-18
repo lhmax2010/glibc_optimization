@@ -1,0 +1,67 @@
+{
+  "schema": "product-floor-full-session-publication.v1",
+  "files": [
+    {
+      "path": "commands.jsonl",
+      "raw_sha256": "658277af3d32ba8553377d5653bc43f19307c2d5b6f214ca1bdd1ac30a5105de",
+      "public_sha256": "835c891f268099e7174bcb9a61cb0729cb9733b00220a563cc6e19015c4ca09e",
+      "redacted": true
+    },
+    {
+      "path": "contract_gate.json",
+      "raw_sha256": "e00bfdcc21c1167cc8d0b7d4a70e8ca38c6cf37a65793ed811e313d7487496f9",
+      "public_sha256": "e00bfdcc21c1167cc8d0b7d4a70e8ca38c6cf37a65793ed811e313d7487496f9",
+      "redacted": false
+    },
+    {
+      "path": "contract_push.json",
+      "raw_sha256": "d9b2cd2301c4ef22d1964567ac80c1c24c940c09be716abe022535b2d806c207",
+      "public_sha256": "d9b2cd2301c4ef22d1964567ac80c1c24c940c09be716abe022535b2d806c207",
+      "redacted": false
+    },
+    {
+      "path": "control_frames.json",
+      "raw_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "public_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "redacted": false
+    },
+    {
+      "path": "intents.jsonl",
+      "raw_sha256": "e855bdcef57db0e369e5b12cc1181840e9a76887614ce5e5122123e5942eb4ae",
+      "public_sha256": "a9a82111d00da71e678c70f4508b5183445b28c5bd8e2e21a9092735257895a9",
+      "redacted": true
+    },
+    {
+      "path": "raw/devices_0.txt",
+      "raw_sha256": "e7015f68fa3a2a847ba8f2791a71b971ec95e71297b8466265a3136c74c3cba5",
+      "public_sha256": "e7015f68fa3a2a847ba8f2791a71b971ec95e71297b8466265a3136c74c3cba5",
+      "redacted": false
+    },
+    {
+      "path": "raw/reset_kill.txt",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted": false
+    },
+    {
+      "path": "raw/reset_start.txt",
+      "raw_sha256": "0ace707aa8746a057b07aed26442d70cf8abc504e6516c1e42eba9044e89353f",
+      "public_sha256": "0ace707aa8746a057b07aed26442d70cf8abc504e6516c1e42eba9044e89353f",
+      "redacted": false
+    },
+    {
+      "path": "raw/selfcheck_0.txt",
+      "raw_sha256": "1a9c04f07d5738817bd7e411f9fa31a122e16af6d97c0ef12d5dcc6917e273a7",
+      "public_sha256": "bf4596eae72811e76662f3e9061eebf661fd125047b44d2d4b402c2631801147",
+      "redacted": true
+    },
+    {
+      "path": "state.json",
+      "raw_sha256": "c3c735ce6803f003cd3550ebfc97212627bb9ad04fcc8de578abd1226986b976",
+      "public_sha256": "c3c735ce6803f003cd3550ebfc97212627bb9ad04fcc8de578abd1226986b976",
+      "redacted": false
+    }
+  ],
+  "local_stream_sha256": null,
+  "policy": "Original command receipts retained locally, available on request; a full stream is retained only if a working session was created. Host paths and private identifiers redacted, board paths retained."
+}

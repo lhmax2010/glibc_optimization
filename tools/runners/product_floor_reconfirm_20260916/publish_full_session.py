@@ -111,7 +111,7 @@ def publish(source,output,mapping,address):
     (output/'audit.json').write_text(clean(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n'))
     runner.old.write_json(output/'publication.json',dict(schema='product-floor-full-session-publication.v1',files=manifest,
                          local_stream_sha256=hashlib.sha256((source/'stream.raw').read_bytes()).hexdigest() if (source/'stream.raw').exists() else None,
-                         policy='Full original stream retained locally, available on request; host paths and private identifiers redacted, board paths retained.'))
+                         policy='Original command receipts retained locally, available on request; a full stream is retained only if a working session was created. Host paths and private identifiers redacted, board paths retained.'))
     if receipt['status']=='COMPLETE':
         if replay(output)!=json.loads((output/'summary.json').read_text()):raise ValueError('public replay differs')
     print('PASS full-session publication: '+receipt['status']+' files='+str(len(paths)))

@@ -1,0 +1,8 @@
+{
+  "status": "STOP",
+  "started_utc": "2026-09-18T06:25:22.375920+00:00",
+  "source_commit": "0f02fe3f0673ef4456e8ed44b0cbb90d193aad05",
+  "complete_batches": 0,
+  "reason": "ValueError: STOP SDB reported failure: reset_start",
+  "ended_utc": "2026-09-18T06:25:22.529942+00:00"
+}

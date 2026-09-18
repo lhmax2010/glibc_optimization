@@ -1,0 +1,2 @@
+error: target not found
+error: serial number '<PRODUCT_BOARD_IP>:26101' wrong

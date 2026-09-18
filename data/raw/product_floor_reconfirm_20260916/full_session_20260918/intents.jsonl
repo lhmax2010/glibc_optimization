@@ -1,0 +1,4 @@
+{"label": "devices_0", "argv": ["sdb", "devices"], "started_utc": "2026-09-18T06:25:22.377388+00:00", "started_ns": 1789712722377401341}
+{"label": "selfcheck_0", "argv": ["sdb", "-s", "<PRODUCT_BOARD_IP>:26101", "shell", "LC_ALL=C id;r=$?;echo;echo RC=$r;test $r = 0 && echo DONE || echo FAIL"], "started_utc": "2026-09-18T06:25:22.454418+00:00", "started_ns": 1789712722454427782}
+{"label": "reset_kill", "argv": ["sdb", "kill-server"], "started_utc": "2026-09-18T06:25:22.457829+00:00", "started_ns": 1789712722457833456}
+{"label": "reset_start", "argv": ["sdb", "start-server"], "started_utc": "2026-09-18T06:25:22.460435+00:00", "started_ns": 1789712722460438434}

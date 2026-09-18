@@ -237,6 +237,11 @@ cmp /tmp/product-floor-persistent-summary.json \
 
 ## 2026-09-18 全流程单会话
 
+**本轮现场结果：连通自检 STOP。** devices 无设备，唯一 server 重置中 start-server
+报 `protocol fault: no status`；工作长会话尚未建立，未提权，0 点。以下命令保留为
+冻结规格与复现说明，不是自动重试许可；完整 600 s 产品画像仍未完成。先恢复通道、
+获准新执行轮再开跑，不能复用本轮输出目录。公开 STOP 复算见报告 §11.3。
+
 PM 确认本轮权限例外后，新入口为 `run_full_session.py`；**不要再次运行上节旧
 入口**。根权限不是默认行为，只有本轮 PM 明确只读授权后才可传授权开关。
 
