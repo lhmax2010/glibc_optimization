@@ -234,3 +234,46 @@ cmp /tmp/product-floor-persistent-summary.json \
 合同/分析器字节、11 候选集合、完整标记、身份不变、PD 求和、600 s 覆盖、root 恢复；
 真实 floor 没有必须等于历史增量的容差带，也不因结果改分类器。采样器的只读开销
 不是零；产品 hook/probe 落地必须走签名/正规构建链，本次 stdin 授权不替代该要求。
+
+## 2026-09-18 全流程单会话
+
+PM 确认本轮权限例外后，新入口为 `run_full_session.py`；**不要再次运行上节旧
+入口**。根权限不是默认行为，只有本轮 PM 明确只读授权后才可传授权开关。
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/run_full_session.py \
+  --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --push-receipt board_results/product_floor_reconfirm_20260916/full_session_push.json \
+  --output board_results/product_floor_reconfirm_20260916/full_session_20260918 \
+  --pm-authorized-readonly-root
+```
+
+开跑前必须先提交 [合同](full_session_contract.json)与[分析器](analyze_full_session.py)，
+打 annotated tag `product-floor-full-session-contract-20260918` 并推送。用
+`run_full_session.py --record-push <host-receipt.json>` 记录远端 tag 核验时间，
+至少 600 s 后才允许连板。此回执文件仅在 host 创建；不允许覆写或重跑输出目录。
+
+预检 devices + 一次短 id（首次失败至多一次 server 重置及自检重试），随后 root on。
+唯一工作 `sdb shell` 首读 id，再完成身份、基线、一次 `/proc` 遍历、当前 Top10 与
+主候选并集、600 s 采样和 /tmp/进程收尾。退出后 root off，再唯一一次短 id；
+正常路径共一个工作长会话及两个获准 id 短查询，**没有逐 PID SDB 调用**。
+所有 stdin 行和短查询均本地检查不超过 200 UTF-8 字节；所有板端命令只读，
+循环文本不落盘。15 s 静默或断开立即停止，不自动重连。已消失/被复用的 PID
+标为不完整窗口后退役，继续其他候选；不得把丢失值补为零或静默重新绑定 PID。
+
+host 测试以真实 POSIX shell 和模拟 SDB 执行整条路径，含旧 PID 全变、消失、
+身份门失败、root-on 不确定失败、root-off 失败、流中断、静默与字节边界。
+公共复算（仅完整结果）：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/analyze_full_session.py \
+  --source data/raw/product_floor_reconfirm_20260916/full_session_20260918 \
+  --output /tmp/product-floor-full-session-summary.json
+cmp /tmp/product-floor-full-session-summary.json \
+  data/raw/product_floor_reconfirm_20260916/full_session_20260918/summary.json
+```
+
+`publish_full_session.py` 在本地先校验原始输出、逐帧与 CSV/事件完全一致，再按既有
+映射发布紧凑件。完整 stream 与原名仅本地留存，可按请求提供。确定性门为合同字节、
+会话数量、RC/DONE、PD 求和、身份连续性、实际 600 s 与降权 UID；不规定当前 floor
+必须等于历史活动增量，不据本轮结果修改分类器。现场结果以报告 §11 为准。
