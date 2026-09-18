@@ -181,3 +181,51 @@ python3 tools/runners/product_floor_reconfirm_20260916/run_authorized_root.py \
 没有绕过签名检查或重跑；自有脚本已删除，root off 后 id=5001 已核验。
 详见[报告 §8](../../../docs/product_floor_reconfirm_20260916.md#82-执行结果权限门通过未签名脚本执行被拒绝)。
 后续板上复现先需 PM 确认受支持的签名交付方式并重新授权；host 回执复算不受影响。
+
+## 2026-09-18 单会话长驻、不落盘采样
+
+本轮 PM 允许把命令文本直接送入一次 `sdb shell` 的 stdin，不推送/执行脚本文件，
+不绕过镜像签名门。`run_persistent.py` 是新入口；旧入口与旧停止证据保留，勿运行
+`run_diskless.py` 的并行短连接采样。只允许当前一轮只读 root 授权，不能作为默认提权。
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/run_persistent.py \
+  --ip '<PRODUCT_BOARD_IP>' --mapping desensitize_map.tsv \
+  --previous-private-snapshot board_results/product_floor_reconfirm_20260916/diskless_20260917/candidates.json \
+  --push-receipt board_results/product_floor_reconfirm_20260916/persistent_push.json \
+  --output board_results/product_floor_reconfirm_20260916/persistent_20260918 \
+  --pm-authorized-readonly-root
+```
+
+[合同](persistent_contract.json)与[分析器](analyze_persistent.py)在 annotated tag
+`product-floor-persistent-contract-20260918` 固定；推送回执后至少 600 s 才能连接。
+私有候选快照须先按映射脱敏后与公开固定快照一致；地址只用于路由，不用于判板。
+本地完整原始件可按请求提供，公开仓库不包含私有映射或完整 smaps 流。
+
+连接前 `devices` + 极短 id 自检；仅失败时允许一次 host server reset/connect 与一次
+自检重试。身份门后提权，重新确认身份/基线/候选。采样会话以 nonce 标记每批及
+每次只读输出，每读保留 RC/DONE；完成整批才接收 host ACK。EOF 不开启下一批，
+15 s 无任何输出或连接断开立即 STOP，不重连、不重跑。任何 root-on 尝试后都执行
+root off 与 UID5001 核验。命令白名单无文件创建/上传/删除、attach、kill 或包操作。
+短查询请求体与每一条 stdin 程序行均不超过 200 字节；完整循环是 stdin 文本，不是
+超长 `sdb shell <command>` 参数。HISTFILE 仅在本次 shell 内清空，避免保存输入历史。
+
+时间口径：目标 1 s，名义 601 点，实际每候选在板端 epoch 与 host 单调时钟均覆盖
+至少 600 s；不以补点凑数。板端 `date +%s` 为 1 秒精度（输出单位 ns 不代表精度），
+准确抖动由 host 接收标记的单调时钟测量。顺序扫描并非同时快照，公开批次/读区间。
+分桶输入为所有映射头与 Private_Dirty 行，复用原 smaps 分类函数；不依赖 timeout。
+
+成功结果的 host L1 复算：
+
+```sh
+python3 tools/runners/product_floor_reconfirm_20260916/analyze_persistent.py \
+  --source data/raw/product_floor_reconfirm_20260916/persistent_20260918 \
+  --output /tmp/product-floor-persistent-summary.json
+cmp /tmp/product-floor-persistent-summary.json \
+  data/raw/product_floor_reconfirm_20260916/persistent_20260918/summary.json
+```
+
+仅 COMPLETE 才能使用上述成功路径；STOP 的部分点不生成分类结论。确定性验收为
+合同/分析器字节、11 候选集合、完整标记、身份不变、PD 求和、600 s 覆盖、root 恢复；
+真实 floor 没有必须等于历史增量的容差带，也不因结果改分类器。采样器的只读开销
+不是零；产品 hook/probe 落地必须走签名/正规构建链，本次 stdin 授权不替代该要求。
