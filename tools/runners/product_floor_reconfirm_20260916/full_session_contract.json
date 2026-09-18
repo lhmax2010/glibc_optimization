@@ -1,0 +1,27 @@
+{
+  "schema": "product-floor-full-session.v1",
+  "date": "2026-09-18",
+  "pm_authorization_date": "2026-09-17",
+  "tag": "product-floor-full-session-contract-20260918",
+  "minimum_push_to_connect_seconds": 600,
+  "transport": "One working sdb shell covers root id, identity, baseline, one /proc traversal, sampling and cleanup. Commands are interpreted from stdin; no board files. Each stdin line and each short request including framing is <=200 UTF-8 bytes.",
+  "exceptions": "Before work: devices plus one short id self-check (also pre-root id); only if it fails, one server kill/start/connect and one self-check retry. One external root on. After work, one root off and exactly one short RC/DONE id query proving UID5001. No other short shell connections. Root-on session first read is id. No reconnect after working session begins.",
+  "authorization": "This round only: passive reads, root mode transitions and local host output. No board file writes, scripts, push, packages, configuration, attach, injection, kill, reboot or poweroff. HISTFILE is empty in the observer shell to prevent history persistence.",
+  "identity": "kernel must not contain rpi4; architecture armv7l; Tizen TV release, not unified-toolchain/development; id after elevation UID0. Record full release, glibc, memory, uptime, date, CPU, partitions and optional yama/gdb availability. Do not infer board identity from IP.",
+  "discovery": "Exactly one in-session traversal of /proc/[0-9]*/stat; bracket mapping-header/Private_Dirty reads by stat reads. Rank stable readable userspace processes by glibc heap PD descending, tie by PID ascending. Select current Top10 plus every exact-comm primary match (enlightenment/ServiceH/ServiceA resolved from private mapping); union by PID. Exclude observer shell. Record transient exits, empty kernel smaps and failures, PID/start changes from prior snapshot. Do not launch per-PID SDB requests.",
+  "sampling": {
+    "duration_seconds": 600,
+    "nominal_points": 601,
+    "target_period_seconds": 1,
+    "schedule": "Shell epoch-second arithmetic compares each batch start +1; sleep 1 while before deadline, no catch-up burst. Host ACK each complete batch; finish only after board and host batch spans >=600s and each surviving target spans >=600s. Actual point count reported, no padding/interpolation. Board date +%s has one-second resolution; host receipt uses epoch_ns and monotonic_ns.",
+    "reads": "Each batch reads meminfo, zram mm_stat, swaps; each remaining PID stat, mapping headers and all Private_Dirty fields, stat again. Host uses unchanged analyze_floor.smaps classification. All four PD buckets, faults and global counters retained. Reads are sequential, not simultaneous.",
+    "disappearance": "A missing /proc/PID or PID/start replacement emits a timestamped disappearance event, retires that candidate without rebinding; other candidates continue. A partial candidate never counts as a full 600s profile. Non-disappearance read errors, malformed frames/counters, silence >=15s or disconnect stop the entire run without reconnection/rerun.",
+    "framing": "Random nonce, unique per-command BEGIN/END labels with RC and DONE/FAIL; batch begin/end + host timestamps. Final working-session RC0 DONE and transport RC0 required. Journal every subprocess intent before start and preserve partial raw stream.",
+    "tools": "Probe all required board commands together: cat,date,sleep,awk,uname,id,ps,ls,rpm,getconf,df. No timeout or sha256sum required. Missing commands are listed once before discovery/sampling."
+  },
+  "analysis": {
+    "classifier": "Unmodified audit_phenotypes.release_ratio_census including a+b, n and u; first current sample is baseline. Absolute minimum and first/last60 actual board-second minima; report zram positive steps, faults and total/other-anon PD at largest drawdown. Global net swap flatness alone is not unique allocator attribution.",
+    "history": "enlightenment +1736 KiB and ServiceA +788 KiB are historical activity increments, ServiceH2360 KiB an upper bound; current passive absolute floors are not equivalent to these increments. smaps cannot identify live/bin or reclaimable pages."
+  },
+  "cleanup": "Within working session compare /tmp listing before/after and ps view; no self-created board file exists by construction. Other activity is reported, never cleaned. Close working session, root off, single id query. Any gate failure stops observation and preserves completed evidence; root restoration remains mandatory."
+}

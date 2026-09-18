@@ -1200,3 +1200,28 @@ host 收线：补入两项本轮公开停止回执测试后，共 105 项相关�
 克隆的完整 `reproduce.sh verify` 为 OVERALL PASS（不代表板端画像完成）。332 条
 文档链接、63 对原始/公开哈希通过，当前树 4852 文件端点扫描零命中，既有全局
 脱敏映射原字符串检查零命中。保留用户原有的未跟踪目录，不纳入本轮提交。
+
+## 11. 2026-09-18 续跑：全流程单会话（事前规格）
+
+PM 于 2026-09-17 明确确认两个权限例外：会话前允许一次独立 root on，工作
+长驻会话的首项读取立即记录 id；会话退出并 root off 后，允许唯一一次
+RC/DONE id 短查询核验 UID5001。连通自检仍为 devices + 极短 id（兼作提权前
+记录）；仅初次失败允许一次 server kill/start/connect 与一次自检重试。
+**身份、基线、一次性候选发现、600 s 采样及无文件残留核验全部在同一工作
+会话内完成。** 不再调用 §10 的逐 PID 短连接重发现路径。
+
+冻结规格见 [full_session_contract.json](../tools/runners/product_floor_reconfirm_20260916/full_session_contract.json)，
+公开分析器见 [analyze_full_session.py](../tools/runners/product_floor_reconfirm_20260916/analyze_full_session.py)。
+二者先提交、打 annotated tag `product-floor-full-session-contract-20260918`，
+记录远端推送时间，至少 600 s 后才允许板端连通自检。旧合同与旧数据均保留不动。
+
+一次 `/proc` 遍历按当前堆 PD 排名 Top10（同值按 PID 升序），再与三个指定
+名称的全部精确匹配 PID 合并；排除采集 shell 自身。记录旧 PID/start 与当前
+身份差异，不信任 IP 或旧 PID。采样时消失或 PID 被复用的候选记录事件后退役，
+继续其余候选，不补零、不绑定替代进程，部分窗口不称为完整画像。
+
+目标 1 s、名义 601 点；shell 以 epoch 秒比较 elapsed 控时，host 记录实际
+接收时间。实际点数不补齐；存活候选的板端与 host 时钟均需覆盖 600 s。各读
+保留 RC/DONE；15 s 无输出、断开或非消失类读错立即 STOP，不重连、不重跑。
+所有请求行不超过 200 字节。全程无板端落盘、负载、安装、注入、attach、kill
+或 reboot；退出路径必须 root off 并核验。实际结果与时间线在执行后续记。
