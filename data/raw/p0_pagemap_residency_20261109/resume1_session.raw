@@ -1,0 +1,33 @@
+printf '\nBEGIN_P0_1\n'; uname -r; r=$?; printf '\nEND_P0_1 RC=%s ' "$r"; if [ "$r" -eq 0 ]; then echo DONE; else echo FAIL; fi
+root:~> printf '\nBEGIN_P0_1\n'; uname -r; r=$?; printf '\nEND_P0_1 RC=%s ' "$r" ; if [ "$r" -eq 0 ]; then echo DONE; else echo FAIL; fi
+
+BEGIN_P0_1
+6.12.80-arm-rpi4-v7l
+
+END_P0_1 RC=0 DONE
+root:~> printf '\nBEGIN_P0_2\n'; uname -m; r=$?; printf '\nEND_P0_2 RC=%s ' "$r" ; if [ "$r" -eq 0 ]; then echo DONE; else echo FAIL; fi
+
+BEGIN_P0_2
+armv7l
+
+END_P0_2 RC=0 DONE
+root:~> printf '\nBEGIN_P0_3\n'; cat /etc/os-release; r=$?; printf '\nEND_P0_3 R C=%s ' "$r"; if [ "$r" -eq 0 ]; then echo DONE; else echo FAIL; fi
+
+BEGIN_P0_3
+NAME=Tizen
+VERSION="11.0.0 (Tizen11.0/Unified)"
+ID=tizen
+VERSION_ID=11.0.0
+PRETTY_NAME="Tizen 11.0.0 (Tizen11.0/Unified)"
+ANSI_COLOR="0;36"
+CPE_NAME="cpe:/o:tizen:tizen:11.0.0"
+BUILD_ID=tizen-unified-toolchain_20261106.063932_tizen-headed-armv7l
+
+END_P0_3 RC=0 DONE
+root:~> printf '\nBEGIN_P0_4\n'; id -u; r=$?; printf '\nEND_P0_4 RC=%s ' "$r"; i f [ "$r" -eq 0 ]; then echo DONE; else echo FAIL; fi
+
+BEGIN_P0_4
+0
+
+END_P0_4 RC=0 DONE
+root:~> 

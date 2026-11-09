@@ -1,0 +1,8 @@
+/usr/bin/bt-service
+/usr/bin/contacts-service-ipcd
+/usr/bin/isf
+/usr/bin/isf-panel-efl
+/usr/bin/media-server
+/usr/bin/pushd
+/usr/bin/resourced
+/usr/bin/tizen-watcherd

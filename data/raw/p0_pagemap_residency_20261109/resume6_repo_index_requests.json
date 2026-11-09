@@ -1,0 +1,16 @@
+[
+  {
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/",
+    "final_url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/",
+    "status": 200,
+    "bytes": 74343,
+    "utc": "2026-11-09T14:12:11.388007+00:00"
+  },
+  {
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/",
+    "final_url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/",
+    "status": 200,
+    "bytes": 1239,
+    "utc": "2026-11-09T14:12:12.112686+00:00"
+  }
+]

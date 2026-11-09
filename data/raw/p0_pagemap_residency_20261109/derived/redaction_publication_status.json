@@ -1,0 +1,15 @@
+{
+  "status": "STOP_REMAINING_SCANNER_FINDINGS",
+  "scanner_rc": 1,
+  "findings": [
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_readelf_22.raw",
+      "line": 6051,
+      "column": 9,
+      "encoding": "ipv4-hex-le"
+    }
+  ],
+  "staged": false,
+  "committed": false,
+  "pushed": false
+}

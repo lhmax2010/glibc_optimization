@@ -1,0 +1,18 @@
+[New LWP 736]
+[New LWP 731]
+[New LWP 730]
+[New LWP 729]
+[New LWP 722]
+[New LWP 690]
+[New LWP 652]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/libthread_db.so.1".
+0xb6874918 in __GI___poll (fds=0x13ee428, nfds=18, timeout=4999) at ../sysdeps/unix/sysv/linux/poll.c:29
+
+warning: 29	../sysdeps/unix/sysv/linux/poll.c: No such file or directory
+$1 = 0
+$2 = 0
+[Inferior 1 (process 555) detached]
+
+RC=0
+DONE

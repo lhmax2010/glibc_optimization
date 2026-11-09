@@ -1,0 +1,11 @@
+PASS pagemap_bits.tsv vs .bin: all six files, every page and all four bits identical; residency tables byte-identical
+PASS residency_summary.tsv manual-values=identical bytes=identical sha256=3a53a40a0791a52210c3da0c172656f3a3cf13a6db2ff17bcff81d351638dc22
+PASS malloc_info_pools.tsv manual-values=identical bytes=identical sha256=f63101705f707105c3ddfa39b6c3c9f6dccb36f5e3ce4457ad2db9f99ccc9044
+PASS H1/H2/H3/H4; AT_SECURE=0
+RC=0
+
+PASS malloc_trim_symbols.tsv source-hashes=verified report-verdicts=31/31 bytes=identical sha256=b7271929241865b0c03a695f3af4fe0f7b0b8ee09add1a2c875ebbc527cfff39
+PASS malloc_trim_callers_summary.tsv source-hashes=verified report-verdicts=31/31 bytes=identical sha256=7dff5b0d348a30b3ef4177be9baaed5869b05884359c692b6fe8067e6573fddd
+PASS symbol extraction: Value/Size/Num omitted; realpath unrecorded and empty
+RC=0
+OVERALL PASS

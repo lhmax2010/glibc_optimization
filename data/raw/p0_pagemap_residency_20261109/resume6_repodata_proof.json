@@ -1,0 +1,8 @@
+{
+  "repomd_sha256": "e432f1c6ab0d1278222e4ca24035bcd828289385ef28594877913f75a62365ac",
+  "revision": "1793378577",
+  "primary_url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/repodata/b3ec543a10f9d593f50a226248910b1f7fd205e118e878014b3a405570f907aa-primary.xml.gz",
+  "primary_checksum_type": "sha256",
+  "primary_expected_checksum": "b3ec543a10f9d593f50a226248910b1f7fd205e118e878014b3a405570f907aa",
+  "primary_checksum_pass": true
+}

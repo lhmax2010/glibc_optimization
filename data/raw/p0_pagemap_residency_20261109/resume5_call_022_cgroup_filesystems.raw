@@ -1,0 +1,5 @@
+nodev	cgroup
+nodev	cgroup2
+
+RC=0
+DONE

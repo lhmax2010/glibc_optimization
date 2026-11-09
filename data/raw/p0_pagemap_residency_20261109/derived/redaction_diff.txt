@@ -1,0 +1,1973 @@
+PUBLIC DIFF: deleted original endpoint tokens are represented by <ORIGINAL_BOARD_IP>. Address input validation is part of address parameterization. Measurement values, timestamps, and original hash fields are unchanged.
+
+--- before/data/raw/p0_pagemap_residency_20261109/connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/connect.raw
+@@ -1 +1 @@
+-error: failed to connect to remote target '<ORIGINAL_BOARD_IP>'
++error: failed to connect to remote target '<TEST_BOARD_IP>'
+--- before/data/raw/p0_pagemap_residency_20261109/report.md
++++ after/data/raw/p0_pagemap_residency_20261109/report.md
+@@ -16,7 +16,7 @@
+ 连接请求的原始输出保存在 connect.raw，内容如下：
+ 
+ ```text
+-error: failed to connect to remote target '<ORIGINAL_BOARD_IP>'
++error: failed to connect to remote target '<TEST_BOARD_IP>'
+ ```
+ 
+ sdb 进程退出码为 0，但错误文本明确表示失败，因此按失败处理，停止全部后续板端操作。
+--- before/data/raw/p0_pagemap_residency_20261109/resume1_connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume1_connect.raw
+@@ -1 +1 @@
+-<ORIGINAL_BOARD_IP>:26101 is already connected
++<TEST_BOARD_IP>:26101 is already connected
+--- before/data/raw/p0_pagemap_residency_20261109/resume1_devices.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume1_devices.raw
+@@ -1,2 +1,2 @@
+ List of devices attached 
+-<ORIGINAL_BOARD_IP>:26101	device    	rpi4
++<TEST_BOARD_IP>:26101	device    	rpi4
+--- before/data/raw/p0_pagemap_residency_20261109/resume2_call_001_connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume2_call_001_connect.raw
+@@ -1 +1 @@
+-<ORIGINAL_BOARD_IP>:26101 is already connected
++<TEST_BOARD_IP>:26101 is already connected
+--- before/data/raw/p0_pagemap_residency_20261109/resume2_state.json
++++ after/data/raw/p0_pagemap_residency_20261109/resume2_state.json
+@@ -10,7 +10,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "connect",
+-        "<ORIGINAL_BOARD_IP>"
++        "<TEST_BOARD_IP>"
+       ],
+       "start_utc": "2026-11-09T12:19:00.829352+00:00",
+       "start_ns": 1794226740829362676,
+@@ -27,7 +27,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -r;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -48,7 +48,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -m;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -69,7 +69,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /etc/os-release;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -90,7 +90,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+--- before/data/raw/p0_pagemap_residency_20261109/resume3_call_001_connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume3_call_001_connect.raw
+@@ -1 +1 @@
+-<ORIGINAL_BOARD_IP>:26101 is already connected
++<TEST_BOARD_IP>:26101 is already connected
+--- before/data/raw/p0_pagemap_residency_20261109/resume3_state.json
++++ after/data/raw/p0_pagemap_residency_20261109/resume3_state.json
+@@ -10,7 +10,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "connect",
+-        "<ORIGINAL_BOARD_IP>"
++        "<TEST_BOARD_IP>"
+       ],
+       "start_utc": "2026-11-09T12:39:40.169846+00:00",
+       "start_ns": 1794227980169856966,
+@@ -27,7 +27,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "on"
+       ],
+@@ -46,7 +46,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -r;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -67,7 +67,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -m;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -88,7 +88,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /etc/os-release;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -109,7 +109,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -130,7 +130,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/uptime;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -151,7 +151,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "mkdir -p /tmp/p0;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -172,7 +172,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls -la /tmp/p0;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -193,7 +193,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "command -v readelf;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -214,7 +214,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "off"
+       ],
+@@ -233,7 +233,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+--- before/data/raw/p0_pagemap_residency_20261109/resume4_call_001_connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume4_call_001_connect.raw
+@@ -1 +1 @@
+-<ORIGINAL_BOARD_IP>:26101 is already connected
++<TEST_BOARD_IP>:26101 is already connected
+--- before/data/raw/p0_pagemap_residency_20261109/resume4_state.json
++++ after/data/raw/p0_pagemap_residency_20261109/resume4_state.json
+@@ -10,7 +10,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "connect",
+-        "<ORIGINAL_BOARD_IP>"
++        "<TEST_BOARD_IP>"
+       ],
+       "start_utc": "2026-11-09T12:57:28.548514+00:00",
+       "start_ns": 1794229048548523330,
+@@ -27,7 +27,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "on"
+       ],
+@@ -46,7 +46,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -r;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -67,7 +67,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -m;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -88,7 +88,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /etc/os-release;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -109,7 +109,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -130,7 +130,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/uptime;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -151,7 +151,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "command -v gdb dd grep pgrep ps 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -172,7 +172,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "command -v gdb;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -193,7 +193,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "off"
+       ],
+@@ -212,7 +212,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+--- before/data/raw/p0_pagemap_residency_20261109/resume5_call_001_connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume5_call_001_connect.raw
+@@ -1 +1 @@
+-<ORIGINAL_BOARD_IP>:26101 is already connected
++<TEST_BOARD_IP>:26101 is already connected
+--- before/data/raw/p0_pagemap_residency_20261109/resume5_state.json
++++ after/data/raw/p0_pagemap_residency_20261109/resume5_state.json
+@@ -10,7 +10,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "connect",
+-        "<ORIGINAL_BOARD_IP>"
++        "<TEST_BOARD_IP>"
+       ],
+       "start_utc": "2026-11-09T13:31:38.698702+00:00",
+       "start_ns": 1794231098698717677,
+@@ -27,7 +27,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "on"
+       ],
+@@ -46,7 +46,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -r;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -67,7 +67,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -m;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -88,7 +88,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /etc/os-release;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -109,7 +109,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -130,7 +130,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/uptime;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -151,7 +151,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "command -v dd grep pgrep ps tar rpm 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -172,7 +172,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "df -k / /tmp;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -193,7 +193,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep -E \" / | /tmp \" /proc/mounts;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -214,7 +214,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "mkdir -p /tmp/p0;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -235,7 +235,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "rpm -qa | sort > /tmp/p0/rpmqa_before.txt;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -256,7 +256,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/tmp/p0/rpmqa_before.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume5_rpmqa_before.txt"
+@@ -276,7 +276,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/swaps;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -297,7 +297,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/sys/vm/swappiness;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -318,7 +318,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep -E \"MemTotal|MemFree|MemAvailable|SwapTotal|SwapFree\" /proc/meminfo;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -339,7 +339,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls /sys/block/ | grep zram;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -360,7 +360,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /sys/block/zram0/disksize;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -381,7 +381,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /sys/block/zram0/mm_stat;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -402,7 +402,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /sys/block/zram0/comp_algorithm;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -423,7 +423,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/pressure/memory;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -444,7 +444,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep cgroup /proc/filesystems;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -465,7 +465,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls /sys/fs/cgroup/;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -486,7 +486,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "find /sys/fs/cgroup -maxdepth 2 \\( -name memory.max -o -name memory.limit_in_bytes \\) 2>/dev/null | head -5;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -507,7 +507,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "pgrep -l resourced;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -528,7 +528,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls /etc/resourced/ 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -549,7 +549,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /etc/resourced/*.conf;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -570,7 +570,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep -l malloc_trim /usr/lib/lib*.so* 2>/dev/null > /tmp/p0/hits_lib.txt;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -591,7 +591,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep -l malloc_trim /usr/bin/* 2>/dev/null > /tmp/p0/hits_bin.txt;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -612,7 +612,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "rpm -qa | sort > /tmp/p0/rpmqa_after.txt;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -633,7 +633,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/tmp/p0/rpmqa_after.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume5_rpmqa_after.txt"
+@@ -653,7 +653,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "command -v gdb 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -674,7 +674,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "tar -C /tmp/p0 --exclude=rpms --exclude=gdbroot --exclude=all_data.tar -cf /tmp/p0/all_data.tar .;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -695,7 +695,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/tmp/p0/all_data.tar",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume5_all_data.tar"
+@@ -715,7 +715,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "rm -rf /tmp/p0;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -736,7 +736,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls /tmp/p0 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -757,7 +757,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "df -k / /tmp;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -778,7 +778,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "off"
+       ],
+@@ -797,7 +797,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+--- before/data/raw/p0_pagemap_residency_20261109/resume6_call_001_connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume6_call_001_connect.raw
+@@ -1 +1 @@
+-<ORIGINAL_BOARD_IP>:26101 is already connected
++<TEST_BOARD_IP>:26101 is already connected
+--- before/data/raw/p0_pagemap_residency_20261109/resume6_state.json
++++ after/data/raw/p0_pagemap_residency_20261109/resume6_state.json
+@@ -10,7 +10,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "connect",
+-        "<ORIGINAL_BOARD_IP>"
++        "<TEST_BOARD_IP>"
+       ],
+       "start_utc": "2026-11-09T14:10:57.496622+00:00",
+       "start_ns": 1794233457496638726,
+@@ -27,7 +27,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "on"
+       ],
+@@ -46,7 +46,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -r;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -67,7 +67,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -m;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -88,7 +88,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /etc/os-release;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -109,7 +109,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -130,7 +130,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/uptime;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -151,7 +151,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep MemTotal /proc/meminfo;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -172,7 +172,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "command -v dd grep pgrep ps tar 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -193,7 +193,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "df -k /opt/usr;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -214,7 +214,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep \" /opt/usr \" /proc/mounts;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -235,7 +235,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "mkdir -p /opt/usr/p0/data /opt/usr/p0/elf;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -256,7 +256,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_all_hits.txt",
+         "/opt/usr/p0/all_hits.txt"
+@@ -276,7 +276,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "tar chf /opt/usr/p0/hits.tar -T /opt/usr/p0/all_hits.txt 2>/opt/usr/p0/hits_tar.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -297,7 +297,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls -l /opt/usr/p0/hits.tar 2>/opt/usr/p0/hits_tar_ls.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -318,7 +318,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/hits_tar.err",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_hits_tar.err"
+@@ -338,7 +338,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/hits_tar_ls.err",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_hits_tar_ls.err"
+@@ -358,7 +358,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/hits.tar",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_elf/hits.tar"
+@@ -378,7 +378,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_gdbroot.tar",
+         "/opt/usr/p0/gdbroot.tar"
+@@ -398,7 +398,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0 && tar xf gdbroot.tar && rm gdbroot.tar;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -419,7 +419,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "LD_TRACE_LOADED_OBJECTS=1 LD_LIBRARY_PATH=/opt/usr/p0/gdbroot/usr/lib /opt/usr/p0/gdbroot/usr/bin/gdb 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -440,7 +440,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_gdb_environment.txt",
+         "/opt/usr/p0/environment"
+@@ -460,7 +460,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;gdb -nx -nh -batch -ex \"show version\" 2>&1 | head -3;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -481,7 +481,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_source_trim_via_gdb.sh",
+         "/opt/usr/p0/trim_via_gdb.sh"
+@@ -501,7 +501,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_m1.gdb",
+         "/opt/usr/p0/m1.gdb"
+@@ -521,7 +521,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_m2.gdb",
+         "/opt/usr/p0/m2.gdb"
+@@ -541,7 +541,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_m3.gdb",
+         "/opt/usr/p0/m3.gdb"
+@@ -561,7 +561,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "pgrep -x enlightenment;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -582,7 +582,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/555/stat;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -603,7 +603,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/uptime;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -624,7 +624,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/auxv of=/opt/usr/p0/data/auxv.bin 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -645,7 +645,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/auxv.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_auxv_a0.bin"
+@@ -665,7 +665,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep -A20 \"\\[heap\\]\" /proc/555/smaps | tee /opt/usr/p0/data/t1_pre_smaps.txt;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -686,7 +686,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0 && tar cf data.tar data;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -707,7 +707,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data.tar",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_data.tar"
+@@ -727,7 +727,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "rm -rf /opt/usr/p0;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -748,7 +748,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls /opt/usr/p0 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -769,7 +769,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "df -k /opt/usr;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -790,7 +790,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "off"
+       ],
+@@ -809,7 +809,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+--- before/data/raw/p0_pagemap_residency_20261109/resume7_call_001_connect.raw
++++ after/data/raw/p0_pagemap_residency_20261109/resume7_call_001_connect.raw
+@@ -1 +1 @@
+-<ORIGINAL_BOARD_IP>:26101 is already connected
++<TEST_BOARD_IP>:26101 is already connected
+--- before/data/raw/p0_pagemap_residency_20261109/resume7_state.json
++++ after/data/raw/p0_pagemap_residency_20261109/resume7_state.json
+@@ -10,7 +10,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "connect",
+-        "<ORIGINAL_BOARD_IP>"
++        "<TEST_BOARD_IP>"
+       ],
+       "start_utc": "2026-11-09T15:04:16.842809+00:00",
+       "start_ns": 1794236656842816651,
+@@ -27,7 +27,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "on"
+       ],
+@@ -46,7 +46,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -r;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -67,7 +67,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "uname -m;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -88,7 +88,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /etc/os-release;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -109,7 +109,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -130,7 +130,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/uptime;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -151,7 +151,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep MemTotal /proc/meminfo;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -172,7 +172,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "command -v dd grep pgrep ps tar 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -193,7 +193,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "df -k /opt/usr;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -214,7 +214,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "grep \" /opt/usr \" /proc/mounts;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -235,7 +235,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "mkdir -p /opt/usr/p0/data;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -256,7 +256,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_gdbroot.tar",
+         "/opt/usr/p0/gdbroot.tar"
+@@ -276,7 +276,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0 && tar xf gdbroot.tar && rm gdbroot.tar;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -297,7 +297,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_gdb_environment.txt",
+         "/opt/usr/p0/environment"
+@@ -317,7 +317,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;gdb -nx -nh -batch -ex \"show version\" 2>&1 | head -3;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -338,7 +338,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_source_trim_via_gdb.sh",
+         "/opt/usr/p0/trim_via_gdb.sh"
+@@ -358,7 +358,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_m1.gdb",
+         "/opt/usr/p0/m1.gdb"
+@@ -378,7 +378,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_m2.gdb",
+         "/opt/usr/p0/m2.gdb"
+@@ -398,7 +398,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "push",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_m3.gdb",
+         "/opt/usr/p0/m3.gdb"
+@@ -418,7 +418,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "pgrep -x enlightenment;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -439,7 +439,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/555/stat;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -460,7 +460,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cat /proc/uptime;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -481,7 +481,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/auxv of=/opt/usr/p0/data/auxv.bin 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -502,7 +502,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/auxv.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_auxv_a0.bin"
+@@ -522,7 +522,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;awk '/\\[heap\\]/{f=1} f{print} f&&/^VmFlags/{exit}' /proc/555/smaps >t1_pre_smaps.txt 2>t1_pre_smaps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -543,7 +543,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_pre_smaps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_pre_smaps.txt"
+@@ -563,7 +563,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;grep \"\\[heap\\]\" /proc/555/maps >t1_pre_maps.txt 2>t1_pre_maps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -584,7 +584,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_pre_maps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_pre_maps.txt"
+@@ -604,7 +604,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/pagemap of=/opt/usr/p0/data/t1_pre_pm.bin bs=8 skip=3218 count=2098 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -625,7 +625,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_pre_pm.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_pre_pm.bin"
+@@ -645,7 +645,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;gdb -nx -nh -p 555 -batch -x /opt/usr/p0/m1.gdb;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -666,7 +666,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_pre.xml",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_pre.xml"
+@@ -686,7 +686,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;cat /proc/555/stat >t1_pre_stat.txt 2>t1_pre_stat.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -707,7 +707,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_pre_stat.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_pre_stat.txt"
+@@ -727,7 +727,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;sh /opt/usr/p0/trim_via_gdb.sh 555;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -748,7 +748,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;awk '/\\[heap\\]/{f=1} f{print} f&&/^VmFlags/{exit}' /proc/555/smaps >t1_post_smaps.txt 2>t1_post_smaps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -769,7 +769,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_post_smaps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_post_smaps.txt"
+@@ -789,7 +789,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;grep \"\\[heap\\]\" /proc/555/maps >t1_post_maps.txt 2>t1_post_maps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -810,7 +810,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_post_maps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_post_maps.txt"
+@@ -830,7 +830,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/pagemap of=/opt/usr/p0/data/t1_post_pm.bin bs=8 skip=3218 count=2096 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -851,7 +851,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_post_pm.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_post_pm.bin"
+@@ -871,7 +871,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;cat /proc/555/stat >t1_post_stat.txt 2>t1_post_stat.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -892,7 +892,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t1_post_stat.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t1_post_stat.txt"
+@@ -912,7 +912,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;awk '/\\[heap\\]/{f=1} f{print} f&&/^VmFlags/{exit}' /proc/555/smaps >t2_pre_smaps.txt 2>t2_pre_smaps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -933,7 +933,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_pre_smaps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_pre_smaps.txt"
+@@ -953,7 +953,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;grep \"\\[heap\\]\" /proc/555/maps >t2_pre_maps.txt 2>t2_pre_maps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -974,7 +974,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_pre_maps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_pre_maps.txt"
+@@ -994,7 +994,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/pagemap of=/opt/usr/p0/data/t2_pre_pm.bin bs=8 skip=3218 count=2096 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1015,7 +1015,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_pre_pm.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_pre_pm.bin"
+@@ -1035,7 +1035,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;gdb -nx -nh -p 555 -batch -x /opt/usr/p0/m2.gdb;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1056,7 +1056,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_pre.xml",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_pre.xml"
+@@ -1076,7 +1076,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;cat /proc/555/stat >t2_pre_stat.txt 2>t2_pre_stat.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1097,7 +1097,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_pre_stat.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_pre_stat.txt"
+@@ -1117,7 +1117,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;sh /opt/usr/p0/trim_via_gdb.sh 555;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1138,7 +1138,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;awk '/\\[heap\\]/{f=1} f{print} f&&/^VmFlags/{exit}' /proc/555/smaps >t2_post_smaps.txt 2>t2_post_smaps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1159,7 +1159,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_post_smaps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_post_smaps.txt"
+@@ -1179,7 +1179,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;grep \"\\[heap\\]\" /proc/555/maps >t2_post_maps.txt 2>t2_post_maps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1200,7 +1200,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_post_maps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_post_maps.txt"
+@@ -1220,7 +1220,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/pagemap of=/opt/usr/p0/data/t2_post_pm.bin bs=8 skip=3218 count=2096 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1241,7 +1241,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_post_pm.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_post_pm.bin"
+@@ -1261,7 +1261,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;cat /proc/555/stat >t2_post_stat.txt 2>t2_post_stat.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1282,7 +1282,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t2_post_stat.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t2_post_stat.txt"
+@@ -1302,7 +1302,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;awk '/\\[heap\\]/{f=1} f{print} f&&/^VmFlags/{exit}' /proc/555/smaps >t3_pre_smaps.txt 2>t3_pre_smaps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1323,7 +1323,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_pre_smaps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_pre_smaps.txt"
+@@ -1343,7 +1343,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;grep \"\\[heap\\]\" /proc/555/maps >t3_pre_maps.txt 2>t3_pre_maps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1364,7 +1364,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_pre_maps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_pre_maps.txt"
+@@ -1384,7 +1384,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/pagemap of=/opt/usr/p0/data/t3_pre_pm.bin bs=8 skip=3218 count=2096 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1405,7 +1405,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_pre_pm.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_pre_pm.bin"
+@@ -1425,7 +1425,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;gdb -nx -nh -p 555 -batch -x /opt/usr/p0/m3.gdb;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1446,7 +1446,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_pre.xml",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_pre.xml"
+@@ -1466,7 +1466,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;cat /proc/555/stat >t3_pre_stat.txt 2>t3_pre_stat.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1487,7 +1487,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_pre_stat.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_pre_stat.txt"
+@@ -1507,7 +1507,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         ". /opt/usr/p0/environment;sh /opt/usr/p0/trim_via_gdb.sh 555;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1528,7 +1528,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;awk '/\\[heap\\]/{f=1} f{print} f&&/^VmFlags/{exit}' /proc/555/smaps >t3_post_smaps.txt 2>t3_post_smaps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1549,7 +1549,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_post_smaps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_post_smaps.txt"
+@@ -1569,7 +1569,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;grep \"\\[heap\\]\" /proc/555/maps >t3_post_maps.txt 2>t3_post_maps.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1590,7 +1590,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_post_maps.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_post_maps.txt"
+@@ -1610,7 +1610,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "dd if=/proc/555/pagemap of=/opt/usr/p0/data/t3_post_pm.bin bs=8 skip=3218 count=2096 2>/dev/null;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1631,7 +1631,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_post_pm.bin",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_post_pm.bin"
+@@ -1651,7 +1651,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0/data;cat /proc/555/stat >t3_post_stat.txt 2>t3_post_stat.err;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1672,7 +1672,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data/t3_post_stat.txt",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_a0_t3_post_stat.txt"
+@@ -1692,7 +1692,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "cd /opt/usr/p0 && tar cf data.tar data;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1713,7 +1713,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "pull",
+         "/opt/usr/p0/data.tar",
+         "/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume7_data.tar"
+@@ -1733,7 +1733,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "rm -rf /opt/usr/p0;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1754,7 +1754,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "ls /opt/usr/p0 2>&1;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1775,7 +1775,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "df -k /opt/usr;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+@@ -1796,7 +1796,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "root",
+         "off"
+       ],
+@@ -1815,7 +1815,7 @@
+       "argv": [
+         "/home/linhao/.local/bin/sdb",
+         "-s",
+-        "<ORIGINAL_BOARD_IP>:26101",
++        "<TEST_BOARD_IP>:26101",
+         "shell",
+         "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+       ],
+--- before/tools/runners/p0_pagemap_residency_20261109/host_session.py
++++ after/tools/runners/p0_pagemap_residency_20261109/host_session.py
+@@ -13,7 +13,10 @@
+ 
+ OUT = Path(__file__).resolve().parent
+ SDB = '/home/linhao/.local/bin/sdb'
+-TARGET = sys.argv[1]
++TARGET = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get('P0_BOARD_IP', '')).strip()
++if not TARGET:
++    print('board address argument or P0_BOARD_IP is required', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = TARGET + ':26101'
+ 
+ def record(name, obj):
+--- before/tools/runners/p0_pagemap_residency_20261109/resume1_host_session.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume1_host_session.py
+@@ -17,7 +17,10 @@
+         return ROOT / ('resume1_' + name)
+ OUT = PrefixedOutput()
+ SDB = '/home/linhao/.local/bin/sdb'
+-TARGET = sys.argv[1]
++TARGET = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get('P0_BOARD_IP', '')).strip()
++if not TARGET:
++    print('board address argument or P0_BOARD_IP is required', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = TARGET + ':26101'
+ 
+ def record(name, obj):
+--- before/tools/runners/p0_pagemap_residency_20261109/resume2_driver.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume2_driver.py
+@@ -13,7 +13,10 @@
+ D = Path(__file__).resolve().parent
+ ROOT = D.parents[1]
+ SDB = '/home/linhao/.local/bin/sdb'
+-IP = '<ORIGINAL_BOARD_IP>'
++IP = os.environ.get('P0_BOARD_IP', '').strip()
++if not IP:
++    print('P0_BOARD_IP is required; no default board address', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = IP + ':26101'
+ SUFFIX = ';r=$?;printf "\\nRC=%s\\n" "$r";[ "$r" = 0 ]&&echo DONE||echo FAIL'
+ CHANNEL = re.compile(r'broken pipe|protocol fault|connection reset|failed to connect|server is not running|device not found|device offline|closed connection', re.I)
+--- before/tools/runners/p0_pagemap_residency_20261109/resume3_driver.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume3_driver.py
+@@ -13,7 +13,10 @@
+ D = Path(__file__).resolve().parent
+ ROOT = D.parents[1]
+ SDB = '/home/linhao/.local/bin/sdb'
+-IP = '<ORIGINAL_BOARD_IP>'
++IP = os.environ.get('P0_BOARD_IP', '').strip()
++if not IP:
++    print('P0_BOARD_IP is required; no default board address', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = IP + ':26101'
+ SUFFIX = ';r=$?;printf "\\nRC=%s\\n" "$r";[ "$r" = 0 ]&&echo DONE||echo FAIL'
+ CHANNEL = re.compile(r'broken pipe|protocol fault|connection reset|failed to connect|server is not running|device not found|device offline|closed connection', re.I)
+--- before/tools/runners/p0_pagemap_residency_20261109/resume4_driver.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume4_driver.py
+@@ -13,7 +13,10 @@
+ D = Path(__file__).resolve().parent
+ ROOT = D.parents[1]
+ SDB = '/home/linhao/.local/bin/sdb'
+-IP = '<ORIGINAL_BOARD_IP>'
++IP = os.environ.get('P0_BOARD_IP', '').strip()
++if not IP:
++    print('P0_BOARD_IP is required; no default board address', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = IP + ':26101'
+ SUFFIX = ';r=$?;printf "\\nRC=%s\\n" "$r";[ "$r" = 0 ]&&echo DONE||echo FAIL'
+ CHANNEL = re.compile(r'broken pipe|protocol fault|connection reset|failed to connect|server is not running|device not found|device offline|closed connection', re.I)
+--- before/tools/runners/p0_pagemap_residency_20261109/resume5_driver.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume5_driver.py
+@@ -13,7 +13,10 @@
+ D = Path(__file__).resolve().parent
+ ROOT = D.parents[1]
+ SDB = '/home/linhao/.local/bin/sdb'
+-IP = '<ORIGINAL_BOARD_IP>'
++IP = os.environ.get('P0_BOARD_IP', '').strip()
++if not IP:
++    print('P0_BOARD_IP is required; no default board address', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = IP + ':26101'
+ SUFFIX = ';r=$?;printf "\\nRC=%s\\n" "$r";[ "$r" = 0 ]&&echo DONE||echo FAIL'
+ CHANNEL = re.compile(r'broken pipe|protocol fault|connection reset|failed to connect|server is not running|device not found|device offline|closed connection', re.I)
+--- before/tools/runners/p0_pagemap_residency_20261109/resume6_driver.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume6_driver.py
+@@ -13,7 +13,10 @@
+ D = Path(__file__).resolve().parent
+ ROOT = D.parents[1]
+ SDB = '/home/linhao/.local/bin/sdb'
+-IP = '<ORIGINAL_BOARD_IP>'
++IP = os.environ.get('P0_BOARD_IP', '').strip()
++if not IP:
++    print('P0_BOARD_IP is required; no default board address', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = IP + ':26101'
+ SUFFIX = ';r=$?;printf "\\nRC=%s\\n" "$r";[ "$r" = 0 ]&&echo DONE||echo FAIL'
+ CHANNEL = re.compile(r'broken pipe|protocol fault|connection reset|failed to connect|server is not running|device not found|device offline|closed connection', re.I)
+--- before/tools/runners/p0_pagemap_residency_20261109/resume6_measure.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume6_measure.py
+@@ -83,7 +83,9 @@
+     obs['stat']=sf;write('observations.json',observations)
+     return obs
+ 
+-def b_serial():return '<ORIGINAL_BOARD_IP>:26101'
++def b_serial():
++    from resume6_driver import SERIAL
++    return SERIAL
+ 
+ def main():
+     if not b.s.get('gdb_ready'):raise Stop('STOP_GDB_NOT_READY')
+--- before/tools/runners/p0_pagemap_residency_20261109/resume7_driver.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume7_driver.py
+@@ -13,7 +13,10 @@
+ D = Path(__file__).resolve().parent
+ ROOT = D.parents[1]
+ SDB = '/home/linhao/.local/bin/sdb'
+-IP = '<ORIGINAL_BOARD_IP>'
++IP = os.environ.get('P0_BOARD_IP', '').strip()
++if not IP:
++    print('P0_BOARD_IP is required; no default board address', file=sys.stderr)
++    raise SystemExit(2)
+ SERIAL = IP + ':26101'
+ SUFFIX = ';r=$?;printf "\\nRC=%s\\n" "$r";[ "$r" = 0 ]&&echo DONE||echo FAIL'
+ CHANNEL = re.compile(r'broken pipe|protocol fault|connection reset|failed to connect|server is not running|device not found|device offline|closed connection', re.I)
+--- before/tools/runners/p0_pagemap_residency_20261109/resume7_measure.py
++++ after/tools/runners/p0_pagemap_residency_20261109/resume7_measure.py
+@@ -95,7 +95,9 @@
+     obs['stat']=sf;write('observations.json',observations)
+     return obs
+ 
+-def b_serial():return '<ORIGINAL_BOARD_IP>:26101'
++def b_serial():
++    from resume7_driver import SERIAL
++    return SERIAL
+ 
+ def main():
+     b.start()

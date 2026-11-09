@@ -1,0 +1,1299 @@
+{
+  "schema": "private-endpoint-scan.v1",
+  "files": 5222,
+  "findings": [
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/connect.raw",
+      "line": 1,
+      "column": 44,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/report.md",
+      "line": 19,
+      "column": 44,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume1_connect.raw",
+      "line": 1,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume1_devices.raw",
+      "line": 2,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_call_001_connect.raw",
+      "line": 1,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_state.json",
+      "line": 13,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_state.json",
+      "line": 30,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_state.json",
+      "line": 51,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_state.json",
+      "line": 72,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_state.json",
+      "line": 93,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_call_001_connect.raw",
+      "line": 1,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 13,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 30,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 49,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 70,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 91,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 112,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 133,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 154,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 175,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 196,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 217,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "line": 236,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_call_001_connect.raw",
+      "line": 1,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 13,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 30,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 49,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 70,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 91,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 112,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 133,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 154,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 175,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 196,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "line": 215,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_call_001_connect.raw",
+      "line": 1,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 13,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 30,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 49,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 70,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 91,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 112,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 133,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 154,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 175,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 196,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 217,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 238,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 259,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 279,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 300,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 321,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 342,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 363,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 384,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 405,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 426,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 447,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 468,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 489,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 510,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 531,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 552,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 573,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 594,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 615,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 636,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 656,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 677,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 698,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 718,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 739,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 760,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 781,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "line": 800,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_call_001_connect.raw",
+      "line": 1,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_readelf_22.raw",
+      "line": 6051,
+      "column": 9,
+      "encoding": "ipv4-hex-le"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 13,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 30,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 49,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 70,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 91,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 112,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 133,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 154,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 175,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 196,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 217,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 238,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 259,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 279,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 300,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 321,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 341,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 361,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 381,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 401,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 422,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 443,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 463,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 484,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 504,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 524,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 544,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 564,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 585,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 606,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 627,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 648,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 668,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 689,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 710,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 730,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 751,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 772,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 793,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "line": 812,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_call_001_connect.raw",
+      "line": 1,
+      "column": 1,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 13,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 30,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 49,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 70,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 91,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 112,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 133,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 154,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 175,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 196,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 217,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 238,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 259,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 279,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 300,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 320,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 341,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 361,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 381,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 401,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 421,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 442,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 463,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 484,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 505,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 525,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 546,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 566,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 587,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 607,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 628,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 648,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 669,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 689,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 710,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 730,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 751,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 772,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 792,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 813,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 833,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 854,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 874,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 895,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 915,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 936,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 956,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 977,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 997,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1018,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1038,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1059,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1079,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1100,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1120,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1141,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1162,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1182,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1203,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1223,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1244,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1264,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1285,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1305,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1326,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1346,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1367,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1387,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1408,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1428,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1449,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1469,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1490,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1510,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1531,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1552,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1572,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1593,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1613,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1634,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1654,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1675,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1695,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1716,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1736,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1757,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1778,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1799,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "line": 1818,
+      "column": 10,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume2_driver.py",
+      "line": 16,
+      "column": 7,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume3_driver.py",
+      "line": 16,
+      "column": 7,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume4_driver.py",
+      "line": 16,
+      "column": 7,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume5_driver.py",
+      "line": 16,
+      "column": 7,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume6_driver.py",
+      "line": 16,
+      "column": 7,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume6_measure.py",
+      "line": 86,
+      "column": 24,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume7_driver.py",
+      "line": 16,
+      "column": 7,
+      "encoding": "ipv4-text"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume7_measure.py",
+      "line": 98,
+      "column": 24,
+      "encoding": "ipv4-text"
+    }
+  ],
+  "count": 215,
+  "verdict": "FAIL",
+  "scope": "current tracked tree only; no historical rewrite; no address values in output"
+}

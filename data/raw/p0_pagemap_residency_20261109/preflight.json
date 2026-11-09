@@ -1,0 +1,35 @@
+{
+  "created_before_ns": 1794223022673048419,
+  "created_after_ns": 1794223022673093996,
+  "created_utc": "2026-11-09T11:17:02.673095+00:00",
+  "sha256": "ab68cc2645f08a30069d58f562993811746b24e17e396d6904b594925ddeab14",
+  "mtime_ns": 1794223022673080926,
+  "source_commit": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b",
+  "checks": {
+    "git rev-parse --is-shallow-repository": {
+      "rc": 0,
+      "stdout": "false\n",
+      "stderr": ""
+    },
+    "git rev-parse demo-v14^{commit}": {
+      "rc": 0,
+      "stdout": "7289a47b9d24791944cd3b02c00f24b8cb76aa3b\n",
+      "stderr": ""
+    },
+    "git check-ignore -v local_review/": {
+      "rc": 0,
+      "stdout": ".git/info/exclude:7:local_review/\tlocal_review/\n",
+      "stderr": ""
+    }
+  },
+  "resource_limits": {
+    "cpu_max": "200000 100000",
+    "affinity": [
+      0,
+      1
+    ],
+    "memory_max": 2147483648,
+    "memory_swap_max": 0
+  },
+  "board_commands_started": false
+}

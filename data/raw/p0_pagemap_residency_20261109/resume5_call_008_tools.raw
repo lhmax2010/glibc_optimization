@@ -1,0 +1,9 @@
+/usr/bin/dd
+/usr/bin/grep
+/usr/bin/pgrep
+/usr/bin/ps
+/usr/bin/tar
+/usr/bin/rpm
+
+RC=0
+DONE

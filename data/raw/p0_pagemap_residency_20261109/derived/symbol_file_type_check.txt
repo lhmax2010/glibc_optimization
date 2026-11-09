@@ -1,0 +1,7 @@
+find forbidden suffixes: empty
+ELF magic: 0
+non-bin non-UTF8/NUL files: 0
+gdbroot directories: 0
+allowed binary evidence: 7 unchanged .bin files
+source inventory bytes and mtimes: unchanged
+PASS

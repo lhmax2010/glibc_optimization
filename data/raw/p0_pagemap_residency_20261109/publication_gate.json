@@ -1,0 +1,12 @@
+{
+  "status": "STOP_PRIVACY_SCAN",
+  "scanner_rc": 1,
+  "files": 5222,
+  "findings": 215,
+  "scope": "tracked tree plus explicit untracked candidate files",
+  "git_diff_stat": "",
+  "git_status_entries": 344,
+  "staged": false,
+  "committed": false,
+  "pushed": false
+}

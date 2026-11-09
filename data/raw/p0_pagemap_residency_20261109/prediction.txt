@@ -1,0 +1,4 @@
+H1：对每一次 trim，reclaimed_bytes == (present_pages_pre − present_pages_post) × 4096，精确相等。
+H2：在同一进程上短时间内连续 trim 三次，第二、三次的 Δpresent_pages 与 reclaimed_bytes 均 ≤ 1 页。
+H3：present_pages_pre × 4096 与同时刻 [heap] 的 Private_Dirty 相等，允许 ±2 页误差。
+H4：[heap] 范围内 pagemap bit62（swapped）置位的页数为 0。

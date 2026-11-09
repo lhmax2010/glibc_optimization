@@ -1,0 +1,13 @@
+	linux-vdso.so.1 (0xbef5c000)
+	libexpat.so.1 => /lib/libexpat.so.1 (0xb6f4b000)
+	libtinfow.so.6 => /lib/libtinfow.so.6 (0xb6f2c000)
+	libncursesw.so.6 => /lib/libncursesw.so.6 (0xb6f0d000)
+	libpython3.14.so.1.0 => /opt/usr/p0/gdbroot/usr/lib/libpython3.14.so.1.0 (0xb6b8f000)
+	libm.so.6 => /lib/libm.so.6 (0xb6b41000)
+	libstdc++.so.6 => /lib/libstdc++.so.6 (0xb69a3000)
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 (0xb6988000)
+	libc.so.6 => /lib/libc.so.6 (0xb6826000)
+	/lib/ld-linux.so.3 (0xb6f77000)
+
+RC=0
+DONE

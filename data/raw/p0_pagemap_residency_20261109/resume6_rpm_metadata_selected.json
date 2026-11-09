@@ -1,0 +1,86 @@
+{
+  "gdb-16.3-1.2.armv7l.rpm": {
+    "file": "gdb-16.3-1.2.armv7l.rpm",
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/gdb-16.3-1.2.armv7l.rpm",
+    "sha256": "3faf73b5fcad87e4d5f32220a0b7c95ad209749adc97f5937d1bcabb2a93eb1a",
+    "bytes": 2658309,
+    "name": "gdb",
+    "arch": "armv7l",
+    "version": {
+      "epoch": "0",
+      "ver": "16.3",
+      "rel": "1.2",
+      "vcs": "platform/upstream/gdb#646a30181e8e3a480c4eecf10b966d04ad23da08"
+    }
+  },
+  "gdbm-1.8.3-1.16.armv7l.rpm": {
+    "file": "gdbm-1.8.3-1.16.armv7l.rpm",
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/gdbm-1.8.3-1.16.armv7l.rpm",
+    "sha256": "2a7bb048072ad2c8a019a0076472bea67c7709e429d371efc29f9f0ef0edb6da",
+    "bytes": 22389,
+    "name": "gdbm",
+    "arch": "armv7l",
+    "version": {
+      "epoch": "0",
+      "ver": "1.8.3",
+      "rel": "1.16",
+      "vcs": "product/upstream/gdbm#cfe14ccbde9850bb2dd61868956a7d36d7249494"
+    }
+  },
+  "libgmp-4.2.1-1.13.armv7l.rpm": {
+    "file": "libgmp-4.2.1-1.13.armv7l.rpm",
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/libgmp-4.2.1-1.13.armv7l.rpm",
+    "sha256": "5a3445861b9f548c1e746d5539ac9d1bc4bf102ab43ac9cdfd12b1ece79455a7",
+    "bytes": 104317,
+    "name": "libgmp",
+    "arch": "armv7l",
+    "version": {
+      "epoch": "0",
+      "ver": "4.2.1",
+      "rel": "1.13",
+      "vcs": "product/upstream/gmp#542079c749279f7a83cd066fbdadcd81bab19516"
+    }
+  },
+  "libpython3_141_0-3.14.2-1.11.armv7l.rpm": {
+    "file": "libpython3_141_0-3.14.2-1.11.armv7l.rpm",
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/libpython3_141_0-3.14.2-1.11.armv7l.rpm",
+    "sha256": "1728d49d13b673d3e5a64872eb1c4020b457b1491222ca408b98dab1ec10704d",
+    "bytes": 1196761,
+    "name": "libpython3_141_0",
+    "arch": "armv7l",
+    "version": {
+      "epoch": "0",
+      "ver": "3.14.2",
+      "rel": "1.11",
+      "vcs": "platform/upstream/python3#969bf43d278d412e20141e26086c56f311a8565a"
+    }
+  },
+  "python3-3.14.2-1.12.armv7l.rpm": {
+    "file": "python3-3.14.2-1.12.armv7l.rpm",
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/python3-3.14.2-1.12.armv7l.rpm",
+    "sha256": "45baa1a16f125566ee93c920ee20d087082538f78a695ec48e44e67cb2d0d317",
+    "bytes": 1971789,
+    "name": "python3",
+    "arch": "armv7l",
+    "version": {
+      "epoch": "0",
+      "ver": "3.14.2",
+      "rel": "1.12",
+      "vcs": "platform/upstream/python3#969bf43d278d412e20141e26086c56f311a8565a"
+    }
+  },
+  "python3-base-3.14.2-1.11.armv7l.rpm": {
+    "file": "python3-base-3.14.2-1.11.armv7l.rpm",
+    "url": "http://download.tizen.org/snapshots/TIZEN/Tizen/Tizen-Base-Toolchain/tizen-base-toolchain_20261030.120529/repos/standard/packages/armv7l/python3-base-3.14.2-1.11.armv7l.rpm",
+    "sha256": "331e0ff8fb9f1be2c65eaf3671b6906e8f0b84a432d46be23de32e411c322c25",
+    "bytes": 7167269,
+    "name": "python3-base",
+    "arch": "armv7l",
+    "version": {
+      "epoch": "0",
+      "ver": "3.14.2",
+      "rel": "1.11",
+      "vcs": "platform/upstream/python3#969bf43d278d412e20141e26086c56f311a8565a"
+    }
+  }
+}

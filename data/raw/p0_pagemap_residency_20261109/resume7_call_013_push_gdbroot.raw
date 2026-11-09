@@ -1,0 +1,4 @@
+WARNING: Your data are to be sent over an unencrypted connection and could be read by others.
+pushed            resume6_gdbroot.tar	  0%	      0MB	    0KB/spushed            resume6_gdbroot.tar	 16%	      8MB	 8767KB/spushed            resume6_gdbroot.tar	 34%	     18MB	 9532KB/spushed            resume6_gdbroot.tar	 42%	     22MB	 3352KB/spushed            resume6_gdbroot.tar	 48%	     25MB	  573KB/spushed            resume6_gdbroot.tar	 64%	     33MB	 6824KB/spushed            resume6_gdbroot.tar	 77%	     40MB	 4951KB/spushed            resume6_gdbroot.tar	 99%	     51MB	11695KB/spushed            resume6_gdbroot.tar	100%	     52MB	11695KB/s
+1 file(s) pushed. 0 file(s) skipped.
+/home/linhao/Toolchain/development/glibc_optimization/local_review/p0_pagemap_zram_20261109_191702/resume6_gdbroot.tar   3934KB/s (54579200 bytes in 13.548s)

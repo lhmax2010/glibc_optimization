@@ -1,0 +1,8 @@
+{
+  "status": "STOPPED",
+  "reason": "[Errno 32] Broken pipe",
+  "end": {
+    "epoch_ns": 1794224496724830820,
+    "utc": "2026-11-09T11:41:36.724831+00:00"
+  }
+}

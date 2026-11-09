@@ -1,0 +1,5 @@
+{"label": "uname_r", "command": "uname -r", "payload_bytes": 128, "start": {"epoch_ns": 1794224447223408927, "utc": "2026-11-09T11:40:47.223409+00:00"}}
+{"label": "uname_m", "command": "uname -m", "payload_bytes": 128, "start": {"epoch_ns": 1794224447437807033, "utc": "2026-11-09T11:40:47.437807+00:00"}}
+{"label": "os_release", "command": "cat /etc/os-release", "payload_bytes": 139, "start": {"epoch_ns": 1794224447480646088, "utc": "2026-11-09T11:40:47.480646+00:00"}}
+{"label": "id_u", "command": "id -u", "payload_bytes": 125, "start": {"epoch_ns": 1794224447524601776, "utc": "2026-11-09T11:40:47.524602+00:00"}}
+{"label": "readelf_path", "command": "command -v readelf", "payload_bytes": 138, "start": {"epoch_ns": 1794224496724734777, "utc": "2026-11-09T11:41:36.724737+00:00"}}

@@ -1,0 +1,15 @@
+{
+  "schema": "private-endpoint-scan.v1",
+  "files": 5239,
+  "findings": [
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_readelf_22.raw",
+      "line": 6051,
+      "column": 9,
+      "encoding": "ipv4-hex-le"
+    }
+  ],
+  "count": 1,
+  "verdict": "FAIL",
+  "scope": "current tracked tree only; no historical rewrite; no address values in output"
+}

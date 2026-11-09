@@ -1,0 +1,7 @@
+/usr/bin/dd
+/usr/bin/grep
+/usr/bin/pgrep
+/usr/bin/ps
+
+RC=0
+DONE

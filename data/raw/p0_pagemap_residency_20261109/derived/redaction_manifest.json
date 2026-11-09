@@ -1,0 +1,197 @@
+{
+  "files": 26,
+  "address_occurrences": 214,
+  "changes": [
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "e1c9698d6960aed8e8dbbfd86385f5b223e06e92ec226735f37751266a96abf0",
+      "public_sha256": "8910eed277699435761855534cf10ae04c7ce5ec697e9bef2c4302c0b8df0b95"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/report.md",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "19e7af6faf95ccc99b1126ea62167db005a2552cd52240835e24abd16af598e1",
+      "public_sha256": "298ecd980b00e096fa985af665336dcda1338a398d7e0902f2ce049e5155c460"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume1_connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume1_devices.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "3fd531569eb71347bfc292e5212310b5c5f20a0243dac20c00617aece63ab43a",
+      "public_sha256": "6f132b8fdb2cd23da1489ba4f71c4e4b297ce31b8cbe9dd44575e7993be00462"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_call_001_connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume2_state.json",
+      "endpoint_occurrences": 5,
+      "kind": "address-token-only",
+      "original_sha256": "b1db34a4b16e7d6944096dcca64f526c35ff08b3f2a628f9781b0d0597026d1b",
+      "public_sha256": "6986a2a6586637edf602ea2909316d742859bcc08903a2f56655aca93a7bf519"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_call_001_connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume3_state.json",
+      "endpoint_occurrences": 12,
+      "kind": "address-token-only",
+      "original_sha256": "563a176e58dcf1b5fa831f0258a495f3f32b5d1c8147423ecd2da1961359ae92",
+      "public_sha256": "4495f5945f57e6107348dd332ed475a649556baf5dea083c60902403c730231b"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_call_001_connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume4_state.json",
+      "endpoint_occurrences": 11,
+      "kind": "address-token-only",
+      "original_sha256": "9a341000f16f8a534d7025ba06f1536833163ac62881117f65f55ddee6368965",
+      "public_sha256": "6d1434aba0650e0d80536462c7f8cbd66434cf7449d74d6f27306f85e2c692cb"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_call_001_connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume5_state.json",
+      "endpoint_occurrences": 39,
+      "kind": "address-token-only",
+      "original_sha256": "319f38efa54f27f1fff20dad2cacd00dafd0662a37b506c2ca5ca844cdfa1a6c",
+      "public_sha256": "3f9fd10879d7b2615a354f306c407d70aa0fe595d6ae8a4fd51a46e37c98e5ff"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_call_001_connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume6_state.json",
+      "endpoint_occurrences": 40,
+      "kind": "address-token-only",
+      "original_sha256": "643daf20ae7b8405d981a66574a883a4908e78ec382bfd11b6bb7119d2dbf25c",
+      "public_sha256": "a0cc79bf0513acedbeda37aeaa855c4c18e2368c596c01f4047f617ba93245b6"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_call_001_connect.raw",
+      "endpoint_occurrences": 1,
+      "kind": "address-token-only",
+      "original_sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7",
+      "public_sha256": "e690536f80f3acb3c3a552c2460e79fc7cdc36a3ccdea70703c6d92e979597da"
+    },
+    {
+      "path": "data/raw/p0_pagemap_residency_20261109/resume7_state.json",
+      "endpoint_occurrences": 89,
+      "kind": "address-token-only",
+      "original_sha256": "ccbb128338b7249f48d732bb832621ddbd099605acae8cf9329216de3d5b496b",
+      "public_sha256": "f256514cd4a583f310ea753fb02ddee106098ee4b6dd1dbfbafc33eee0a64895"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/host_session.py",
+      "endpoint_occurrences": 0,
+      "kind": "address-configuration-only",
+      "original_sha256": "3d6a7229b6c3f7862f3d6740807ef96423cd64fc2cc6cf1d717cbd53591d2c11",
+      "public_sha256": "b047530b746d461050268b0f12e610ac1d16626cf77c88fd336047182254b4c1"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume1_host_session.py",
+      "endpoint_occurrences": 0,
+      "kind": "address-configuration-only",
+      "original_sha256": "b3ed7778e2fb5012be2bf84526130af9da46b4da4ffb9c48971c13461a839d63",
+      "public_sha256": "f648a1e1b7e6d6126bf55e9b415539c3728e751106a55a710f95e8f6a8c820c2"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume2_driver.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "24dbf2f7514e3b5834743f41064d35fe0cf1c85291eb96117e73034f1824cde7",
+      "public_sha256": "506376ea06503350c2ab45768f35f4bd2cdb03a5cfaf10cc946ac1b07a3558dc"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume3_driver.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "208abc01f51adcd97eae06f5a843e420b44f8a908fb192c27af7e385a3e2a821",
+      "public_sha256": "6a6ede4f019918bc70c5d87abee80f94064b1eceeeee4b4d418164f303be41dd"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume4_driver.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "6d354a4ac37872b6afce33fd2b1dc3199623ce8fd22d9c06d046148c0be3b198",
+      "public_sha256": "95a3537d0972fd70082476e76de77356ce05f422d55b10624b82a240fcd22d9f"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume5_driver.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "1894566b383dc5a09760552cafa840fb015d98d41507a679de0b3d11896f32a3",
+      "public_sha256": "a977245e8b0d770d0cb2d83904452b70239adbf4dc0b67e6925dafaa32a4aa70"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume6_driver.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "7bcdc2099993518c04c5a5121e4f9720e9b2ad79bbc29ed8b2fd5fb40b39ab36",
+      "public_sha256": "59844dbfeb9ca0b0ce009668c4603b7136ac27af6b0a3e48daa9a5c0f6930fec"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume6_measure.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "466f3f36939aae38b998701d7bd9fdb7c2ec0a46eabc665761d5fde987070add",
+      "public_sha256": "00527600f97d22d35204977a3877201142360628692f2d21f373f306fd2f0796"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume7_driver.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "4dbbd1f79858f0eab36e5c096dbaa84ddbca9e75c583671b064fb1f542691099",
+      "public_sha256": "f6aacd449f211dcdef7a037051fc789503d3b5ff410ec3535595e0516090c1d6"
+    },
+    {
+      "path": "tools/runners/p0_pagemap_residency_20261109/resume7_measure.py",
+      "endpoint_occurrences": 1,
+      "kind": "address-configuration-only",
+      "original_sha256": "da076f8e189282955551bebd0de8029cbffb72d0c76f7f959292de97e8a03328",
+      "public_sha256": "d10a29d138c309febfabba5ca3ff610c6f47bf1da835ab139f1517c1b443ba85"
+    }
+  ],
+  "tracked_scan_before": {
+    "files": 4873,
+    "findings": 0
+  },
+  "candidate_scan_before": {
+    "files": 352,
+    "findings": 215
+  },
+  "binary_findings": 0
+}

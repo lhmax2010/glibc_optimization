@@ -1,0 +1,6 @@
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/mmcblk0p2         1115180   1082504      4180 100% /
+tmpfs                  1988232        24   1988208   1% /tmp
+
+RC=0
+DONE

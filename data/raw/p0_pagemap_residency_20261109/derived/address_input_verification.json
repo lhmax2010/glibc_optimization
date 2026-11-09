@@ -1,0 +1,52 @@
+[
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/host_session.py",
+    "rc": 2,
+    "stderr": "board address argument or P0_BOARD_IP is required\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume1_host_session.py",
+    "rc": 2,
+    "stderr": "board address argument or P0_BOARD_IP is required\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume2_driver.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume3_driver.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume4_driver.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume5_driver.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume6_driver.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume6_measure.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume7_driver.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  },
+  {
+    "file": "tools/runners/p0_pagemap_residency_20261109/resume7_measure.py",
+    "rc": 2,
+    "stderr": "P0_BOARD_IP is required; no default board address\n"
+  }
+]

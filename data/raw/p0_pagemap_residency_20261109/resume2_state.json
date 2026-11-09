@@ -1,0 +1,112 @@
+{
+  "calls": 5,
+  "reconnects": 0,
+  "channel_failures": 0,
+  "last_end_monotonic": 384847.305644979,
+  "records": [
+    {
+      "n": 1,
+      "label": "connect",
+      "argv": [
+        "/home/linhao/.local/bin/sdb",
+        "connect",
+        "<TEST_BOARD_IP>"
+      ],
+      "start_utc": "2026-11-09T12:19:00.829352+00:00",
+      "start_ns": 1794226740829362676,
+      "start_monotonic": 384844.791658971,
+      "file": "resume2_call_001_connect.raw",
+      "end_utc": "2026-11-09T12:19:00.835416+00:00",
+      "end_ns": 1794226740835421808,
+      "host_rc": 0,
+      "sha256": "0a07c63ee1b162e0ae563a8eeb646f7009c2770a5c105f90e4dabfafac56c9b7"
+    },
+    {
+      "n": 2,
+      "label": "identity_uname_r",
+      "argv": [
+        "/home/linhao/.local/bin/sdb",
+        "-s",
+        "<TEST_BOARD_IP>:26101",
+        "shell",
+        "uname -r;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+      ],
+      "start_utc": "2026-11-09T12:19:01.335575+00:00",
+      "start_ns": 1794226741335595320,
+      "start_monotonic": 384845.29789256,
+      "file": "resume2_call_002_identity_uname_r.raw",
+      "end_utc": "2026-11-09T12:19:01.462587+00:00",
+      "end_ns": 1794226741462601324,
+      "host_rc": 0,
+      "sha256": "5c86e5f34df775c3b93f20b793c94d668aaa10b5b6a15348bb179204bfeee40f",
+      "remote_rc": 0,
+      "payload_bytes": 72
+    },
+    {
+      "n": 3,
+      "label": "identity_uname_m",
+      "argv": [
+        "/home/linhao/.local/bin/sdb",
+        "-s",
+        "<TEST_BOARD_IP>:26101",
+        "shell",
+        "uname -m;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+      ],
+      "start_utc": "2026-11-09T12:19:01.962741+00:00",
+      "start_ns": 1794226741962761939,
+      "start_monotonic": 384845.925058931,
+      "file": "resume2_call_003_identity_uname_m.raw",
+      "end_utc": "2026-11-09T12:19:02.090608+00:00",
+      "end_ns": 1794226742090622612,
+      "host_rc": 0,
+      "sha256": "d6ea8cf4e6797465e843bbac56163777bec07ac9a8cebb9b05e6c96f5d9b33f2",
+      "remote_rc": 0,
+      "payload_bytes": 72
+    },
+    {
+      "n": 4,
+      "label": "identity_os_release",
+      "argv": [
+        "/home/linhao/.local/bin/sdb",
+        "-s",
+        "<TEST_BOARD_IP>:26101",
+        "shell",
+        "cat /etc/os-release;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+      ],
+      "start_utc": "2026-11-09T12:19:02.590881+00:00",
+      "start_ns": 1794226742590898887,
+      "start_monotonic": 384846.553195948,
+      "file": "resume2_call_004_identity_os_release.raw",
+      "end_utc": "2026-11-09T12:19:02.716522+00:00",
+      "end_ns": 1794226742716537212,
+      "host_rc": 0,
+      "sha256": "e8dcdc7bddb67115b68ead65789114fefd854d7bc413e9553fdb2ee3604ce2c8",
+      "remote_rc": 0,
+      "payload_bytes": 83
+    },
+    {
+      "n": 5,
+      "label": "identity_id_u",
+      "argv": [
+        "/home/linhao/.local/bin/sdb",
+        "-s",
+        "<TEST_BOARD_IP>:26101",
+        "shell",
+        "id -u;r=$?;printf \"\\nRC=%s\\n\" \"$r\";[ \"$r\" = 0 ]&&echo DONE||echo FAIL"
+      ],
+      "start_utc": "2026-11-09T12:19:03.216850+00:00",
+      "start_ns": 1794226743216874274,
+      "start_monotonic": 384847.1791716,
+      "file": "resume2_call_005_identity_id_u.raw",
+      "end_utc": "2026-11-09T12:19:03.343353+00:00",
+      "end_ns": 1794226743343367430,
+      "host_rc": 0,
+      "sha256": "5a3508283c7b48f23afeed13e56c038477faf3f4f5cd6806bf354dec562025a1",
+      "remote_rc": 0,
+      "payload_bytes": 69
+    }
+  ],
+  "status": "STOPPED",
+  "reason": "STOP_ROOT_REQUIRED 5001",
+  "stopped_utc": "2026-11-09T12:19:03.344782+00:00"
+}

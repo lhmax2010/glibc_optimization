@@ -1,0 +1,140 @@
+[MemoryLevelThreshold]
+MediumLevel=       25%
+LowLevel=          15%
+CriticalLevel=     10%
+OomLevel=           7%
+#LmkThresholdLeave= 14%
+#ProactiveThreshold= 10%
+#ProactiveThresholdLeave= 14%
+#LmkMaxVictimPerOom= 10
+OomPopup=           no
+
+[MemoryAppTypeLimit]
+ServicePerAppLimitAction=128MB
+#WidgetPerAppLimitAction=160MB
+#GUIPerAppLimitAction=1024MB
+#WebPerAppLimitAction=512MB
+
+[MemoryAppStatusLimit]
+#BackgroundPerAppLimitAction=768MB
+
+[MemoryBackgroundLru]
+BackgroundLruLimit=  80%
+
+[MemoryLMKGovernor]
+ForegroundAppListPostGovernor=no
+WorkingSetSizePostGovernor=no
+
+[MemoryLimitTrigger]
+MemoryLimitTrigger=oom
+#MemoryLimitTrigger=threshold
+#MemoryLimitTrigger=others
+
+[WatchdogFailAction]
+FailOnce=/usr/sbin/reboot silent
+FailTwice=/usr/sbin/reboot silent
+FailOther=/usr/sbin/reboot silent
+
+[CpuThrottling]
+#CpuSched=idle
+#CpuNice=19
+#CpuShare=64
+#CpuCFSRuntime=50ms
+#CpuCFSPeriod=1s
+[HEART]
+BATTERY=ON
+CPU=ON
+MEMORY=OFF
+STORAGE=OFF
+
+[BATTERY_POWER_MODE]
+POWER_NORMAL_MODE=676
+POWER_SAVING_MODE=750
+ULTRA_SAVING_MODE=1947
+
+[BATTERY_2600]
+LOGIC_V2=1
+DISCHARGE_FAST=700
+DISCHARGE_SLOW=12000
+AVERAGE_PWR=35.0
+OCV_SOC_POLY_COEF=6 3402.664 42.031 -1.76745 0.034798 -0.00030516 0.0000010116
+
+[BATTERY_1500]
+LOGIC_V2=1
+DISCHARGE_FAST=200
+DISCHARGE_SLOW=7000
+AVERAGE_PWR=35.0
+OCV_SOC_POLY_COEF=6 3402.664 42.031 -1.76745 0.034798 -0.00030516 0.0000010116
+
+[BATTERY]
+LOGIC_V2=0
+DISCHARGE_FAST=0
+DISCHARGE_SLOW=0
+AVERAGE_PWR=0.0
+[MemorySwap]
+SwapEnable=no
+ReclaimAtBoot=yes
+SwapType=zram
+BackgroundLruSwappiness=80
+
+[MemoryZram]
+CompAlgorithm=zstd
+ZramRatio=0.4
+
+[MemoryZswap]
+PoolRatio=40
+PoolType=z3fold
+
+[MemoryDedup]
+DedupAtBoot=yes
+ScanOnLowmem=yes
+
+[MemoryKsm]
+KsmMode=oneshot
+#KsmMode=periodic
+
+PagesToScan=100
+PagesToScanWithBoost=1000
+
+[MemoryCompaction]
+FragLevel=800
+
+[MemoryBackgroundReclaim]
+# Unset this option if it causes any unexepcted issue (e.g. jerky animation).
+AfterScreenDim=yes
+
+[CpuSched]
+CpuSchedFeature=no_rt_runtime_share
+CpuRTRuntime=950ms
+CpuRTPeriod=1000ms
+
+[CpuAffinity]
+#ForegroundApps=1,2,4-6
+
+[CpuBoostingLevelStrong]
+CpuSched=rr
+CpuRTPriority=50
+
+[CpuBoostingLevelMedium]
+CpuSched=rr
+CpuRTPriority=1
+
+[CpuBoostingLevelWeak]
+CpuSched=other
+CpuNice=-20 # Priority=100
+
+[CpuBoostingStallGovernor]
+CpuBoostingStallGovernor=no
+[APPUSAGE]
+APPUSAGE=ON
+
+[BLOCK]
+activate=TRUE
+mode=WRITE
+include=DOWNLOADABLE
+exclude=SLP_debug
+exclude_proc=mtp-responder
+logging=5
+
+RC=0
+DONE

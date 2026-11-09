@@ -1,0 +1,32 @@
+board_path	verdict
+/usr/bin/bt-service	UND 导入
+/usr/bin/contacts-service-ipcd	UND 导入
+/usr/bin/isf	UND 导入
+/usr/bin/isf-panel-efl	UND 导入
+/usr/bin/media-server	UND 导入
+/usr/bin/pushd	UND 导入
+/usr/bin/resourced	UND 导入
+/usr/bin/tizen-watcherd	UND 导入
+/usr/lib/libamd.so.1	UND 导入
+/usr/lib/libamd.so.1.82.15	UND 导入
+/usr/lib/libapp-core-cpp.so.1	UND 导入
+/usr/lib/libapp-core-cpp.so.1.28.10	UND 导入
+/usr/lib/libappcore-common.so.1	UND 导入
+/usr/lib/libappcore-common.so.1.28.10	UND 导入
+/usr/lib/libbluetooth.default.so	UND 导入
+/usr/lib/libbluetooth.default.so.1	UND 导入
+/usr/lib/libbluetooth.default.so.1.0.0	UND 导入
+/usr/lib/libc_malloc_debug.so.0	定义
+/usr/lib/liblaunchpad.so.0	UND 导入
+/usr/lib/liblaunchpad.so.0.51.7	UND 导入
+/usr/lib/libmuse-server.so.0	UND 导入
+/usr/lib/libmuse-server.so.0.6.1	UND 导入
+/usr/lib/libnntrainer.so	UND 导入
+/usr/lib/libpipewire-0.3.so.0	UND 导入
+/usr/lib/libpipewire-0.3.so.0.1600.0	UND 导入
+/usr/lib/libpkgmgr-info-server.so.0	UND 导入
+/usr/lib/libpkgmgr-info-server.so.0.37.5	UND 导入
+/usr/lib/libscim-1.0.so.8	UND 导入
+/usr/lib/libscim-1.0.so.8.2.3	UND 导入
+/usr/lib/libscl-core.so	UND 导入
+/usr/lib/libtrackrenderer.so	UND 导入

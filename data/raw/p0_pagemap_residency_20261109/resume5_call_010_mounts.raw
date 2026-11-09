@@ -1,0 +1,5 @@
+/dev/mmcblk0p2 / ext4 ro,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,noexec 0 0
+
+RC=0
+DONE
