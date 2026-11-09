@@ -78,6 +78,8 @@ resume7 校验后复用；没有重新下载。板上 GDB16.3 版本确认通过
 
 ## 宿主复算（不连接板子）
 
+三份 malloc_info XML（t1_pre.xml、t2_pre.xml、t3_pre.xml）经 `git add -f` 加入仓库，因为仓库 `.gitignore` 默认忽略 `*.xml`。
+
 在仓库根目录执行：
 
 ```sh
